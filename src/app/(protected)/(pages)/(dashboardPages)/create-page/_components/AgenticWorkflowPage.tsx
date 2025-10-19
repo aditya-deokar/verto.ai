@@ -6,8 +6,9 @@ import { Input } from '@/components/ui/input'
 import { Textarea } from '@/components/ui/textarea'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Label } from '@/components/ui/label'
-import { motion } from 'framer-motion'
-import { ArrowLeft, Sparkles, Loader2, Wand2, Brain, FileText, Palette, Image as ImageIcon, Package, Target, Search, ImagePlus, Database } from 'lucide-react'
+import { Badge } from '@/components/ui/badge'
+import { motion, AnimatePresence } from 'framer-motion'
+import { ArrowLeft, Sparkles, Loader2, Wand2, Brain, FileText, Palette, Image as ImageIcon, Package, Target, Search, ImagePlus, Database, Zap, Lightbulb, CheckCircle2 } from 'lucide-react'
 import { toast } from 'sonner'
 import { useRouter } from 'next/navigation'
 import { useAgenticGenerationV2 } from '@/hooks/useAgenticGenerationV2'
@@ -124,130 +125,180 @@ const AgenticWorkflowPage = ({ onBack }: Props) => {
         initial="hidden"
         animate="visible"
         variants={containerVariants}
-        className="space-y-8 max-w-6xl mx-auto pb-12"
+        className="space-y-8 max-w-7xl mx-auto pb-12 px-4"
       >
-        {/* Header */}
-        <motion.div variants={itemVariants} className="flex items-center gap-4">
-          <Button
-            variant="ghost"
-            size="icon"
-            onClick={onBack}
-            className="hover:bg-primary/10"
-          >
-            <ArrowLeft className="h-5 w-5" />
-          </Button>
-          <div className="flex-1">
-            <h1 className="text-4xl font-bold text-primary flex items-center gap-3">
-              <div className="p-2 rounded-lg bg-gradient-to-br from-purple-500 to-blue-500">
-                <Sparkles className="h-6 w-6 text-white" />
+        {/* Header with Gradient Background */}
+        <motion.div 
+          variants={itemVariants} 
+          className="relative overflow-hidden rounded-2xl border border-border/50 bg-gradient-to-br from-background via-background to-background/80 p-8 shadow-lg"
+        >
+          {/* Animated Background Effect */}
+          <div className="absolute inset-0 hero-gradient opacity-50" />
+          <div className="absolute inset-0 dotted-grid" />
+          
+          <div className="relative flex items-start gap-6">
+            <Button
+              variant="ghost"
+              size="icon"
+              onClick={onBack}
+              className="hover:bg-background/80 hover:scale-110 transition-all duration-200 border border-border/50 shadow-sm"
+            >
+              <ArrowLeft className="h-5 w-5" />
+            </Button>
+            
+            <div className="flex-1">
+              <div className="flex items-center gap-3 mb-3">
+                <motion.div 
+                  className="p-3 rounded-xl verto-bg shadow-lg"
+                  whileHover={{ scale: 1.05, rotate: 5 }}
+                  transition={{ type: "spring", stiffness: 300 }}
+                >
+                  <Sparkles className="h-7 w-7 text-white" />
+                </motion.div>
+                <div>
+                  <h1 className="text-4xl md:text-5xl font-bold flex items-center gap-3">
+                    <span className="verto">Agentic Workflow</span>
+                    <span className="text-primary">Generator</span>
+                  </h1>
+                  <Badge variant="secondary" className="mt-2">
+                    <Zap className="h-3 w-3 mr-1" />
+                    Powered by 8 AI Agents
+                  </Badge>
+                </div>
               </div>
-              Agentic Workflow Generator
-            </h1>
-            <p className="text-secondary mt-2">
-              Powered by 5 specialized AI agents working together to create your perfect presentation
-            </p>
+              <p className="text-muted-foreground text-lg max-w-2xl">
+                Watch as specialized AI agents collaborate in real-time to craft your perfect presentation—from structure to visuals
+              </p>
+            </div>
           </div>
         </motion.div>
 
-        <div className="grid lg:grid-cols-3 gap-6">
+        <div className="grid lg:grid-cols-3 gap-8">
           {/* Left Column - Input Form */}
           <motion.div variants={itemVariants} className="lg:col-span-2 space-y-6">
-            <Card className="border-2">
-              <CardHeader>
-                <CardTitle className="flex items-center gap-2">
-                  <Wand2 className="h-5 w-5" />
+            <Card className="border-2 border-border/50 shadow-xl overflow-hidden">
+              <div className="absolute top-0 left-0 right-0 h-1 verto-bg" />
+              <CardHeader className="bg-gradient-to-br from-muted/30 via-background to-background pb-4">
+                <CardTitle className="flex items-center gap-3 text-2xl">
+                  <div className="p-2 rounded-lg bg-gradient-to-br from-red-500/10 to-orange-500/10 border border-red-500/20">
+                    <Wand2 className="h-6 w-6 text-red-500" />
+                  </div>
                   Presentation Details
                 </CardTitle>
-                <CardDescription>
-                  Provide information about your presentation
+                <CardDescription className="text-base">
+                  Tell us what you want to create and we'll handle the rest
                 </CardDescription>
               </CardHeader>
-              <CardContent className="space-y-6">
+              <CardContent className="space-y-6 pt-6">
                 {/* Title Input */}
-                <div className="space-y-2">
-                  <Label htmlFor="title" className="text-base font-semibold">
-                    Presentation Title *
+                <motion.div 
+                  className="space-y-3"
+                  whileFocus={{ scale: 1.01 }}
+                  transition={{ duration: 0.2 }}
+                >
+                  <Label htmlFor="title" className="text-base font-semibold flex items-center gap-2">
+                    <span className="text-red-500">*</span> Presentation Title
                   </Label>
                   <Input
                     id="title"
                     placeholder="e.g., Introduction to Machine Learning"
                     value={presentationTitle}
                     onChange={(e) => setPresentationTitle(e.target.value)}
-                    className="text-base"
+                    className="text-base h-12 border-2 focus:border-red-500 transition-colors"
                     disabled={isGenerating}
                   />
-                  <p className="text-xs text-muted-foreground">
+                  <p className="text-sm text-muted-foreground flex items-center gap-2">
+                    <Lightbulb className="h-4 w-4 text-orange-500" />
                     Give your presentation a clear, descriptive title
                   </p>
-                </div>
+                </motion.div>
 
                 {/* Topic Input */}
-                <div className="space-y-2">
-                  <Label htmlFor="topic" className="text-base font-semibold">
-                    Main Topic *
+                <motion.div 
+                  className="space-y-3"
+                  whileFocus={{ scale: 1.01 }}
+                  transition={{ duration: 0.2 }}
+                >
+                  <Label htmlFor="topic" className="text-base font-semibold flex items-center gap-2">
+                    <span className="text-red-500">*</span> Main Topic
                   </Label>
                   <Textarea
                     id="topic"
                     placeholder="e.g., Explain the basics of machine learning, including supervised and unsupervised learning, neural networks, and real-world applications"
                     value={presentationTopic}
                     onChange={(e) => setPresentationTopic(e.target.value)}
-                    rows={4}
-                    className="text-base resize-none"
+                    rows={5}
+                    className="text-base resize-none border-2 focus:border-red-500 transition-colors"
                     disabled={isGenerating}
                   />
-                  <p className="text-xs text-muted-foreground">
+                  <p className="text-sm text-muted-foreground flex items-center gap-2">
+                    <Lightbulb className="h-4 w-4 text-orange-500" />
                     Describe what you want your presentation to cover
                   </p>
-                </div>
+                </motion.div>
 
                 {/* Additional Context */}
-                <div className="space-y-2">
-                  <Label htmlFor="context" className="text-base font-semibold">
-                    Additional Context (Optional)
+                <motion.div 
+                  className="space-y-3"
+                  whileFocus={{ scale: 1.01 }}
+                  transition={{ duration: 0.2 }}
+                >
+                  <Label htmlFor="context" className="text-base font-semibold flex items-center gap-2">
+                    Additional Context
+                    <Badge variant="outline" className="text-xs">Optional</Badge>
                   </Label>
                   <Textarea
                     id="context"
                     placeholder="e.g., Target audience: college students with basic programming knowledge. Focus on practical examples. Include code snippets where relevant."
                     value={additionalContext}
                     onChange={(e) => setAdditionalContext(e.target.value)}
-                    rows={3}
-                    className="text-base resize-none"
+                    rows={4}
+                    className="text-base resize-none border-2 focus:border-orange-500 transition-colors"
                     disabled={isGenerating}
                   />
-                  <p className="text-xs text-muted-foreground">
-                    Add any specific requirements, target audience, or style preferences
+                  <p className="text-sm text-muted-foreground flex items-center gap-2">
+                    <Lightbulb className="h-4 w-4 text-orange-500" />
+                    Add specific requirements, target audience, or style preferences
                   </p>
-                </div>
+                </motion.div>
 
                 {/* Generate Button */}
                 <motion.div
-                  whileHover={{ scale: 1.02 }}
-                  whileTap={{ scale: 0.98 }}
+                  className="pt-4"
+                  whileHover={{ scale: 1.01 }}
+                  whileTap={{ scale: 0.99 }}
                 >
                   <Button
                     size="lg"
-                    className="w-full h-14 text-lg font-semibold bg-gradient-to-r from-purple-500 to-blue-500 hover:from-purple-600 hover:to-blue-600 relative overflow-hidden group"
+                    className="w-full h-16 text-lg font-bold verto-bg hover:opacity-90 relative overflow-hidden group shadow-2xl border-0"
                     onClick={handleGenerate}
                     disabled={isGenerating}
                   >
-                    {/* Animated gradient overlay */}
-                    <motion.div
-                      className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent"
-                      animate={{
-                        x: ['-100%', '200%'],
-                      }}
-                      transition={{
-                        repeat: Infinity,
-                        duration: 2,
-                        ease: "linear",
-                      }}
-                    />
+                    {/* Shimmer Effect */}
+                    {!isGenerating && (
+                      <motion.div
+                        className="absolute inset-0 bg-gradient-to-r from-transparent via-white/30 to-transparent"
+                        animate={{
+                          x: ['-100%', '200%'],
+                        }}
+                        transition={{
+                          repeat: Infinity,
+                          duration: 2,
+                          ease: "linear",
+                        }}
+                      />
+                    )}
                     
-                    <span className="relative flex items-center gap-2">
+                    <span className="relative flex items-center justify-center gap-3 text-white">
                       {isGenerating ? (
                         <>
                           <Loader2 className="h-6 w-6 animate-spin" />
-                          Generating... {Math.round(progress)}%
+                          <span className="flex items-center gap-2">
+                            Generating... 
+                            <Badge variant="secondary" className="bg-white/20 text-white border-0">
+                              {Math.round(progress)}%
+                            </Badge>
+                          </span>
                         </>
                       ) : (
                         <>
@@ -263,33 +314,50 @@ const AgenticWorkflowPage = ({ onBack }: Props) => {
           </motion.div>
 
           {/* Right Column - Agent Information */}
-          <motion.div variants={itemVariants} className="space-y-4">
-            <Card className="border-2">
-              <CardHeader>
-                <CardTitle className="text-lg">The AI Agents</CardTitle>
-                <CardDescription>
-                  Eight specialized agents will work on your presentation
+          <motion.div variants={itemVariants} className="space-y-6">
+            <Card className="border-2 border-border/50 shadow-xl sticky top-6 overflow-hidden">
+              <div className="absolute top-0 left-0 right-0 h-1 verto-bg" />
+              <CardHeader className="bg-gradient-to-br from-muted/30 via-background to-background pb-4">
+                <CardTitle className="text-xl flex items-center gap-2">
+                  <div className="p-2 rounded-lg bg-gradient-to-br from-red-500/10 to-orange-500/10 border border-red-500/20">
+                    <Brain className="h-5 w-5 text-red-500" />
+                  </div>
+                  AI Agent Pipeline
+                </CardTitle>
+                <CardDescription className="text-sm">
+                  8 specialized agents working in sequence
                 </CardDescription>
               </CardHeader>
-              <CardContent className="space-y-4">
+              <CardContent className="space-y-3 max-h-[calc(100vh-300px)] overflow-y-auto">
                 {AGENT_INFO.map((agent, index) => (
                   <motion.div
                     key={agent.name}
                     initial={{ opacity: 0, x: 20 }}
                     animate={{ opacity: 1, x: 0 }}
-                    transition={{ delay: index * 0.1 }}
-                    className="flex gap-3 p-3 rounded-lg bg-muted/50 hover:bg-muted transition-colors"
+                    transition={{ delay: index * 0.08 }}
+                    whileHover={{ scale: 1.02, x: 4 }}
+                    className="group relative flex gap-3 p-4 rounded-xl bg-gradient-to-br from-muted/30 via-muted/20 to-background border border-border/50 hover:border-red-500/30 transition-all duration-300 cursor-pointer shadow-sm hover:shadow-md"
                   >
-                    <div className={`flex-shrink-0 mt-1 ${agent.color}`}>
+                    {/* Step Number Badge */}
+                    <div className="absolute -left-2 -top-2 w-6 h-6 rounded-full verto-bg flex items-center justify-center text-white text-xs font-bold shadow-lg">
+                      {index + 1}
+                    </div>
+                    
+                    <div className={`flex-shrink-0 mt-1 ${agent.color} group-hover:scale-110 transition-transform duration-300`}>
                       <agent.icon className="h-5 w-5" />
                     </div>
                     <div className="flex-1 min-w-0">
-                      <p className="font-semibold text-sm text-primary">
-                        {index + 1}. {agent.name}
+                      <p className="font-semibold text-sm text-primary group-hover:text-red-500 transition-colors">
+                        {agent.name}
                       </p>
-                      <p className="text-xs text-muted-foreground mt-1">
+                      <p className="text-xs text-muted-foreground mt-1 leading-relaxed">
                         {agent.description}
                       </p>
+                    </div>
+                    
+                    {/* Hover Arrow */}
+                    <div className="absolute right-3 top-1/2 -translate-y-1/2 opacity-0 group-hover:opacity-100 transition-opacity">
+                      <CheckCircle2 className="h-4 w-4 text-red-500" />
                     </div>
                   </motion.div>
                 ))}
@@ -297,19 +365,38 @@ const AgenticWorkflowPage = ({ onBack }: Props) => {
             </Card>
 
             {/* Tips Card */}
-            <Card className="border-2 border-blue-200 dark:border-blue-900 bg-blue-50/50 dark:bg-blue-950/20">
-              <CardHeader>
+            <Card className="border-2 border-orange-200/50 dark:border-orange-900/30 bg-gradient-to-br from-orange-50/50 via-red-50/30 to-background dark:from-orange-950/20 dark:via-red-950/10 dark:to-background shadow-lg overflow-hidden">
+              <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-orange-500 to-red-500" />
+              <CardHeader className="pb-3">
                 <CardTitle className="text-lg flex items-center gap-2">
-                  <Sparkles className="h-4 w-4 text-blue-500" />
-                  Pro Tips
+                  <motion.div
+                    animate={{ rotate: [0, 10, -10, 0] }}
+                    transition={{ duration: 2, repeat: Infinity, ease: "easeInOut" }}
+                  >
+                    <Lightbulb className="h-5 w-5 text-orange-500" />
+                  </motion.div>
+                  <span className="verto">Pro Tips</span>
                 </CardTitle>
               </CardHeader>
-              <CardContent className="space-y-2 text-sm text-muted-foreground">
-                <p>✓ Be specific about your topic</p>
-                <p>✓ Mention target audience</p>
-                <p>✓ Specify any style preferences</p>
-                <p>✓ Include key points to cover</p>
-                <p>✓ The more context, the better!</p>
+              <CardContent className="space-y-2.5 text-sm">
+                {[
+                  "Be specific about your topic",
+                  "Mention target audience",
+                  "Specify any style preferences",
+                  "Include key points to cover",
+                  "The more context, the better!"
+                ].map((tip, index) => (
+                  <motion.div
+                    key={tip}
+                    initial={{ opacity: 0, x: -20 }}
+                    animate={{ opacity: 1, x: 0 }}
+                    transition={{ delay: index * 0.1 }}
+                    className="flex items-center gap-2 text-muted-foreground hover:text-primary transition-colors group"
+                  >
+                    <CheckCircle2 className="h-4 w-4 text-green-500 flex-shrink-0 group-hover:scale-110 transition-transform" />
+                    <span>{tip}</span>
+                  </motion.div>
+                ))}
               </CardContent>
             </Card>
           </motion.div>

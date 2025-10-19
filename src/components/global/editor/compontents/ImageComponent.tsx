@@ -26,10 +26,13 @@ const CustomImage = ({
   onContentChange,
   isEditable = true,
 }: Props) => {
+  // Handle empty or invalid src
+  const imageSrc = typeof src === "string" && src.trim() ? src.trim() : "/placeholder.svg";
+  
   return (
     <div className="relative group w-full h-full rounded-lg">
       <Image
-        src={typeof src === "string" ? src.trim() : src}
+        src={imageSrc}
         // src={'/file.svg'}
         width={isPreview ? 48 : 800}
         height={isPreview ? 48 : 800}

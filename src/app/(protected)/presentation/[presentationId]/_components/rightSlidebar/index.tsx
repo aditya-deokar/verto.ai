@@ -33,7 +33,7 @@ const EditorSidebar = (props: Props) => {
                             <span className="sr-only">Choose Layout</span>
                         </Button>
                     </PopoverTrigger>
-                    <PopoverContent side="left" align="center" className="w-[480px] p-0">
+                    <PopoverContent side="left" align="center" className="w-[480px] h-[600px] p-0">
                         <LayoutChooser />
                     </PopoverContent>
                 </Popover>
@@ -51,7 +51,7 @@ const EditorSidebar = (props: Props) => {
                     <PopoverContent
                         side="left"
                         align="center"
-                        className="w-[480px] p-0"
+                        className="w-[480px] h-[600px] p-0"
                         style={{
                             backgroundColor: currentTheme.backgroundColor,
                             color: currentTheme.fontColor,
@@ -71,7 +71,7 @@ const EditorSidebar = (props: Props) => {
                             <span className="sr-only">Change Style</span>
                         </Button>
                     </PopoverTrigger>
-                    <PopoverContent side="left" align="center" className="w-80">
+                    <PopoverContent side="left" align="center" className="w-96 h-[600px] p-0">
                         <ThemeChooser />
                     </PopoverContent>
                 </Popover>
