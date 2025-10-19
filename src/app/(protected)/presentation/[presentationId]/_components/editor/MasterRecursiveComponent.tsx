@@ -16,8 +16,11 @@ import TableOfContents from "@/components/global/editor/compontents/TableOfConte
 import Divider from "@/components/global/editor/compontents/Divider";
 import CustomImage from "@/components/global/editor/compontents/ImageComponent";
 import TableComponent from "@/components/global/editor/compontents/TableComponent";
-
-
+import {
+  getComponentAccessibility,
+  getComponentStyling,
+  canEditComponent,
+} from "@/lib/slideComponents";
 
 type MasterRecursiveComponentProps = {
   content: ContentItem;
@@ -29,6 +32,43 @@ type MasterRecursiveComponentProps = {
   isEditable?: boolean;
   slideId: string;
   index?: number;
+};
+
+/**
+ * Enhanced animation configurations for different component types
+ */
+const getAnimationConfig = (contentType: string) => {
+  const baseConfig = {
+    initial: { opacity: 0, y: 20 } as any,
+    animate: { opacity: 1, y: 0 } as any,
+    transition: { duration: 0.5 } as any,
+  };
+
+  // Custom animations for specific components
+  const animations: Record<string, any> = {
+    heading1: {
+      initial: { opacity: 0, scale: 0.9 },
+      animate: { opacity: 1, scale: 1 },
+      transition: { duration: 0.6, type: "spring", stiffness: 100 },
+    },
+    title: {
+      initial: { opacity: 0, y: -30 },
+      animate: { opacity: 1, y: 0 },
+      transition: { duration: 0.7, type: "spring", damping: 12 },
+    },
+    image: {
+      initial: { opacity: 0, scale: 0.8 },
+      animate: { opacity: 1, scale: 1 },
+      transition: { duration: 0.6 },
+    },
+    calloutBox: {
+      initial: { opacity: 0, x: -20 },
+      animate: { opacity: 1, x: 0 },
+      transition: { duration: 0.5 },
+    },
+  };
+
+  return animations[contentType] || baseConfig;
 };
 
 const ContentRenderer: React.FC<MasterRecursiveComponentProps> = React.memo(
@@ -47,55 +87,83 @@ const ContentRenderer: React.FC<MasterRecursiveComponentProps> = React.memo(
       isPreview: isPreview,
     };
 
-    const animationProps = {
-      initial: { opacity: 0, y: 20 },
-      animate: { opacity: 1, y: 0 },
-      transition: { duration: 0.5 },
+    const animationProps = getAnimationConfig(content.type);
+
+    // Get accessibility attributes from advanced component system
+    const getAccessibilityProps = (contentType: string) => {
+      try {
+        const a11y = getComponentAccessibility({ type: contentType } as any);
+        return {
+          role: a11y?.role,
+          'aria-label': a11y?.ariaLabel,
+        };
+      } catch {
+        return {};
+      }
     };
 
-    // WIP: COMPLETE TYPES
+    // Get styling classes from advanced component system
+    const getStylingClasses = (contentType: string) => {
+      try {
+        const styling = getComponentStyling({ type: contentType } as any);
+        return styling?.defaultClasses || '';
+      } catch {
+        return '';
+      }
+    };
+
+    // Enhanced heading components with accessibility
+    const renderHeading = (
+      HeadingComponent: React.ComponentType<any>,
+      level: number
+    ) => (
+      <motion.div 
+        className="w-full h-full" 
+        {...animationProps}
+        {...getAccessibilityProps(`heading${level}`)}
+      >
+        <HeadingComponent {...commonProps} />
+      </motion.div>
+    );
 
     switch (content.type) {
       case "heading1":
-        return (
-          <motion.div className="w-full h-full" {...animationProps}>
-            <Heading1 {...commonProps} />
-          </motion.div>
-        );
+        return renderHeading(Heading1, 1);
+      
       case "heading2":
-        return (
-          <motion.div className="w-full h-full" {...animationProps}>
-            <Heading2 {...commonProps} />
-          </motion.div>
-        );
+        return renderHeading(Heading2, 2);
+      
       case "heading3":
-        return (
-          <motion.div className="w-full h-full" {...animationProps}>
-            <Heading3 {...commonProps} />
-          </motion.div>
-        );
+        return renderHeading(Heading3, 3);
+      
       case "heading4":
-        return (
-          <motion.div className="w-full h-full" {...animationProps}>
-            <Heading4 {...commonProps} />
-          </motion.div>
-        );
+        return renderHeading(Heading4, 4);
+      
       case "title":
         return (
-          <motion.div className="w-full h-full" {...animationProps}>
+          <motion.div 
+            className="w-full h-full" 
+            {...animationProps}
+            {...getAccessibilityProps('title')}
+          >
             <Title {...commonProps} />
           </motion.div>
         );
+      
       case "paragraph":
         return (
-          <motion.div className="w-full h-full" {...animationProps}>
+          <motion.div 
+            className="w-full h-full" 
+            {...animationProps}
+            {...getAccessibilityProps('paragraph')}
+          >
             <Paragraph {...commonProps} />
           </motion.div>
         );
 
       case "table":
         return (
-          <motion.div>
+          <motion.div {...getAccessibilityProps('table')}>
             <TableComponent
               content={content.content as string[][]}
               onChange={(newContent) =>
@@ -111,6 +179,7 @@ const ContentRenderer: React.FC<MasterRecursiveComponentProps> = React.memo(
             />
           </motion.div>
         );
+      
       case "resizable-column":
         if (Array.isArray(content.content)) {
           return (
@@ -127,33 +196,46 @@ const ContentRenderer: React.FC<MasterRecursiveComponentProps> = React.memo(
           );
         }
         return null;
+      
       case "image":
-       return ( <motion.div {...animationProps} className="w-full h-full">
-          <CustomImage
-            src={content.content as string}
-            alt={content.alt || "image"}
-            className={content.className}
-            isPreview={isPreview}
-            contentId={content.id}
-            onContentChange={onContentChange}
-            isEditable={isEditable}
-          />
-        </motion.div>);
+        return (
+          <motion.div 
+            {...animationProps} 
+            className="w-full h-full"
+            {...getAccessibilityProps('image')}
+          >
+            <CustomImage
+              src={(content.content as string) || "/placeholder.svg"}
+              alt={content.alt || "image"}
+              className={content.className}
+              isPreview={isPreview}
+              contentId={content.id}
+              onContentChange={onContentChange}
+              isEditable={isEditable}
+            />
+          </motion.div>
+        );
 
       case "blockquote":
         return (
           <motion.div
             {...animationProps}
             className={cn("w-full h-full flex flex-col", content.className)}
+            {...getAccessibilityProps('blockquote')}
           >
             <BlockQuote>
               <Paragraph {...commonProps} />
             </BlockQuote>
           </motion.div>
         );
+      
       case "numberedList":
         return (
-          <motion.div {...animationProps} className="w-full h-full">
+          <motion.div 
+            {...animationProps} 
+            className="w-full h-full"
+            {...getAccessibilityProps('numberedList')}
+          >
             <ListComponents
               items={content.content as string[]}
               onChange={(newItems) => onContentChange(content.id, newItems)}
@@ -161,9 +243,14 @@ const ContentRenderer: React.FC<MasterRecursiveComponentProps> = React.memo(
             />
           </motion.div>
         );
+      
       case "bulletList":
         return (
-          <motion.div {...animationProps} className="w-full h-full">
+          <motion.div 
+            {...animationProps} 
+            className="w-full h-full"
+            {...getAccessibilityProps('bulletList')}
+          >
             <BulletList
               items={content.content as string[]}
               onChange={(newItems) => onContentChange(content.id, newItems)}
@@ -171,9 +258,14 @@ const ContentRenderer: React.FC<MasterRecursiveComponentProps> = React.memo(
             />
           </motion.div>
         );
+      
       case "todoList":
         return (
-          <motion.div {...animationProps} className="w-full h-full">
+          <motion.div 
+            {...animationProps} 
+            className="w-full h-full"
+            {...getAccessibilityProps('todoList')}
+          >
             <TodoList
               items={content.content as string[]}
               onChange={(newItems) => onContentChange(content.id, newItems)}
@@ -181,9 +273,14 @@ const ContentRenderer: React.FC<MasterRecursiveComponentProps> = React.memo(
             />
           </motion.div>
         );
+      
       case "calloutBox":
         return (
-          <motion.div {...animationProps} className="w-full h-full">
+          <motion.div 
+            {...animationProps} 
+            className="w-full h-full"
+            {...getAccessibilityProps('calloutBox')}
+          >
             <CalloutBox
               type={content.callOutType || "info"}
               className={content.className}
@@ -195,7 +292,11 @@ const ContentRenderer: React.FC<MasterRecursiveComponentProps> = React.memo(
 
       case "codeBlock":
         return (
-          <motion.div {...animationProps} className="w-full h-full">
+          <motion.div 
+            {...animationProps} 
+            className="w-full h-full"
+            {...getAccessibilityProps('codeBlock')}
+          >
             <CodeBlock
               code={content.code}
               language={content.language}
@@ -204,9 +305,14 @@ const ContentRenderer: React.FC<MasterRecursiveComponentProps> = React.memo(
             />
           </motion.div>
         );
+      
       case "tableOfContents":
         return (
-          <motion.div {...animationProps} className="w-full h-full">
+          <motion.div 
+            {...animationProps} 
+            className="w-full h-full"
+            {...getAccessibilityProps('tableOfContents')}
+          >
             <TableOfContents
               items={content.content as string[]}
               onItemClick={(id) => {
@@ -216,9 +322,14 @@ const ContentRenderer: React.FC<MasterRecursiveComponentProps> = React.memo(
             />
           </motion.div>
         );
+      
       case "divider":
         return (
-          <motion.div {...animationProps} className="w-full h-full">
+          <motion.div 
+            {...animationProps} 
+            className="w-full h-full"
+            {...getAccessibilityProps('divider')}
+          >
             <Divider className={content.className as string} />
           </motion.div>
         );
@@ -257,7 +368,7 @@ const ContentRenderer: React.FC<MasterRecursiveComponentProps> = React.memo(
                           index={subIndex + 1}
                           parentId={content.id}
                           slideId={slideId}
-                        ></DropZone>
+                        />
                       )}
                     </React.Fragment>
                   )
@@ -268,14 +379,16 @@ const ContentRenderer: React.FC<MasterRecursiveComponentProps> = React.memo(
             </motion.div>
           );
         }
-
         return null;
+      
       default:
+        // Fallback for unknown component types
+        console.warn(`Unknown component type: ${content.type}`);
         return null;
     }
   }
 );
-ContentRenderer.displayName = "ContentRendere";
+ContentRenderer.displayName = "ContentRenderer";
 
 export const MasterRecursiveComponent: React.FC<MasterRecursiveComponentProps> =
   React.memo(

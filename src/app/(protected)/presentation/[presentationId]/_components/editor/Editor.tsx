@@ -152,6 +152,7 @@ export const DraggableSlide: React.FC<DraggableSlideProps> = ({
         backgroundImage: currentTheme.gradientBackground,
       }}
       onClick={() => setCurrentSlide(index)}
+      data-slide-index={index}
     >
       <div className="h-full w-full flex-grow overflow-hidden">
         <MasterRecursiveComponent
@@ -203,7 +204,6 @@ const Editor = ({ isEditable }: Props) => {
   const autosaveTimeoutRef = useRef<NodeJS.Timeout | null>(null);
 
   const orderedSlides = getOrderedSlides();
-  const slideRefs = useRef<(HTMLDivElement | null)[]>([]);
   const [loading, setLoading] = useState(true);
 
   const moveSlide = (dragIndex: number, hoverIndex: number) => {
@@ -244,12 +244,21 @@ const Editor = ({ isEditable }: Props) => {
   };
 
   useEffect(() => {
-    if (slideRefs.current[currentSlide]) {
-      slideRefs.current[currentSlide]?.scrollIntoView({
-        behavior: "smooth",
-        block: "center",
-      });
-    }
+    // Use a slight delay to ensure DOM is fully rendered
+    const timer = setTimeout(() => {
+      const slideElement = document.querySelector(
+        `[data-slide-index="${currentSlide}"]`
+      );
+      
+      if (slideElement) {
+        slideElement.scrollIntoView({
+          behavior: "smooth",
+          block: "center",
+        });
+      }
+    }, 100);
+
+    return () => clearTimeout(timer);
   }, [currentSlide]);
 
   useEffect(() => {
