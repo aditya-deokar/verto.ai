@@ -106,9 +106,15 @@ const PresentationMode = ({onClose}:Props) => {
             <Button
             variant={'ghost'}
             size={'icon'}
-            className='absolute top-4 right-4 text-white'
+            className='absolute top-4 right-4 text-white hover:bg-white/20 transition-colors'
             onClick={onClose}
+            aria-label="Close presentation"
             ><X className='h-6 w-6'/></Button>
+
+            {/* Slide Counter */}
+            <div className='absolute top-4 left-4 text-white bg-black/50 px-3 py-1 rounded-md text-sm font-medium'>
+                {currentSlideIndex + 1} / {slides.length}
+            </div>
 
             <div className='absolute bottom-4 left-1/2 transform -translate-x-1/2 flex space-x-4'>
                 <Button
@@ -116,16 +122,24 @@ const PresentationMode = ({onClose}:Props) => {
                 size={'icon'}
                 onClick={goToPreviousSlide}
                 disabled={currentSlideIndex===0}
+                className='bg-white/10 hover:bg-white/20 text-white border-white/30 disabled:opacity-30'
+                aria-label="Previous slide"
                 ><ChevronLeft className='h-4 w-4'/></Button>
 
-                {!isLastSlide && (
                 <Button
                 variant={'outline'}
                 size={'icon'}
                 onClick={goToNextSlide}
-                disabled={currentSlideIndex===0}
+                disabled={isLastSlide}
+                className='bg-white/10 hover:bg-white/20 text-white border-white/30 disabled:opacity-30'
+                aria-label={isLastSlide ? "End presentation" : "Next slide"}
                 ><ChevronRight className='h-4 w-4'/></Button>
-                )}
+            </div>
+
+            {/* Keyboard Hints */}
+            <div className='absolute bottom-4 right-4 text-white/60 text-xs space-y-1'>
+                <div>← → Arrow keys to navigate</div>
+                <div>ESC to exit</div>
             </div>
         </div>
     </div>
