@@ -7,14 +7,16 @@ import { Textarea } from '@/components/ui/textarea'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Label } from '@/components/ui/label'
 import { Badge } from '@/components/ui/badge'
+import { ScrollArea } from '@/components/ui/scroll-area'
 import { motion, AnimatePresence } from 'framer-motion'
-import { ArrowLeft, Sparkles, Loader2, Wand2, Brain, FileText, Palette, Image as ImageIcon, Package, Target, Search, ImagePlus, Database, Zap, Lightbulb, CheckCircle2 } from 'lucide-react'
+import { ArrowLeft, Sparkles, Loader2, Wand2, Brain, FileText, Palette, Image as ImageIcon, Package, Target, Search, ImagePlus, Database, Zap, Lightbulb, CheckCircle2, Check } from 'lucide-react'
 import { toast } from 'sonner'
 import { useRouter } from 'next/navigation'
 import { useAgenticGenerationV2 } from '@/hooks/useAgenticGenerationV2'
 import AgenticWorkflowDialog from '@/components/global/agentic-workflow/AgenticWorkflowDialog'
 import { useSlideStore } from '@/store/useSlideStore'
-import { containerVariants, itemVariants } from '@/lib/constants'
+import { containerVariants, itemVariants, themes } from '@/lib/constants'
+import { Theme } from '@/lib/types'
 
 type Props = {
   onBack: () => void
@@ -77,6 +79,7 @@ const AgenticWorkflowPage = ({ onBack }: Props) => {
   const [presentationTitle, setPresentationTitle] = useState('')
   const [presentationTopic, setPresentationTopic] = useState('')
   const [additionalContext, setAdditionalContext] = useState('')
+  const [selectedTheme, setSelectedTheme] = useState<Theme>(themes[0]) // Default theme
 
   const { 
     generate, 
@@ -104,11 +107,18 @@ const AgenticWorkflowPage = ({ onBack }: Props) => {
       return
     }
 
+    if (!selectedTheme) {
+      toast.error("Error", {
+        description: "Please select a theme",
+      })
+      return
+    }
+
     try {
       // V2 workflow handles everything (project creation + AI generation)
       const fullTopic = `${presentationTitle}: ${presentationTopic}`
       
-      await generate(fullTopic, additionalContext, 'light')
+      await generate(fullTopic, additionalContext, selectedTheme.type)
       
       // Success toast is shown after navigation in the hook
       
@@ -259,6 +269,93 @@ const AgenticWorkflowPage = ({ onBack }: Props) => {
                   <p className="text-sm text-muted-foreground flex items-center gap-2">
                     <Lightbulb className="h-4 w-4 text-orange-500" />
                     Add specific requirements, target audience, or style preferences
+                  </p>
+                </motion.div>
+
+                {/* Theme Selection */}
+                <motion.div 
+                  className="space-y-3"
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: 0.2 }}
+                >
+                  <Label className="text-base font-semibold flex items-center gap-2">
+                    <span className="text-red-500">*</span> Select Theme
+                  </Label>
+                  <ScrollArea className="h-[300px] rounded-xl border-2 border-border/50 bg-muted/20 p-4">
+                    <div className="grid grid-cols-2 gap-3">
+                      {themes.map((theme) => (
+                        <motion.div
+                          key={theme.name}
+                          whileHover={{ scale: 1.03 }}
+                          whileTap={{ scale: 0.97 }}
+                          className="relative"
+                        >
+                          <Button
+                            type="button"
+                            onClick={() => setSelectedTheme(theme)}
+                            disabled={isGenerating}
+                            className="w-full h-auto p-4 flex flex-col items-start gap-2 relative overflow-hidden transition-all duration-300 border-2"
+                            style={{
+                              fontFamily: theme.fontFamily,
+                              color: theme.fontColor,
+                              background: theme.gradientBackground || theme.backgroundColor,
+                              borderColor: selectedTheme.name === theme.name ? theme.accentColor : 'transparent',
+                              opacity: isGenerating ? 0.6 : 1,
+                            }}
+                          >
+                            {/* Selection Indicator */}
+                            {selectedTheme.name === theme.name && (
+                              <motion.div
+                                initial={{ scale: 0 }}
+                                animate={{ scale: 1 }}
+                                className="absolute top-2 right-2 w-6 h-6 rounded-full flex items-center justify-center shadow-lg"
+                                style={{ backgroundColor: theme.accentColor }}
+                              >
+                                <Check className="h-4 w-4" style={{ color: theme.backgroundColor }} />
+                              </motion.div>
+                            )}
+
+                            <div className="w-full text-left">
+                              <p className="font-bold text-sm mb-1">{theme.name}</p>
+                              <div className="flex items-center gap-1">
+                                <Badge 
+                                  variant="secondary" 
+                                  className="text-xs px-2 py-0"
+                                  style={{
+                                    backgroundColor: `${theme.accentColor}20`,
+                                    color: theme.accentColor,
+                                    borderColor: theme.accentColor,
+                                  }}
+                                >
+                                  {theme.type}
+                                </Badge>
+                              </div>
+                            </div>
+
+                            {/* Theme Preview Dots */}
+                            <div className="flex gap-1.5 mt-2">
+                              <div 
+                                className="w-3 h-3 rounded-full" 
+                                style={{ backgroundColor: theme.backgroundColor }}
+                              />
+                              <div 
+                                className="w-3 h-3 rounded-full" 
+                                style={{ backgroundColor: theme.accentColor }}
+                              />
+                              <div 
+                                className="w-3 h-3 rounded-full" 
+                                style={{ backgroundColor: theme.slideBackgroundColor || theme.backgroundColor }}
+                              />
+                            </div>
+                          </Button>
+                        </motion.div>
+                      ))}
+                    </div>
+                  </ScrollArea>
+                  <p className="text-sm text-muted-foreground flex items-center gap-2">
+                    <Palette className="h-4 w-4 text-purple-500" />
+                    Selected: <span className="font-semibold text-primary">{selectedTheme.name}</span>
                   </p>
                 </motion.div>
 

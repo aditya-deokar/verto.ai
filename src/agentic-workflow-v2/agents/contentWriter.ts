@@ -40,32 +40,102 @@ export async function runContentWriter(
       .map((outline, index) => `${index + 1}. ${outline}`)
       .join("\n");
 
-    const prompt = `You are an expert presentation copywriter. Write compelling, professional content for a presentation.
+    const prompt = `You are an ELITE presentation copywriter specializing in creating engaging, impactful slide content that captivates audiences and communicates ideas with clarity.
 
+═══════════════════════════════════════════════════════════════
+📋 PRESENTATION DETAILS
+═══════════════════════════════════════════════════════════════
 Overall Topic: "${topic}"
 ${context ? `Additional Context: "${context}"` : ""}
 
-Slide Outlines:
+═══════════════════════════════════════════════════════════════
+📝 SLIDE OUTLINES TO WRITE
+═══════════════════════════════════════════════════════════════
 ${formattedOutlines}
 
-Instructions:
-1. For EACH outline above, generate:
-   - A compelling, concise title (max 100 characters)
-   - Main body content (150-500 characters per slide)
-2. Content should be:
-   - Clear and easy to understand
-   - Professional and engaging
-   - Suitable for presentation slides (not essay format)
-   - Use bullet points (markdown format with "-") when listing items
-3. Maintain consistent tone throughout
-4. Build narrative flow from slide to slide
-5. You MUST generate exactly ${outlines.length} slide contents in the exact same order
+═══════════════════════════════════════════════════════════════
+✍️ YOUR TASK
+═══════════════════════════════════════════════════════════════
+For EACH outline above, generate TWO components:
 
-Example format:
-Title: "Introduction to AI"
-Content: "Artificial Intelligence is transforming industries worldwide:\n- Automation of repetitive tasks\n- Enhanced decision-making\n- Personalized user experiences"
+**1. TITLE (Max 80 characters)**
+- Compelling, clear, action-oriented
+- Use power words and active voice
+- Make it memorable and specific
+- Examples: "Transform Your Workflow" NOT "Workflow Transformation"
 
-Generate all slide content now:`;
+**2. CONTENT (150-600 characters)**
+- Structure varies based on content type:
+  
+  **For Concept/Explanation Slides:**
+  - Start with clear definition or statement
+  - Add 2-3 supporting points as bullet list
+  - Use "\n-" format for bullets
+  
+  **For Data/Statistics Slides:**
+  - Lead with the impressive number or stat
+  - Explain what it means
+  - Add context or comparison
+  
+  **For Process/Timeline Slides:**
+  - Use numbered list "\n1. Step" format
+  - Keep each step concise (5-10 words)
+  - Focus on actions
+  
+  **For Comparison Slides:**
+  - Use bullet points for each option
+  - Highlight key differences
+  - Keep parallel structure
+  
+  **For Examples/Case Studies:**
+  - Tell a mini story
+  - Include specific details
+  - Show impact/results
+
+═══════════════════════════════════════════════════════════════
+🎯 CONTENT QUALITY STANDARDS
+═══════════════════════════════════════════════════════════════
+✅ DO:
+- Write for slides (concise, scannable)
+- Use bullet points liberally (format: "\n- Point")
+- Include numbers and specifics when relevant
+- Vary sentence structure and length
+- Build logical flow slide-to-slide
+- Make every word count
+- Think visually (content should complement layouts)
+
+❌ DON'T:
+- Write long paragraphs or essays
+- Use jargon without explanation
+- Include unnecessary details
+- Repeat information across slides
+- Use passive voice excessively
+- Create walls of text
+
+═══════════════════════════════════════════════════════════════
+📊 EXAMPLE OUTPUT FORMATS
+═══════════════════════════════════════════════════════════════
+
+**Concept Slide:**
+Title: "The Power of AI in Modern Business"
+Content: "Artificial Intelligence is revolutionizing how companies operate and compete:\n- Automate repetitive tasks (save 40% time)\n- Make data-driven decisions faster\n- Personalize customer experiences at scale\n- Predict trends before competitors"
+
+**Statistics Slide:**
+Title: "Market Growth: The Numbers Speak"
+Content: "Global AI market reached $136B in 2023, growing 37% year-over-year.\n\nKey drivers:\n- Enterprise adoption up 3x since 2020\n- 80% of companies now invest in AI\n- Expected to hit $1.5T by 2030"
+
+**Process Slide:**
+Title: "Your 5-Step AI Implementation Roadmap"
+Content: "1. Assess current capabilities and gaps\n2. Define clear business objectives\n3. Select the right AI tools and partners\n4. Train team and pilot projects\n5. Scale successful implementations"
+
+**Comparison Slide:**
+Title: "Traditional vs. AI-Powered Approach"
+Content: "Traditional:\n- Manual data analysis (hours/days)\n- Limited personalization\n- Reactive decision-making\n\nAI-Powered:\n- Real-time insights (seconds)\n- Hyper-personalization at scale\n- Predictive and proactive"
+
+═══════════════════════════════════════════════════════════════
+🚀 GENERATE NOW
+═══════════════════════════════════════════════════════════════
+Create compelling, professional content for ALL ${outlines.length} slides in the EXACT same order. Make this presentation unforgettable!`;
 
     console.log("🤖 Calling AI to generate content...");
 
@@ -74,7 +144,6 @@ Generate all slide content now:`;
       schema: bulkContentSchema,
       prompt: prompt,
       temperature: modelConfigs.content.temperature,
-      maxTokens: modelConfigs.content.maxTokens,
     });
 
     const slidesContent = object.slidesContent;

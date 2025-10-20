@@ -43,26 +43,55 @@ export async function runLayoutSelector(
       })
       .join("\n\n");
 
-    const prompt = `You are a presentation design expert. Analyze each slide's content and select the most appropriate layout type.
+    const prompt = `You are an ELITE presentation designer with expertise in visual communication and layout optimization. Your mission: Select the PERFECT layout for each slide to maximize impact and engagement.
 
 ${LAYOUT_DESCRIPTIONS}
 
-Slides to analyze:
+═══════════════════════════════════════════════════════════════
+📊 SLIDES TO ANALYZE
+═══════════════════════════════════════════════════════════════
 ${slidesSummary}
 
-Instructions:
-1. For each slide, select the layout type that best fits its content
-2. Consider:
-   - Content length and structure
-   - Whether the slide benefits from visuals (use image layouts)
-   - If comparing items (use column layouts)
-   - If listing features or steps (use multi-column layouts)
-3. Ensure variety - avoid using the same layout for 3+ consecutive slides
-4. First slide is usually "blank-card" (introduction)
-5. Last slide can be "blank-card" (conclusion) or image-based (call-to-action)
-6. Provide brief reasoning for each choice
+═══════════════════════════════════════════════════════════════
+🎯 YOUR SELECTION CRITERIA
+═══════════════════════════════════════════════════════════════
 
-Generate layout selections for all ${slides.length} slides:`;
+**Content Analysis:**
+1. **Text-Heavy Content** → Use column layouts (twoColumns, threeColumns, fourColumns)
+2. **Visual Concepts** → Use image layouts (accentLeft, splitContentImage, imageAndText)
+3. **Statistics/Numbers** → Use bigNumberLayout for impressive metrics
+4. **Comparisons** → Use comparisonLayout or twoColumnsWithHeadings
+5. **Quotes** → Use quoteLayout for testimonials or inspirational messages
+6. **Processes** → Use processFlow or timelineLayout for step-by-step content
+7. **Features List** → Use iconGrid or threeColumnsWithHeadings
+8. **Case Studies** → Use twoImageColumns or threeImageColumns with visuals
+9. **Dramatic Moments** → Use fullImageBackground for emotional impact
+10. **Transitions** → Use sectionDivider between major sections
+11. **Conclusion** → Use callToAction for final slide with clear next steps
+
+**Visual Variety Rules:**
+- ✅ Aim for 5-8 different layout types in the presentation
+- ❌ Never use same layout 3+ times consecutively
+- ✅ Alternate between image-heavy and text-heavy layouts
+- ❌ Don't overuse basic layouts (blank-card should be <30% of slides)
+- ✅ Use specialized layouts (bigNumber, quote, timeline) when content fits
+
+**Strategic Positioning:**
+- Slide 1: titleAndContent or blank-card (strong opening)
+- Early slides: Mix image + text layouts to engage visually
+- Middle slides: Vary based on content (columns, grids, specialized)
+- Final slide: callToAction (clear next steps) OR quoteLayout (inspirational close)
+
+═══════════════════════════════════════════════════════════════
+✨ OUTPUT REQUIREMENTS
+═══════════════════════════════════════════════════════════════
+For each slide, provide:
+1. **layoutType:** One of the 25 available layouts
+2. **reasoning:** 30-50 word explanation of WHY this layout is perfect for this content
+
+Be bold! Use advanced layouts when they fit. Make this presentation visually stunning!
+
+Generate layout selections for all ${slides.length} slides NOW:`;
 
     console.log("🤖 Calling AI to select layouts...");
 
@@ -71,7 +100,6 @@ Generate layout selections for all ${slides.length} slides:`;
       schema: layoutSelectionSchema,
       prompt: prompt,
       temperature: modelConfigs.layout.temperature,
-      maxTokens: modelConfigs.layout.maxTokens,
     });
 
     const layouts = object.layouts;
