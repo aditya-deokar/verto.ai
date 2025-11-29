@@ -12,37 +12,86 @@ import { ReferedLayoutsSchema } from '@/lib/zod';
 
 
 
-
-
 export const generateCreativePrompt=async (userPrompt:string)=>{
 
     try {
     
     // console.log("🟢 Generating creative prompt...", userPrompt);
     const { object } = await generateObject({
-      model: google("gemini-2.0-flash", {
-        structuredOutputs: false,
-      }),
+      model: google("gemini-2.5-flash"),
       schema: outlineSchema,
-      system:`You are a helpful AI that generates outlines for presentations.`,
-      prompt: ` Create a coherent and relevant outline for the following prompt: ${userPrompt}.
-                The outline should consist of at least 6 points, with each point written as a single sentence.
-                Ensure the outline is well-structured and directly related to the topic. 
-                Return the output in the following JSON format:
+      system:`You are an ELITE presentation strategist and content architect. You specialize in creating compelling, well-structured presentation outlines that tell a story and engage audiences.`,
+      prompt: `Create a strategic, comprehensive outline for a presentation on: "${userPrompt}"
 
-                {
-                    "outlines": [
-                    "Point 1",
-                    "Point 2",
-                    "Point 3",
-                    "Point 4",
-                    "Point 5",
-                    "Point 6"
-                    ]
-                }
+**OUTLINE REQUIREMENTS:**
 
-                Ensure that the JSON is valid and properly formatted. Do not include any other text or explanations outside the JSON.
-  `
+1. **Structure & Flow:**
+   - Generate 8-15 strategic slides (not just 6)
+   - Follow a narrative arc: Opening → Core Content → Closing
+   - Each point should be a complete, compelling slide title
+   - Create natural flow and logical progression
+
+2. **Content Types to Include (mix these):**
+   - Opening: Title/introduction slide
+   - Context: Problem statement or background
+   - Core Concepts: 3-5 main teaching/explanation slides
+   - Evidence: Statistics, case studies, or examples
+   - Process: Step-by-step methodologies or timelines
+   - Comparison: Before/after or options analysis
+   - Impact: Benefits or outcomes
+   - Closing: Summary, call-to-action, or next steps
+
+3. **Slide Title Guidelines:**
+   - Each title should be descriptive and engaging (5-10 words)
+   - Use action words and specific language
+   - Hint at the content type (e.g., "3 Key Benefits", "How It Works", "Case Study: Success Story")
+   - Vary your approach to maintain interest
+
+4. **Strategic Positioning:**
+   - Start strong (grab attention)
+   - Build momentum (develop ideas logically)
+   - Include peaks (highlight key insights)
+   - End memorably (clear takeaway)
+
+**EXAMPLES:**
+
+Topic: "Introduction to Machine Learning"
+Good Outline:
+1. "Machine Learning: Transforming Modern Technology"
+2. "The Problem: Making Sense of Big Data"
+3. "What is Machine Learning?"
+4. "Supervised vs. Unsupervised Learning"
+5. "How Neural Networks Work"
+6. "Real-World Applications: Healthcare, Finance, and More"
+7. "Success Story: Netflix Recommendation Engine"
+8. "Getting Started: Tools and Resources"
+9. "The Future of Machine Learning"
+10. "Take Action: Your ML Journey Begins Here"
+
+Topic: "Startup Growth Strategy"
+Good Outline:
+1. "Building a Scalable Startup in 2025"
+2. "The Startup Challenge: Growth vs. Sustainability"
+3. "5 Pillars of Sustainable Growth"
+4. "Customer Acquisition: Finding Your Market"
+5. "Product-Market Fit: How to Know You've Found It"
+6. "Scaling Operations: Systems That Work"
+7. "Funding Options: Bootstrap vs. VC"
+8. "Case Study: How Airbnb Scaled Globally"
+9. "Common Pitfalls to Avoid"
+10. "Your 90-Day Growth Roadmap"
+
+Now create a compelling outline for: "${userPrompt}"
+
+Return as JSON array of 8-15 slide titles:
+{
+  "outlines": [
+    "Slide 1 title",
+    "Slide 2 title",
+    ...
+  ]
+}
+`
     
     });
 
@@ -65,1147 +114,69 @@ export const generateCreativePrompt=async (userPrompt:string)=>{
 }
 
 
-
-
-
-
-// const referedLayouts = [
-//   {
-//     id: uuidv4(),
-//     slideName: "Blank card",
-//     type: "blank-card",
-//     className: "p-8 mx-auto flex justify-center items-center min-h-[200px]",
-//     content: {
-//       id: uuidv4(),
-//       type: "column" as ContentType,
-//       name: "Column",
-//       content: [
-//         {
-//           id: uuidv4(),
-//           type: "title" as ContentType,
-//           name: "Title",
-//           content: "",
-//           placeholder: "Untitled Card",
-//         },
-//       ],
-//     },
-//   },
-
-//   {
-//     id: uuidv4(),
-//     slideName: "Accent left",
-//     type: "accentLeft",
-//     className: "min-h-[300px]",
-//     content: {
-//       id: uuidv4(),
-//       type: "column" as ContentType,
-//       name: "Column",
-//       restrictDropTo: true,
-//       content: [
-//         {
-//           id: uuidv4(),
-//           type: "resizable-column" as ContentType,
-//           name: "Resizable column",
-//           restrictToDrop: true,
-//           content: [
-//             {
-//               id: uuidv4(),
-//               type: "image" as ContentType,
-//               name: "Image",
-//               content:
-//                 "https://plus.unsplash.com/premium_photo-1729004379397-ece899804701?q=80&w=2767&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
-//               alt: "Title",
-//             },
-//             {
-//               id: uuidv4(),
-//               type: "column" as ContentType,
-//               name: "Column",
-//               content: [
-//                 {
-//                   id: uuidv4(),
-//                   type: "heading1" as ContentType,
-//                   name: "Heading1",
-//                   content: "",
-//                   placeholder: "Heading1",
-//                 },
-//                 {
-//                   id: uuidv4(),
-//                   type: "paragraph" as ContentType,
-//                   name: "Paragraph",
-//                   content: "",
-//                   placeholder: "start typing here",
-//                 },
-//               ],
-//               className: "w-full h-full p-8 flex justify-center items-center",
-//               placeholder: "Heading1",
-//             },
-//           ],
-//         },
-//       ],
-//     },
-//   },
-
-//   {
-//     id: uuidv4(),
-//     slideName: "Accent Right",
-//     type: "accentRight",
-//     className: "min-h-[300px]",
-//     content: {
-//       id: uuidv4(),
-//       type: "column" as ContentType,
-//       name: "Column",
-//       content: [
-//         {
-//           id: uuidv4(),
-//           type: "resizable-column" as ContentType,
-//           name: "Resizable column",
-//           restrictToDrop: true,
-//           content: [
-//             {
-//               id: uuidv4(),
-//               type: "column" as ContentType,
-//               name: "Column",
-//               content: [
-//                 {
-//                   id: uuidv4(),
-//                   type: "heading1" as ContentType,
-//                   name: "Heading1",
-//                   content: "",
-//                   placeholder: "Heading1",
-//                 },
-//                 {
-//                   id: uuidv4(),
-//                   type: "paragraph" as ContentType,
-//                   name: "Paragraph",
-//                   content: "",
-//                   placeholder: "start typing here",
-//                 },
-//               ],
-//               className: "w-full h-full p-8 flex justify-center items-center",
-//               placeholder: "Heading1",
-//             },
-//             {
-//               id: uuidv4(),
-//               type: "image" as ContentType,
-//               name: "Image",
-//               restrictToDrop: true,
-//               content:
-//                 "https://plus.unsplash.com/premium_photo-1729004379397-ece899804701?q=80&w=2767&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
-//               alt: "Title",
-//             },
-//           ],
-//         },
-//       ],
-//     },
-//   },
-
-//   {
-//     id: uuidv4(),
-//     slideName: "Image and text",
-//     type: "imageAndText",
-//     className: "min-h-[200px] p-8 mx-auto flex justify-center items-center",
-//     content: {
-//       id: uuidv4(),
-//       type: "column" as ContentType,
-//       name: "Column",
-//       content: [
-//         {
-//           id: uuidv4(),
-//           type: "resizable-column" as ContentType,
-//           name: "Image and text",
-//           className: "border",
-//           content: [
-//             {
-//               id: uuidv4(),
-//               type: "column" as ContentType,
-//               name: "Column",
-//               content: [
-//                 {
-//                   id: uuidv4(),
-//                   type: "image" as ContentType,
-//                   name: "Image",
-//                   className: "p-3",
-//                   content:
-//                     "https://plus.unsplash.com/premium_photo-1729004379397-ece899804701?q=80&w=2767&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
-//                   alt: "Title",
-//                 },
-//               ],
-//             },
-//             {
-//               id: uuidv4(),
-//               type: "column" as ContentType,
-//               name: "Column",
-//               content: [
-//                 {
-//                   id: uuidv4(),
-//                   type: "heading1" as ContentType,
-//                   name: "Heading1",
-//                   content: "",
-//                   placeholder: "Heading1",
-//                 },
-//                 {
-//                   id: uuidv4(),
-//                   type: "paragraph" as ContentType,
-//                   name: "Paragraph",
-//                   content: "",
-//                   placeholder: "start typing here",
-//                 },
-//               ],
-//               className: "w-full h-full p-8 flex justify-center items-center",
-//               placeholder: "Heading1",
-//             },
-//           ],
-//         },
-//       ],
-//     },
-//   },
-
-//   {
-//     id: uuidv4(),
-//     slideName: "Text and image",
-//     type: "textAndImage",
-//     className: "min-h-[200px] p-8 mx-auto flex justify-center items-center",
-//     content: {
-//       id: uuidv4(),
-//       type: "column" as ContentType,
-//       name: "Column",
-//       content: [
-//         {
-//           id: uuidv4(),
-//           type: "resizable-column" as ContentType,
-//           name: "Text and image",
-//           className: "border",
-//           content: [
-//             {
-//               id: uuidv4(),
-//               type: "column" as ContentType,
-//               name: "",
-//               content: [
-//                 {
-//                   id: uuidv4(),
-//                   type: "heading1" as ContentType,
-//                   name: "Heading1",
-//                   content: "",
-//                   placeholder: "Heading1",
-//                 },
-//                 {
-//                   id: uuidv4(),
-//                   type: "paragraph" as ContentType,
-//                   name: "Paragraph",
-//                   content: "",
-//                   placeholder: "start typing here",
-//                 },
-//               ],
-//               className: "w-full h-full p-8 flex justify-center items-center",
-//               placeholder: "Heading1",
-//             },
-//             {
-//               id: uuidv4(),
-//               type: "column" as ContentType,
-//               name: "Column",
-//               content: [
-//                 {
-//                   id: uuidv4(),
-//                   type: "image" as ContentType,
-//                   name: "Image",
-//                   className: "p-3",
-//                   content:
-//                     "https://plus.unsplash.com/premium_photo-1729004379397-ece899804701?q=80&w=2767&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
-//                   alt: "Title",
-//                 },
-//               ],
-//             },
-//           ],
-//         },
-//       ],
-//     },
-//   },
-
-//   {
-//     id: uuidv4(),
-//     slideName: "Two columns",
-//     type: "twoColumns",
-//     className: "p-4 mx-auto flex justify-center items-center",
-//     content: {
-//       id: uuidv4(),
-//       type: "column" as ContentType,
-//       name: "Column",
-//       content: [
-//         {
-//           id: uuidv4(),
-//           type: "title" as ContentType,
-//           name: "Title",
-//           content: "",
-//           placeholder: "Untitled Card",
-//         },
-//         {
-//           id: uuidv4(),
-//           type: "resizable-column" as ContentType,
-//           name: "Text and image",
-//           className: "border",
-//           content: [
-//             {
-//               id: uuidv4(),
-//               type: "paragraph" as ContentType,
-//               name: "Paragraph",
-//               content: "",
-//               placeholder: "Start typing...",
-//             },
-//             {
-//               id: uuidv4(),
-//               type: "paragraph" as ContentType,
-//               name: "Paragraph",
-//               content: "",
-//               placeholder: "Start typing...",
-//             },
-//           ],
-//         },
-//       ],
-//     },
-//   },
-
-//   {
-//     id: uuidv4(),
-//     slideName: "Two columns with headings",
-//     type: "twoColumnsWithHeadings",
-//     className: "p-4 mx-auto flex justify-center items-center",
-//     content: {
-//       id: uuidv4(),
-//       type: "column" as ContentType,
-//       name: "Column",
-//       content: [
-//         {
-//           id: uuidv4(),
-//           type: "title" as ContentType,
-//           name: "Title",
-//           content: "",
-//           placeholder: "Untitled Card",
-//         },
-//         {
-//           id: uuidv4(),
-//           type: "resizable-column" as ContentType,
-//           name: "Text and image",
-//           className: "border",
-//           content: [
-//             {
-//               id: uuidv4(),
-//               type: "column" as ContentType,
-//               name: "Column",
-//               content: [
-//                 {
-//                   id: uuidv4(),
-//                   type: "heading3" as ContentType,
-//                   name: "Heading3",
-//                   content: "",
-//                   placeholder: "Heading 3",
-//                 },
-//                 {
-//                   id: uuidv4(),
-//                   type: "paragraph" as ContentType,
-//                   name: "Paragraph",
-//                   content: "",
-//                   placeholder: "Start typing...",
-//                 },
-//               ],
-//             },
-//             {
-//               id: uuidv4(),
-//               type: "column" as ContentType,
-//               name: "Column",
-//               content: [
-//                 {
-//                   id: uuidv4(),
-//                   type: "heading3" as ContentType,
-//                   name: "Heading3",
-//                   content: "",
-//                   placeholder: "Heading 3",
-//                 },
-//                 {
-//                   id: uuidv4(),
-//                   type: "paragraph" as ContentType,
-//                   name: "Paragraph",
-//                   content: "",
-//                   placeholder: "Start typing...",
-//                 },
-//               ],
-//             },
-//           ],
-//         },
-//       ],
-//     },
-//   },
-
-//   {
-//     id: uuidv4(),
-//     slideName: "Three column",
-//     type: "threeColumns",
-//     className: "p-4 mx-auto flex justify-center items-center",
-//     content: {
-//       id: uuidv4(),
-//       type: "column" as ContentType,
-//       name: "Column",
-//       content: [
-//         {
-//           id: uuidv4(),
-//           type: "title" as ContentType,
-//           name: "Title",
-//           content: "",
-//           placeholder: "Untitled Card",
-//         },
-//         {
-//           id: uuidv4(),
-//           type: "resizable-column" as ContentType,
-//           name: "Text and image",
-//           className: "border",
-//           content: [
-//             {
-//               id: uuidv4(),
-//               type: "paragraph" as ContentType,
-//               name: "",
-//               content: "",
-//               placeholder: "Start typing...",
-//             },
-//             {
-//               id: uuidv4(),
-//               type: "paragraph" as ContentType,
-//               name: "",
-//               content: "",
-//               placeholder: "Start typing...",
-//             },
-//             {
-//               id: uuidv4(),
-//               type: "paragraph" as ContentType,
-//               name: "",
-//               content: "",
-//               placeholder: "Start typing...",
-//             },
-//           ],
-//         },
-//       ],
-//     },
-//   },
-// ];
-
-// const prompt = `### Guidelines
-// You are a highly creative AI that generates JSON-based layouts for presentations. I will provide you with a pattern and a format to follow, and for each outline, you must generate unique layouts and contents and give me the output in the JSON format expected.
-// Our final JSON output is a combination of layouts and elements. The available LAYOUTS TYPES are as follows: "accentLeft", "accentRight", "imageAndText", "textAndImage", "twoColumns", "twoColumnsWithHeadings", "threeColumns", "threeColumnsWithHeadings", "fourColumns", "twoImageColumns", "threeImageColumns", "fourImageColumns", "tableLayout".
-// The available CONTENT TYPES are "heading1", "heading2", "heading3", "heading4", "title", "paragraph", "table", "resizable-column", "image", "blockquote", "numberedList", "bulletList", "todoList", "calloutBox", "codeBlock", "tableOfContents", "divider", "column"
-
-// Use these outlines as a starting point for the content of the presentations 
-//   ${JSON.stringify(outlineArray)}
-
-// The output must be an array of JSON objects.
-//   1. Write layouts based on the specific outline provided. Do not use types that are not mentioned in the example layouts.
-//   2. Ensuring each layout is unique.
-//   3. Adhere to the structure of existing layouts
-//   4. Fill placeholder data into content fields where required.
-//   5. Generate unique image placeholders for the 'content' property of image components and also alt text according to the outline.
-//   6. Ensure proper formatting and schema alignment for the output JSON.
-// 7. First create LAYOUTS TYPES  at the top most level of the JSON output as follows ${JSON.stringify(
-//     [
-//       {
-//         slideName: "Blank card",
-//         type: "blank-card",
-//         className: "p-8 mx-auto flex justify-center items-center min-h-[200px]",
-//         content: {},
-//       },
-//     ]
-//   )}
-
-// 8.The content property of each LAYOUTS TYPE should start with “column” and within the columns content property you can use any  of the CONTENT TYPES I provided above. Resizable-column, column and other multi element contents should be an array because you can have more elements inside them nested. Static elements like title and paragraph should have content set to a string.Here is an example of what 1 layout with 1 column with 1 title inside would look like:
-// ${JSON.stringify([
-//   {
-//     slideName: "Blank card",
-//     type: "blank-card",
-//     className: "p-8 mx-auto flex justify-center items-center min-h-[200px]",
-//     content: {
-//       id: uuidv4(),
-//       type: "column" as ContentType,
-//       name: "Column",
-//       content: [
-//         {
-//           id: uuidv4(),
-//           type: "title" as ContentType,
-//           name: "Title",
-//           content: "",
-//           placeholder: "Untitled Card",
-//         },
-//       ],
-//     },
-//   },
-// ])}
-
-
-// 9. Here is a final example of an example output for you to get an idea 
-// ${JSON.stringify([
-//   {
-//     id: uuidv4(),
-//     slideName: "Blank card",
-//     type: "blank-card",
-//     className: "p-8 mx-auto flex justify-center items-center min-h-[200px]",
-//     content: {
-//       id: uuidv4(),
-//       type: "column" as ContentType,
-//       name: "Column",
-//       content: [
-//         {
-//           id: uuidv4(),
-//           type: "title" as ContentType,
-//           name: "Title",
-//           content: "",
-//           placeholder: "Untitled Card",
-//         },
-//       ],
-//     },
-//   },
-
-//   {
-//     id: uuidv4(),
-//     slideName: "Accent left",
-//     type: "accentLeft",
-//     className: "min-h-[300px]",
-//     content: {
-//       id: uuidv4(),
-//       type: "column" as ContentType,
-//       name: "Column",
-//       restrictDropTo: true,
-//       content: [
-//         {
-//           id: uuidv4(),
-//           type: "resizable-column" as ContentType,
-//           name: "Resizable column",
-//           restrictToDrop: true,
-//           content: [
-//             {
-//               id: uuidv4(),
-//               type: "image" as ContentType,
-//               name: "Image",
-//               content:
-//                 "https://plus.unsplash.com/premium_photo-1729004379397-ece899804701?q=80&w=2767&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
-//               alt: "Title",
-//             },
-//             {
-//               id: uuidv4(),
-//               type: "column" as ContentType,
-//               name: "Column",
-//               content: [
-//                 {
-//                   id: uuidv4(),
-//                   type: "heading1" as ContentType,
-//                   name: "Heading1",
-//                   content: "",
-//                   placeholder: "Heading1",
-//                 },
-//                 {
-//                   id: uuidv4(),
-//                   type: "paragraph" as ContentType,
-//                   name: "Paragraph",
-//                   content: "",
-//                   placeholder: "start typing here",
-//                 },
-//               ],
-//               className: "w-full h-full p-8 flex justify-center items-center",
-//               placeholder: "Heading1",
-//             },
-//           ],
-//         },
-//       ],
-//     },
-//   },
-// ])}
-
-//  For Images 
-//   - The alt text should describe the image clearly and concisely.
-//   - Focus on the main subject(s) of the image and any relevant details such as colors, shapes, people, or objects.
-//   - Ensure the alt text aligns with the context of the presentation slide it will be used on (e.g., professional, educational, business-related).
-//   - Avoid using terms like "image of" or "picture of," and instead focus directly on the content and meaning.
-
-//   Output the layouts in JSON format. Ensure there are no duplicate layouts across the array.`;
-
-  //   const prompt = `
-//     I will provide you with an array of outlines, and for each outline, you must generate a unique and creative layout. Use the existing layouts as examples for structure and design, and generate unique designs based on the provided outline.
-
-//     ### Guidelines:
-//     1. Write layouts based on the specific outline provided. Do not use types that are not mentioned in the example layouts.
-//     2. Use diverse and engaging designs, ensuring each layout is unique.
-//     3. Adhere to the structure of existing layouts but add new styles or components if needed.
-//     4. Fill placeholder data into content fields where required.
-//     5. Generate unique image placeholders for the 'content' property of image components and also alt text according to the outline.
-//     6. Ensure proper formatting and schema alignment for the output JSON.
-
-//     ### Example Layouts:
-//     ${JSON.stringify(referedLayouts, null, 2)}
-
-//     ### Outline Array:
-//     ${JSON.stringify(outlineArray)}
-
-//     For each entry in the outline array, generate:
-//     - A unique JSON layout with creative designs.
-//     - Properly filled content, including placeholders for image components.
-//     - Clear and well-structured JSON data.
-//     For Images
-//     - The alt text should describe the image clearly and concisely.
-//     - Focus on the main subject(s) of the image and any relevant details such as colors, shapes, people, or objects.
-//     - Ensure the alt text aligns with the context of the presentation slide it will be used on (e.g., professional, educational, business-related).
-//     - Avoid using terms like "image of" or "picture of," and instead focus directly on the content and meaning.
-
-//     Output the layouts in JSON format. Ensure there are no duplicate layouts across the array.
-// `
-
-// export const generateLayoutsJSON =async (outlineArray: string[])=>{
-  
-
-
-// const prompt = `You are a JSON layout generator. 
-// Generate an array of slide layouts with the following exact structure. 
-// Always return **valid JSON only** without explanation or extra text.
-
-// Rules:
-// - The root output must be: const referedLayouts = [ ... ];
-// - Each layout must include:
-//   - id: uuidv4()
-//   - slideName: string
-//   - type: string
-//   - className: string
-//   - content: {
-//       id: uuidv4(),
-//       type: "column" | "resizable-column" | "title" | "heading1" | "heading3" | "paragraph" | "image",
-//       name: string,
-//       content: [] (nested items),
-//       placeholder?: string,
-//       className?: string,
-//       alt?: string
-//     }
-// - Use nested content arrays to build the structure.
-// - Always use "as ContentType" type casting for type values.
-// - Use Unsplash URLs for default image content.
-// - Do not add explanations or comments.
-
-// Output example (format your result exactly like this):
-
-// const referedLayouts = [
-//   {
-//     id: uuidv4(),
-//     slideName: "Blank card",
-//     type: "blank-card",
-//     className: "p-8 mx-auto flex justify-center items-center min-h-[200px]",
-//     content: {
-//       id: uuidv4(),
-//       type: "column" as ContentType,
-//       name: "Column",
-//       content: [
-//         {
-//           id: uuidv4(),
-//           type: "title" as ContentType,
-//           name: "Title",
-//           content: "",
-//           placeholder: "Untitled Card",
-//         },
-//       ],
-//     },
-//   },
-
-//   {
-//     id: uuidv4(),
-//     slideName: "Accent left",
-//     type: "accentLeft",
-//     className: "min-h-[300px]",
-//     content: {
-//       id: uuidv4(),
-//       type: "column" as ContentType,
-//       name: "Column",
-//       restrictDropTo: true,
-//       content: [
-//         {
-//           id: uuidv4(),
-//           type: "resizable-column" as ContentType,
-//           name: "Resizable column",
-//           restrictToDrop: true,
-//           content: [
-//             {
-//               id: uuidv4(),
-//               type: "image" as ContentType,
-//               name: "Image",
-//               content:
-//                 "https://plus.unsplash.com/premium_photo-1729004379397-ece899804701?q=80&w=2767&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
-//               alt: "Title",
-//             },
-//             {
-//               id: uuidv4(),
-//               type: "column" as ContentType,
-//               name: "Column",
-//               content: [
-//                 {
-//                   id: uuidv4(),
-//                   type: "heading1" as ContentType,
-//                   name: "Heading1",
-//                   content: "",
-//                   placeholder: "Heading1",
-//                 },
-//                 {
-//                   id: uuidv4(),
-//                   type: "paragraph" as ContentType,
-//                   name: "Paragraph",
-//                   content: "",
-//                   placeholder: "start typing here",
-//                 },
-//               ],
-//               className: "w-full h-full p-8 flex justify-center items-center",
-//               placeholder: "Heading1",
-//             },
-//           ],
-//         },
-//       ],
-//     },
-//   },
-
-//   {
-//     id: uuidv4(),
-//     slideName: "Accent Right",
-//     type: "accentRight",
-//     className: "min-h-[300px]",
-//     content: {
-//       id: uuidv4(),
-//       type: "column" as ContentType,
-//       name: "Column",
-//       content: [
-//         {
-//           id: uuidv4(),
-//           type: "resizable-column" as ContentType,
-//           name: "Resizable column",
-//           restrictToDrop: true,
-//           content: [
-//             {
-//               id: uuidv4(),
-//               type: "column" as ContentType,
-//               name: "Column",
-//               content: [
-//                 {
-//                   id: uuidv4(),
-//                   type: "heading1" as ContentType,
-//                   name: "Heading1",
-//                   content: "",
-//                   placeholder: "Heading1",
-//                 },
-//                 {
-//                   id: uuidv4(),
-//                   type: "paragraph" as ContentType,
-//                   name: "Paragraph",
-//                   content: "",
-//                   placeholder: "start typing here",
-//                 },
-//               ],
-//               className: "w-full h-full p-8 flex justify-center items-center",
-//               placeholder: "Heading1",
-//             },
-//             {
-//               id: uuidv4(),
-//               type: "image" as ContentType,
-//               name: "Image",
-//               restrictToDrop: true,
-//               content:
-//                 "https://plus.unsplash.com/premium_photo-1729004379397-ece899804701?q=80&w=2767&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
-//               alt: "Title",
-//             },
-//           ],
-//         },
-//       ],
-//     },
-//   },
-
-//   {
-//     id: uuidv4(),
-//     slideName: "Image and text",
-//     type: "imageAndText",
-//     className: "min-h-[200px] p-8 mx-auto flex justify-center items-center",
-//     content: {
-//       id: uuidv4(),
-//       type: "column" as ContentType,
-//       name: "Column",
-//       content: [
-//         {
-//           id: uuidv4(),
-//           type: "resizable-column" as ContentType,
-//           name: "Image and text",
-//           className: "border",
-//           content: [
-//             {
-//               id: uuidv4(),
-//               type: "column" as ContentType,
-//               name: "Column",
-//               content: [
-//                 {
-//                   id: uuidv4(),
-//                   type: "image" as ContentType,
-//                   name: "Image",
-//                   className: "p-3",
-//                   content:
-//                     "https://plus.unsplash.com/premium_photo-1729004379397-ece899804701?q=80&w=2767&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
-//                   alt: "Title",
-//                 },
-//               ],
-//             },
-//             {
-//               id: uuidv4(),
-//               type: "column" as ContentType,
-//               name: "Column",
-//               content: [
-//                 {
-//                   id: uuidv4(),
-//                   type: "heading1" as ContentType,
-//                   name: "Heading1",
-//                   content: "",
-//                   placeholder: "Heading1",
-//                 },
-//                 {
-//                   id: uuidv4(),
-//                   type: "paragraph" as ContentType,
-//                   name: "Paragraph",
-//                   content: "",
-//                   placeholder: "start typing here",
-//                 },
-//               ],
-//               className: "w-full h-full p-8 flex justify-center items-center",
-//               placeholder: "Heading1",
-//             },
-//           ],
-//         },
-//       ],
-//     },
-//   },
-
-//   {
-//     id: uuidv4(),
-//     slideName: "Text and image",
-//     type: "textAndImage",
-//     className: "min-h-[200px] p-8 mx-auto flex justify-center items-center",
-//     content: {
-//       id: uuidv4(),
-//       type: "column" as ContentType,
-//       name: "Column",
-//       content: [
-//         {
-//           id: uuidv4(),
-//           type: "resizable-column" as ContentType,
-//           name: "Text and image",
-//           className: "border",
-//           content: [
-//             {
-//               id: uuidv4(),
-//               type: "column" as ContentType,
-//               name: "",
-//               content: [
-//                 {
-//                   id: uuidv4(),
-//                   type: "heading1" as ContentType,
-//                   name: "Heading1",
-//                   content: "",
-//                   placeholder: "Heading1",
-//                 },
-//                 {
-//                   id: uuidv4(),
-//                   type: "paragraph" as ContentType,
-//                   name: "Paragraph",
-//                   content: "",
-//                   placeholder: "start typing here",
-//                 },
-//               ],
-//               className: "w-full h-full p-8 flex justify-center items-center",
-//               placeholder: "Heading1",
-//             },
-//             {
-//               id: uuidv4(),
-//               type: "column" as ContentType,
-//               name: "Column",
-//               content: [
-//                 {
-//                   id: uuidv4(),
-//                   type: "image" as ContentType,
-//                   name: "Image",
-//                   className: "p-3",
-//                   content:
-//                     "https://plus.unsplash.com/premium_photo-1729004379397-ece899804701?q=80&w=2767&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
-//                   alt: "Title",
-//                 },
-//               ],
-//             },
-//           ],
-//         },
-//       ],
-//     },
-//   },
-
-//   {
-//     id: uuidv4(),
-//     slideName: "Two columns",
-//     type: "twoColumns",
-//     className: "p-4 mx-auto flex justify-center items-center",
-//     content: {
-//       id: uuidv4(),
-//       type: "column" as ContentType,
-//       name: "Column",
-//       content: [
-//         {
-//           id: uuidv4(),
-//           type: "title" as ContentType,
-//           name: "Title",
-//           content: "",
-//           placeholder: "Untitled Card",
-//         },
-//         {
-//           id: uuidv4(),
-//           type: "resizable-column" as ContentType,
-//           name: "Text and image",
-//           className: "border",
-//           content: [
-//             {
-//               id: uuidv4(),
-//               type: "paragraph" as ContentType,
-//               name: "Paragraph",
-//               content: "",
-//               placeholder: "Start typing...",
-//             },
-//             {
-//               id: uuidv4(),
-//               type: "paragraph" as ContentType,
-//               name: "Paragraph",
-//               content: "",
-//               placeholder: "Start typing...",
-//             },
-//           ],
-//         },
-//       ],
-//     },
-//   },
-
-//   {
-//     id: uuidv4(),
-//     slideName: "Two columns with headings",
-//     type: "twoColumnsWithHeadings",
-//     className: "p-4 mx-auto flex justify-center items-center",
-//     content: {
-//       id: uuidv4(),
-//       type: "column" as ContentType,
-//       name: "Column",
-//       content: [
-//         {
-//           id: uuidv4(),
-//           type: "title" as ContentType,
-//           name: "Title",
-//           content: "",
-//           placeholder: "Untitled Card",
-//         },
-//         {
-//           id: uuidv4(),
-//           type: "resizable-column" as ContentType,
-//           name: "Text and image",
-//           className: "border",
-//           content: [
-//             {
-//               id: uuidv4(),
-//               type: "column" as ContentType,
-//               name: "Column",
-//               content: [
-//                 {
-//                   id: uuidv4(),
-//                   type: "heading3" as ContentType,
-//                   name: "Heading3",
-//                   content: "",
-//                   placeholder: "Heading 3",
-//                 },
-//                 {
-//                   id: uuidv4(),
-//                   type: "paragraph" as ContentType,
-//                   name: "Paragraph",
-//                   content: "",
-//                   placeholder: "Start typing...",
-//                 },
-//               ],
-//             },
-//             {
-//               id: uuidv4(),
-//               type: "column" as ContentType,
-//               name: "Column",
-//               content: [
-//                 {
-//                   id: uuidv4(),
-//                   type: "heading3" as ContentType,
-//                   name: "Heading3",
-//                   content: "",
-//                   placeholder: "Heading 3",
-//                 },
-//                 {
-//                   id: uuidv4(),
-//                   type: "paragraph" as ContentType,
-//                   name: "Paragraph",
-//                   content: "",
-//                   placeholder: "Start typing...",
-//                 },
-//               ],
-//             },
-//           ],
-//         },
-//       ],
-//     },
-//   },
-
-//   {
-//     id: uuidv4(),
-//     slideName: "Three column",
-//     type: "threeColumns",
-//     className: "p-4 mx-auto flex justify-center items-center",
-//     content: {
-//       id: uuidv4(),
-//       type: "column" as ContentType,
-//       name: "Column",
-//       content: [
-//         {
-//           id: uuidv4(),
-//           type: "title" as ContentType,
-//           name: "Title",
-//           content: "",
-//           placeholder: "Untitled Card",
-//         },
-//         {
-//           id: uuidv4(),
-//           type: "resizable-column" as ContentType,
-//           name: "Text and image",
-//           className: "border",
-//           content: [
-//             {
-//               id: uuidv4(),
-//               type: "paragraph" as ContentType,
-//               name: "",
-//               content: "",
-//               placeholder: "Start typing...",
-//             },
-//             {
-//               id: uuidv4(),
-//               type: "paragraph" as ContentType,
-//               name: "",
-//               content: "",
-//               placeholder: "Start typing...",
-//             },
-//             {
-//               id: uuidv4(),
-//               type: "paragraph" as ContentType,
-//               name: "",
-//               content: "",
-//               placeholder: "Start typing...",
-//             },
-//           ],
-//         },
-//       ],
-//     },
-//   },
-// ];
-// `
-//   try {
-    
-//   console.log("🟢 Generating Layout 🟢");
-//    const { object } = await generateObject({
-//       model: google("gemini-2.5-flash", {
-//         structuredOutputs: false,
-//       }),
-//       schema: ReferedLayoutsSchema,
-//       system:`You are a highly creative AI that generates JSON-based layouts for presentations.`,
-//       prompt: prompt
-    
-//     });
-
-//     if (!object) {
-//       return { status: 400, error: "No content generated" };
-//     }
-
-//     // await Promise.all(object.map(replaceImagePlaceholders));
-
-//     console.log("🟢 Layouts Generated successfully 🟢");
-//     return { status: 200, data: object };
-
-//   } catch (error) {
-//       console.error("🔴 ERROR:", error);
-//       return { status: 500, error: "Internal server error" };
-//   }
-
-
-
-// }
-
-// export const generateLayouts = async (projectId: string, theme: string) => {
-//   try {
-//     if (!projectId) {
-//       return { status: 400, error: "Project ID is required" };
-//     }
-//     const user = await currentUser();
-//     if (!user) {
-//       return { status: 403, error: "User not authenticated" };
-//     }
-
-//     const userExist = await prisma.user.findUnique({
-//       where: { clerkId: user.id },
-//     });
-
-//     if (!userExist || !userExist.subscription) {
-//       return {
-//         status: 403,
-//         error: !userExist?.subscription
-//           ? "User does not have an active subscription"
-//           : "User not found in the database",
-//       };
-//     }
-
-//     const project = await prisma.project.findUnique({
-//       where: { id: projectId, isDeleted: false },
-//     });
-
-//     if (!project) {
-//       return { status: 404, error: "Project not found" };
-//     }
-
-//     if (!project.outlines || project.outlines.length === 0) {
-//       return { status: 400, error: "Project does not have any outlines" };
-//     }
-
-//     const layouts = await generateLayoutsJSON(project.outlines);
-
-//     if (layouts.status !== 200) {
-//       return layouts;
-//     }
-
-//     await prisma.project.update({
-//       where: { id: projectId },
-//       data: { slides: layouts, themeName: theme },
-//     });
-
-//     return { status: 200, data: layouts };
-//   } catch (error) {
-//     console.error("🔴 ERROR:", error);
-//     return { status: 500, error: "Internal server error", data: [] };
-//   }
-// };
-
-
-
-
 export const generateImageUrl = async (prompt: string): Promise<string> => {
   try {
     const improvedPrompt = `
-Create a highly realistic, professional image based on the following description. The image should look as if captured in real life, with attention to detail, lighting, and texture.
+Create a PROFESSIONAL, HIGH-QUALITY image for a presentation slide.
 
-Description: ${prompt}
+**Image Description:** ${prompt}
 
-Important Notes:
-- The image must be in a photorealistic style and visually compelling.
-- Ensure all text, signs, or visible writing in the image are in English.
-- Pay special attention to lighting, shadows, and textures to make the image as lifelike as possible.
-- Avoid elements that appear abstract, cartoonish, or overly artistic. The image should be suitable for professional presentations.
-- Focus on accurately depicting the concept described, including specific objects, environment, mood, and context. Maintain relevance to the description provided.
+**CRITICAL REQUIREMENTS:**
 
-Example Use Cases: Business presentations, educational slides, professional designs.
+1. **Style & Quality:**
+   - Photorealistic, professional-grade imagery
+   - Suitable for business/educational presentations
+   - High contrast and clarity
+   - Sharp focus on key elements
+   - Professional color grading
+
+2. **Composition:**
+   - Clean, uncluttered composition
+   - Clear focal point
+   - Balanced visual weight
+   - Appropriate negative space
+   - Suitable for 16:9 aspect ratio
+
+3. **Lighting & Atmosphere:**
+   - Professional lighting (avoid harsh shadows)
+   - Natural or studio-quality illumination
+   - Appropriate mood for context
+   - Depth and dimension
+
+4. **Content Standards:**
+   - All text/signs MUST be in English
+   - No watermarks or branding
+   - Modern, current aesthetic
+   - Culturally appropriate
+   - Relevant to topic
+
+5. **Technical Specifications:**
+   - High resolution
+   - Proper exposure
+   - Rich color depth
+   - Professional post-processing
+
+**AVOID:**
+- Cartoonish or abstract styles
+- Overly busy or cluttered scenes
+- Poor lighting or exposure
+- Low-quality stock photo aesthetics
+- Irrelevant or off-topic imagery
+- Text overlays or captions
+- Watermarks or logos
+
+**USE CASES:**
+- Corporate presentations
+- Educational materials  
+- Training documents
+- Professional reports
+- Conference slides
+
+Generate an image that looks like it was shot by a professional photographer or created by a top-tier design studio.
 `;
 
     const result = await generateText({
-      model: google('gemini-2.0-flash-exp'),
+      model: google('gemini-2.5-flash'),
       providerOptions: {
         google: { responseModalities: ['TEXT', 'IMAGE'] },
       },
@@ -1213,7 +184,10 @@ Example Use Cases: Business presentations, educational slides, professional desi
     });
 
     // Find the first image file in the result
-    const imageFile = result.files?.find(file => file.mimeType?.startsWith('image/'));
+    const imageFile = result.files?.find(file => {
+      const mimeType = (file as any).mimeType;
+      return mimeType && typeof mimeType === 'string' && mimeType.startsWith('image/');
+    });
 
     if (imageFile && imageFile.base64) {
       console.log('🟢 Image generated successfully:', imageFile.base64);
@@ -1279,60 +253,387 @@ const populateUuids = (element: any) => {
 };
 
 
+// Sanitize and validate content items to ensure all have required fields
+const sanitizeContent = (element: any): any => {
+    if (typeof element !== 'object' || element === null) {
+        return element;
+    }
+
+    // If this is an array, process each item
+    if (Array.isArray(element)) {
+        return element.map(sanitizeContent).filter(item => item !== null);
+    }
+
+    // Ensure required fields exist
+    if (!element.type) {
+        // If no type, try to infer it or skip
+        if (element.content && Array.isArray(element.content) && element.content.length > 0) {
+            // If it has array content, it's likely a column
+            element.type = 'column';
+        } else if (typeof element.content === 'string') {
+            // If it has string content, make it a paragraph
+            element.type = 'paragraph';
+        } else {
+            // Skip this element entirely
+            console.warn('Skipping element without type:', element);
+            return null;
+        }
+    }
+
+    // Ensure id exists
+    if (!element.id) {
+        element.id = uuidv4();
+    }
+
+    // Ensure name exists
+    if (!element.name) {
+        element.name = element.type || 'Component';
+    }
+
+    // Recursively sanitize nested content
+    if (Array.isArray(element.content)) {
+        element.content = element.content.map(sanitizeContent).filter((item: any) => item !== null);
+    } else if (element.content && typeof element.content === 'object' && !Array.isArray(element.content)) {
+        element.content = sanitizeContent(element.content);
+    }
+
+    return element;
+};
+
+
+// Process and validate an entire slide
+const sanitizeSlide = (slide: any): any => {
+    if (!slide) return null;
+    
+    // Ensure slide has required fields
+    if (!slide.id) slide.id = uuidv4();
+    if (!slide.type) slide.type = 'blank-card';
+    if (!slide.slideName) slide.slideName = 'Slide';
+    if (!slide.className) slide.className = 'p-8';
+    
+    // Sanitize the content
+    if (slide.content) {
+        slide.content = sanitizeContent(slide.content);
+    } else {
+        // Create default content if missing
+        slide.content = {
+            id: uuidv4(),
+            type: 'column',
+            name: 'Column',
+            content: []
+        };
+    }
+    
+    return slide;
+};
+
+
+
+
+
 // export const generateLayoutsJSON = async (outlineArray: string[]) => {
-//   // --- FIX: A completely rewritten prompt that requests valid JSON and uses the presentation outlines ---
+  
 //   const prompt = `
-//     You are an expert presentation layout designer. Based on the following presentation outlines, generate an array of slide layouts in valid JSON format.
+// You are an ELITE presentation designer with expertise in creating visually stunning, content-rich slide decks. Generate a complete presentation in JSON format.
 
-//     Presentation Outlines:
-//     ${outlineArray.map((outline, index) => `${index + 1}. ${outline}`).join('\n')}
+// **PRESENTATION OUTLINES:**
+// ${outlineArray.map((outline, index) => `${index + 1}. ${outline}`).join('\n')}
 
-//     Rules for JSON generation:
-//     1.  The root of the output MUST be a valid JSON array of slide objects.
-//     2.  Each object in the array represents a slide.
-//     3.  Generate content (titles, headings, paragraphs) that is relevant to the provided outlines.
-//     4.  Use a variety of slide types to make the presentation engaging.
-//     5.  For all "id" fields, use the placeholder string "uuid-placeholder".
-//     6.  For "image" content, use a relevant Unsplash URL.
-//     7.  Do NOT include any explanations, comments, or any text outside of the main JSON array.
+// ════════════════════════════════════════════════════════════════
+// 📋 COMPONENT TYPES AVAILABLE (25 Layout Options)
+// ════════════════════════════════════════════════════════════════
 
-//     Here is an example of a single slide object structure:
-//     {
-//       "id": "uuid-placeholder",
-//       "slideName": "Title Slide",
-//       "type": "title-slide",
-//       "className": "p-8 mx-auto flex flex-col justify-center items-center min-h-[300px]",
-//       "content": {
+// **STRUCTURAL COMPONENTS:**
+// - "column" - Vertical container (content = array of components)
+// - "resizable-column" - Draggable columns (content = array of components)
+
+// **TEXT COMPONENTS:**
+// - "title" - Main slide title (content = string)
+// - "heading1", "heading2", "heading3", "heading4" - Headings (content = string)
+// - "paragraph" - Body text (content = string)
+// - "blockquote" - Quote text (content = string)
+
+// **LIST COMPONENTS:**
+// - "bulletList" - Bullet points (content = array of strings)
+// - "numberedList" - Numbered items (content = array of strings)
+// - "todoList" - Checklist items (content = array of strings)
+
+// **VISUAL COMPONENTS:**
+// - "image" - Image display (content = URL string, alt = description)
+// - "divider" - Horizontal line separator
+
+// **ADVANCED COMPONENTS:**
+// - "table" - Data table (complex structure with headers/rows)
+// - "tableOfContents" - Outline of slides (content = array of strings)
+// - "calloutBox" - Highlighted info box (content = string, variant = "info"/"warning"/"success")
+// - "codeBlock" - Code snippet (code = string, language = string)
+// - "customButton" - Interactive button (content = string, link = URL)
+
+// ════════════════════════════════════════════════════════════════
+// 🎨 LAYOUT PATTERNS TO USE (Mix & Match)
+// ════════════════════════════════════════════════════════════════
+
+// **1. TITLE SLIDE (First Slide):**
+//    - Center-aligned title + subtitle
+//    - Use: title + paragraph
+//    - className: "flex flex-col justify-center items-center text-center h-full"
+
+// **2. SIMPLE CONTENT (Concepts, Definitions):**
+//    - Heading + paragraph or bullet list
+//    - Use: heading2 + paragraph/bulletList
+//    - className: "p-8 space-y-6"
+
+// **3. TWO-COLUMN SPLIT (Comparisons, Before/After):**
+//    - Use: resizable-column with 2 columns
+//    - Each column: heading3 + bulletList
+//    - className: "grid grid-cols-2 gap-6 p-8"
+
+// **4. THREE-COLUMN (Features, Categories):**
+//    - Use: column with 3 nested columns
+//    - Each column: heading4 + paragraph
+//    - className: "grid grid-cols-3 gap-4 p-8"
+
+// **5. IMAGE + TEXT (Visual Explanations):**
+//    - Use: resizable-column (50/50 split)
+//    - Left: heading2 + paragraph/bulletList
+//    - Right: image
+//    - className: "grid grid-cols-2 gap-8 items-center p-8"
+
+// **6. BIG STAT/NUMBER (Metrics, KPIs):**
+//    - Use: heading1 (giant number) + paragraph (description)
+//    - className: "flex flex-col justify-center items-center text-center h-full"
+//    - Make number huge: className on heading1: "text-9xl font-bold"
+
+// **7. QUOTE SLIDE (Testimonials, Inspiration):**
+//    - Use: blockquote + paragraph (attribution)
+//    - className: "flex flex-col justify-center items-center p-16"
+//    - blockquote className: "text-4xl italic"
+
+// **8. TIMELINE/PROCESS (Steps, Phases):**
+//    - Use: numberedList with detailed items
+//    - Or: multiple calloutBoxes in sequence
+//    - className: "space-y-4 p-8"
+
+// **9. DATA TABLE (Comparisons, Specifications):**
+//    - Use: table component
+//    - Structure: headers + rows with data
+//    - className: "p-8"
+
+// **10. CALL-TO-ACTION (Final Slide):**
+//     - Use: heading2 + paragraph + customButton
+//     - Center-aligned, focused
+//     - className: "flex flex-col justify-center items-center text-center h-full gap-6"
+
+// ════════════════════════════════════════════════════════════════
+// ⚡ JSON STRUCTURE RULES (CRITICAL!)
+// ════════════════════════════════════════════════════════════════
+
+// 1. **Root Structure:**
+//    - Output = Array of slide objects
+//    - Each slide MUST have: id, slideName, type, className, content
+
+// 2. **Data Types by Component:**
+//    - column/resizable-column → content = ARRAY of components
+//    - title/heading/paragraph/blockquote/calloutBox → content = STRING
+//    - bulletList/numberedList/todoList → content = ARRAY OF STRINGS
+//    - image → content = URL (string), alt = description (string)
+//    - table → complex object with headers/rows
+//    - codeBlock → code = STRING, language = STRING
+
+// 3. **ID Fields:**
+//    - Always use "uuid-placeholder" for all id fields
+//    - IDs will be replaced with real UUIDs later
+
+// 4. **Names:**
+//    - "name" property = descriptive label (e.g., "Main Title", "Key Points")
+//    - Actual content goes in "content" property
+
+// 5. **ClassNames:**
+//    - Use Tailwind CSS classes
+//    - Common patterns: "p-8", "space-y-6", "grid grid-cols-2 gap-6"
+//    - Responsive: "flex flex-col", "items-center", "justify-center"
+
+// ════════════════════════════════════════════════════════════════
+// 📝 CONTENT WRITING GUIDELINES
+// ════════════════════════════════════════════════════════════════
+
+// **DO:**
+// ✅ Write clear, concise content (150-600 characters per paragraph)
+// ✅ Use bullet points for lists (3-8 items)
+// ✅ Create descriptive headings
+// ✅ Add engaging image alt text (for AI image generation)
+// ✅ Vary slide layouts for visual interest
+// ✅ Use calloutBoxes for important notes
+// ✅ Include tables for data comparisons
+// ✅ Add quotes for credibility
+
+// **DON'T:**
+// ❌ Write walls of text (keep paragraphs short)
+// ❌ Repeat the same layout for every slide
+// ❌ Use vague or generic content
+// ❌ Forget to add alt text for images
+// ❌ Create more than 8 bullet points per list
+// ❌ Use complex nested structures unnecessarily
+
+// ════════════════════════════════════════════════════════════════
+// 🎯 EXAMPLE SLIDES
+// ════════════════════════════════════════════════════════════════
+
+// **Example 1: Title Slide**
+// {
+//   "id": "uuid-placeholder",
+//   "slideName": "Introduction",
+//   "type": "title-slide",
+//   "className": "flex flex-col justify-center items-center text-center h-full",
+//   "content": {
+//     "id": "uuid-placeholder",
+//     "type": "column",
+//     "name": "Title Container",
+//     "content": [
+//       {
+//         "id": "uuid-placeholder",
+//         "type": "title",
+//         "name": "Main Title",
+//         "content": "Machine Learning: The Future of Technology"
+//       },
+//       {
+//         "id": "uuid-placeholder",
+//         "type": "paragraph",
+//         "name": "Subtitle",
+//         "className": "text-2xl text-gray-600 mt-4",
+//         "content": "Understanding AI and its Impact on Modern Business"
+//       }
+//     ]
+//   }
+// }
+
+// **Example 2: Content with Bullet List**
+// {
+//   "id": "uuid-placeholder",
+//   "slideName": "Key Benefits",
+//   "type": "content-slide",
+//   "className": "p-8 space-y-6",
+//   "content": {
+//     "id": "uuid-placeholder",
+//     "type": "column",
+//     "name": "Content Container",
+//     "content": [
+//       {
+//         "id": "uuid-placeholder",
+//         "type": "heading2",
+//         "name": "Section Title",
+//         "content": "Why Machine Learning Matters"
+//       },
+//       {
+//         "id": "uuid-placeholder",
+//         "type": "bulletList",
+//         "name": "Benefits List",
+//         "content": [
+//           "Automates complex decision-making processes",
+//           "Learns and improves from data over time",
+//           "Handles massive datasets efficiently",
+//           "Uncovers hidden patterns and insights",
+//           "Reduces human error and bias"
+//         ]
+//       }
+//     ]
+//   }
+// }
+
+// **Example 3: Image + Text Layout**
+// {
+//   "id": "uuid-placeholder",
+//   "slideName": "Visual Example",
+//   "type": "content-slide",
+//   "className": "p-8",
+//   "content": {
+//     "id": "uuid-placeholder",
+//     "type": "resizable-column",
+//     "name": "Split Layout",
+//     "content": [
+//       {
 //         "id": "uuid-placeholder",
 //         "type": "column",
-//         "name": "Main Content",
+//         "name": "Text Side",
+//         "className": "space-y-4",
 //         "content": [
 //           {
 //             "id": "uuid-placeholder",
-//             "type": "title",
+//             "type": "heading2",
 //             "name": "Title",
-//             "content": "The Main Title of the Presentation",
-//             "placeholder": "Presentation Title"
+//             "content": "How Neural Networks Work"
 //           },
 //           {
 //             "id": "uuid-placeholder",
 //             "type": "paragraph",
-//             "name": "Subtitle",
-//             "content": "A brief and engaging subtitle.",
-//             "placeholder": "Subtitle"
+//             "name": "Description",
+//             "content": "Neural networks mimic the human brain's structure, processing information through interconnected layers of nodes. Each layer transforms the data, learning patterns and relationships."
 //           }
 //         ]
+//       },
+//       {
+//         "id": "uuid-placeholder",
+//         "type": "image",
+//         "name": "Diagram",
+//         "content": "https://via.placeholder.com/800x600",
+//         "alt": "Detailed diagram showing neural network architecture with input layer, hidden layers, and output layer, with colorful connections between nodes"
 //       }
-//     }
+//     ]
+//   }
+// }
+
+// **Example 4: Big Number Slide**
+// {
+//   "id": "uuid-placeholder",
+//   "slideName": "Impact Statistics",
+//   "type": "content-slide",
+//   "className": "flex flex-col justify-center items-center text-center h-full",
+//   "content": {
+//     "id": "uuid-placeholder",
+//     "type": "column",
+//     "name": "Stat Container",
+//     "content": [
+//       {
+//         "id": "uuid-placeholder",
+//         "type": "heading1",
+//         "name": "Big Number",
+//         "className": "text-9xl font-bold text-primary",
+//         "content": "84%"
+//       },
+//       {
+//         "id": "uuid-placeholder",
+//         "type": "paragraph",
+//         "name": "Context",
+//         "className": "text-2xl text-gray-600 mt-6",
+//         "content": "of businesses report increased efficiency with AI implementation"
+//       }
+//     ]
+//   }
+// }
+
+// ════════════════════════════════════════════════════════════════
+// 🚀 YOUR TASK
+// ════════════════════════════════════════════════════════════════
+
+// Based on the outlines provided above:
+// 1. Create ${outlineArray.length} slides (one for each outline point)
+// 2. Choose appropriate layouts for each slide type
+// 3. Write engaging, clear content (150-600 characters per section)
+// 4. Use variety - mix different layouts and components
+// 5. Add images where relevant (write descriptive alt text)
+// 6. Make it visually interesting and professional
+// 7. Ensure all JSON is valid and properly formatted
+
+// Generate the complete JSON array now!
 //   `;
 
 //   try {
-//     console.log("🟢 Generating Layouts based on outlines...");
+//     console.log("🟢 Generating rich layouts based on outlines...");
     
 //     const { object } = await generateObject({
-//       model: google("gemini-1.5-flash"), // No need for structuredOutputs: false here
+//       model: google("gemini-2.5-flash"),
 //       schema: ReferedLayoutsSchema,
-//       system: `You are a creative AI assistant that generates presentation slide layouts in JSON format based on user-provided outlines.`,
+//       system: `You are a creative AI assistant that generates presentation slide layouts in valid JSON format based on user-provided outlines and a rich set of component types.`,
 //       prompt: prompt,
 //     });
 
@@ -1340,165 +641,244 @@ const populateUuids = (element: any) => {
 //       return { status: 400, error: "No content was generated by the AI." };
 //     }
 
-//     // --- FIX: After generation, loop through the object and replace placeholders with real UUIDs ---
 //     object.forEach(populateUuids);
 
-//     console.log("🟢 Layouts Generated and UUIDs populated successfully 🟢");
+//     console.log("🟢 Rich layouts generated successfully 🟢");
 //     return { status: 200, data: object };
 
 //   } catch (error) {
 //       console.error("🔴 AI Generation ERROR:", error);
+//       // Add more detailed error logging for Zod validation issues
+//       if (error instanceof Error && error.message.includes('Validation')) {
+//           console.error("Zod Validation Error Details:", (error as any).cause);
+//       }
 //       return { status: 500, error: "An error occurred during AI content generation." };
 //   }
 // }
 
-// export const generateLayouts = async (projectId: string, theme: string) => {
-//   try {
-//     if (!projectId) {
-//       return { status: 400, error: "Project ID is required" };
-//     }
-//     const user = await currentUser();
-//     if (!user) {
-//       return { status: 403, error: "User not authenticated" };
-//     }
 
-//     const userExist = await prisma.user.findUnique({
-//       where: { clerkId: user.id },
-//     });
 
-//     if (!userExist) {
-//       return { status: 404, error: "User not found in the database" };
-//     }
-    
-//     // Note: Subscription check logic is kept as is.
-//     // if (!userExist.subscription) {
-//     //   return {
-//     //     status: 403,
-//     //     error: "User does not have an active subscription",
-//     //   };
-//     // }
-
-//     const project = await prisma.project.findUnique({
-//       where: { id: projectId, isDeleted: false },
-//     });
-
-//     if (!project) {
-//       return { status: 404, error: "Project not found" };
-//     }
-
-//     if (!project.outlines || project.outlines.length === 0) {
-//       return { status: 400, error: "Project does not have any outlines to generate content from" };
-//     }
-
-//     const layouts = await generateLayoutsJSON(project.outlines);
-
-//     if (layouts.status !== 200 || !layouts.data) {
-//       return { status: layouts.status, error: layouts.error || "Failed to generate valid layouts" };
-//     }
-
-//     await prisma.project.update({
-//       where: { id: projectId },
-//       // --- FIX: Store only the array of slides (layouts.data), not the entire status object. ---
-//       // The data is now a JSON object which Prisma handles correctly.
-//       data: { slides: layouts.data as any, themeName: theme },
-//     });
-
-//     return { status: 200, data: layouts };
-//   } catch (error) {
-//     console.error("🔴 Server Action ERROR:", error);
-//     return { status: 500, error: "Internal server error" };
-//   }
-// };
-
+// ------------------------------------------------------------------
+// ▼▼▼ THIS IS THE UPDATED FUNCTION ▼▼▼
+// ------------------------------------------------------------------
 
 
 
 export const generateLayoutsJSON = async (outlineArray: string[]) => {
-  
-  // --- FIX: A completely rewritten prompt to teach the AI about your rich components ---
+
+  // The prompt has been completely overhauled to generate the desired "JSON 2" schema.
   const prompt = `
-    You are an expert presentation designer AI. Your task is to generate a rich, engaging slide deck in JSON format based on the provided outlines.
+You are an expert presentation designer AI. Your task is to generate a complete, well-structured presentation in a specific JSON format based on a list of slide outlines.
 
-    Presentation Outlines:
-    ${outlineArray.map((outline, index) => `${index + 1}. ${outline}`).join('\n')}
+**PRESENTATION OUTLINES:**
+${outlineArray.map((outline, index) => `${index + 1}. ${outline}`).join('\n')}
 
-    **CRITICAL JSON Structure Rules:**
-    1.  The root output MUST be a valid JSON array of slide objects. Do NOT include any text outside the JSON array.
-    2.  For each slide object, you will generate a root "content" object that defines the layout (e.g., a "column").
-    3.  **Data Type Rule:** The "content" property's data type depends on the "type":
-        - For "column" or "resizable-column", "content" MUST be an array of other content objects.
-        - For "title", "heading1", "paragraph", "blockquote", "calloutBox", "content" MUST be a STRING with the text.
-        - For "bulletList" or "numberedList", "content" MUST be an ARRAY OF STRINGS.
-        - For "image", "content" MUST be a STRING containing a URL.
-        - For "codeBlock", "content" MUST be an EMPTY STRING, and the code goes in the "code" property.
-    4.  The "name" property should be a short, descriptive name for the component instance (e.g., "Main Title", "Key Features List"). The actual text goes in the "content" property.
-    5.  For all "id" fields, use the placeholder string "uuid-placeholder".
+════════════════════════════════════════════════════════════════
+🎨 SLIDE LAYOUT TYPES AVAILABLE (Choose one for each slide's root "type")
+════════════════════════════════════════════════════════════════
 
-    **Example of a Correct Title Slide Structure:**
-    {
-      "id": "uuid-placeholder",
-      "slideName": "Introduction",
-      "type": "title-slide",
-      "className": "flex flex-col justify-center items-center text-center",
-      "content": {
+1.  **"blank-card"**: A simple card, typically for titles or summaries. Usually contains a single column with a heading and a bullet list.
+2.  **"twoColumns"**: A layout for comparing ideas or breaking down topics. Contains a title and a resizable-column with two paragraphs.
+3.  **"threeColumns"**: Similar to twoColumns, but for three distinct points. Contains a title and a resizable-column with three paragraphs.
+4.  **"imageAndText"**: A split layout with an image on one side and text on the other. The content is a resizable-column with two children: one column for the image, and one column for text components (like a heading and bullet list).
+5.  **"textAndImage"**: The reverse of imageAndText, with text on the left and the image on the right.
+6.  **"accentLeft"**: A full-bleed layout with an image on the left and a text block on the right.
+7.  **"accentRight"**: A full-bleed layout with a text block on the left and an image on the right.
+
+════════════════════════════════════════════════════════════════
+🧱 CONTENT COMPONENT TYPES (Use these inside your layouts)
+════════════════════════════════════════════════════════════════
+
+-   **Structural**: "column", "resizable-column"
+-   **Text**: "heading1", "paragraph", "title", "bulletList"
+-   **Visual**: "image" (must include a descriptive "alt" property for image generation)
+
+════════════════════════════════════════════════════════════════
+⚡ CRITICAL JSON STRUCTURE RULES
+════════════════════════════════════════════════════════════════
+
+1.  **Root Structure**: The output MUST be a JSON array of slide objects.
+2.  **Slide Object**: Each slide object must have these top-level keys: \`id\`, \`type\`, \`content\`, \`className\`, \`slideName\`.
+3.  **Root \`type\`**: The root \`type\` for each slide MUST be one of the 7 layout types listed above (e.g., "imageAndText", "blank-card").
+4.  **Content Nesting**: The \`content\` object for every slide MUST start with a single "column" component. Inside that column, you will place the layout's main components (like "resizable-column", "title", etc.). Follow the nesting patterns in the examples EXACTLY.
+5.  **IDs and Names**: Use "uuid-placeholder" for all \`id\` fields. The \`name\` property should be a descriptive label for the component's purpose (e.g., "Slide Title", "Content Column").
+6.  **Image Components**: Every component with \`type: "image"\` MUST have a descriptive \`alt\` property that clearly explains the desired visual. Content should be an empty string: \`"content": ""\`.
+
+════════════════════════════════════════════════════════════════
+📝 CONTENT WRITING GUIDELINES
+════════════════════════════════════════════════════════════════
+
+✅ Create concise, engaging content for each component based on the slide outline.
+✅ Write descriptive \`alt\` text for images that an AI can use to generate a relevant picture.
+✅ Vary the slide layouts to keep the presentation interesting.
+✅ Ensure every slide directly addresses its corresponding outline point.
+❌ Do NOT write long paragraphs. Keep text brief and scannable.
+❌ Do NOT forget the required nesting structure (\`Slide -> content -> column -> resizable-column -> ...\`).
+
+════════════════════════════════════════════════════════════════
+🎯 EXAMPLE SLIDES (Follow these structures precisely!)
+════════════════════════════════════════════════════════════════
+
+**Example 1: "blank-card" for a Title Slide**
+{
+  "id": "uuid-placeholder",
+  "type": "blank-card",
+  "content": {
+    "id": "uuid-placeholder",
+    "name": "Column",
+    "type": "column",
+    "content": [
+      {
         "id": "uuid-placeholder",
-        "type": "column",
-        "name": "Title Content",
+        "name": "Slide Title",
+        "type": "heading1",
+        "content": "Web3: Unveiling the Next-Gen Internet"
+      },
+      {
+        "id": "uuid-placeholder",
+        "name": "Bullet Points",
+        "type": "bulletList",
+        "content": [
+          "Is Web3 truly the future, or just hype?",
+          "Aims to be a decentralized, user-owned web.",
+          "Key aspects: Blockchain, Tokenization, User Control"
+        ]
+      }
+    ]
+  },
+  "className": "p-8 mx-auto flex justify-center items-center min-h-[200px]",
+  "slideName": "Web3: A New Internet?"
+}
+
+**Example 2: "imageAndText" Layout**
+{
+  "id": "uuid-placeholder",
+  "type": "imageAndText",
+  "content": {
+    "id": "uuid-placeholder",
+    "name": "Column",
+    "type": "column",
+    "content": [
+      {
+        "id": "uuid-placeholder",
+        "name": "Image and text",
+        "type": "resizable-column",
         "content": [
           {
             "id": "uuid-placeholder",
-            "type": "title",
-            "name": "Main Title",
-            "content": "Langchain: A Framework for Language Model Applications"
+            "name": "Column",
+            "type": "column",
+            "content": [
+              {
+                "id": "uuid-placeholder",
+                "alt": "Abstract visualization of a glowing, interconnected blockchain.",
+                "name": "Image",
+                "type": "image",
+                "content": "",
+                "className": "p-3"
+              }
+            ]
           },
           {
             "id": "uuid-placeholder",
+            "name": "Column",
+            "type": "column",
+            "content": [
+              {
+                "id": "uuid-placeholder",
+                "name": "Slide Title",
+                "type": "heading1",
+                "content": "Blockchain: The Core Technology"
+              },
+              {
+                "id": "uuid-placeholder",
+                "name": "Bullet Points",
+                "type": "bulletList",
+                "content": [
+                  "Blockchain is a distributed, immutable ledger.",
+                  "Blocks are bundles of transactions.",
+                  "The chain links blocks securely using cryptography."
+                ]
+              }
+            ],
+            "className": "w-full h-full p-8 flex justify-center items-center"
+          }
+        ],
+        "className": "border"
+      }
+    ]
+  },
+  "className": "min-h-[200px] p-8 mx-auto flex justify-center items-center",
+  "slideName": "Blockchain Basics"
+}
+
+**Example 3: "threeColumns" Layout**
+{
+  "id": "uuid-placeholder",
+  "type": "threeColumns",
+  "content": {
+    "id": "uuid-placeholder",
+    "name": "Column",
+    "type": "column",
+    "content": [
+      {
+        "id": "uuid-placeholder",
+        "name": "Title",
+        "type": "title",
+        "content": "Web3 Infrastructure: The Foundation"
+      },
+      {
+        "id": "uuid-placeholder",
+        "name": "Three columns",
+        "type": "resizable-column",
+        "content": [
+          {
+            "id": "uuid-placeholder",
+            "name": "Paragraph",
             "type": "paragraph",
-            "name": "Subtitle",
-            "className": "text-xl text-gray-500",
-            "content": "Empowering developers to build data-aware and agentic applications."
-          }
-        ]
-      }
-    }
-
-    **Example of a Correct Bullet List Slide Structure:**
-    {
-      "id": "uuid-placeholder",
-      "slideName": "Core Components",
-      "type": "content-slide",
-      "className": "p-8",
-      "content": {
-        "id": "uuid-placeholder",
-        "type": "column",
-        "name": "List Content",
-        "content": [
-          {
-            "id": "uuid-placeholder",
-            "type": "heading2",
-            "name": "Slide Heading",
-            "content": "Core Langchain Components"
+            "content": "Web3 relies on a robust infrastructure. The primary component is the blockchain protocol itself, like Ethereum or Solana."
           },
           {
             "id": "uuid-placeholder",
-            "type": "bulletList",
-            "name": "Component List",
-            "content": ["Models", "Prompts", "Chains", "Indexes"]
+            "name": "Paragraph",
+            "type": "paragraph",
+            "content": "Decentralized storage solutions like IPFS are crucial for hosting data without a central server."
+          },
+          {
+            "id": "uuid-placeholder",
+            "name": "Paragraph",
+            "type": "paragraph",
+            "content": "Oracles act as bridges, linking blockchains to real-world data sources, which is essential for smart contracts."
           }
-        ]
+        ],
+        "className": "border"
       }
-    }
+    ]
+  },
+  "className": "p-4 mx-auto flex justify-center items-center",
+  "slideName": "Web3 Infrastructure"
+}
 
-    Now, based on all these rules and the outlines, generate the complete JSON array for the presentation.
+════════════════════════════════════════════════════════════════
+🚀 YOUR TASK
+════════════════════════════════════════════════════════════════
+
+Based on the ${outlineArray.length} outlines provided:
+1.  Generate a complete JSON array of slide objects.
+2.  For each slide, select the most appropriate layout \`type\` from the 7 options.
+3.  Populate the layout with relevant content components and well-written text.
+4.  Ensure the final JSON is valid and strictly follows the structure shown in the examples.
+
+Generate the complete JSON array now!
   `;
 
   try {
     console.log("🟢 Generating rich layouts based on outlines...");
-    
+
     const { object } = await generateObject({
-      model: google("gemini-1.5-flash"),
-      schema: ReferedLayoutsSchema,
-      system: `You are a creative AI assistant that generates presentation slide layouts in valid JSON format based on user-provided outlines and a rich set of component types.`,
+      model: google("gemini-2.5-flash"), // Consider using 1.5 Flash or Pro for complex JSON
+      schema: ReferedLayoutsSchema, // Assuming this Zod schema matches the new structure
+      system: `You are a creative AI assistant that generates presentation slide layouts in a specific, valid JSON format based on user-provided outlines and a rich set of component types. You must adhere strictly to the provided examples and structural rules.`,
       prompt: prompt,
     });
 
@@ -1506,20 +886,24 @@ export const generateLayoutsJSON = async (outlineArray: string[]) => {
       return { status: 400, error: "No content was generated by the AI." };
     }
 
-    object.forEach(populateUuids);
+    // Populate UUIDs and sanitize the generated content
+    const sanitizedSlides = object.map(slide => {
+      populateUuids(slide);
+      return sanitizeSlide(slide);
+    }).filter(slide => slide !== null);
 
-    console.log("🟢 Rich layouts generated successfully 🟢");
-    return { status: 200, data: object };
+    console.log("🟢 Rich layouts generated and sanitized successfully 🟢");
+    return { status: 200, data: sanitizedSlides };
 
   } catch (error) {
       console.error("🔴 AI Generation ERROR:", error);
-      // Add more detailed error logging for Zod validation issues
       if (error instanceof Error && error.message.includes('Validation')) {
           console.error("Zod Validation Error Details:", (error as any).cause);
       }
       return { status: 500, error: "An error occurred during AI content generation." };
   }
 }
+
 
 
 
@@ -1579,116 +963,3 @@ export const generateLayouts = async (projectId: string, theme: string) => {
       }
 };
 
-
-const q = [
-  {
-    id: "52393323-f662-4cde-8a99-0165bc7b7a27",
-    type: "title",
-    content: {
-      id: "404651f2-1692-4e27-af6d-215e779d378d",
-      name: "Langchain: A Framework for Language Model Applications",
-      type: "heading1",
-      content: "",
-    },
-    className: "slide-title",
-    slideName: "Langchain Introduction",
-  },
-  {
-    id: "b46d414c-ee40-47e1-b37b-5cfa4109b971",
-    type: "paragraph",
-    content: {
-      id: "e8c62102-f06a-44e7-bb90-d59b9d8e7cf6",
-      name: "Langchain empowers developers to build applications that are both data-aware, meaning they can access and process external data, and agentic, capable of making decisions and taking actions.",
-      type: "paragraph",
-      content: "",
-    },
-    className: "slide-content",
-    slideName: "Data-Aware and Agentic Applications",
-  },
-  {
-    id: "94597d7b-ebcd-44e8-9869-782451d9cf93",
-    type: "bulletList",
-    content: {
-      id: "59d1ebc9-3851-49eb-8191-fef4351d0dee",
-      name: "Core Langchain Components",
-      type: "bulletList",
-      content: ["Models", "Prompts", "Chains", "Indexes"],
-    },
-    className: "slide-content",
-    slideName: "Core Components",
-  },
-  {
-    id: "dff99b4b-858d-4391-a04a-43a53676d7ea",
-    type: "column",
-    content: {
-      id: "ffbc950b-1ffd-44e4-a87f-58f41a574449",
-      name: "Modules",
-      type: "resizable-column",
-      content: [
-        {
-          id: "86aa860c-34f0-42e7-944d-96012b554c63",
-          name: "Model I/O",
-          type: "bulletList",
-          content: ["LLMs", "Embeddings"],
-        },
-        {
-          id: "444089c5-7921-49bc-80f8-cc8971a30846",
-          name: "Data Connection",
-          type: "bulletList",
-          content: ["Document Loaders", "Vector Databases"],
-        },
-        {
-          id: "155d1837-571c-45ec-be43-a3ff8fd9d221",
-          name: "Chains & Agents",
-          type: "bulletList",
-          content: ["Sequential Chains", "Agents"],
-        },
-      ],
-    },
-    className: "slide-content",
-    slideName: "Langchain Modules",
-  },
-  {
-    id: "e0b29a8c-594d-4f91-b498-d06d51103cc6",
-    type: "bulletList",
-    content: {
-      id: "8a052e19-df48-4fda-87e1-b317ba47e39e",
-      name: "Langchain Applications",
-      type: "bulletList",
-      content: [
-        "Chatbots",
-        "Question Answering Systems",
-        "Text Summarization Tools",
-        "Data-driven Agents",
-      ],
-    },
-    className: "slide-content",
-    slideName: "Use Cases",
-  },
-  {
-    id: "0129d993-f7dd-4355-ad7f-006bb53774f2",
-    type: "calloutBox",
-    content: {
-      id: "c71db744-1a38-4cdf-93f2-b0ced646c3d5",
-      name: "Key Advantage",
-      type: "calloutBox",
-      content:
-        "Langchain streamlines development with pre-built components and abstractions, reducing boilerplate code and accelerating development cycles.",
-      callOutType: "success",
-    },
-    className: "slide-content",
-    slideName: "Simplified Development",
-  },
-  {
-    id: "4a438166-c5ef-49cf-b865-726233671d32",
-    type: "paragraph",
-    content: {
-      id: "765e00a0-32ce-4d8d-83ca-2916be154cde",
-      name: "Langchain is a powerful and versatile framework for building the next generation of AI applications.",
-      type: "paragraph",
-      content: "",
-    },
-    className: "slide-content",
-    slideName: "Conclusion",
-  },
-];

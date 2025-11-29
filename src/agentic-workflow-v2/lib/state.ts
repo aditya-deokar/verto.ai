@@ -74,5 +74,21 @@ export interface LayoutTemplate {
   slideName: string;
   className: string;
   requiresImage: boolean;
-  contentStructure: 'title-only' | 'title-content' | 'two-column' | 'three-column' | 'image-text';
+  contentStructure: 
+    | 'title-only' 
+    | 'title-content' 
+    | 'two-column' 
+    | 'three-column'
+    | 'four-column'
+    | 'image-text'
+    | 'image-grid'
+    | 'stat-showcase'
+    | 'comparison'
+    | 'quote'
+    | 'timeline'
+    | 'image-overlay'
+    | 'feature-grid'
+    | 'divider'
+    | 'process'
+    | 'cta';
 }

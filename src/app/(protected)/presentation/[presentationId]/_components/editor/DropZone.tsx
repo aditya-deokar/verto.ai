@@ -1,7 +1,7 @@
 'use client'
 
 import React from 'react'
-import { useDrop } from 'react-dnd'
+import { useDrop, useDragDropManager } from 'react-dnd'
 import { v4 as uuidv4 } from 'uuid'
 import { cn } from '@/lib/utils'
 import { useSlideStore } from '@/store/useSlideStore'
@@ -14,7 +14,10 @@ type DropZoneProps = {
   slideId: string
 }
 
-const DropZone = ({ index, parentId, slideId }: DropZoneProps) => {
+/**
+ * Inner component that uses the actual DnD hooks
+ */
+const DropZoneInner = ({ index, parentId, slideId }: DropZoneProps) => {
   const addComponentInSlide = useSlideStore((state) => state.addComponentInSlide)
 
   const [{ isOver, canDrop }, drop] = useDrop({
@@ -59,6 +62,29 @@ const DropZone = ({ index, parentId, slideId }: DropZoneProps) => {
       )}
     </div>
   )
+}
+
+/**
+ * Wrapper component that checks for DnD context
+ */
+const DropZone = (props: DropZoneProps) => {
+  // Check if we're inside a DndProvider by trying to get the manager
+  // This is a safe way to check without throwing
+  let hasDndContext = false;
+  
+  try {
+    const manager = useDragDropManager();
+    hasDndContext = !!manager;
+  } catch {
+    hasDndContext = false;
+  }
+
+  if (!hasDndContext) {
+    // Return null if no DnD context - this prevents the error
+    return null;
+  }
+
+  return <DropZoneInner {...props} />;
 }
 
 export default DropZone
