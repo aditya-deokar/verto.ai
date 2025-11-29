@@ -3,7 +3,36 @@
 import { generateObject } from "ai";
 import { model, modelConfigs } from "../lib/llm";
 import { AdvancedPresentationState } from "../lib/state";
-import { bulkContentSchema, validateSlideCount } from "../lib/validators";
+import { bulkContentSchema } from "../lib/validators";
+
+/**
+ * Ensure we have exactly the right number of content items
+ * Pads with default content if too few, truncates if too many
+ */
+function normalizeContentCount(
+  slidesContent: Array<{ title: string; content: string }>,
+  outlines: string[],
+  expectedCount: number
+): Array<{ title: string; content: string }> {
+  // If we have enough, just take what we need
+  if (slidesContent.length >= expectedCount) {
+    return slidesContent.slice(0, expectedCount);
+  }
+
+  // If we have fewer, pad with generated defaults based on outlines
+  const normalized = [...slidesContent];
+  
+  for (let i = slidesContent.length; i < expectedCount; i++) {
+    const outline = outlines[i] || `Slide ${i + 1}`;
+    normalized.push({
+      title: outline.length > 80 ? outline.slice(0, 77) + "..." : outline,
+      content: `Key points about ${outline}:\n- Important concept to understand\n- Essential for your knowledge\n- Building block for advanced topics`,
+    });
+    console.log(`   ⚠️ Generated fallback content for slide ${i + 1}: "${outline}"`);
+  }
+
+  return normalized;
+}
 
 /**
  * Agent 3: Content Writer (Bulk)
@@ -135,7 +164,10 @@ Content: "Traditional:\n- Manual data analysis (hours/days)\n- Limited personali
 ═══════════════════════════════════════════════════════════════
 🚀 GENERATE NOW
 ═══════════════════════════════════════════════════════════════
-Create compelling, professional content for ALL ${outlines.length} slides in the EXACT same order. Make this presentation unforgettable!`;
+⚠️ CRITICAL: You MUST generate EXACTLY ${outlines.length} slides - one for each outline above.
+Do NOT skip any slides. Do NOT combine slides. Do NOT add extra slides.
+
+Generate compelling, professional content for ALL ${outlines.length} slides in the EXACT same order as the outlines above. Make this presentation unforgettable!`;
 
     console.log("🤖 Calling AI to generate content...");
 
@@ -146,14 +178,13 @@ Create compelling, professional content for ALL ${outlines.length} slides in the
       temperature: modelConfigs.content.temperature,
     });
 
-    const slidesContent = object.slidesContent;
+    let slidesContent = object.slidesContent;
 
-    // Validate we got the right number of slides
-    validateSlideCount(
-      slidesContent.length,
-      outlines.length,
-      "Content Writer"
-    );
+    // Normalize slide count - handle cases where AI generates wrong number
+    if (slidesContent.length !== outlines.length) {
+      console.warn(`⚠️  AI generated ${slidesContent.length} slides but expected ${outlines.length}. Normalizing...`);
+      slidesContent = normalizeContentCount(slidesContent, outlines, outlines.length);
+    }
 
     console.log(`✅ Generated content for ${slidesContent.length} slides:`);
     slidesContent.forEach((slide, i) => {

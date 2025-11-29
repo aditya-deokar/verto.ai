@@ -1277,17 +1277,76 @@ function buildLayoutContent(
 }
 
 /**
+ * Recursively validate and fix content items to ensure all have required fields
+ */
+function validateContent(content: any): any {
+  if (!content) return null;
+  
+  // If it's an array, validate each item
+  if (Array.isArray(content)) {
+    return content.map(validateContent).filter(item => item !== null);
+  }
+  
+  // For string content (like in bulletList), return as-is
+  if (typeof content === 'string') {
+    return content;
+  }
+  
+  // If it's not an object, return as-is
+  if (typeof content !== 'object') {
+    return content;
+  }
+  
+  // Ensure type exists
+  if (!content.type) {
+    if (Array.isArray(content.content) && content.content.some((c: any) => typeof c === 'object')) {
+      content.type = 'column';
+    } else if (typeof content.content === 'string') {
+      content.type = 'paragraph';
+    } else {
+      console.warn('Skipping content without type:', content);
+      return null;
+    }
+  }
+  
+  // Ensure id exists
+  if (!content.id) {
+    content.id = uuidv4();
+  }
+  
+  // Ensure name exists
+  if (!content.name) {
+    content.name = content.type || 'Component';
+  }
+  
+  // Recursively validate nested content if it's an array of objects
+  if (Array.isArray(content.content)) {
+    content.content = content.content.map((item: any) => {
+      if (typeof item === 'object' && item !== null) {
+        return validateContent(item);
+      }
+      return item; // Keep strings as-is (for lists)
+    }).filter((item: any) => item !== null);
+  }
+  
+  return content;
+}
+
+/**
  * Compile a single slide into final JSON structure
  */
 function compileSingleSlide(slide: SlideGenerationData): Slide {
   const layoutType = slide.layoutType || "blank-card";
   const template = getLayoutTemplate(layoutType);
   
-  const content = buildLayoutContent(slide, layoutType);
+  let content = buildLayoutContent(slide, layoutType);
+  
+  // Validate and fix the content structure
+  content = validateContent(content);
 
   return {
     id: uuidv4(),
-    slideName: slide.outline,
+    slideName: slide.outline || "Slide",
     type: layoutType,
     className: template?.className || "p-8 mx-auto flex justify-center items-center min-h-[200px]",
     content: content,

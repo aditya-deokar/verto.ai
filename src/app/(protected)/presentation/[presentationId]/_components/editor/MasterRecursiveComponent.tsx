@@ -73,6 +73,12 @@ const getAnimationConfig = (contentType: string) => {
 
 const ContentRenderer: React.FC<MasterRecursiveComponentProps> = React.memo(
   ({ content, onContentChange, slideId, index, isPreview, isEditable }) => {
+    // Safety check: if content or content.type is undefined, return null early
+    if (!content || !content.type) {
+      // Don't spam console - silently skip invalid content
+      return null;
+    }
+
     const handleChange = useCallback(
       (e: React.ChangeEvent<HTMLTextAreaElement>) => {
         onContentChange(content.id, e.target.value);
@@ -373,7 +379,7 @@ const ContentRenderer: React.FC<MasterRecursiveComponentProps> = React.memo(
                     </React.Fragment>
                   )
                 )
-              ) : isEditable ? (
+              ) : !isPreview && isEditable ? (
                 <DropZone index={0} parentId={content.id} slideId={slideId} />
               ) : null}
             </motion.div>

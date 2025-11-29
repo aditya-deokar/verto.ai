@@ -30,6 +30,7 @@ const ThumnailPreview = ({ slide ,theme }: Props) => {
                     content={slide.content}
                     onContentChange={()=>{}}
                     isPreview={true}
+                    isEditable={false}
                     slideId={slide.id}
                 />
             </div>) : (
