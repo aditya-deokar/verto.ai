@@ -15,7 +15,7 @@ const singleSlideContentSchema = z.object({
 // This is the main schema for our bulk generation call.
 // It expects an object containing an array of slide content.
 const bulkContentSchema = z.object({
-  slidesContent: z.array(singleSlideContentSchema).describe("An array of content objects, one for each slide outline provided."),
+  slidesContent: z.array(singleSlideContentSchema).describe("An array of content objects, one for each slide outline-solid provided."),
 });
 
 /**

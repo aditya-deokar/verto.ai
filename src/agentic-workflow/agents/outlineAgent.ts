@@ -23,7 +23,7 @@ export async function runOutlineGenerator(state: PresentationGraphState): Promis
     const { object } = await generateObject({
       model: model,
       schema: outlineSchema,
-      prompt: `You are an expert presentation creator. Given the following topic, please generate a clear and logical outline for a presentation. The topic is: "${state.userInput}"`,
+      prompt: `You are an expert presentation creator. Given the following topic, please generate a clear and logical outline-solid for a presentation. The topic is: "${state.userInput}"`,
     });
 
     console.log("✅ Outlines generated successfully.");
@@ -46,7 +46,7 @@ export async function runOutlineGenerator(state: PresentationGraphState): Promis
   } catch (error) {
     console.error("🔴 Error in Outline Generator Agent:", error);
     return {
-      error: "Failed to generate a valid outline for the presentation.",
+      error: "Failed to generate a valid outline-solid for the presentation.",
     };
   }
 }

@@ -133,7 +133,7 @@ export function VertoTestimonialsSection() {
                     {/* <motion.img
                       src={testimonial.image || "/placeholder.svg"}
                       alt={testimonial.name}
-                      className="w-12 h-12 rounded-full bg-gradient-to-br from-red-500 to-orange-500"
+                      className="w-12 h-12 rounded-full bg-linear-to-br from-red-500 to-orange-500"
                       whileHover={{ scale: 1.1 }}
                       transition={{ type: "spring", stiffness: 300 }}
                     /> */}

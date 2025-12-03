@@ -17,7 +17,7 @@ export function VertoFinalCtaSection() {
           viewport={{ once: true }}
         >
           <ShineBorder borderClassName="border border-red-500/30 rounded-xl">
-            <div className="p-12 dark:bg-gradient-to-br dark:from-black dark:via-black dark:to-red-900/20 rounded-xl text-center">
+            <div className="p-12 dark:bg-linear-to-br dark:from-black dark:via-black dark:to-red-900/20 rounded-xl text-center">
               <motion.div
                 className="mb-6"
                 initial={{ scale: 0, rotate: -180 }}
@@ -38,7 +38,7 @@ export function VertoFinalCtaSection() {
                 viewport={{ once: true }}
               >
                 Ready to Revolutionize Your{" "}
-                <span className="bg-clip-text text-transparent bg-gradient-to-r from-red-500 to-orange-500">
+                <span className="bg-clip-text text-transparent bg-linear-to-r from-red-500 to-orange-500">
                   Presentations?
                 </span>
               </motion.h2>
@@ -63,7 +63,7 @@ export function VertoFinalCtaSection() {
                   <div className="flex gap-4 p-2 bg-background rounded-xl">
                      <Input
                         placeholder="Enter your Email Id"
-                        className="border-none outline-none focus:outline-none focus:ring-0 focus-visible:ring-0 focus:border-transparent shadow-none w-full"
+                        className="border-none outline-hidden focus:outline-hidden focus:ring-0 focus-visible:ring-0 focus:border-transparent shadow-none w-full"
                       />
                     <motion.div  whileTap={{ scale: 0.95 }}>
                       <Button className="verto-bg hover:opacity-90 gap-2 px-6">

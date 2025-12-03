@@ -53,7 +53,7 @@ const ColumnComponent = ({
         direction="horizontal"
         className={cn(
           'h-full w-full flex ',
-          !isEditable && '!border-0',
+          !isEditable && 'border-0!',
           className
         )}
       >

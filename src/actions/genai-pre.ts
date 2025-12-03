@@ -1254,7 +1254,7 @@
       ],
     },
     className:
-      "flex flex-col justify-center items-center text-center min-h-screen p-12 bg-gradient-to-br from-blue-500 to-purple-600 text-white",
+      "flex flex-col justify-center items-center text-center min-h-screen p-12 bg-linear-to-br from-blue-500 to-purple-600 text-white",
     slideName: "Title Slide - Python Innovation",
   },
   {
@@ -1440,7 +1440,7 @@
       className: "flex flex-col gap-8 items-center max-w-3xl mx-auto",
     },
     className:
-      "flex flex-col justify-center items-center text-center min-h-screen p-12 bg-gradient-to-br from-green-500 to-teal-600 text-white",
+      "flex flex-col justify-center items-center text-center min-h-screen p-12 bg-linear-to-br from-green-500 to-teal-600 text-white",
     slideName: "Conclusion and CTA",
   },
 ];

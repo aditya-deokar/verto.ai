@@ -1034,7 +1034,7 @@ export const BigNumberLayout = {
             id: uuidv4(),
             type: "column" as ContentType,
             name: "Column",
-            className: "flex items-center justify-center bg-gradient-to-br from-primary/10 to-primary/5 rounded-lg p-8",
+            className: "flex items-center justify-center bg-linear-to-br from-primary/10 to-primary/5 rounded-lg p-8",
             content: [
               {
                 id: uuidv4(),
@@ -1482,7 +1482,7 @@ export const IconGrid = {
 export const SectionDivider = {
   slideName: "Section Divider",
   type: "sectionDivider",
-  className: "p-12 mx-auto flex items-center justify-center min-h-[400px] bg-gradient-to-br from-primary/10 to-primary/5",
+  className: "p-12 mx-auto flex items-center justify-center min-h-[400px] bg-linear-to-br from-primary/10 to-primary/5",
   content: {
     id: uuidv4(),
     type: "column" as ContentType,

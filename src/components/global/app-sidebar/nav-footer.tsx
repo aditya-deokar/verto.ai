@@ -62,7 +62,7 @@ export function NavFooter({ prismaUser }: { prismaUser: User }) {
                 </span>
               </div>
 
-              <div className="w-full bg-vivid-gradient p-[1px] rounded-full">
+              <div className="w-full bg-vivid-gradient p-px rounded-full">
                 <Button
                   className="w-full border-vivid bg-primary-10 hover:bg-transparent text-primary rounded-full font-bold "
                   variant={"default"}

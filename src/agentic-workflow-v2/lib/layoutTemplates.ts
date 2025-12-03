@@ -165,7 +165,7 @@ export const LAYOUT_TEMPLATES: LayoutTemplate[] = [
   {
     type: "sectionDivider",
     slideName: "Section Divider",
-    className: "p-12 mx-auto flex items-center justify-center min-h-[400px] bg-gradient-to-br from-primary/10 to-primary/5",
+    className: "p-12 mx-auto flex items-center justify-center min-h-[400px] bg-linear-to-br from-primary/10 to-primary/5",
     requiresImage: false,
     contentStructure: "divider",
   },

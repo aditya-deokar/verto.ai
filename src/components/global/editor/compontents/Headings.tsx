@@ -35,7 +35,7 @@ const createHeading = (displayName: string, defaultClassName: string, useAccentC
       return (
         <textarea
           className={cn(
-            `w-full bg-transparent ${defaultClassName} font-bold text-gray-900 placeholder:text-gray-300/50 focus:outline-none resize-none overflow-hidden leading-[1.1] tracking-tight`,
+            `w-full bg-transparent ${defaultClassName} font-bold text-gray-900 placeholder:text-gray-300/50 focus:outline-hidden resize-none overflow-hidden leading-[1.1] tracking-tight`,
             isPreview ? 'cursor-default' : '',
             className
           )}

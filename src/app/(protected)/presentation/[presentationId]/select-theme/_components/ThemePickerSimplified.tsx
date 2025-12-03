@@ -93,7 +93,7 @@ const ThemePickerSimplified = ({ onThemeSelect, selectedTheme, themes }: Props) 
                     borderLeft: `1px solid ${selectedTheme.accentColor}20`,
                 }}
             >
-                <div className='p-8 space-y-6 flex-shrink-0'>
+                <div className='p-8 space-y-6 shrink-0'>
                     {/* Header */}
                     <div className='space-y-2'>
                         <h2 
@@ -129,7 +129,7 @@ const ThemePickerSimplified = ({ onThemeSelect, selectedTheme, themes }: Props) 
                 </div>
 
                 {/* Theme Selection */}
-                <ScrollArea className='flex-grow px-8 pb-8'>
+                <ScrollArea className='grow px-8 pb-8'>
                     <div className='grid grid-cols-1 gap-4 px-2'>
                         {themes.map((theme) => (
                             <motion.div

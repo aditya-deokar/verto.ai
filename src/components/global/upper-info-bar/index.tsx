@@ -12,7 +12,7 @@ import { ThemeSwitcher } from "../mode-toggle";
 
 const UpperInfoBar = ({user}:{user:User}) => {
   return (
-    <header className="sticky top-0 z-[10] flex shrink-0 flex-wrap items-center gap-2  bg-background p-4 justify-between">
+    <header className="sticky top-0 z-10 flex shrink-0 flex-wrap items-center gap-2  bg-background p-4 justify-between">
       <SidebarTrigger className="-ml-1" />
       <Separator orientation="vertical" className="mr-2 h-4" />
 

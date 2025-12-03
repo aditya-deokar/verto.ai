@@ -157,7 +157,7 @@ const ThemePreview = (props: Props) => {
             color:selectedTheme.accentColor,
             fontFamily:selectedTheme.fontFamily,
         }}>
-            <div className='flex-grow overflow-y-hidden '>
+            <div className='grow overflow-y-hidden '>
                 <div className='p-12 flex flex-col items-center min-h-screen'>
                     <Button
                     variant={"outline"}
@@ -174,7 +174,7 @@ const ThemePreview = (props: Props) => {
                         Back
                     </Button>
 
-                    <div className='w-full flex justify-center items-center relative flex-grow'>
+                    <div className='w-full flex justify-center items-center relative grow'>
                         <ThemeCard
                             title='Quick Start'
                             content={leftCardContent}

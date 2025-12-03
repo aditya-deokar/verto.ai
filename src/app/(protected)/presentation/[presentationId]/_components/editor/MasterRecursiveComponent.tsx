@@ -461,7 +461,7 @@ export const MasterRecursiveComponent: React.FC<MasterRecursiveComponentProps> =
             index={index}
           />
           {isEditable && (
-            <div className="absolute -top-2 -right-2 opacity-0 group-hover/item:opacity-100 transition-all duration-200 z-[50] flex gap-1">
+            <div className="absolute -top-2 -right-2 opacity-0 group-hover/item:opacity-100 transition-all duration-200 z-50 flex gap-1">
               <div
                 ref={drag as unknown as React.RefObject<HTMLDivElement>}
                 className="cursor-grab active:cursor-grabbing"

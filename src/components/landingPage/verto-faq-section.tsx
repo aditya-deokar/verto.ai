@@ -56,7 +56,7 @@ export function VertoFaqSection() {
         >
           <h2 className="text-3xl md:text-5xl font-bold mb-4">
             Questions? We have{" "}
-            <span className="bg-clip-text text-transparent bg-gradient-to-r from-red-500 to-orange-500">answers</span>
+            <span className="bg-clip-text text-transparent bg-linear-to-r from-red-500 to-orange-500">answers</span>
           </h2>
         </motion.div>
 

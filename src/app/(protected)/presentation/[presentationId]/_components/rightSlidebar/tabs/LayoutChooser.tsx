@@ -39,7 +39,7 @@ export const DraggableLayoutItem = ({
     >
       {isNew && (
         <Badge 
-          className="absolute -top-2 -right-2 z-10 bg-gradient-to-r from-orange-500 to-red-500 border-none"
+          className="absolute -top-2 -right-2 z-10 bg-linear-to-r from-orange-500 to-red-500 border-none"
           variant="default"
         >
           <Sparkles className="w-3 h-3 mr-1" />
@@ -86,18 +86,18 @@ const LayoutChooser = () => {
   return (
     <div className="flex flex-col h-full max-h-full overflow-hidden bg-background">
       {/* Search Bar */}
-      <div className="p-4 border-b flex-shrink-0 bg-muted/50">
+      <div className="p-4 border-b shrink-0 bg-muted/50">
         <input
           type="text"
           placeholder="Search layouts..."
           value={searchQuery}
           onChange={(e) => setSearchQuery(e.target.value)}
-          className="w-full px-3 py-2 rounded-md border bg-background focus:outline-none focus:ring-2 focus:ring-primary"
+          className="w-full px-3 py-2 rounded-md border bg-background focus:outline-hidden focus:ring-2 focus:ring-primary"
         />
       </div>
 
       {/* Layout Count Badge */}
-      <div className="px-4 py-2 flex items-center justify-between flex-shrink-0 bg-muted/50 border-b">
+      <div className="px-4 py-2 flex items-center justify-between shrink-0 bg-muted/50 border-b">
         <span className="text-sm font-medium">
           {layouts.reduce((acc, group) => acc + group.layouts.length, 0)} Layouts Available
         </span>
@@ -123,7 +123,7 @@ const LayoutChooser = () => {
                 </h3>
                 {group.name === "Advanced Layouts" && (
                   <Badge 
-                    className="bg-gradient-to-r from-orange-500 to-red-500 text-white border-none"
+                    className="bg-linear-to-r from-orange-500 to-red-500 text-white border-none"
                     variant="default"
                   >
                     <Sparkles className="w-3 h-3 mr-1" />
@@ -155,7 +155,7 @@ const LayoutChooser = () => {
 
       {/* Footer Info */}
       <div 
-        className="p-3 border-t text-xs text-center flex-shrink-0 bg-muted/30 text-muted-foreground"
+        className="p-3 border-t text-xs text-center shrink-0 bg-muted/30 text-muted-foreground"
       >
         Drag any layout to add to your slide
       </div>

@@ -141,7 +141,7 @@ Now generate your comprehensive outline:`;
   } catch (error) {
     console.error("🔴 Error generating outline:", error);
     return {
-      error: `Failed to generate outline: ${error instanceof Error ? error.message : "Unknown error"}`,
+      error: `Failed to generate outline-solid: ${error instanceof Error ? error.message : "Unknown error"}`,
     };
   }
 }

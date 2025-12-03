@@ -168,12 +168,12 @@ const PresentationMode = ({ onClose }: Props) => {
                 {/* Top Controls Overlay */}
                 <div className="absolute top-0 left-0 w-full p-4 flex justify-between items-start opacity-0 group-hover:opacity-100 transition-opacity duration-300 z-50">
                     <div className="flex items-center gap-4">
-                        <div className='text-white bg-black/50 px-3 py-1 rounded-md text-sm font-medium backdrop-blur-sm'>
+                        <div className='text-white bg-black/50 px-3 py-1 rounded-md text-sm font-medium backdrop-blur-xs'>
                             {currentSlideIndex + 1} / {slides.length}
                         </div>
 
                         {showTimer && (
-                            <div className='flex items-center gap-2 text-white bg-black/50 px-3 py-1 rounded-md text-sm font-medium backdrop-blur-sm'>
+                            <div className='flex items-center gap-2 text-white bg-black/50 px-3 py-1 rounded-md text-sm font-medium backdrop-blur-xs'>
                                 <Clock className="w-4 h-4" />
                                 {formatTime(elapsedTime)}
                                 <button onClick={() => setIsTimerRunning(!isTimerRunning)} className="hover:text-primary transition-colors">

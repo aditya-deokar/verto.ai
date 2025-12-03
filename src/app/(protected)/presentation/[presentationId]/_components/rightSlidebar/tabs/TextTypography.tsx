@@ -36,7 +36,7 @@ const TextTypography = () => {
   return (
     <div className="flex flex-col h-full max-h-full overflow-hidden bg-background">
       {/* Header */}
-      <div className="p-4 border-b space-y-3 flex-shrink-0 bg-muted/50">
+      <div className="p-4 border-b space-y-3 shrink-0 bg-muted/50">
         <div className="flex items-center justify-between">
           <h2 className="font-bold flex items-center gap-2">
             <Type className="w-5 h-5" />
@@ -53,12 +53,12 @@ const TextTypography = () => {
           placeholder="Search components..."
           value={searchQuery}
           onChange={(e) => setSearchQuery(e.target.value)}
-          className="w-full px-3 py-2 rounded-md border bg-background focus:outline-none focus:ring-2 focus:ring-primary text-sm"
+          className="w-full px-3 py-2 rounded-md border bg-background focus:outline-hidden focus:ring-2 focus:ring-primary text-sm"
         />
       </div>
 
       {/* Component Count */}
-      <div className="px-4 py-2 flex items-center justify-between flex-shrink-0 bg-muted/50 border-b">
+      <div className="px-4 py-2 flex items-center justify-between shrink-0 bg-muted/50 border-b">
         <span className="text-sm font-medium">
           {filteredCount} Components Available
         </span>
@@ -103,7 +103,7 @@ const TextTypography = () => {
       </ScrollArea>
 
       {/* Footer Info */}
-      <div className="p-3 border-t text-xs text-center space-y-1 flex-shrink-0 bg-muted/30 text-muted-foreground">
+      <div className="p-3 border-t text-xs text-center space-y-1 shrink-0 bg-muted/30 text-muted-foreground">
         <p>Showing {filteredCount} of {totalComponents} components</p>
         <p className="text-[10px]">Drag any component to add to your slide</p>
       </div>
