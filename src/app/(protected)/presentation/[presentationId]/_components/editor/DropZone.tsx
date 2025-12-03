@@ -19,14 +19,16 @@ type DropZoneProps = {
  */
 const DropZoneInner = ({ index, parentId, slideId }: DropZoneProps) => {
   const addComponentInSlide = useSlideStore((state) => state.addComponentInSlide)
+  const moveComponentInSlide = useSlideStore((state) => state.moveComponentInSlide)
 
   const [{ isOver, canDrop }, drop] = useDrop({
-    accept: 'CONTENT_ITEM',
+    accept: ['CONTENT_ITEM', 'SLIDE_ITEM'],
     drop: (item: {
       type: string
       componentType: string
       label: string
       component: ContentItem
+      id?: string
     }) => {
       if (item.type === 'component') {
         addComponentInSlide(
@@ -38,6 +40,8 @@ const DropZoneInner = ({ index, parentId, slideId }: DropZoneProps) => {
           parentId,
           index
         )
+      } else if (item.type === 'move' && item.id) {
+        moveComponentInSlide(slideId, item.id, parentId, index);
       }
     },
     collect: (monitor) => ({
@@ -50,14 +54,13 @@ const DropZoneInner = ({ index, parentId, slideId }: DropZoneProps) => {
     <div
       ref={drop as unknown as React.RefObject<HTMLDivElement>}
       className={cn(
-        'h-3 w-full transition-all duration-200',
-        isOver && canDrop ? 'border-blue-500 bg-blue-100' : 'border-gray-300',
-        'hover:border-blue-300'
+        'w-full transition-all duration-200 rounded-md',
+        isOver && canDrop ? 'h-24 border-2 border-dashed border-blue-500 bg-blue-50' : 'h-4 hover:h-8 border border-transparent hover:border-blue-300 hover:bg-blue-50/50',
       )}
     >
       {isOver && canDrop && (
-        <div className="w-full h-full flex text-sm items-center justify-center text-green-600">
-          Drop here 
+        <div className="w-full h-full flex text-sm items-center justify-center text-blue-600 font-medium">
+          Drop here
         </div>
       )}
     </div>
@@ -71,7 +74,7 @@ const DropZone = (props: DropZoneProps) => {
   // Check if we're inside a DndProvider by trying to get the manager
   // This is a safe way to check without throwing
   let hasDndContext = false;
-  
+
   try {
     const manager = useDragDropManager();
     hasDndContext = !!manager;

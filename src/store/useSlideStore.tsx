@@ -9,7 +9,7 @@ interface SlideState {
   project: Project | null;
   setProject: (id: Project | null) => void;
   slides: Slide[];
-  setSlides: (slides:any) => void;
+  setSlides: (slides: any) => void;
   currentSlide: number;
   currentTheme: Theme;
   addSlide: (slide: Slide) => void;
@@ -31,6 +31,17 @@ interface SlideState {
     parentId: string,
     index: number
   ) => void;
+  removeComponentFromSlide: (slideId: string, componentId: string) => void;
+  moveComponentInSlide: (
+    slideId: string,
+    componentId: string,
+    newParentId: string,
+    newIndex: number
+  ) => void;
+  undo: () => void;
+  redo: () => void;
+  past: Slide[][];
+  future: Slide[][];
   resetSlideStore: () => void;
 }
 
@@ -50,27 +61,54 @@ export const useSlideStore = create(
       project: null,
       setProject: (project) => set({ project }),
       slides: [],
+      past: [],
+      future: [],
       setSlides: (slides: any) => set({ slides }),
       currentSlide: 0,
       currentTheme: defaultTheme,
+      undo: () => set((state) => {
+        if (state.past.length === 0) return state;
+        const previous = state.past[state.past.length - 1];
+        const newPast = state.past.slice(0, -1);
+        return {
+          slides: previous,
+          past: newPast,
+          future: [state.slides, ...state.future]
+        };
+      }),
+      redo: () => set((state) => {
+        if (state.future.length === 0) return state;
+        const next = state.future[0];
+        const newFuture = state.future.slice(1);
+        return {
+          slides: next,
+          past: [...state.past, state.slides],
+          future: newFuture
+        };
+      }),
       addSlide: (slide: Slide) =>
         set((state) => {
+          const newPast = [...state.past, state.slides];
           const newSlides = [...state.slides];
           const insertIndex = slide.slideOrder;
           newSlides.splice(insertIndex as number, 0, { ...slide, id: uuidv4() });
 
-          for (let i = insertIndex !; i < newSlides.length; i++) {
+          for (let i = insertIndex!; i < newSlides.length; i++) {
             newSlides[i].slideOrder = i;
           }
 
-          return { slides: newSlides, currentSlide: insertIndex };
+          return { slides: newSlides, currentSlide: insertIndex, past: newPast, future: [] };
         }),
       removeSlide: (id) =>
         set((state) => ({
+          past: [...state.past, state.slides],
+          future: [],
           slides: state.slides.filter((slide) => slide.id !== id),
         })),
       updateSlide: (id, content) =>
         set((state) => ({
+          past: [...state.past, state.slides],
+          future: [],
           slides: state.slides.map((slide) =>
             slide.id === id ? { ...slide, content } : slide
           ),
@@ -101,6 +139,8 @@ export const useSlideStore = create(
           };
 
           return {
+            past: [...state.past, state.slides],
+            future: [],
             slides: state.slides.map((slide) =>
               slide.id === slideId
                 ? { ...slide, content: updateContentRecursively(slide.content) }
@@ -122,6 +162,8 @@ export const useSlideStore = create(
           const [removed] = newSlides.splice(fromIndex, 1);
           newSlides.splice(toIndex, 0, removed);
           return {
+            past: [...state.past, state.slides],
+            future: [],
             slides: newSlides.map((slide, index) => ({
               ...slide,
               slideOrder: index,
@@ -137,56 +179,165 @@ export const useSlideStore = create(
             s.slideOrder = i;
           });
 
-          return { slides: newSlides, currentSlide: index };
+          return { slides: newSlides, currentSlide: index, past: [...state.past, state.slides], future: [] };
         }),
-        addComponentInSlide: (
-          slideId: string,
-          item: ContentItem,
-          parentId: string,
-          index: number
-        ) => {
-          set((state) => {
-            const updatedSlides = state.slides.map((slide) => {
-              if (slide.id !== slideId) return slide;
-        
-              const updateContent = (content: ContentItem): ContentItem => {
-                // Check if this is the direct parent
-                if (content.id === parentId) {
-                  return {
-                    ...content,
-                    content: [
-                      ...(content.content as ContentItem[]).slice(0, index),
-                      item,
-                      ...(content.content as ContentItem[]).slice(index)
-                    ]
-                  };
-                }
-        
-                // Recursively search nested content
-                if (Array.isArray(content.content)) {
-                  return {
-                    ...content,
-                    content: (content.content as ContentItem[]).map(updateContent)
-                  };
-                }
-        
-                return content;
-              };
-        
-              return {
-                ...slide,
-                content: updateContent(slide.content)
-              };
-            });
-        
-            return { slides: updatedSlides };
+      addComponentInSlide: (
+        slideId: string,
+        item: ContentItem,
+        parentId: string,
+        index: number
+      ) => {
+        set((state) => {
+          const updatedSlides = state.slides.map((slide) => {
+            if (slide.id !== slideId) return slide;
+
+            const updateContent = (content: ContentItem): ContentItem => {
+              // Check if this is the direct parent
+              if (content.id === parentId && Array.isArray(content.content)) {
+                return {
+                  ...content,
+                  content: [
+                    ...(content.content as ContentItem[]).slice(0, index),
+                    item,
+                    ...(content.content as ContentItem[]).slice(index)
+                  ]
+                };
+              }
+
+              // Recursively search nested content
+              if (Array.isArray(content.content)) {
+                return {
+                  ...content,
+                  content: (content.content as ContentItem[]).map(updateContent)
+                };
+              }
+
+              return content;
+            };
+
+            return {
+              ...slide,
+              content: updateContent(slide.content)
+            };
           });
-        },
+
+          return { slides: updatedSlides, past: [...state.past, state.slides], future: [] };
+        });
+      },
+      removeComponentFromSlide: (slideId: string, componentId: string) => {
+        set((state) => {
+          const updatedSlides = state.slides.map((slide) => {
+            if (slide.id !== slideId) return slide;
+
+            const removeContent = (content: ContentItem): ContentItem => {
+              if (Array.isArray(content.content)) {
+                return {
+                  ...content,
+                  content: (content.content as ContentItem[])
+                    .filter((item) => item.id !== componentId)
+                    .map(removeContent),
+                };
+              }
+              return content;
+            };
+
+            return {
+              ...slide,
+              content: removeContent(slide.content),
+            };
+          });
+
+          return { slides: updatedSlides, past: [...state.past, state.slides], future: [] };
+        });
+      },
+      moveComponentInSlide: (
+        slideId: string,
+        componentId: string,
+        newParentId: string,
+        newIndex: number
+      ) => {
+        set((state) => {
+          const slideIndex = state.slides.findIndex((s) => s.id === slideId);
+          if (slideIndex === -1) return state;
+
+          const newSlides = [...state.slides];
+          const slide = { ...newSlides[slideIndex] };
+
+          let movedComponent: ContentItem | null = null;
+
+          // 1. Remove the component from its old position
+          const removeRecursive = (content: ContentItem): ContentItem => {
+            if (Array.isArray(content.content)) {
+              // Check if it's an array of ContentItems by checking the first element or if it's empty (doesn't matter if empty)
+              // But to be safe for TS, we cast or check.
+              // Since we are looking for an ID, we only care if it holds ContentItems.
+              const isContentItemArray = content.content.length === 0 || (typeof content.content[0] === 'object' && !Array.isArray(content.content[0]));
+
+              if (isContentItemArray) {
+                const items = content.content as ContentItem[];
+                const index = items.findIndex((c) => c.id === componentId);
+
+                if (index !== -1) {
+                  movedComponent = items[index];
+                  const newContent = [...items];
+                  newContent.splice(index, 1);
+
+                  // Adjust newIndex if we are moving within the same parent and removed from before the target
+                  if (content.id === newParentId && index < newIndex) {
+                    newIndex--;
+                  }
+
+                  return { ...content, content: newContent };
+                }
+
+                return {
+                  ...content,
+                  content: items.map(removeRecursive),
+                };
+              }
+            }
+            return content;
+          };
+
+          slide.content = removeRecursive(slide.content);
+
+          if (!movedComponent) return state;
+
+          // 2. Insert the component into the new position
+          const insertRecursive = (content: ContentItem): ContentItem => {
+            if (content.id === newParentId && Array.isArray(content.content)) {
+              // We assume if we are dropping into it, it accepts ContentItems
+              const items = content.content as ContentItem[];
+              const newContent = [...items];
+              newContent.splice(newIndex, 0, movedComponent!);
+              return { ...content, content: newContent };
+            }
+
+            if (Array.isArray(content.content)) {
+              const isContentItemArray = content.content.length === 0 || (typeof content.content[0] === 'object' && !Array.isArray(content.content[0]));
+              if (isContentItemArray) {
+                return {
+                  ...content,
+                  content: (content.content as ContentItem[]).map(insertRecursive),
+                };
+              }
+            }
+            return content;
+          };
+
+          slide.content = insertRecursive(slide.content);
+          newSlides[slideIndex] = slide;
+
+          return { slides: newSlides, past: [...state.past, state.slides], future: [] };
+        });
+      },
       resetSlideStore: () => {
         console.log("🟢 Resetting slide store");
         set({
           project: null,
           slides: [],
+          past: [],
+          future: [],
           currentSlide: 0,
           currentTheme: defaultTheme,
         });

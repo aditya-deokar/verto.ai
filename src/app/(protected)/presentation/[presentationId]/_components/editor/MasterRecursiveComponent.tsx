@@ -3,6 +3,7 @@
 import { ContentItem } from "@/lib/types";
 import React, { useCallback } from "react";
 import { motion } from "framer-motion";
+import { useDrag } from "react-dnd";
 import { cn } from "@/lib/utils";
 import DropZone from "./DropZone";
 import { Heading1, Heading2, Heading3, Heading4, Title } from "@/components/global/editor/compontents/Headings";
@@ -21,6 +22,10 @@ import {
   getComponentStyling,
   canEditComponent,
 } from "@/lib/slideComponents";
+import { Trash2, GripVertical } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { useSlideStore } from "@/store/useSlideStore";
+import { AnimatePresence } from "framer-motion";
 
 type MasterRecursiveComponentProps = {
   content: ContentItem;
@@ -406,6 +411,8 @@ export const MasterRecursiveComponent: React.FC<MasterRecursiveComponentProps> =
       isPreview = false,
       isEditable = true,
     }) => {
+      const { removeComponentFromSlide } = useSlideStore();
+
       if (isPreview) {
         return (
           <ContentRenderer
@@ -418,8 +425,33 @@ export const MasterRecursiveComponent: React.FC<MasterRecursiveComponentProps> =
           />
         );
       }
+
+      const handleDelete = (e: React.MouseEvent) => {
+        e.stopPropagation();
+        removeComponentFromSlide(slideId, content.id);
+      };
+
+      const [{ isDragging }, drag] = useDrag({
+        type: 'SLIDE_ITEM',
+        item: { type: 'move', id: content.id },
+        canDrag: isEditable && !content.restrictToDrop,
+        collect: (monitor) => ({
+          isDragging: !!monitor.isDragging(),
+        }),
+      });
+
       return (
-        <React.Fragment>
+        <motion.div
+          layout
+          initial={{ opacity: 0, scale: 0.95 }}
+          animate={{ opacity: 1, scale: 1 }}
+          exit={{ opacity: 0, scale: 0.95 }}
+          transition={{ duration: 0.2 }}
+          className={cn(
+            "group/item relative w-full h-full",
+            isDragging && "opacity-50"
+          )}
+        >
           <ContentRenderer
             content={content}
             onContentChange={onContentChange}
@@ -428,7 +460,31 @@ export const MasterRecursiveComponent: React.FC<MasterRecursiveComponentProps> =
             slideId={slideId}
             index={index}
           />
-        </React.Fragment>
+          {isEditable && (
+            <div className="absolute -top-2 -right-2 opacity-0 group-hover/item:opacity-100 transition-all duration-200 z-[50] flex gap-1">
+              <div
+                ref={drag as unknown as React.RefObject<HTMLDivElement>}
+                className="cursor-grab active:cursor-grabbing"
+              >
+                <Button
+                  variant="secondary"
+                  size="icon"
+                  className="h-6 w-6 rounded-full shadow-md hover:bg-blue-100"
+                >
+                  <GripVertical className="h-3 w-3 text-blue-600" />
+                </Button>
+              </div>
+              <Button
+                variant="destructive"
+                size="icon"
+                className="h-6 w-6 rounded-full shadow-md"
+                onClick={handleDelete}
+              >
+                <Trash2 className="h-3 w-3" />
+              </Button>
+            </div>
+          )}
+        </motion.div>
       );
     }
   );
