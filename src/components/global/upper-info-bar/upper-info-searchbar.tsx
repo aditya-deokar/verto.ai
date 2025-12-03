@@ -19,7 +19,7 @@ const SearchBar = () => {
       <Input
         type="text"
         placeholder="Search by title"
-        className="flex-grow bg-transparent border-none focus-visible:ring-0 focus-visible:ring-offset-0 ml-6"
+        className="grow bg-transparent border-none focus-visible:ring-0 focus-visible:ring-offset-0 ml-6"
       />
     </div>
   );

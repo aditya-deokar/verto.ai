@@ -76,7 +76,7 @@ const ThemeCard = ({
     }}
     >
         <Card
-        className='h-full shadow-2xl backdrop-blur-sm'
+        className='h-full shadow-2xl backdrop-blur-xs'
         style={{
             backgroundColor:theme.slideBackgroundColor,
             border:`1px solid ${theme.accentColor}20`,

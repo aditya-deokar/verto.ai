@@ -37,7 +37,7 @@ const RecentPrompts = () => {
 
   return (
     <motion.div variants={containerVariants} 
-    className='space-y-4 !mt-20'>
+    className='space-y-4 mt-20!'>
         <motion.h2 className='text-2xl font-semibold text-center' variants={itemVariants}>
             Your Recent Prompts
         </motion.h2>

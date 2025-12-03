@@ -6,7 +6,7 @@ import { generatePresentationGraph } from '@/agentic-workflow/actions/genai-grap
 
 const AGENT_STEPS_CONFIG: Omit<AgentStep, 'status' | 'details'>[] = [
   {
-    id: 'outline',
+    id: 'outline-solid',
     name: 'Outline Generator',
     description: 'Creating presentation structure and key topics'
   },

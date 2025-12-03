@@ -83,7 +83,7 @@ const ThemePicker = ({onThemeSelect, selectedTheme, themes}: Props) => {
           borderLeft:`1px solid ${selectedTheme.accentColor}20`,
         }}
       >
-        <div className='p-8 space-y-6 flex-shrink-0'>
+        <div className='p-8 space-y-6 shrink-0'>
           <div className='space-y-2'>
             <h2 className='text-3xl font-bold tracking-tight'
             style={{
@@ -113,7 +113,7 @@ const ThemePicker = ({onThemeSelect, selectedTheme, themes}: Props) => {
             {loading ? "Generating..." : "Generate Presentation"}
           </Button>
         </div>
-        <ScrollArea className='flex-grow px-8 pb-8 '>
+        <ScrollArea className='grow px-8 pb-8 '>
             <div className='grid grid-cols-1 gap-4 px-2'>
               {
                 themes.map((theme)=>(

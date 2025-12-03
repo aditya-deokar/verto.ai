@@ -122,7 +122,7 @@ const ProjectCard = ({
     className={`group w-full flex-col flex gap-y-3 rounded-xl p-3 transition-colors ${!isDelete && 'hover:bg-muted/50'}`}
     variants={itemVariants}
     >
-        <div className='relative aspect-[16/10] overflow-hidden rounded-lg cursor-pointer'
+        <div className='relative aspect-16/10 overflow-hidden rounded-lg cursor-pointer'
         onClick={HandleNavigation}>
             <ThumnailPreview 
             theme={theme} 

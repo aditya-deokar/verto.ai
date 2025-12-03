@@ -861,7 +861,7 @@ function buildLayoutContent(
                 id: uuidv4(),
                 type: "column",
                 name: "Column",
-                className: "flex items-center justify-center bg-gradient-to-br from-primary/10 to-primary/5 rounded-lg p-8",
+                className: "flex items-center justify-center bg-linear-to-br from-primary/10 to-primary/5 rounded-lg p-8",
                 content: [
                   {
                     id: uuidv4(),

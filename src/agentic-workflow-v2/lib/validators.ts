@@ -35,7 +35,7 @@ export const singleSlideContentSchema = z.object({
 export const bulkContentSchema = z.object({
   slidesContent: z
     .array(singleSlideContentSchema)
-    .describe("An array of content objects, one for each slide outline provided."),
+    .describe("An array of content objects, one for each slide outline-solid provided."),
 });
 
 /**

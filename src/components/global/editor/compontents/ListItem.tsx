@@ -14,7 +14,7 @@ const ListItem = ({ fontColor, index,  isEditable=true, item, onChange, onKeyDow
     <input type="text" value={item} 
     onChange={(e)=> onChange(index, e.target.value)}
     onKeyDown={(e)=> onKeyDown(e, index)}
-    className='bg-transparent outline-none w-full py-1'
+    className='bg-transparent outline-hidden w-full py-1'
     style={{
         color: fontColor
     }}

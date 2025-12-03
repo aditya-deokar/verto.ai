@@ -29,7 +29,7 @@ const LayoutPreviewItem = ({
         isSelected && "ring-2 ring-blue-500"
       )}
     >
-      <div className="w-full aspect-[16/9] rounded-md border bg-gray-100 dark:bg-gray-700 p-2 shadow-sm hover:shadow-md transition-shadow duration-200">
+      <div className="w-full aspect-video rounded-md border bg-gray-100 dark:bg-gray-700 p-2 shadow-xs hover:shadow-md transition-shadow duration-200">
         <Icon />
       </div>
         <span className="text-xs text-gray-500 font-medium">{name}</span>

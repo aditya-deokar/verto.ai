@@ -89,7 +89,7 @@ const ComponentCard = ({ item }: { item: ComponentItemProps }) => {
                 "group-hover:scale-105 transform"
               )}
             >
-              <div className="w-full aspect-[16/9] rounded-md border bg-gradient-to-br from-gray-50 to-gray-100 dark:from-gray-700 dark:to-gray-800 p-2 shadow-sm hover:shadow-md transition-shadow duration-200">
+              <div className="w-full aspect-video rounded-md border bg-linear-to-br from-gray-50 to-gray-100 dark:from-gray-700 dark:to-gray-800 p-2 shadow-xs hover:shadow-md transition-shadow duration-200">
                 <div className="flex items-center flex-col gap-2 h-full justify-center">
                   <span className="text-3xl text-primary group-hover:scale-110 transition-transform">
                     {item.icon}

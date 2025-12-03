@@ -83,7 +83,7 @@ const ThemeChooser = () => {
   return (
     <div className="flex flex-col h-full max-h-full overflow-hidden bg-background">
       {/* Header */}
-      <div className="p-4 border-b space-y-3 flex-shrink-0 bg-muted/50">
+      <div className="p-4 border-b space-y-3 shrink-0 bg-muted/50">
         <div className="flex items-center justify-between">
           <h2 className="font-bold flex items-center gap-2">
             <Palette className="w-5 h-5" />
@@ -100,7 +100,7 @@ const ThemeChooser = () => {
           placeholder="Search themes..."
           value={searchQuery}
           onChange={(e) => setSearchQuery(e.target.value)}
-          className="w-full px-3 py-2 rounded-md border bg-background focus:outline-none focus:ring-2 focus:ring-primary text-sm"
+          className="w-full px-3 py-2 rounded-md border bg-background focus:outline-hidden focus:ring-2 focus:ring-primary text-sm"
         />
 
         {/* Category Tabs */}
@@ -120,7 +120,7 @@ const ThemeChooser = () => {
 
         {/* New Themes Badge */}
         <div className="flex items-center justify-center gap-2 text-xs">
-          <Badge className="bg-gradient-to-r from-orange-500 to-red-500 text-white border-none">
+          <Badge className="bg-linear-to-r from-orange-500 to-red-500 text-white border-none">
             <Sparkles className="w-3 h-3 mr-1" />
             {themeStats.new} NEW THEMES
           </Badge>
@@ -138,7 +138,7 @@ const ThemeChooser = () => {
               <Button
                 onClick={() => handleThemeChange(theme)}
                 key={theme.name}
-                variant={isActive ? "default" : "outline"}
+                variant={isActive ? "default" : "outline-solid"}
                 className={`
                   relative flex flex-col items-center justify-start px-4 w-full h-auto 
                   transition-all duration-200 hover:scale-[1.02] hover:shadow-lg
@@ -153,7 +153,7 @@ const ThemeChooser = () => {
                 {/* New Badge */}
                 {isNew && (
                   <Badge 
-                    className="absolute -top-2 -right-2 bg-gradient-to-r from-orange-500 to-red-500 text-white border-none text-[10px] px-1.5 py-0.5"
+                    className="absolute -top-2 -right-2 bg-linear-to-r from-orange-500 to-red-500 text-white border-none text-[10px] px-1.5 py-0.5"
                     variant="default"
                   >
                     NEW
@@ -228,7 +228,7 @@ const ThemeChooser = () => {
 
       {/* Footer Info */}
       <div 
-        className="p-3 border-t text-xs text-center space-y-1 flex-shrink-0 bg-muted/30 text-muted-foreground"
+        className="p-3 border-t text-xs text-center space-y-1 shrink-0 bg-muted/30 text-muted-foreground"
       >
         <p>Showing {filteredThemes.length} of {themeStats.total} themes</p>
         <p className="text-[10px]">Click any theme to apply</p>

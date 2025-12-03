@@ -47,12 +47,12 @@ const CreatePage = ({ onSelectOption }:Props) => {
                     className={`${option.highlight
                             ? "bg-vivid-gradient"
                             : "hover:bg-vivid-gradient border"
-                        } rounded-xl p-[1px] transition-all duration-300 ease-in-out`}
+                        } rounded-xl p-px transition-all duration-300 ease-in-out`}
                 >
                     <ShineBorder>
                         <motion.div
                         className={`${option.highlight
-                            && "dark:bg-gradient-to-br dark:from-black dark:via-black dark:to-red-900/20 overflow-hidden"
+                            && "dark:bg-linear-to-br dark:from-black dark:via-black dark:to-red-900/20 overflow-hidden"
                         } w-full p-4 flex flex-col gap-y-6 items-start bg-background rounded-xl`}
                         whileHover={{
                             transition: { duration: 0.01 },
@@ -82,7 +82,7 @@ const CreatePage = ({ onSelectOption }:Props) => {
                             whileTap={{ scale: 0.95 }}
                         >
                             <Button
-                                variant={option.highlight ? "default" : "outline"}
+                                variant={option.highlight ? "default" : "outline-solid"}
                                 className="w-fit rounded-lg font-bold"
                                 size={"sm"}
                                 onClick={() => onSelectOption(option.type)}

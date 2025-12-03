@@ -140,7 +140,7 @@ const AgenticWorkflowPage = ({ onBack }: Props) => {
         {/* Header with Gradient Background */}
         <motion.div 
           variants={itemVariants} 
-          className="relative overflow-hidden rounded-2xl border border-border/50 bg-gradient-to-br from-background via-background to-background/80 p-8 shadow-lg"
+          className="relative overflow-hidden rounded-2xl border border-border/50 bg-linear-to-br from-background via-background to-background/80 p-8 shadow-lg"
         >
           {/* Animated Background Effect */}
           <div className="absolute inset-0 hero-gradient opacity-50" />
@@ -151,7 +151,7 @@ const AgenticWorkflowPage = ({ onBack }: Props) => {
               variant="ghost"
               size="icon"
               onClick={onBack}
-              className="hover:bg-background/80 hover:scale-110 transition-all duration-200 border border-border/50 shadow-sm"
+              className="hover:bg-background/80 hover:scale-110 transition-all duration-200 border border-border/50 shadow-xs"
             >
               <ArrowLeft className="h-5 w-5" />
             </Button>
@@ -188,9 +188,9 @@ const AgenticWorkflowPage = ({ onBack }: Props) => {
           <motion.div variants={itemVariants} className="lg:col-span-2 space-y-6">
             <Card className="border-2 border-border/50 shadow-xl overflow-hidden">
               <div className="absolute top-0 left-0 right-0 h-1 verto-bg" />
-              <CardHeader className="bg-gradient-to-br from-muted/30 via-background to-background pb-4">
+              <CardHeader className="bg-linear-to-br from-muted/30 via-background to-background pb-4">
                 <CardTitle className="flex items-center gap-3 text-2xl">
-                  <div className="p-2 rounded-lg bg-gradient-to-br from-red-500/10 to-orange-500/10 border border-red-500/20">
+                  <div className="p-2 rounded-lg bg-linear-to-br from-red-500/10 to-orange-500/10 border border-red-500/20">
                     <Wand2 className="h-6 w-6 text-red-500" />
                   </div>
                   Presentation Details
@@ -374,7 +374,7 @@ const AgenticWorkflowPage = ({ onBack }: Props) => {
                     {/* Shimmer Effect */}
                     {!isGenerating && (
                       <motion.div
-                        className="absolute inset-0 bg-gradient-to-r from-transparent via-white/30 to-transparent"
+                        className="absolute inset-0 bg-linear-to-r from-transparent via-white/30 to-transparent"
                         animate={{
                           x: ['-100%', '200%'],
                         }}
@@ -414,9 +414,9 @@ const AgenticWorkflowPage = ({ onBack }: Props) => {
           <motion.div variants={itemVariants} className="space-y-6">
             <Card className="border-2 border-border/50 shadow-xl sticky top-6 overflow-hidden">
               <div className="absolute top-0 left-0 right-0 h-1 verto-bg" />
-              <CardHeader className="bg-gradient-to-br from-muted/30 via-background to-background pb-4">
+              <CardHeader className="bg-linear-to-br from-muted/30 via-background to-background pb-4">
                 <CardTitle className="text-xl flex items-center gap-2">
-                  <div className="p-2 rounded-lg bg-gradient-to-br from-red-500/10 to-orange-500/10 border border-red-500/20">
+                  <div className="p-2 rounded-lg bg-linear-to-br from-red-500/10 to-orange-500/10 border border-red-500/20">
                     <Brain className="h-5 w-5 text-red-500" />
                   </div>
                   AI Agent Pipeline
@@ -433,14 +433,14 @@ const AgenticWorkflowPage = ({ onBack }: Props) => {
                     animate={{ opacity: 1, x: 0 }}
                     transition={{ delay: index * 0.08 }}
                     whileHover={{ scale: 1.02, x: 4 }}
-                    className="group relative flex gap-3 p-4 rounded-xl bg-gradient-to-br from-muted/30 via-muted/20 to-background border border-border/50 hover:border-red-500/30 transition-all duration-300 cursor-pointer shadow-sm hover:shadow-md"
+                    className="group relative flex gap-3 p-4 rounded-xl bg-linear-to-br from-muted/30 via-muted/20 to-background border border-border/50 hover:border-red-500/30 transition-all duration-300 cursor-pointer shadow-xs hover:shadow-md"
                   >
                     {/* Step Number Badge */}
                     <div className="absolute -left-2 -top-2 w-6 h-6 rounded-full verto-bg flex items-center justify-center text-white text-xs font-bold shadow-lg">
                       {index + 1}
                     </div>
                     
-                    <div className={`flex-shrink-0 mt-1 ${agent.color} group-hover:scale-110 transition-transform duration-300`}>
+                    <div className={`shrink-0 mt-1 ${agent.color} group-hover:scale-110 transition-transform duration-300`}>
                       <agent.icon className="h-5 w-5" />
                     </div>
                     <div className="flex-1 min-w-0">
@@ -462,8 +462,8 @@ const AgenticWorkflowPage = ({ onBack }: Props) => {
             </Card>
 
             {/* Tips Card */}
-            <Card className="border-2 border-orange-200/50 dark:border-orange-900/30 bg-gradient-to-br from-orange-50/50 via-red-50/30 to-background dark:from-orange-950/20 dark:via-red-950/10 dark:to-background shadow-lg overflow-hidden">
-              <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-orange-500 to-red-500" />
+            <Card className="border-2 border-orange-200/50 dark:border-orange-900/30 bg-linear-to-br from-orange-50/50 via-red-50/30 to-background dark:from-orange-950/20 dark:via-red-950/10 dark:to-background shadow-lg overflow-hidden">
+              <div className="absolute top-0 left-0 right-0 h-1 bg-linear-to-r from-orange-500 to-red-500" />
               <CardHeader className="pb-3">
                 <CardTitle className="text-lg flex items-center gap-2">
                   <motion.div
@@ -490,7 +490,7 @@ const AgenticWorkflowPage = ({ onBack }: Props) => {
                     transition={{ delay: index * 0.1 }}
                     className="flex items-center gap-2 text-muted-foreground hover:text-primary transition-colors group"
                   >
-                    <CheckCircle2 className="h-4 w-4 text-green-500 flex-shrink-0 group-hover:scale-110 transition-transform" />
+                    <CheckCircle2 className="h-4 w-4 text-green-500 shrink-0 group-hover:scale-110 transition-transform" />
                     <span>{tip}</span>
                   </motion.div>
                 ))}

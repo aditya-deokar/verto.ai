@@ -27,7 +27,7 @@ const Navbar = () => {
                 border-b border-border
                 transition-all duration-300
                 hero-gradient
-                ${isScrolled ? 'shadow-sm' : ''}
+                ${isScrolled ? 'shadow-xs' : ''}
             `}
         >
             {/* Content Container */}

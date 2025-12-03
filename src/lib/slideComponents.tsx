@@ -433,7 +433,7 @@ export const CustomButtonComponent = ComponentFactory.create(
     },
     styling: {
       defaultClasses: 'px-6 py-3 rounded-lg font-medium transition-all',
-      supportedVariants: ['primary', 'secondary', 'outline', 'ghost'],
+      supportedVariants: ['primary', 'secondary', 'outline-solid', 'ghost'],
     },
   }
 );

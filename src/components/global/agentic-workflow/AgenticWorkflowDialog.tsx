@@ -21,7 +21,7 @@ interface AgenticWorkflowDialogProps {
 
 const AGENT_STEPS_CONFIG: Omit<AgentStep, 'status' | 'details'>[] = [
   {
-    id: 'outline',
+    id: 'outline-solid',
     name: 'Outline Generator',
     description: 'Creating presentation structure and key topics'
   },
@@ -110,7 +110,7 @@ const AgenticWorkflowDialog = ({
         <DialogHeader>
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-2">
-              <div className="p-2 rounded-lg bg-gradient-to-br from-purple-500 to-blue-500">
+              <div className="p-2 rounded-lg bg-linear-to-br from-purple-500 to-blue-500">
                 <Sparkles className="h-5 w-5 text-white" />
               </div>
               <div>

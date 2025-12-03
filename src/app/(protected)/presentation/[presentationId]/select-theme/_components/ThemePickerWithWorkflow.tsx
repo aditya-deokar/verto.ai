@@ -24,7 +24,7 @@ type Props = {
 const simulateAgentProgress = (
     updateCallback: (stepId: string, status: AgentStatus, details?: string) => void
 ) => {
-    const steps = ['outline', 'content', 'layout', 'image', 'compiler']
+    const steps = ['outline-solid', 'content', 'layout', 'image', 'compiler']
     let currentIndex = 0
 
     const interval = setInterval(() => {
@@ -61,7 +61,7 @@ const ThemePickerWithWorkflow = ({ onThemeSelect, selectedTheme, themes }: Props
         details?: string;
     }>>([
         {
-            id: 'outline',
+            id: 'outline-solid',
             name: 'Outline Generator',
             description: 'Creating presentation structure and key topics',
             status: 'pending'
@@ -188,7 +188,7 @@ const ThemePickerWithWorkflow = ({ onThemeSelect, selectedTheme, themes }: Props
                     borderLeft: `1px solid ${selectedTheme.accentColor}20`,
                 }}
             >
-                <div className='p-8 space-y-6 flex-shrink-0'>
+                <div className='p-8 space-y-6 shrink-0'>
                     <div className='space-y-2'>
                         <h2 className='text-3xl font-bold tracking-tight'
                             style={{
@@ -217,7 +217,7 @@ const ThemePickerWithWorkflow = ({ onThemeSelect, selectedTheme, themes }: Props
                         >
                             {/* Animated gradient overlay */}
                             <motion.div
-                                className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent"
+                                className="absolute inset-0 bg-linear-to-r from-transparent via-white/20 to-transparent"
                                 animate={{
                                     x: ['-100%', '200%'],
                                 }}
@@ -251,7 +251,7 @@ const ThemePickerWithWorkflow = ({ onThemeSelect, selectedTheme, themes }: Props
                     </div>
                 </div>
                 
-                <ScrollArea className='flex-grow px-8 pb-8'>
+                <ScrollArea className='grow px-8 pb-8'>
                     <div className='grid grid-cols-1 gap-4 px-2'>
                         {themes.map((theme) => (
                             <motion.div

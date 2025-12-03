@@ -57,7 +57,7 @@ export function VertoHeroSection() {
               <div className="flex gap-2 p-2 bg-background/80 rounded-xl">
                 <Input
                   placeholder="Enter Prompt"
-                  className="border-none outline-none focus:outline-none focus:ring-0 focus-visible:ring-0 focus:border-transparent shadow-none"
+                  className="border-none outline-hidden focus:outline-hidden focus:ring-0 focus-visible:ring-0 focus:border-transparent shadow-none"
                 />
                 <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
                   <Button
@@ -90,10 +90,10 @@ export function VertoHeroSection() {
             borderClassName="border border-white/10 rounded-xl overflow-hidden"
           >
             <div className="relative bg-background/80 p-8 rounded-xl">
-              <div className="aspect-video bg-gradient-to-br from-gray-900 to-black rounded-lg flex items-center justify-center border border-white/10">
+              <div className="aspect-video bg-linear-to-br from-gray-900 to-black rounded-lg flex items-center justify-center border border-white/10">
                 <div className="text-center">
                   <motion.div
-                    className="w-20 h-20 mx-auto mb-4 bg-gradient-to-br from-red-500 to-orange-500 rounded-full flex items-center justify-center"
+                    className="w-20 h-20 mx-auto mb-4 bg-linear-to-br from-red-500 to-orange-500 rounded-full flex items-center justify-center"
                     whileHover={{ scale: 1.1, rotate: 5 }}
                     transition={{ type: "spring", stiffness: 300 }}
                   >

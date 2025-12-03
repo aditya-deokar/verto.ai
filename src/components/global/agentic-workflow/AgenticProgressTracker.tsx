@@ -100,7 +100,7 @@ const AgenticProgressTracker = ({
             >
               <div className="flex items-start gap-4">
                 {/* Status Icon */}
-                <div className="flex-shrink-0 mt-1">
+                <div className="shrink-0 mt-1">
                   {getStatusIcon(step.status, isActive)}
                 </div>
 

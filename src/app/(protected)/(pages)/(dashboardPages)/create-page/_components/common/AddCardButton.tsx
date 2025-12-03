@@ -30,7 +30,7 @@ export const AddCardButton: React.FC<AddCardButtonProps> = ({ onAddCard }) => {
             transition={{ duration: 0.2, delay: 0.1 }}
             className="absolute inset-0 flex items-center justify-center"
           >
-            <div className="w-[40%] h-[1px] bg-primary" />
+            <div className="w-[40%] h-px bg-primary" />
             <Button
               variant="outline"
               size="sm"
@@ -40,7 +40,7 @@ export const AddCardButton: React.FC<AddCardButtonProps> = ({ onAddCard }) => {
             >
               <Plus className="h-4 w-4 text-black" />
             </Button>
-            <div className="w-[40%] h-[1px] bg-primary" />
+            <div className="w-[40%] h-px bg-primary" />
           </motion.div>
         )}
       </AnimatePresence>

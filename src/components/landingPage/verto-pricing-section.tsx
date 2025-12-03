@@ -23,7 +23,7 @@ export function VertoPricingSection() {
         "Community support",
       ],
       buttonText: "Get Started for Free",
-      buttonVariant: "outline" as const,
+      buttonVariant: "outline-solid" as const,
       highlight: false,
     },
     {
@@ -59,7 +59,7 @@ export function VertoPricingSection() {
         >
           <h2 className="text-3xl md:text-5xl font-bold mb-4">
             Simple, Transparent{" "}
-            <span className="bg-clip-text text-transparent bg-gradient-to-r from-red-500 to-orange-500">Pricing</span>
+            <span className="bg-clip-text text-transparent bg-linear-to-r from-red-500 to-orange-500">Pricing</span>
           </h2>
           <p className="text-gray-400 mb-8 max-w-2xl mx-auto">Choose the plan that fits your productivity needs</p>
 
@@ -74,7 +74,7 @@ export function VertoPricingSection() {
             <motion.button
               onClick={() => setIsAnnual(!isAnnual)}
               className={`relative w-12 h-6 rounded-full transition-colors ${
-                isAnnual ? "bg-gradient-to-r from-red-500 to-orange-500" : "bg-gray-600"
+                isAnnual ? "bg-linear-to-r from-red-500 to-orange-500" : "bg-gray-600"
               }`}
               whileTap={{ scale: 0.95 }}
             >
@@ -86,7 +86,7 @@ export function VertoPricingSection() {
             </motion.button>
             <span className={`text-sm ${isAnnual ? "text-white" : "text-gray-400"}`}>
               Annually
-              <span className="ml-1 text-xs bg-gradient-to-r from-red-500 to-orange-500 text-white px-2 py-0.5 rounded-full">
+              <span className="ml-1 text-xs bg-linear-to-r from-red-500 to-orange-500 text-white px-2 py-0.5 rounded-full">
                 Save 20%
               </span>
             </span>
@@ -114,7 +114,7 @@ export function VertoPricingSection() {
                 borderClassName={`border ${plan.highlight ? "border-red-500/50" : "border-white/10"} rounded-xl`}
               >
                 <div
-                  className={`p-8 h-full ${plan.highlight ? "bg-gradient-to-b from-black to-black/80" : "bg-black/50"} rounded-xl relative`}
+                  className={`p-8 h-full ${plan.highlight ? "bg-linear-to-b from-black to-black/80" : "bg-black/50"} rounded-xl relative`}
                 >
                   {plan.highlight && (
                     <motion.div
@@ -124,7 +124,7 @@ export function VertoPricingSection() {
                       transition={{ duration: 0.5, delay: 0.5 }}
                       viewport={{ once: true }}
                     >
-                      <div className="bg-gradient-to-r from-red-500 to-orange-500 text-white px-4 py-1 rounded-full text-sm font-medium flex items-center gap-1">
+                      <div className="bg-linear-to-r from-red-500 to-orange-500 text-white px-4 py-1 rounded-full text-sm font-medium flex items-center gap-1">
                         <Zap className="w-3 h-3" />
                         Most Popular
                       </div>
@@ -184,7 +184,7 @@ export function VertoPricingSection() {
                       variant={plan.buttonVariant}
                       className={`w-full ${
                         plan.highlight
-                          ? "bg-gradient-to-r from-red-500 to-orange-500 text-white hover:opacity-90"
+                          ? "bg-linear-to-r from-red-500 to-orange-500 text-white hover:opacity-90"
                           : "border-white/10 bg-white/5 hover:bg-white/10"
                       }`}
                     >

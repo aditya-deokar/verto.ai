@@ -73,7 +73,7 @@ export function VertoUseCasesSection() {
               whileTap={{ scale: 0.95 }}
             >
               <Button
-                variant={activeTab === key ? "default" : "outline"}
+                variant={activeTab === key ? "default" : "outline-solid"}
                 onClick={() => setActiveTab(key)}
                 className={`gap-2 ${
                   activeTab === key
@@ -117,21 +117,21 @@ export function VertoUseCasesSection() {
                           animate={{ opacity: 1, x: 0 }}
                           transition={{ duration: 0.4, delay: 0.3 + index * 0.1 }}
                         >
-                          <div className="w-2 h-2 rounded-full bg-gradient-to-r from-red-500 to-orange-500"></div>
+                          <div className="w-2 h-2 rounded-full bg-linear-to-r from-red-500 to-orange-500"></div>
                           <span className="text-sm text-primary/80">{feature}</span>
                         </motion.div>
                       ))}
                     </div>
                   </motion.div>
                   <motion.div
-                    className="aspect-video bg-gradient-to-br from-gray-900 to-black rounded-lg border border-white/10 flex items-center justify-center"
+                    className="aspect-video bg-linear-to-br from-gray-900 to-black rounded-lg border border-white/10 flex items-center justify-center"
                     initial={{ opacity: 0, x: 30 }}
                     animate={{ opacity: 1, x: 0 }}
                     transition={{ duration: 0.6, delay: 0.4 }}
                   >
                     <div className="text-center">
                       <motion.div
-                        className="w-16 h-16 mx-auto mb-4 bg-gradient-to-br from-red-500 to-orange-500 rounded-full flex items-center justify-center"
+                        className="w-16 h-16 mx-auto mb-4 bg-linear-to-br from-red-500 to-orange-500 rounded-full flex items-center justify-center"
                         whileHover={{ scale: 1.1, rotate: 5 }}
                         transition={{ type: "spring", stiffness: 300 }}
                       >

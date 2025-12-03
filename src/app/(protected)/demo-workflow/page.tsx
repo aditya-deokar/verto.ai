@@ -10,7 +10,7 @@ import { Play, RotateCcw, Sparkles } from 'lucide-react'
 
 const DEMO_STEPS: Omit<AgentStep, 'status'>[] = [
   {
-    id: 'outline',
+    id: 'outline-solid',
     name: 'Outline Generator',
     description: 'Creating presentation structure and key topics'
   },
@@ -110,7 +110,7 @@ export default function AgenticWorkflowDemo() {
         {/* Header */}
         <div className="text-center space-y-4">
           <div className="flex items-center justify-center gap-3">
-            <div className="p-3 rounded-xl bg-gradient-to-br from-purple-500 to-blue-500">
+            <div className="p-3 rounded-xl bg-linear-to-br from-purple-500 to-blue-500">
               <Sparkles className="h-8 w-8 text-white" />
             </div>
             <h1 className="text-4xl font-bold">Agentic Workflow UI</h1>
@@ -206,7 +206,7 @@ export default function AgenticWorkflowDemo() {
 
 const steps = [
   {
-    id: 'outline',
+    id: 'outline-solid',
     name: 'Outline Generator',
     description: 'Creating presentation structure',
     status: 'completed'
