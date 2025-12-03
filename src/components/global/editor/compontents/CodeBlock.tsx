@@ -7,28 +7,37 @@ type Props = {
     code?: string
     language?: string
     onChange: (newCode: string) => void
-    className?: string 
+    className?: string
 }
 
-const CodeBlock = ({code, language, onChange, className}: Props) => {
+const CodeBlock = ({ code, language = 'javascript', onChange, className }: Props) => {
     const { currentTheme } = useSlideStore()
-    
+
     return (
-        <pre
-            className={cn('p-4 rounded-lg overflow-x-auto',
-                //  className
-                )}
-            style={{ backgroundColor: currentTheme.accentColor + '20' }}
+        <div className={cn("rounded-lg overflow-hidden shadow-lg my-4", className)}
+            style={{ backgroundColor: '#1e1e1e' }} // Always dark background for code looks better usually, or use theme
         >
-            <code className={`language-${language}`}>
-                <Textarea
+            <div className="flex items-center px-4 py-2 bg-[#2d2d2d] border-b border-[#3e3e3e]">
+                <div className="flex space-x-2">
+                    <div className="w-3 h-3 rounded-full bg-red-500" />
+                    <div className="w-3 h-3 rounded-full bg-yellow-500" />
+                    <div className="w-3 h-3 rounded-full bg-green-500" />
+                </div>
+                <span className="ml-4 text-xs text-gray-400 font-mono">{language}</span>
+            </div>
+            <div className="p-4 overflow-x-auto">
+                <textarea
                     value={code}
                     onChange={(e) => onChange(e.target.value)}
-                    className="w-full h-full bg-transparent outline-none font-mono"
-                    style={{ color: currentTheme.fontColor}}
-                 />
-            </code>
-        </pre>
+                    className="w-full min-h-[100px] bg-transparent outline-none font-mono text-sm md:text-base resize-none"
+                    style={{
+                        color: '#d4d4d4',
+                        fontFamily: "'Fira Code', 'Consolas', monospace"
+                    }}
+                    spellCheck={false}
+                />
+            </div>
+        </div>
     )
 }
 

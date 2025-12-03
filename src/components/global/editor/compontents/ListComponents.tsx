@@ -24,15 +24,16 @@ const ListItem: React.FC<ListItemProps> = ({
     onKeyDown,
     isEditable,
     fontColor,
-    }) => (
+}) => (
     <input
         type="text"
         value={item}
         onChange={(e) => onChange(index, e.target.value)}
         onKeyDown={(e) => onKeyDown(e, index)}
-        className="bg-transparent outline-none w-full py-1"
+        className="bg-transparent outline-none w-full py-2 text-lg md:text-xl placeholder:text-gray-300/50 focus:placeholder:text-transparent transition-all"
         style={{ color: fontColor }}
         readOnly={!isEditable}
+        placeholder="List item..."
     />
 )
 
@@ -77,11 +78,11 @@ const ListComponents: React.FC<ListProps> = ({
 
     return (
         <ol
-            className={cn('list-decimal list-inside space-y-1', className)}
+            className={cn('list-decimal list-inside space-y-2', className)}
             style={{ color: currentTheme.fontColor }}
         >
             {items.map((item, index) => (
-                <li key={index}>
+                <li key={index} className="pl-2 marker:font-bold marker:opacity-70">
                     <ListItem
                         item={item}
                         index={index}
@@ -139,13 +140,13 @@ export const BulletList: React.FC<ListProps> = ({
 
     return (
         <ul
-            className={cn('list-disc pl-5 space-y-1', className)}
+            className={cn('list-disc pl-6 space-y-2', className)}
             style={{ color: currentTheme.fontColor }}
         >
             {items.map((item, index) => (
                 <li
                     key={index}
-                    className="pl-1 marker:text-current"
+                    className="pl-2 marker:text-current marker:opacity-70"
                 >
                     <ListItem
                         item={item}
@@ -216,41 +217,41 @@ export const TodoList: React.FC<ListProps> = ({
 
     return (
         <ul
-            className={cn('space-y-1', className)}
+            className={cn('space-y-2', className)}
             style={{ color: currentTheme.fontColor }}
         >
             {items.map((item, index) => (
                 <li
                     key={index}
-                    className="flex items-center space-x-2"
+                    className="flex items-center space-x-3 group"
                 >
                     <input
                         type="checkbox"
                         checked={item.startsWith('[x] ')}
                         onChange={() => toggleCheckbox(index)}
-                        className="form-checkbox"
+                        className="w-5 h-5 rounded border-gray-300 text-primary focus:ring-primary transition-all cursor-pointer"
                         disabled={!isEditable}
                     />
-                    <ListItem
-                    item={item.replace(/^\[[ x]\] /, '')}
-                        index={index}
-                        onChange={(index, value) =>
-                            handleChange(
-                                index,
-                                `${item.startsWith('[x] ') ? '[x] ' : '[ ] '}${value}`
-                            )
-                        }
-                        onKeyDown={handleKeyDown}
-                        isEditable={isEditable}
-                        fontColor={currentTheme.fontColor}
-                    />
+                    <div className={cn(
+                        "flex-1 transition-opacity",
+                        item.startsWith('[x] ') ? "opacity-50 line-through" : "opacity-100"
+                    )}>
+                        <ListItem
+                            item={item.replace(/^\[[ x]\] /, '')}
+                            index={index}
+                            onChange={(index, value) =>
+                                handleChange(
+                                    index,
+                                    `${item.startsWith('[x] ') ? '[x] ' : '[ ] '}${value}`
+                                )
+                            }
+                            onKeyDown={handleKeyDown}
+                            isEditable={isEditable}
+                            fontColor={currentTheme.fontColor}
+                        />
+                    </div>
                 </li>
             ))}
         </ul>
     )
 }
-
-
-
-
-

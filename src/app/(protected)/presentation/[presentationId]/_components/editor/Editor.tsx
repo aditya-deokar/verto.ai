@@ -141,15 +141,19 @@ export const DraggableSlide: React.FC<DraggableSlideProps> = ({
     <div
       ref={ref}
       className={cn(
-        "w-full rounded-lg shadow-lg relative p-8 min-h-[400px] max-h-[800px] mb-4",
-        "shadow-xl transition-shadow duration-300",
+        "w-full rounded-xl shadow-lg relative p-8 mb-8 aspect-video overflow-hidden",
+        "transition-all duration-300 ease-in-out",
         "flex flex-col",
-        index === currentSlide ? "ring-2 ring-blue-500 ring-offset-2" : "",
-        // slide.className,
-        isDragging ? "opacity-50" : "opacity-100"
+        index === currentSlide
+          ? "ring-4 ring-primary/80 ring-offset-4 shadow-2xl scale-[1.01]"
+          : "hover:scale-[1.005] hover:shadow-xl",
+        isDragging ? "opacity-50 scale-95" : "opacity-100"
       )}
       style={{
         backgroundImage: currentTheme.gradientBackground,
+        backgroundColor: currentTheme.backgroundColor,
+        color: currentTheme.fontColor,
+        fontFamily: currentTheme.fontFamily,
       }}
       onClick={() => setCurrentSlide(index)}
       data-slide-index={index}
@@ -166,17 +170,17 @@ export const DraggableSlide: React.FC<DraggableSlideProps> = ({
 
       {isEditable && (
         <Popover>
-          <PopoverTrigger asChild className="absolute top-2 left-2">
-            <Button size="sm" variant="outline">
-              <EllipsisVertical className="w-5 h-5" />
+          <PopoverTrigger asChild className="absolute top-4 left-4 opacity-0 group-hover:opacity-100 transition-opacity">
+            <Button size="sm" variant="secondary" className="h-8 w-8 p-0 rounded-full shadow-md">
+              <EllipsisVertical className="w-4 h-4" />
               <span className="sr-only">Slide options</span>
             </Button>
           </PopoverTrigger>
-          <PopoverContent className="w-fit p-0">
-            <div className="flex space-x-2">
-              <Button variant="ghost" onClick={() => handleDelete(slide.id)}>
-                <Trash className="w-5 h-5 text-red-500" />
-                <span className="sr-only">Delete slide</span>
+          <PopoverContent className="w-fit p-1" align="start">
+            <div className="flex flex-col">
+              <Button variant="ghost" size="sm" className="justify-start text-red-500 hover:text-red-600 hover:bg-red-50" onClick={() => handleDelete(slide.id)}>
+                <Trash className="w-4 h-4 mr-2" />
+                Delete slide
               </Button>
             </div>
           </PopoverContent>
@@ -249,7 +253,7 @@ const Editor = ({ isEditable }: Props) => {
       const slideElement = document.querySelector(
         `[data-slide-index="${currentSlide}"]`
       );
-      
+
       if (slideElement) {
         slideElement.scrollIntoView({
           behavior: "smooth",

@@ -105,7 +105,7 @@ export const data = {
 };
 
 export const CreatePageCard = [
- 
+
   {
     title: "Generate with",
     highlightedText: "Creative AI",
@@ -856,7 +856,7 @@ export const themes: Theme[] = [
     type: "light",
   },
   {
-    name: "Urban Jungle",fontFamily: "'Karla', sans-serif",
+    name: "Urban Jungle", fontFamily: "'Karla', sans-serif",
     fontColor: "#2d3748",
     backgroundColor: "#e6fffa",
     slideBackgroundColor: "#ffffff",
@@ -1332,6 +1332,42 @@ export const themes: Theme[] = [
     gradientBackground: "linear-gradient(135deg, #0D0D0D 0%, #1A1A1A 100%)",
     navbarColor: "#1A1A1A",
     sidebarColor: "#0D0D0D",
+    type: "dark",
+  },
+  {
+    name: "Modern Dark",
+    fontFamily: "'Inter', sans-serif",
+    fontColor: "#ffffff",
+    backgroundColor: "#050505",
+    slideBackgroundColor: "#121212",
+    accentColor: "#6366f1",
+    gradientBackground: "linear-gradient(to bottom right, #000000, #1a1a1a)",
+    navbarColor: "#121212",
+    sidebarColor: "#050505",
+    type: "dark",
+  },
+  {
+    name: "Vibrant Glass",
+    fontFamily: "'Outfit', sans-serif",
+    fontColor: "#1a1a1a",
+    backgroundColor: "#ffffff",
+    slideBackgroundColor: "rgba(255, 255, 255, 0.8)",
+    accentColor: "#8b5cf6",
+    gradientBackground: "linear-gradient(135deg, #c4b5fd 0%, #a78bfa 100%)",
+    navbarColor: "#a78bfa",
+    sidebarColor: "#c4b5fd",
+    type: "light",
+  },
+  {
+    name: "Premium Gradient",
+    fontFamily: "'Plus Jakarta Sans', sans-serif",
+    fontColor: "#ffffff",
+    backgroundColor: "#1e1b4b",
+    slideBackgroundColor: "rgba(255, 255, 255, 0.1)",
+    accentColor: "#f472b6",
+    gradientBackground: "linear-gradient(45deg, #4f46e5, #9333ea, #db2777)",
+    navbarColor: "#312e81",
+    sidebarColor: "#1e1b4b",
     type: "dark",
   },
 ];
