@@ -4,7 +4,7 @@ import { ContentType } from "./types";
 export const BlankCard = {
   slideName: "Blank card",
   type: "blank-card",
-  className: "p-8 mx-auto flex justify-center items-center min-h-[200px]",
+  className: "p-8 mx-auto flex justify-center items-center h-full w-full",
   content: {
     id: uuidv4(),
     type: "column" as ContentType,
@@ -24,7 +24,7 @@ export const BlankCard = {
 export const AccentLeft = {
   slideName: "Accent left",
   type: "accentLeft",
-  className: "min-h-[300px]",
+  className: "h-full w-full",
   content: {
     id: uuidv4(),
     type: "column" as ContentType,
@@ -77,7 +77,7 @@ export const AccentLeft = {
 export const AccentRight = {
   slideName: "Accent Right",
   type: "accentRight",
-  className: "min-h-[300px]",
+  className: "h-full w-full",
   content: {
     id: uuidv4(),
     type: "column" as ContentType,
@@ -130,7 +130,7 @@ export const AccentRight = {
 export const ImageAndText = {
   slideName: "Image and text",
   type: "imageAndText",
-  className: "min-h-[200px] p-8 mx-auto flex justify-center items-center",
+  className: "h-full w-full p-8 mx-auto flex justify-center items-center",
   content: {
     id: uuidv4(),
     type: "column" as ContentType,
@@ -190,7 +190,7 @@ export const ImageAndText = {
 export const TextAndImage = {
   slideName: "Text and image",
   type: "textAndImage",
-  className: "min-h-[200px] p-8 mx-auto flex justify-center items-center",
+  className: "h-full w-full p-8 mx-auto flex justify-center items-center",
   content: {
     id: uuidv4(),
     type: "column" as ContentType,
@@ -250,7 +250,7 @@ export const TextAndImage = {
 export const TwoColumns = {
   slideName: "Two columns",
   type: "twoColumns",
-  className: "p-4 mx-auto flex justify-center items-center",
+  className: "p-4 mx-auto flex justify-center items-center h-full w-full",
   content: {
     id: uuidv4(),
     type: "column" as ContentType,
@@ -292,7 +292,7 @@ export const TwoColumns = {
 export const TwoColumnsWithHeadings = {
   slideName: "Two columns with headings",
   type: "twoColumnsWithHeadings",
-  className: "p-4 mx-auto flex justify-center items-center",
+  className: "p-4 mx-auto flex justify-center items-center h-full w-full",
   content: {
     id: uuidv4(),
     type: "column" as ContentType,
@@ -362,7 +362,7 @@ export const TwoColumnsWithHeadings = {
 export const ThreeColumns = {
   slideName: "Three column",
   type: "threeColumns",
-  className: "p-4 mx-auto flex justify-center items-center",
+  className: "p-4 mx-auto flex justify-center items-center h-full w-full",
   content: {
     id: uuidv4(),
     type: "column" as ContentType,
@@ -411,7 +411,7 @@ export const ThreeColumns = {
 export const ThreeColumnsWithHeadings = {
   slideName: "Three columns with headings",
   type: "threeColumnsWithHeadings",
-  className: "p-4 mx-auto flex justify-center items-center",
+  className: "p-4 mx-auto flex justify-center items-center h-full w-full",
   content: {
     id: uuidv4(),
     type: "column" as ContentType,
@@ -503,7 +503,7 @@ export const ThreeColumnsWithHeadings = {
 export const FourColumns = {
   slideName: "Four column",
   type: "fourColumns",
-  className: "p-4 mx-auto flex justify-center items-center",
+  className: "p-4 mx-auto flex justify-center items-center h-full w-full",
   content: {
     id: uuidv4(),
     type: "column" as ContentType,
@@ -559,7 +559,7 @@ export const FourColumns = {
 export const TwoImageColumns = {
   slideName: "Two Image Columns",
   type: "twoImageColumns",
-  className: "p-4 mx-auto flex justify-center items-center",
+  className: "p-4 mx-auto flex justify-center items-center h-full w-full",
   content: {
     id: uuidv4(),
     type: "column" as ContentType,
@@ -647,7 +647,7 @@ export const TwoImageColumns = {
 export const ThreeImageColumns = {
   slideName: "Three Image Columns",
   type: "threeImageColumns",
-  className: "p-4 mx-auto flex justify-center items-center",
+  className: "p-4 mx-auto flex justify-center items-center h-full w-full",
   content: {
     id: uuidv4(),
     type: "column" as ContentType,
@@ -766,7 +766,7 @@ export const ThreeImageColumns = {
 export const FourImageColumns = {
   slideName: "Four Image Columns",
   type: "fourImageColumns",
-  className: "p-4 mx-auto flex justify-center items-center",
+  className: "p-4 mx-auto flex justify-center items-center h-full w-full",
   content: {
     id: uuidv4(),
     type: "column" as ContentType,

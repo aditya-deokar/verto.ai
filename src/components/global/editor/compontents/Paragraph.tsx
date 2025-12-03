@@ -2,65 +2,64 @@ import { cn } from '@/lib/utils'
 import { useSlideStore } from '@/store/useSlideStore'
 import React, { useEffect, useRef } from 'react'
 
-interface ParagraphProps extends React.TextareaHTMLAttributes<HTMLTextAreaElement>{
+interface ParagraphProps extends React.TextareaHTMLAttributes<HTMLTextAreaElement> {
     className?: string
     styles?: React.CSSProperties
-    isPreview?:boolean
+    isPreview?: boolean
 }
 
 const Paragraph = React.forwardRef<HTMLTextAreaElement, ParagraphProps>(
-    ( {className, styles, isPreview=false , ...props }, ref )=>{
+    ({ className, styles, isPreview = false, ...props }, ref) => {
         const textareaRef = useRef<HTMLTextAreaElement>(null);
 
-        const { currentTheme }= useSlideStore();
+        const { currentTheme } = useSlideStore();
 
         useEffect(() => {
-          const textarea= textareaRef.current
+            const textarea = textareaRef.current
 
-          if(textarea && !isPreview){
-            const adjustHeight= ()=>{
-                textarea.style.height= '0';
-                textarea.style.height= `${textarea.scrollHeight}px`
+            if (textarea && !isPreview) {
+                const adjustHeight = () => {
+                    textarea.style.height = '0';
+                    textarea.style.height = `${textarea.scrollHeight}px`
+                }
+
+                textarea.addEventListener('input', adjustHeight);
+                adjustHeight();
+
+                return () => textarea.removeEventListener('input', adjustHeight)
             }
-
-            textarea.addEventListener('input', adjustHeight);
-            adjustHeight();
-
-            return ()=> textarea.removeEventListener('input',adjustHeight)
-          }
         }, [isPreview]);
 
 
         return (
             <textarea
-            className={cn(
-                `w-full bg-transparent font-normal text-gray-900 placeholder:text-gray-300 focus:outline-none resize-none overflow-hidden leading-tight`,
-                `${isPreview ? 'text-[0.5rem]' : 'text-lg'}`,
-                className
-                
-            )}
-            style={{
-                padding:0,
-                margin:0,
-                color:currentTheme.fontColor,
-                boxSizing:'content-box',
-                lineHeight:'1.5rem',
-                minHeight:'1.5rem',
-                ...styles
-            }}
+                className={cn(
+                    `w-full bg-transparent font-normal text-gray-900 placeholder:text-gray-300/50 focus:outline-none resize-none overflow-hidden leading-relaxed tracking-wide`,
+                    isPreview ? 'text-[0.6rem] leading-normal' : 'text-base md:text-lg lg:text-xl',
+                    className
+                )}
+                style={{
+                    padding: 0,
+                    margin: 0,
+                    color: currentTheme.fontColor,
+                    boxSizing: 'content-box',
+                    lineHeight: '1.6',
+                    minHeight: '1.6em',
+                    ...styles
+                }}
 
-            ref={(el)=>{
-                (textareaRef.current as HTMLTextAreaElement | null)= el
+                ref={(el) => {
+                    (textareaRef.current as HTMLTextAreaElement | null) = el
 
-                if(typeof ref === 'function') ref(el)
-                    else if(ref) ref.current = el
-            }}
+                    if (typeof ref === 'function') ref(el)
+                    else if (ref) ref.current = el
+                }}
 
-            readOnly={isPreview}
-            {...props}
+                readOnly={isPreview}
+                {...props}
             ></textarea>
         )
-        
-})
+
+    })
 
 export default Paragraph

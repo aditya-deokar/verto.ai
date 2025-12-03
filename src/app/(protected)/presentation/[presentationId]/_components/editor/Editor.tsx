@@ -14,9 +14,10 @@ import {
   PopoverTrigger,
 } from "@/components/ui/popover";
 import { Button } from "@/components/ui/button";
-import { EllipsisVertical, Trash } from "lucide-react";
+import { EllipsisVertical, Trash, Undo2, Redo2, Save } from "lucide-react";
 import { MasterRecursiveComponent } from "./MasterRecursiveComponent";
 import { updateSlides } from "@/actions/projects";
+import { toast } from "sonner";
 
 interface DropZoneProps {
   index: number;
@@ -141,15 +142,19 @@ export const DraggableSlide: React.FC<DraggableSlideProps> = ({
     <div
       ref={ref}
       className={cn(
-        "w-full rounded-lg shadow-lg relative p-8 min-h-[400px] max-h-[800px] mb-4",
-        "shadow-xl transition-shadow duration-300",
+        "w-full rounded-xl shadow-lg relative p-8 mb-8 aspect-video overflow-hidden",
+        "transition-all duration-300 ease-in-out",
         "flex flex-col",
-        index === currentSlide ? "ring-2 ring-blue-500 ring-offset-2" : "",
-        // slide.className,
-        isDragging ? "opacity-50" : "opacity-100"
+        index === currentSlide
+          ? "ring-4 ring-primary/80 ring-offset-4 shadow-2xl scale-[1.01]"
+          : "hover:scale-[1.005] hover:shadow-xl",
+        isDragging ? "opacity-50 scale-95" : "opacity-100"
       )}
       style={{
         backgroundImage: currentTheme.gradientBackground,
+        backgroundColor: currentTheme.backgroundColor,
+        color: currentTheme.fontColor,
+        fontFamily: currentTheme.fontFamily,
       }}
       onClick={() => setCurrentSlide(index)}
       data-slide-index={index}
@@ -166,17 +171,17 @@ export const DraggableSlide: React.FC<DraggableSlideProps> = ({
 
       {isEditable && (
         <Popover>
-          <PopoverTrigger asChild className="absolute top-2 left-2">
-            <Button size="sm" variant="outline">
-              <EllipsisVertical className="w-5 h-5" />
+          <PopoverTrigger asChild className="absolute top-4 left-4 opacity-0 group-hover:opacity-100 transition-opacity">
+            <Button size="sm" variant="secondary" className="h-8 w-8 p-0 rounded-full shadow-md">
+              <EllipsisVertical className="w-4 h-4" />
               <span className="sr-only">Slide options</span>
             </Button>
           </PopoverTrigger>
-          <PopoverContent className="w-fit p-0">
-            <div className="flex space-x-2">
-              <Button variant="ghost" onClick={() => handleDelete(slide.id)}>
-                <Trash className="w-5 h-5 text-red-500" />
-                <span className="sr-only">Delete slide</span>
+          <PopoverContent className="w-fit p-1" align="start">
+            <div className="flex flex-col">
+              <Button variant="ghost" size="sm" className="justify-start text-red-500 hover:text-red-600 hover:bg-red-50" onClick={() => handleDelete(slide.id)}>
+                <Trash className="w-4 h-4 mr-2" />
+                Delete slide
               </Button>
             </div>
           </PopoverContent>
@@ -199,12 +204,15 @@ const Editor = ({ isEditable }: Props) => {
     reorderSlides,
     slides,
     project,
+    undo,
+    redo,
+    past,
+    future,
   } = useSlideStore();
-
-  const autosaveTimeoutRef = useRef<NodeJS.Timeout | null>(null);
 
   const orderedSlides = getOrderedSlides();
   const [loading, setLoading] = useState(true);
+  const [isSaving, setIsSaving] = useState(false);
 
   const moveSlide = (dragIndex: number, hoverIndex: number) => {
     if (isEditable) {
@@ -249,7 +257,7 @@ const Editor = ({ isEditable }: Props) => {
       const slideElement = document.querySelector(
         `[data-slide-index="${currentSlide}"]`
       );
-      
+
       if (slideElement) {
         slideElement.scrollIntoView({
           behavior: "smooth",
@@ -265,35 +273,58 @@ const Editor = ({ isEditable }: Props) => {
     if (typeof window !== "undefined") setLoading(false);
   }, []);
 
-  const saveSlides = useCallback(() => {
+  const saveSlides = useCallback(async () => {
     if (isEditable && project) {
-      (async () => {
+      setIsSaving(true);
+      try {
         await updateSlides(project.id, JSON.parse(JSON.stringify(slides)));
-      })();
+        toast.success("Slides saved successfully");
+      } catch (error) {
+        toast.error("Failed to save slides");
+        console.error("Save error:", error);
+      } finally {
+        setIsSaving(false);
+      }
     }
   }, [isEditable, project, slides]);
 
-  useEffect(() => {
-    // If we already have a timer, cancel it
-    if (autosaveTimeoutRef.current) {
-      clearTimeout(autosaveTimeoutRef.current);
-    }
-
-    // Inside the timer, make the save request
-    if (isEditable) {
-      autosaveTimeoutRef.current = setTimeout(() => {
-        saveSlides();
-      }, 2000);
-    }
-    return () => {
-      if (autosaveTimeoutRef.current) {
-        clearTimeout(autosaveTimeoutRef.current);
-      }
-    };
-  }, [slides, isEditable, project]);
-
   return (
-    <div className="flex-1 flex flex-col h-full w-full mx-auto px-4 mb-20">
+    <div className="flex-1 flex flex-col h-full w-full mx-auto px-4 mb-20 relative">
+      {isEditable && !loading && (
+        <div className="fixed top-20 right-4 z-50 flex flex-row items-center gap-2 bg-background/80 backdrop-blur-md p-2 rounded-xl border shadow-xl">
+          <Button
+            variant="ghost"
+            size="icon"
+            onClick={undo}
+            disabled={past.length === 0}
+            title="Undo"
+            className="hover:bg-accent rounded-full"
+          >
+            <Undo2 className="h-5 w-5" />
+          </Button>
+          <Button
+            variant="ghost"
+            size="icon"
+            onClick={redo}
+            disabled={future.length === 0}
+            title="Redo"
+            className="hover:bg-accent rounded-full"
+          >
+            <Redo2 className="h-5 w-5" />
+          </Button>
+          <div className="h-6 w-px bg-border mx-1" />
+          <Button
+            variant="ghost"
+            size="icon"
+            onClick={saveSlides}
+            disabled={isSaving}
+            title="Save"
+            className="hover:bg-accent rounded-full text-green-600 hover:text-green-700"
+          >
+            <Save className="h-5 w-5" />
+          </Button>
+        </div>
+      )}
       {loading ? (
         <div className="w-full px-4 flex flex-col space-y-6">
           <Skeleton className="h-52 w-full" />
