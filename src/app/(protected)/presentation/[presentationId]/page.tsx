@@ -20,81 +20,81 @@ type Props = {}
 const page = (props: Props) => {
 
 
-    const{ currentTheme, setCurrentTheme, setProject, setSlides }=useSlideStore();
-    const params = useParams();
-    const { setTheme } = useTheme();
-    const [isLoading, setIsLoading] = useState(true);
+  const { currentTheme, setCurrentTheme, setProject, setSlides } = useSlideStore();
+  const params = useParams();
+  const { setTheme } = useTheme();
+  const [isLoading, setIsLoading] = useState(true);
 
 
-    useEffect(() => {
-      (async()=>{
+  useEffect(() => {
+    (async () => {
 
-        try {
-            const res = await getProjectById(params.presentationId as string);
+      try {
+        const res = await getProjectById(params.presentationId as string);
 
-            if(res?.status !==200 || !res.data){
-                toast.error('Error',{
-                    description: "Failed to Fetch project",
-                });
-                redirect('/dashboard');
-            }
-
-            const findTheme = themes.find( (theme)=>theme.name === res.data.themeName )
-            setCurrentTheme(findTheme || themes[0]);
-            setTheme(findTheme?.type === "dark" ? 'dark' : 'light');
-
-            setProject(res.data);
-            console.log(res.data)
-
-            setSlides(JSON.parse(JSON.stringify(res.data.slides)))
-
-        } catch (error) {
-             toast.error('Error',{
-                    description: "An Unexpected Error Occured",
-                });
-        } finally{
-            setIsLoading(false);
+        if (res?.status !== 200 || !res.data) {
+          toast.error('Error', {
+            description: "Failed to Fetch project",
+          });
+          redirect('/dashboard');
         }
 
+        const findTheme = themes.find((theme) => theme.name === res.data.themeName)
+        setCurrentTheme(findTheme || themes[0]);
+        setTheme(findTheme?.type === "dark" ? 'dark' : 'light');
 
-      })()
-    
-      
-    }, [])
+        setProject(res.data);
+        console.log(res.data)
+
+        setSlides(JSON.parse(JSON.stringify(res.data.slides)))
+
+      } catch (error) {
+        toast.error('Error', {
+          description: "An Unexpected Error Occured",
+        });
+      } finally {
+        setIsLoading(false);
+      }
 
 
-    if(isLoading ){
-       return (
-         <div className='flex items-center justify-center h-screen '>
-            <Loader2 className='w-8 h-8 animate-spin text-primary'/>
-        </div>
-       )
-    }
-    
+    })()
+
+
+  }, [])
+
+
+  if (isLoading) {
+    return (
+      <div className='flex items-center justify-center h-screen '>
+        <Loader2 className='w-8 h-8 animate-spin text-primary' />
+      </div>
+    )
+  }
+
   return (
     <DndProvider backend={HTML5Backend}>
 
       <div className='flex flex-col min-h-screen'>
-        <Navbar presentationId={params.presentationId as string}/>
+        <Navbar presentationId={params.presentationId as string} />
         <div className='flex-1 flex overflow-hidden pt-16'
-        style={{
-                backgroundColor:currentTheme.backgroundColor,
-                color:currentTheme.accentColor,
-                fontFamily:currentTheme.fontFamily,
-                
-                }}
-          >
-            <LayoutPreview />
+          style={{
+            backgroundColor: currentTheme.backgroundColor,
+            color: currentTheme.accentColor,
+            fontFamily: currentTheme.fontFamily,
 
-            <div className="flex-1 ml-64 pr-16">
-              <Editor isEditable={true} />
-            </div>
+          }}
+        >
+          <LayoutPreview />
 
-            <EditorSlidebar />
+          <div className="flex-1 ml-80 pr-16">
+            <Editor isEditable={true} />
+          </div>
+
+          <EditorSlidebar />
 
         </div>
       </div>
-        
+
     </DndProvider>
   )
 }

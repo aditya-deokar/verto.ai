@@ -1,7 +1,7 @@
 "use client";
 
 import { useSlideStore } from "@/store/useSlideStore";
-import React, { useState, useRef, useEffect, useCallback } from "react";
+import React, { useState, useRef, useEffect } from "react";
 import { useDrop, useDrag } from "react-dnd";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { LayoutSlides, Slide } from "@/lib/types";
@@ -14,10 +14,9 @@ import {
   PopoverTrigger,
 } from "@/components/ui/popover";
 import { Button } from "@/components/ui/button";
-import { EllipsisVertical, Trash, Undo2, Redo2, Save } from "lucide-react";
+import { EllipsisVertical, Trash } from "lucide-react";
 import { MasterRecursiveComponent } from "./MasterRecursiveComponent";
-import { updateSlides } from "@/actions/projects";
-import { toast } from "sonner";
+import EditorToolbar from "./EditorToolbar";
 
 interface DropZoneProps {
   index: number;
@@ -92,7 +91,7 @@ export const DraggableSlide: React.FC<DraggableSlideProps> = ({
 }) => {
   const ref = useRef(null);
 
-  const { currentSlide, setCurrentSlide, currentTheme, updateContentItem } =
+  const { currentSlide, setCurrentSlide, currentTheme, updateContentItem, setSelectedComponent } =
     useSlideStore();
 
   const [{ isDragging }, drag] = useDrag({
@@ -156,7 +155,10 @@ export const DraggableSlide: React.FC<DraggableSlideProps> = ({
         color: currentTheme.fontColor,
         fontFamily: currentTheme.fontFamily,
       }}
-      onClick={() => setCurrentSlide(index)}
+      onClick={() => {
+        setCurrentSlide(index)
+        setSelectedComponent(null)
+      }}
       data-slide-index={index}
     >
       <div className="h-full w-full grow overflow-hidden">
@@ -202,17 +204,10 @@ const Editor = ({ isEditable }: Props) => {
     removeSlide,
     addSlideAtIndex,
     reorderSlides,
-    slides,
-    project,
-    undo,
-    redo,
-    past,
-    future,
   } = useSlideStore();
 
   const orderedSlides = getOrderedSlides();
   const [loading, setLoading] = useState(true);
-  const [isSaving, setIsSaving] = useState(false);
 
   const moveSlide = (dragIndex: number, hoverIndex: number) => {
     if (isEditable) {
@@ -273,58 +268,8 @@ const Editor = ({ isEditable }: Props) => {
     if (typeof window !== "undefined") setLoading(false);
   }, []);
 
-  const saveSlides = useCallback(async () => {
-    if (isEditable && project) {
-      setIsSaving(true);
-      try {
-        await updateSlides(project.id, JSON.parse(JSON.stringify(slides)));
-        toast.success("Slides saved successfully");
-      } catch (error) {
-        toast.error("Failed to save slides");
-        console.error("Save error:", error);
-      } finally {
-        setIsSaving(false);
-      }
-    }
-  }, [isEditable, project, slides]);
-
   return (
     <div className="flex-1 flex flex-col h-full w-full mx-auto px-4 mb-20 relative">
-      {isEditable && !loading && (
-        <div className="fixed top-20 right-4 z-50 flex flex-row items-center gap-2 bg-background/80 backdrop-blur-md p-2 rounded-xl border shadow-xl">
-          <Button
-            variant="ghost"
-            size="icon"
-            onClick={undo}
-            disabled={past.length === 0}
-            title="Undo"
-            className="hover:bg-accent rounded-full"
-          >
-            <Undo2 className="h-5 w-5" />
-          </Button>
-          <Button
-            variant="ghost"
-            size="icon"
-            onClick={redo}
-            disabled={future.length === 0}
-            title="Redo"
-            className="hover:bg-accent rounded-full"
-          >
-            <Redo2 className="h-5 w-5" />
-          </Button>
-          <div className="h-6 w-px bg-border mx-1" />
-          <Button
-            variant="ghost"
-            size="icon"
-            onClick={saveSlides}
-            disabled={isSaving}
-            title="Save"
-            className="hover:bg-accent rounded-full text-green-600 hover:text-green-700"
-          >
-            <Save className="h-5 w-5" />
-          </Button>
-        </div>
-      )}
       {loading ? (
         <div className="w-full px-4 flex flex-col space-y-6">
           <Skeleton className="h-52 w-full" />
@@ -358,6 +303,7 @@ const Editor = ({ isEditable }: Props) => {
           </div>
         </ScrollArea>
       )}
+      <EditorToolbar isEditable={isEditable} />
     </div>
   );
 };

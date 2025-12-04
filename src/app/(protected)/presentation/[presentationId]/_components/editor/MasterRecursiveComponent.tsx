@@ -26,6 +26,7 @@ import { Trash2, GripVertical } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useSlideStore } from "@/store/useSlideStore";
 import { AnimatePresence } from "framer-motion";
+import ResizableComponent from "./ResizableComponent";
 
 type MasterRecursiveComponentProps = {
   content: ContentItem;
@@ -96,6 +97,14 @@ const ContentRenderer: React.FC<MasterRecursiveComponentProps> = React.memo(
       value: content.content as string,
       onChange: handleChange,
       isPreview: isPreview,
+      styles: {
+        fontSize: content.fontSize,
+        fontWeight: content.fontWeight,
+        fontStyle: content.fontStyle,
+        textDecoration: content.textDecoration,
+        color: content.color,
+        textAlign: content.textAlign as any,
+      }
     };
 
     const animationProps = getAnimationConfig(content.type);
@@ -415,14 +424,21 @@ export const MasterRecursiveComponent: React.FC<MasterRecursiveComponentProps> =
 
       if (isPreview) {
         return (
-          <ContentRenderer
+          <ResizableComponent
             content={content}
-            onContentChange={onContentChange}
-            isPreview={isPreview}
-            isEditable={isEditable}
             slideId={slideId}
-            index={index}
-          />
+            isEditable={isEditable}
+            isPreview={isPreview}
+          >
+            <ContentRenderer
+              content={content}
+              onContentChange={onContentChange}
+              isPreview={isPreview}
+              isEditable={isEditable}
+              slideId={slideId}
+              index={index}
+            />
+          </ResizableComponent>
         );
       }
 
@@ -441,50 +457,57 @@ export const MasterRecursiveComponent: React.FC<MasterRecursiveComponentProps> =
       });
 
       return (
-        <motion.div
-          layout
-          initial={{ opacity: 0, scale: 0.95 }}
-          animate={{ opacity: 1, scale: 1 }}
-          exit={{ opacity: 0, scale: 0.95 }}
-          transition={{ duration: 0.2 }}
-          className={cn(
-            "group/item relative w-full h-full",
-            isDragging && "opacity-50"
-          )}
+        <ResizableComponent
+          content={content}
+          slideId={slideId}
+          isEditable={isEditable}
+          isPreview={isPreview}
         >
-          <ContentRenderer
-            content={content}
-            onContentChange={onContentChange}
-            isPreview={isPreview}
-            isEditable={isEditable}
-            slideId={slideId}
-            index={index}
-          />
-          {isEditable && (
-            <div className="absolute -top-2 -right-2 opacity-0 group-hover/item:opacity-100 transition-all duration-200 z-50 flex gap-1">
-              <div
-                ref={drag as unknown as React.RefObject<HTMLDivElement>}
-                className="cursor-grab active:cursor-grabbing"
-              >
-                <Button
-                  variant="secondary"
-                  size="icon"
-                  className="h-6 w-6 rounded-full shadow-md hover:bg-blue-100"
+          <motion.div
+            layout
+            initial={{ opacity: 0, scale: 0.95 }}
+            animate={{ opacity: 1, scale: 1 }}
+            exit={{ opacity: 0, scale: 0.95 }}
+            transition={{ duration: 0.2 }}
+            className={cn(
+              "group/item relative w-full h-full",
+              isDragging && "opacity-50"
+            )}
+          >
+            <ContentRenderer
+              content={content}
+              onContentChange={onContentChange}
+              isPreview={isPreview}
+              isEditable={isEditable}
+              slideId={slideId}
+              index={index}
+            />
+            {isEditable && (
+              <div className="absolute -top-2 -right-2 opacity-0 group-hover/item:opacity-100 transition-all duration-200 z-50 flex gap-1">
+                <div
+                  ref={drag as unknown as React.RefObject<HTMLDivElement>}
+                  className="cursor-grab active:cursor-grabbing"
                 >
-                  <GripVertical className="h-3 w-3 text-blue-600" />
+                  <Button
+                    variant="secondary"
+                    size="icon"
+                    className="h-6 w-6 rounded-full shadow-md hover:bg-blue-100"
+                  >
+                    <GripVertical className="h-3 w-3 text-blue-600" />
+                  </Button>
+                </div>
+                <Button
+                  variant="destructive"
+                  size="icon"
+                  className="h-6 w-6 rounded-full shadow-md"
+                  onClick={handleDelete}
+                >
+                  <Trash2 className="h-3 w-3" />
                 </Button>
               </div>
-              <Button
-                variant="destructive"
-                size="icon"
-                className="h-6 w-6 rounded-full shadow-md"
-                onClick={handleDelete}
-              >
-                <Trash2 className="h-3 w-3" />
-              </Button>
-            </div>
-          )}
-        </motion.div>
+            )}
+          </motion.div>
+        </ResizableComponent>
       );
     }
   );

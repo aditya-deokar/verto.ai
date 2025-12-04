@@ -63,7 +63,7 @@ const ThemeChooser = () => {
   const filteredThemes = useMemo(() => {
     return themes.filter(theme => {
       const matchesSearch = theme.name.toLowerCase().includes(searchQuery.toLowerCase());
-      const matchesCategory = 
+      const matchesCategory =
         selectedCategory === "all" ||
         theme.type === selectedCategory;
       return matchesSearch && matchesCategory;
@@ -84,15 +84,7 @@ const ThemeChooser = () => {
     <div className="flex flex-col h-full max-h-full overflow-hidden bg-background">
       {/* Header */}
       <div className="p-4 border-b space-y-3 shrink-0 bg-muted/50">
-        <div className="flex items-center justify-between">
-          <h2 className="font-bold flex items-center gap-2">
-            <Palette className="w-5 h-5" />
-            Themes
-          </h2>
-          <Badge variant="outline">
-            {themeStats.total} Total
-          </Badge>
-        </div>
+
 
         {/* Search Bar */}
         <input
@@ -138,7 +130,7 @@ const ThemeChooser = () => {
               <Button
                 onClick={() => handleThemeChange(theme)}
                 key={theme.name}
-                variant={isActive ? "default" : "outline-solid"}
+                variant={isActive ? "default" : "outline"}
                 className={`
                   relative flex flex-col items-center justify-start px-4 w-full h-auto 
                   transition-all duration-200 hover:scale-[1.02] hover:shadow-lg
@@ -152,7 +144,7 @@ const ThemeChooser = () => {
               >
                 {/* New Badge */}
                 {isNew && (
-                  <Badge 
+                  <Badge
                     className="absolute -top-2 -right-2 bg-linear-to-r from-orange-500 to-red-500 text-white border-none text-[10px] px-1.5 py-0.5"
                     variant="default"
                   >
@@ -186,8 +178,8 @@ const ThemeChooser = () => {
                   </div>
                   <div className="text-base opacity-80">
                     Body text with{" "}
-                    <span 
-                      style={{ 
+                    <span
+                      style={{
                         color: theme.accentColor,
                         textDecoration: 'underline'
                       }}
@@ -195,11 +187,11 @@ const ThemeChooser = () => {
                       accent link
                     </span>
                   </div>
-                  
+
                   {/* Theme Type Badge */}
                   <div className="flex items-center gap-2 mt-2">
-                    <Badge 
-                      variant="secondary" 
+                    <Badge
+                      variant="secondary"
                       className="text-[10px] px-2 py-0.5"
                       style={{
                         backgroundColor: theme.type === 'dark' ? '#1f2937' : '#f3f4f6',
@@ -227,7 +219,7 @@ const ThemeChooser = () => {
       </ScrollArea>
 
       {/* Footer Info */}
-      <div 
+      <div
         className="p-3 border-t text-xs text-center space-y-1 shrink-0 bg-muted/30 text-muted-foreground"
       >
         <p>Showing {filteredThemes.length} of {themeStats.total} themes</p>
