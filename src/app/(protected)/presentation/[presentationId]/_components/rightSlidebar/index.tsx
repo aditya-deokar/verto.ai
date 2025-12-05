@@ -61,7 +61,7 @@ const EditorSidebar = () => {
     );
 
     return (
-        <div className="fixed right-0 top-1/2 -translate-y-1/2 z-40 flex items-start h-[80vh] pointer-events-none">
+        <div className="flex h-full items-center z-40">
             {/* Content Panel */}
             <div
                 className={cn(
@@ -95,7 +95,7 @@ const EditorSidebar = () => {
             </div>
 
             {/* Navigation Dock */}
-            <div className="pointer-events-auto flex flex-col gap-4 p-2 bg-background/80 backdrop-blur-md border shadow-xl rounded-l-2xl mr-0 transition-all duration-300 hover:bg-background">
+            <div className="pointer-events-auto flex flex-col gap-4 p-2 bg-background/80 backdrop-blur-md border shadow-xl rounded-l-2xl mr-0 transition-all duration-300 hover:bg-background my-auto">
                 <NavButton
                     icon={LayoutTemplate}
                     label="Layouts"

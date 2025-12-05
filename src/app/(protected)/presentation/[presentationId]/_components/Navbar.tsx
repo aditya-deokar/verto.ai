@@ -8,82 +8,70 @@ import Link from 'next/link'
 import React, { useState } from 'react'
 import { toast } from 'sonner'
 import PresentationMode from './PresentationMode'
+import { ThemeSwitcher } from '@/components/global/mode-toggle'
 
 type Props = {
-    presentationId:string
+    presentationId: string
 }
 
 const Navbar = ({ presentationId }: Props) => {
 
-    const { currentTheme } =useSlideStore();
+    const { currentTheme } = useSlideStore();
     const [isPresentationMode, setIsPresentationMode] = useState(false);
 
-    const handleCopy= ()=>{
+    const handleCopy = () => {
         navigator.clipboard.writeText(`${window.location.origin}/share/${presentationId}`)
 
         toast.success('Link Copied',
             {
-                description:'The Link has been copied to your clipboard'
+                description: 'The Link has been copied to your clipboard'
             }
         )
     }
 
 
-  return (
-    <nav className='fixed top-0 left-0 right-0 z-50 w-full h-20 flex justify-between items-center py-4 px-7 border-b'
-    style={{
-        backgroundColor:currentTheme.navbarColor || currentTheme.backgroundColor,
-        color:currentTheme.accentColor,
-    }}
-    >
-        <Link passHref href={'/dashboard'}>
-            <Button
-             variant={'outline'}
-             style={{
-                backgroundColor:currentTheme.navbarColor || currentTheme.backgroundColor,
-                color:currentTheme.accentColor,
-                }}
-            >
-                <Home />
-                <span className='hidden sm:inline'>Return Home</span>
+    return (
+        <nav className='w-full h-14 flex justify-between items-center py-2 px-4 border-b z-50 bg-background text-foreground'>
+            <Link passHref href={'/dashboard'}>
+                <Button
+                    variant={'outline'}
+                >
+                    <Home />
+                    <span className='hidden sm:inline'>Return Home</span>
+                </Button>
+            </Link>
 
-            </Button>
-        </Link>
+            <Link href={'/presentation/template-market'}
+                className='text-lg font-semibold hidden sm:block'>
+                Presentation Editor
+            </Link>
 
-        <Link href={'/presentation/template-market'} 
-        className='text-lg font-semibold hidden sm:block'>
-            Presentation Editor
-        </Link>
+            <div className='flex items-center gap-4'>
+                <ThemeSwitcher />
+                <Button
+                    variant={'outline'}
+                    onClick={handleCopy}
+                >
+                    <Share />
+                </Button>
+                {/* selling feature */}
+                {/* <SellTemplate/> */}
 
-        <div className='flex items-center gap-4'>
-            <Button
-             style={{
-                backgroundColor:currentTheme.navbarColor || currentTheme.backgroundColor,
-                color:currentTheme.accentColor,
-                }}
-                variant={'outline'}
-                onClick={handleCopy}
-             >
-                <Share/>
-             </Button>
-             {/* selling feature */}
-             {/* <SellTemplate/> */}
-
-             <Button variant={'default'} className='flex items-center gap-2'
-             onClick={()=> setIsPresentationMode(true)}
-             >
-                <Play className='w-4 h-4'/>
-                <span className='hidden sm:inline'>Present</span>
-             </Button>
-        </div>
-                {/* add presentation */}
-        {isPresentationMode && (
-            <PresentationMode
-            onClose={()=> setIsPresentationMode(false)}
-            />
-        ) }
-    </nav>
-  )
+                <Button variant={'default'} className='flex items-center gap-2'
+                    onClick={() => setIsPresentationMode(true)}
+                >
+                    <Play className='w-4 h-4' />
+                    <span className='hidden sm:inline'>Present</span>
+                </Button>
+            </div>
+            {/* add presentation */}
+            {isPresentationMode && (
+                <PresentationMode
+                    onClose={() => setIsPresentationMode(false)}
+                />
+            )}
+        </nav>
+    )
 }
 
 export default Navbar

@@ -42,7 +42,7 @@ const LayoutPreview = (props: Props) => {
     }, [])
 
     return (
-        <div className='w-80 h-full fixed left-0 top-20 border-r bg-background flex flex-col shadow-sm'>
+        <div className='w-64 h-full border-r bg-background flex flex-col shadow-sm shrink-0'>
             <div className="p-4 border-b bg-background/95 backdrop-blur supports-backdrop-filter:bg-background/60 z-10">
                 <div className='flex items-center justify-between mb-4'>
                     <h2 className='text-xs font-semibold text-muted-foreground uppercase tracking-wider'>Slides</h2>
