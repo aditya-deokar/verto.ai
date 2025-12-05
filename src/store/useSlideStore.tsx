@@ -43,6 +43,13 @@ interface SlideState {
   past: Slide[][];
   future: Slide[][];
   resetSlideStore: () => void;
+  updateComponent: (
+    slideId: string,
+    componentId: string,
+    updates: Partial<ContentItem>
+  ) => void;
+  selectedComponentId: string | null;
+  setSelectedComponent: (id: string | null) => void;
 }
 
 const defaultTheme: Theme = {
@@ -331,6 +338,37 @@ export const useSlideStore = create(
           return { slides: newSlides, past: [...state.past, state.slides], future: [] };
         });
       },
+      updateComponent: (slideId, componentId, updates) => {
+        set((state) => {
+          const updatedSlides = state.slides.map((slide) => {
+            if (slide.id !== slideId) return slide;
+
+            const updateRecursive = (content: ContentItem): ContentItem => {
+              if (content.id === componentId) {
+                return { ...content, ...updates };
+              }
+
+              if (Array.isArray(content.content)) {
+                return {
+                  ...content,
+                  content: (content.content as ContentItem[]).map(updateRecursive),
+                };
+              }
+
+              return content;
+            };
+
+            return {
+              ...slide,
+              content: updateRecursive(slide.content),
+            };
+          });
+
+          return { slides: updatedSlides, past: [...state.past, state.slides], future: [] };
+        });
+      },
+      selectedComponentId: null,
+      setSelectedComponent: (id) => set({ selectedComponentId: id }),
       resetSlideStore: () => {
         console.log("🟢 Resetting slide store");
         set({

@@ -1,10 +1,8 @@
 "use client";
 
 import { useSlideStore } from "@/store/useSlideStore";
-import React, { useState, useRef, useEffect, useCallback } from "react";
-import { useDrop, useDrag } from "react-dnd";
-import { ScrollArea } from "@/components/ui/scroll-area";
-import { LayoutSlides, Slide } from "@/lib/types";
+import React, { useState, useEffect } from "react";
+import { LayoutSlides } from "@/lib/types";
 import { v4 as uuidv4 } from "uuid";
 import { cn } from "@/lib/utils";
 import { Skeleton } from "@/components/ui/skeleton";
@@ -14,125 +12,29 @@ import {
   PopoverTrigger,
 } from "@/components/ui/popover";
 import { Button } from "@/components/ui/button";
-import { EllipsisVertical, Trash, Undo2, Redo2, Save } from "lucide-react";
+import { EllipsisVertical, Trash, ZoomIn, ZoomOut } from "lucide-react";
 import { MasterRecursiveComponent } from "./MasterRecursiveComponent";
-import { updateSlides } from "@/actions/projects";
-import { toast } from "sonner";
+import EditorToolbar from "./EditorToolbar";
 
-interface DropZoneProps {
+interface SlideCanvasProps {
+  slide: any;
   index: number;
-  onDrop: (
-    item: {
-      type: string;
-      layoutType: string;
-      component: LayoutSlides;
-      index?: number;
-    },
-    dropIndex: number
-  ) => void;
-  isEditable: boolean;
-}
-
-export const DropZone: React.FC<DropZoneProps> = ({
-  index,
-  onDrop,
-  isEditable,
-}) => {
-  const [{ isOver, canDrop }, dropRef] = useDrop({
-    accept: ["SLIDE", "layout"],
-    drop: (item: {
-      type: string;
-      layoutType: string;
-      component: LayoutSlides;
-      index?: number;
-    }) => {
-      onDrop(item, index);
-    },
-    canDrop: () => isEditable,
-    collect: (monitor) => ({
-      isOver: !!monitor.isOver(),
-      canDrop: !!monitor.canDrop(),
-    }),
-  });
-
-  if (!isEditable) return null;
-
-  return (
-    <div
-      ref={dropRef as unknown as React.RefObject<HTMLDivElement>}
-      className={cn(
-        "h-4 my-2 rounded-md transition-all duration-200",
-        isOver && canDrop ? "border-green-500 bg-green-100" : "border-gray-100",
-        canDrop ? "border-blue-300" : ""
-      )}
-    >
-      {isOver && canDrop && (
-        <div className="h-full flex items-center justify-center text-green-600">
-          Drop here
-        </div>
-      )}
-    </div>
-  );
-};
-
-interface DraggableSlideProps {
-  slide: Slide;
-  index: number;
-  moveSlide: (dragIndex: number, hoverIndex: number) => void;
   handleDelete: (id: string) => void;
   isEditable: boolean;
 }
 
-export const DraggableSlide: React.FC<DraggableSlideProps> = ({
+export const SlideCanvas: React.FC<SlideCanvasProps> = ({
   slide,
   index,
-  moveSlide,
   handleDelete,
   isEditable,
 }) => {
-  const ref = useRef(null);
-
-  const { currentSlide, setCurrentSlide, currentTheme, updateContentItem } =
-    useSlideStore();
-
-  const [{ isDragging }, drag] = useDrag({
-    type: "SLIDE",
-    item: {
-      index,
-      type: "SLIDE",
-    },
-    collect: (monitor) => ({
-      isDragging: monitor.isDragging(),
-    }),
-    canDrag: isEditable,
-  });
-  const [_, drop] = useDrop({
-    accept: ["SLIDE", "LAYOUT"],
-    hover(item: { index: number; type: string }) {
-      if (!ref.current || !isEditable) {
-        return;
-      }
-
-      const dragIndex = item.index;
-      const hoverIndex = index;
-
-      if (item.type === "SLIDE") {
-        if (dragIndex === hoverIndex) {
-          return;
-        }
-        moveSlide(dragIndex, hoverIndex);
-        item.index = hoverIndex;
-      }
-    },
-  });
-
-  drag(drop(ref));
+  const { currentTheme, updateContentItem, setSelectedComponent, setCurrentSlide } = useSlideStore();
 
   const handleContentChange = (
     contentId: string,
     newContent: string | string[] | string[][]
   ) => {
-    console.log("Content changed", slide, contentId, newContent);
     if (isEditable) {
       updateContentItem(slide.id, contentId, newContent);
     }
@@ -140,15 +42,11 @@ export const DraggableSlide: React.FC<DraggableSlideProps> = ({
 
   return (
     <div
-      ref={ref}
       className={cn(
-        "w-full rounded-xl shadow-lg relative p-8 mb-8 aspect-video overflow-hidden",
-        "transition-all duration-300 ease-in-out",
+        "w-full h-full relative bg-white shadow-2xl",
+        "transition-all duration-200 ease-in-out",
         "flex flex-col",
-        index === currentSlide
-          ? "ring-4 ring-primary/80 ring-offset-4 shadow-2xl scale-[1.01]"
-          : "hover:scale-[1.005] hover:shadow-xl",
-        isDragging ? "opacity-50 scale-95" : "opacity-100"
+        "p-10" // Added padding for better layout
       )}
       style={{
         backgroundImage: currentTheme.gradientBackground,
@@ -156,8 +54,10 @@ export const DraggableSlide: React.FC<DraggableSlideProps> = ({
         color: currentTheme.fontColor,
         fontFamily: currentTheme.fontFamily,
       }}
-      onClick={() => setCurrentSlide(index)}
-      data-slide-index={index}
+      onClick={() => {
+        // setCurrentSlide(index) // Already current
+        setSelectedComponent(null)
+      }}
     >
       <div className="h-full w-full grow overflow-hidden">
         <MasterRecursiveComponent
@@ -171,7 +71,7 @@ export const DraggableSlide: React.FC<DraggableSlideProps> = ({
 
       {isEditable && (
         <Popover>
-          <PopoverTrigger asChild className="absolute top-4 left-4 opacity-0 group-hover:opacity-100 transition-opacity">
+          <PopoverTrigger asChild className="absolute top-4 left-4 opacity-0 hover:opacity-100 transition-opacity z-50">
             <Button size="sm" variant="secondary" className="h-8 w-8 p-0 rounded-full shadow-md">
               <EllipsisVertical className="w-4 h-4" />
               <span className="sr-only">Slide options</span>
@@ -201,163 +101,61 @@ const Editor = ({ isEditable }: Props) => {
     currentSlide,
     removeSlide,
     addSlideAtIndex,
-    reorderSlides,
-    slides,
-    project,
-    undo,
-    redo,
-    past,
-    future,
   } = useSlideStore();
 
   const orderedSlides = getOrderedSlides();
   const [loading, setLoading] = useState(true);
-  const [isSaving, setIsSaving] = useState(false);
+  const [scale, setScale] = useState(1);
 
-  const moveSlide = (dragIndex: number, hoverIndex: number) => {
-    if (isEditable) {
-      reorderSlides(dragIndex, hoverIndex);
-    }
-  };
-
-  const handleDrop = (
-    item: {
-      type: string;
-      layoutType: string;
-      component: LayoutSlides;
-      index?: number;
-    },
-    dropIndex: number
-  ) => {
-    if (!isEditable) return;
-
-    if (item.type === "layout") {
-      addSlideAtIndex(
-        {
-          ...item.component,
-          id: uuidv4(),
-          slideOrder: dropIndex,
-        },
-        dropIndex
-      );
-    } else if (item.type === "SLIDE" && item.index !== undefined) {
-      moveSlide(item.index, dropIndex);
-    }
-  };
   const handleDelete = (id: string) => {
     if (isEditable) {
-      console.log("Deleting", id);
       removeSlide(id);
     }
   };
 
   useEffect(() => {
-    // Use a slight delay to ensure DOM is fully rendered
-    const timer = setTimeout(() => {
-      const slideElement = document.querySelector(
-        `[data-slide-index="${currentSlide}"]`
-      );
-
-      if (slideElement) {
-        slideElement.scrollIntoView({
-          behavior: "smooth",
-          block: "center",
-        });
-      }
-    }, 100);
-
-    return () => clearTimeout(timer);
-  }, [currentSlide]);
-
-  useEffect(() => {
     if (typeof window !== "undefined") setLoading(false);
   }, []);
 
-  const saveSlides = useCallback(async () => {
-    if (isEditable && project) {
-      setIsSaving(true);
-      try {
-        await updateSlides(project.id, JSON.parse(JSON.stringify(slides)));
-        toast.success("Slides saved successfully");
-      } catch (error) {
-        toast.error("Failed to save slides");
-        console.error("Save error:", error);
-      } finally {
-        setIsSaving(false);
-      }
-    }
-  }, [isEditable, project, slides]);
+  const currentSlideData = orderedSlides[currentSlide];
 
   return (
-    <div className="flex-1 flex flex-col h-full w-full mx-auto px-4 mb-20 relative">
-      {isEditable && !loading && (
-        <div className="fixed top-20 right-4 z-50 flex flex-row items-center gap-2 bg-background/80 backdrop-blur-md p-2 rounded-xl border shadow-xl">
-          <Button
-            variant="ghost"
-            size="icon"
-            onClick={undo}
-            disabled={past.length === 0}
-            title="Undo"
-            className="hover:bg-accent rounded-full"
-          >
-            <Undo2 className="h-5 w-5" />
-          </Button>
-          <Button
-            variant="ghost"
-            size="icon"
-            onClick={redo}
-            disabled={future.length === 0}
-            title="Redo"
-            className="hover:bg-accent rounded-full"
-          >
-            <Redo2 className="h-5 w-5" />
-          </Button>
-          <div className="h-6 w-px bg-border mx-1" />
-          <Button
-            variant="ghost"
-            size="icon"
-            onClick={saveSlides}
-            disabled={isSaving}
-            title="Save"
-            className="hover:bg-accent rounded-full text-green-600 hover:text-green-700"
-          >
-            <Save className="h-5 w-5" />
-          </Button>
-        </div>
-      )}
+    <div className="flex-1 flex flex-col h-full w-full relative bg-muted/20">
       {loading ? (
-        <div className="w-full px-4 flex flex-col space-y-6">
-          <Skeleton className="h-52 w-full" />
-          <Skeleton className="h-52 w-full" />
-          <Skeleton className="h-52 w-full" />
+        <div className="w-full h-full flex items-center justify-center">
+          <Skeleton className="h-[60%] w-[80%] rounded-xl" />
         </div>
       ) : (
-        <ScrollArea className="flex-1 mt-8 w-full">
-          <div className="px-4 pb-4 space-y-4 pt-2">
-            {isEditable && (
-              <DropZone index={0} onDrop={handleDrop} isEditable={isEditable} />
+        <div className="flex-1 overflow-hidden flex items-center justify-center p-8 relative">
+          {/* Zoom Controls (Optional) */}
+          {/* <div className="absolute bottom-4 right-4 flex gap-2 z-50">
+                <Button size="icon" variant="outline" onClick={() => setScale(s => Math.max(0.5, s - 0.1))}><ZoomOut className="w-4 h-4" /></Button>
+                <Button size="icon" variant="outline" onClick={() => setScale(s => Math.min(2, s + 0.1))}><ZoomIn className="w-4 h-4" /></Button>
+            </div> */}
+
+          <div
+            className="aspect-video w-full max-w-5xl shadow-2xl rounded-sm overflow-hidden ring-1 ring-black/5"
+            style={{
+              transform: `scale(${scale})`,
+              transition: 'transform 0.2s ease-in-out'
+            }}
+          >
+            {currentSlideData ? (
+              <SlideCanvas
+                slide={currentSlideData}
+                index={currentSlide}
+                handleDelete={handleDelete}
+                isEditable={isEditable}
+              />
+            ) : (
+              <div className="w-full h-full flex items-center justify-center bg-white text-muted-foreground">
+                No slide selected
+              </div>
             )}
-            {orderedSlides.map((slide, index) => (
-              <React.Fragment key={slide.id || index}>
-                <DraggableSlide
-                  slide={slide}
-                  index={index}
-                  moveSlide={moveSlide}
-                  handleDelete={handleDelete}
-                  isEditable={isEditable}
-                />
-                {isEditable && (
-                  <DropZone
-                    index={index + 1}
-                    onDrop={handleDrop}
-                    isEditable={isEditable}
-                  />
-                )}
-              </React.Fragment>
-            ))}
           </div>
-        </ScrollArea>
+        </div>
       )}
+      <EditorToolbar isEditable={isEditable} />
     </div>
   );
 };

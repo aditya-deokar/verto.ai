@@ -10,16 +10,17 @@ type Props = {
     index: number
 }
 
-const ScaledPreview = ({ index, isActive, slide}: Props) => {
+const ScaledPreview = ({ index, isActive, slide }: Props) => {
     const { currentTheme } = useSlideStore()
-    
+
     return (
         <div
             className={cn(
-                'w-full relative aspect-video rounded-lg overflow-hidden transition-all duration-200 p-2 ring-2 ring-primary-80 ring-offset-2',
-                 isActive
-                    ? 'ring-2 ring-blue-500 ring-offset-2'
-                    : 'hover:ring-2 hover:ring-gray-200 hover:ring-offset-2'
+                'w-full relative aspect-video rounded-md overflow-hidden transition-all duration-200 shadow-sm',
+                'border border-border', // Default border
+                isActive
+                    ? 'ring-2 ring-primary ring-offset-1'
+                    : 'group-hover:ring-1 group-hover:ring-primary/20'
             )}
             style={{
                 fontFamily: currentTheme.fontFamily,
@@ -29,11 +30,11 @@ const ScaledPreview = ({ index, isActive, slide}: Props) => {
             }}
 
         >
-            <div className="scale-[0.5] origin-top-left w-[200%] h-[200%] overflow-hidden">
+            <div className="scale-[0.5] origin-top-left w-[200%] h-[200%] overflow-hidden pointer-events-none">
                 <MasterRecursiveComponent
                     slideId={slide.id}
                     content={slide.content}
-                    onContentChange={() => {}}
+                    onContentChange={() => { }}
                     isPreview={true}
                     isEditable={false}
                 />

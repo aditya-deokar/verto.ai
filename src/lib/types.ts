@@ -7,7 +7,6 @@ export interface Slide {
   className?: string;
 }
 
-
 export interface ContentItem {
   id: string;
   type: ContentType;
@@ -26,8 +25,19 @@ export interface ContentItem {
   language?: string;
   bgColor?: string;
   isTransparent?: boolean;
+  width?: number;
+  height?: number;
+  x?: number;
+  y?: number;
+  isDraggable?: boolean;
+  isResizable?: boolean;
+  fontSize?: string;
+  fontWeight?: string;
+  fontStyle?: string;
+  textDecoration?: string;
+  color?: string;
+  textAlign?: string;
 }
-
 
 export type ContentType =
   | "column"
@@ -60,53 +70,49 @@ export type ContentType =
   | "table"
   | "tableOfContents";
 
-
-
-export interface Theme{
-  name:string;
-  fontFamily:string;
-  fontColor:string;
-  accentColor:string;
-  backgroundColor:string;
-  slideBackgroundColor?:string;
-  sidebarColor?:string;
-  gradientBackground?:string;
-  navbarColor?:string;
-  type:'light' | 'dark';
-
+export interface Theme {
+  name: string;
+  fontFamily: string;
+  fontColor: string;
+  accentColor: string;
+  backgroundColor: string;
+  slideBackgroundColor?: string;
+  sidebarColor?: string;
+  gradientBackground?: string;
+  navbarColor?: string;
+  type: 'light' | 'dark';
 }
 
-export interface OutlineCard{
-  title:string 
-  id:string 
+export interface OutlineCard {
+  title: string
+  id: string
   order: number
 }
 
-export interface LayoutSlides{
-  type:string
-  slideName:string
-  content:ContentItem
-  className?:string
+export interface LayoutSlides {
+  type: string
+  slideName: string
+  content: ContentItem
+  className?: string
 }
 
 export interface Layout {
-  name:string
-  icon:React.FC
-  type:string
-  component:LayoutSlides
+  name: string
+  icon: React.FC
+  type: string
+  component: LayoutSlides
   layoutType: string
 }
 
 export interface LayoutGroup {
   name: string
-  layouts:Layout[]
+  layouts: Layout[]
 }
 
 export interface ComponentGroup {
   name: string;
   components: Component[];
 }
-
 
 interface Component {
   name: string;

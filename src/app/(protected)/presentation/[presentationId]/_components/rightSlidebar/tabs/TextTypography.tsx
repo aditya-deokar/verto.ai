@@ -5,7 +5,7 @@ import { Badge } from '@/components/ui/badge';
 import { component } from '@/lib/constants';
 import React, { useState, useMemo } from 'react';
 import ComponentCard from './components-tab/ComponentPreview';
-import { Type, Sparkles } from 'lucide-react';
+import { Type } from 'lucide-react';
 
 const TextTypography = () => {
   const [searchQuery, setSearchQuery] = useState("");
@@ -18,7 +18,7 @@ const TextTypography = () => {
   // Filter components based on search
   const filteredComponents = useMemo(() => {
     if (!searchQuery.trim()) return component;
-    
+
     return component.map(group => ({
       ...group,
       components: group.components.filter(comp =>
@@ -35,19 +35,8 @@ const TextTypography = () => {
 
   return (
     <div className="flex flex-col h-full max-h-full overflow-hidden bg-background">
-      {/* Header */}
-      <div className="p-4 border-b space-y-3 shrink-0 bg-muted/50">
-        <div className="flex items-center justify-between">
-          <h2 className="font-bold flex items-center gap-2">
-            <Type className="w-5 h-5" />
-            Components
-          </h2>
-          <Badge variant="outline">
-            {totalComponents} Total
-          </Badge>
-        </div>
-
-        {/* Search Bar */}
+      {/* Search Bar */}
+      <div className="p-4 border-b shrink-0 bg-muted/50">
         <input
           type="text"
           placeholder="Search components..."
