@@ -9,6 +9,7 @@ import Link from 'next/link'
 import React, { useState } from 'react'
 import { toast } from 'sonner'
 import PresentationMode from './PresentationMode'
+import { ThemeSwitcher } from '@/components/global/mode-toggle'
 
 type Props = {
     presentationId: string

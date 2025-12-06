@@ -73,23 +73,25 @@ const page = (props: Props) => {
 
   return (
     <DndProvider backend={HTML5Backend}>
-
-      <div className='flex flex-col min-h-screen'>
+      <div className='flex flex-col h-screen bg-background'>
         <Navbar presentationId={params.presentationId as string} />
         <div className='flex-1 flex overflow-hidden pt-16 bg-secondary/20'>
           <EditorLeftSidebar />
 
-          <div className="flex-1 ml-80 pr-16">
+          <div className="flex-1 flex flex-col overflow-hidden relative bg-muted/10 min-w-0">
             <Editor isEditable={true} />
           </div>
 
+<<<<<<< HEAD
           <div className='bg-background'>
             <EditorSlidebar />
           </div>
 
+=======
+          <EditorSlidebar />
+>>>>>>> 2baabf4ba177aac702da38fc9f61466fd730633e
         </div>
       </div>
-
     </DndProvider>
   )
 }

@@ -55,6 +55,7 @@ const ResizableComponent = ({ content, slideId, children, isEditable, isPreview 
     }
 
     const handleDragEnd = (event: MouseEvent | TouchEvent | PointerEvent, info: PanInfo) => {
+<<<<<<< HEAD
         // We need to calculate the *final* absolute position relative to the parent container
         const parentRect = ref.current?.parentElement?.getBoundingClientRect()
         const elementRect = ref.current?.getBoundingClientRect()
@@ -68,6 +69,15 @@ const ResizableComponent = ({ content, slideId, children, isEditable, isPreview 
             setY(newY)
             updateComponent(slideId, content.id, { x: newX, y: newY })
         }
+=======
+        // When using animate prop for x/y, the element is visually at 'x' (from state) + drag offset.
+        // We need to commit this new position to state.
+        const newX = Number(x) + info.offset.x
+        const newY = Number(y) + info.offset.y
+        setX(newX)
+        setY(newY)
+        updateComponent(slideId, content.id, { x: newX, y: newY })
+>>>>>>> 2baabf4ba177aac702da38fc9f61466fd730633e
     }
 
     const handleResizeStart = (e: React.MouseEvent, direction: ResizeDirection) => {
@@ -192,12 +202,14 @@ const ResizableComponent = ({ content, slideId, children, isEditable, isPreview 
             dragControls={dragControls}
             dragMomentum={false}
             onDragEnd={handleDragEnd}
+            animate={{
+                x: isAbsolute ? x : 0,
+                y: isAbsolute ? y : 0,
+            }}
             style={{
                 width: width,
                 height: height,
                 position: isAbsolute ? 'absolute' : 'relative',
-                left: isAbsolute ? x : undefined,
-                top: isAbsolute ? y : undefined,
                 zIndex: isAbsolute ? 10 : 1,
             }}
             className={cn(
