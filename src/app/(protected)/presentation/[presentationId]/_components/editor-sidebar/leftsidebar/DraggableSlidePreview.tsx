@@ -48,18 +48,22 @@ const DraggableSlidePreview = ({ index, moveSlide, slide }: Props) => {
         <div
             ref={ref}
             className={cn(
-                'group relative flex items-start gap-2 p-2 rounded-lg transition-all duration-200',
-                isDragging ? 'opacity-50' : 'opacity-100',
-                index === currentSlide ? 'bg-primary/10' : 'hover:bg-muted/50'
+                'group relative flex items-start gap-3 p-3 rounded-xl transition-all duration-300 cursor-pointer',
+                isDragging ? 'opacity-40 scale-95' : 'opacity-100',
+                index === currentSlide
+                    ? 'bg-primary/5 ring-1 ring-primary/20 shadow-sm'
+                    : 'hover:bg-muted/30 hover:scale-[1.02]'
             )}
             onClick={() => setCurrentSlide(index)}
         >
             {/* Slide Number */}
             <div className={cn(
-                "text-xs font-medium w-4 text-muted-foreground pt-1 transition-colors",
-                index === currentSlide && "text-primary"
+                "text-xs font-bold w-6 h-6 flex items-center justify-center rounded-full transition-colors duration-200",
+                index === currentSlide
+                    ? "bg-primary text-primary-foreground"
+                    : "text-muted-foreground group-hover:bg-muted group-hover:text-foreground"
             )}>
-                {index + 1}
+                {index + 3}
             </div>
 
             {/* Preview Container */}

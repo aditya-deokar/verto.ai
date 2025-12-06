@@ -34,14 +34,14 @@ const Paragraph = React.forwardRef<HTMLTextAreaElement, ParagraphProps>(
         return (
             <textarea
                 className={cn(
-                    `w-full bg-transparent font-normal text-gray-900 placeholder:text-gray-300/50 focus:outline-hidden resize-none overflow-hidden leading-relaxed tracking-wide`,
+                    `w-full bg-transparent font-normal placeholder:text-gray-300/50 focus:outline-hidden resize-none leading-relaxed tracking-wide`,
                     isPreview ? 'text-[0.6rem] leading-normal' : 'text-base md:text-lg lg:text-xl',
                     className
                 )}
                 style={{
                     padding: 0,
                     margin: 0,
-                    color: currentTheme.fontColor,
+                    color: styles?.color || currentTheme.fontColor,
                     boxSizing: 'content-box',
                     lineHeight: '1.6',
                     minHeight: '1.6em',

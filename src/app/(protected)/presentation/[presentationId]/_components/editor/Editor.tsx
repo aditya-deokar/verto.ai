@@ -269,7 +269,7 @@ const Editor = ({ isEditable }: Props) => {
   }, []);
 
   return (
-    <div className="flex-1 flex flex-col h-full w-full mx-auto px-4 mb-20 relative">
+    <div className="flex-1 flex flex-col h-full w-full mx-auto px-4 mb-20 relative bg-background">
       {loading ? (
         <div className="w-full px-4 flex flex-col space-y-6">
           <Skeleton className="h-52 w-full" />

@@ -32,21 +32,24 @@ const createHeading = (displayName: string, defaultClassName: string, useAccentC
         }
       }, [isPreview])
 
+      const { color, ...restStyles } = styles || {};
+      const finalColor = color || (useAccentColor ? currentTheme.accentColor : 'inherit');
+
       return (
         <textarea
           className={cn(
-            `w-full bg-transparent ${defaultClassName} font-bold text-gray-900 placeholder:text-gray-300/50 focus:outline-hidden resize-none overflow-hidden leading-[1.1] tracking-tight`,
+            `w-full bg-transparent ${defaultClassName} font-bold text-gray-900 placeholder:text-gray-300/50 focus:outline-hidden resize-none leading-[1.1] tracking-tight`,
             isPreview ? 'cursor-default' : '',
             className
           )}
           style={{
             padding: 0,
             margin: 0,
-            color: useAccentColor ? currentTheme.accentColor : 'inherit',
+            color: finalColor,
             boxSizing: 'content-box',
             lineHeight: '1.1em',
             minHeight: '1.1em',
-            ...styles,
+            ...restStyles,
           }}
           ref={(el) => {
             (textareaRef.current as HTMLTextAreaElement | null) = el

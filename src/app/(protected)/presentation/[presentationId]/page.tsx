@@ -11,7 +11,7 @@ import { toast } from 'sonner'
 import { DndProvider } from 'react-dnd'
 import { HTML5Backend } from 'react-dnd-html5-backend'
 import Navbar from './_components/Navbar'
-import LayoutPreview from './_components/editor-sidebar/leftsidebar/LayoutPreview'
+import EditorLeftSidebar from './_components/editor-sidebar/new-leftsidebar/EditorLeftSidebar'
 import Editor from './_components/editor/Editor'
 import EditorSlidebar from './_components/rightSlidebar'
 
@@ -84,7 +84,7 @@ const page = (props: Props) => {
 
           }}
         >
-          <LayoutPreview />
+          <EditorLeftSidebar />
 
           <div className="flex-1 ml-80 pr-16">
             <Editor isEditable={true} />

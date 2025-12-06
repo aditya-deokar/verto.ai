@@ -61,11 +61,11 @@ const EditorSidebar = () => {
     );
 
     return (
-        <div className="fixed right-0 top-1/2 -translate-y-1/2 z-40 flex items-start h-[80vh] pointer-events-none">
+        <div className="fixed right-0 top-1/2 -translate-y-1/2 z-40 flex items-start h-[80vh] pointer-events-none bg-background!">
             {/* Content Panel */}
             <div
                 className={cn(
-                    "h-full bg-background/95 backdrop-blur-xl border-y border-l shadow-2xl transition-all duration-300 ease-in-out overflow-hidden flex flex-col pointer-events-auto rounded-l-2xl mr-4",
+                    "h-full bg-background border-y border-l shadow-2xl transition-all duration-300 ease-in-out overflow-hidden flex flex-col pointer-events-auto rounded-l-2xl mr-4",
                     activeTab ? "w-[400px] opacity-100 translate-x-0" : "w-0 opacity-0 translate-x-10 border-none"
                 )}
             >
@@ -95,7 +95,7 @@ const EditorSidebar = () => {
             </div>
 
             {/* Navigation Dock */}
-            <div className="pointer-events-auto flex flex-col gap-4 p-2 bg-background/80 backdrop-blur-md border shadow-xl rounded-l-2xl mr-0 transition-all duration-300 hover:bg-background">
+            <div className="pointer-events-auto flex flex-col gap-4 p-2 bg-background border shadow-xl rounded-l-2xl mr-0 transition-all duration-300">
                 <NavButton
                     icon={LayoutTemplate}
                     label="Layouts"
