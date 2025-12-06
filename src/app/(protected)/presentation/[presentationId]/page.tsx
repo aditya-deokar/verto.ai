@@ -11,7 +11,7 @@ import { toast } from 'sonner'
 import { DndProvider } from 'react-dnd'
 import { HTML5Backend } from 'react-dnd-html5-backend'
 import Navbar from './_components/Navbar'
-import LayoutPreview from './_components/editor-sidebar/leftsidebar/LayoutPreview'
+import EditorLeftSidebar from './_components/editor-sidebar/new-leftsidebar/EditorLeftSidebar'
 import Editor from './_components/editor/Editor'
 import EditorSlidebar from './_components/rightSlidebar'
 
@@ -75,8 +75,15 @@ const page = (props: Props) => {
     <DndProvider backend={HTML5Backend}>
       <div className='flex flex-col h-screen bg-background'>
         <Navbar presentationId={params.presentationId as string} />
-        <div className='flex-1 flex overflow-hidden'>
-          <LayoutPreview />
+        <div className='flex-1 flex overflow-hidden pt-16'
+          style={{
+            backgroundColor: currentTheme.backgroundColor,
+            color: currentTheme.accentColor,
+            fontFamily: currentTheme.fontFamily,
+
+          }}
+        >
+          <EditorLeftSidebar />
 
           <div className="flex-1 flex flex-col overflow-hidden relative bg-muted/10 min-w-0">
             <Editor isEditable={true} />

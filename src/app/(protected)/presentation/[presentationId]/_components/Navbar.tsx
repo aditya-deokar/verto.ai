@@ -1,4 +1,5 @@
 'use client'
+import { ThemeSwitcher } from '@/components/global/mode-toggle'
 import { Button } from '@/components/ui/button'
 import Home from '@/icons/Home'
 import { Share } from '@/icons/Share'
@@ -16,7 +17,7 @@ type Props = {
 
 const Navbar = ({ presentationId }: Props) => {
 
-    const { currentTheme } = useSlideStore();
+    const { currentTheme, project } = useSlideStore();
     const [isPresentationMode, setIsPresentationMode] = useState(false);
 
     const handleCopy = () => {
@@ -31,29 +32,45 @@ const Navbar = ({ presentationId }: Props) => {
 
 
     return (
-        <nav className='w-full h-14 flex justify-between items-center py-2 px-4 border-b z-50 bg-background text-foreground'>
+        <nav className='fixed top-0 left-0 right-0 z-50 w-full h-16 flex justify-between items-center py-3 px-7 border-b bg-background/80 backdrop-blur-md'>
             <Link passHref href={'/dashboard'}>
                 <Button
                     variant={'outline'}
+                    style={{
+                        backgroundColor: currentTheme.navbarColor || currentTheme.backgroundColor,
+                        color: currentTheme.accentColor,
+                    }}
                 >
                     <Home />
                     <span className='hidden sm:inline'>Return Home</span>
+
                 </Button>
             </Link>
 
-            <Link href={'/presentation/template-market'}
-                className='text-lg font-semibold hidden sm:block'>
-                Presentation Editor
+            <Link href={'/presentation/template-market'} className='hidden sm:block'>
+                <h1 className='text-lg font-semibold truncate max-w-[400px]'
+                    style={{
+                        color: currentTheme.accentColor,
+                    }}
+                >
+                    {project?.title || 'Presentation Editor'}
+                </h1>
             </Link>
 
             <div className='flex items-center gap-4'>
-                <ThemeSwitcher />
                 <Button
+                    style={{
+                        backgroundColor: currentTheme.navbarColor || currentTheme.backgroundColor,
+                        color: currentTheme.accentColor,
+                    }}
                     variant={'outline'}
                     onClick={handleCopy}
                 >
                     <Share />
                 </Button>
+
+                <ThemeSwitcher />
+
                 {/* selling feature */}
                 {/* <SellTemplate/> */}
 

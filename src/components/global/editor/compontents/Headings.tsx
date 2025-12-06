@@ -32,25 +32,24 @@ const createHeading = (displayName: string, defaultClassName: string, useAccentC
         }
       }, [isPreview])
 
+      const { color, ...restStyles } = styles || {};
+      const finalColor = color || (useAccentColor ? currentTheme.accentColor : 'inherit');
+
       return (
         <textarea
           className={cn(
-            `w-full bg-transparent ${defaultClassName} font-bold text-gray-900 placeholder:text-gray-300/50 focus:outline-hidden resize-none overflow-hidden leading-[1.1] tracking-tight`,
+            `w-full bg-transparent ${defaultClassName} font-bold text-gray-900 placeholder:text-gray-300/50 focus:outline-hidden resize-none leading-[1.1] tracking-tight`,
             isPreview ? 'cursor-default' : '',
             className
           )}
           style={{
             padding: 0,
             margin: 0,
+            color: finalColor,
             boxSizing: 'content-box',
             lineHeight: '1.1em',
             minHeight: '1.1em',
-            ...styles,
-            // Apply color last to ensure it takes precedence if styles.color is defined,
-            // otherwise fall back to accent color or inherit.
-            // Note: If styles.color is undefined, it might still override 'inherit' if spread after.
-            // So we use explicit logic here.
-            color: styles?.color || (useAccentColor ? currentTheme.accentColor : 'inherit'),
+            ...restStyles,
           }}
           ref={(el) => {
             (textareaRef.current as HTMLTextAreaElement | null) = el

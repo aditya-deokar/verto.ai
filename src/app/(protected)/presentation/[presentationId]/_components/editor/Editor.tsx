@@ -120,7 +120,7 @@ const Editor = ({ isEditable }: Props) => {
   const currentSlideData = orderedSlides[currentSlide];
 
   return (
-    <div className="flex-1 flex flex-col h-full w-full relative bg-muted/20">
+    <div className="flex-1 flex flex-col h-full w-full mx-auto px-4 mb-20 relative bg-background">
       {loading ? (
         <div className="w-full h-full flex items-center justify-center">
           <Skeleton className="h-[60%] w-[80%] rounded-xl" />

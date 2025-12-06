@@ -73,7 +73,7 @@ export function VertoUseCasesSection() {
               whileTap={{ scale: 0.95 }}
             >
               <Button
-                variant={activeTab === key ? "default" : "outline-solid"}
+                variant={activeTab === key ? "default" : "outline"}
                 onClick={() => setActiveTab(key)}
                 className={`gap-2 ${
                   activeTab === key

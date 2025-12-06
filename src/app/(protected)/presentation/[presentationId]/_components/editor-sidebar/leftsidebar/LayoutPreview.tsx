@@ -42,11 +42,11 @@ const LayoutPreview = (props: Props) => {
     }, [])
 
     return (
-        <div className='w-64 h-full border-r bg-background flex flex-col shadow-sm shrink-0'>
+        <div className='w-80 h-[calc(100vh-4rem)] fixed left-0 top-16 border-r bg-background flex flex-col shadow-sm'>
             <div className="p-4 border-b bg-background/95 backdrop-blur supports-backdrop-filter:bg-background/60 z-10">
                 <div className='flex items-center justify-between mb-4'>
                     <h2 className='text-xs font-semibold text-muted-foreground uppercase tracking-wider'>Slides</h2>
-                    <span className='text-xs text-muted-foreground bg-secondary px-2 py-0.5 rounded-full'>
+                    <span className='text-xs px-2 py-0.5 rounded-full'>
                         {slides?.length}
                     </span>
                 </div>
@@ -56,7 +56,7 @@ const LayoutPreview = (props: Props) => {
                 </Button>
             </div>
 
-            <ScrollArea className='flex-1 w-full'>
+            <ScrollArea className='flex-1 w-full no-scrollbar'>
                 {loading ? (
                     <div className='w-full px-4 flex flex-col space-y-4 py-4'>
                         <Skeleton className='h-24 w-full rounded-lg' />
@@ -64,7 +64,7 @@ const LayoutPreview = (props: Props) => {
                         <Skeleton className='h-24 w-full rounded-lg' />
                     </div>
                 ) : (
-                    <div className='p-4 pr-8 pb-32 space-y-4'>
+                    <div className='px-8 space-y-4 py-4 pb-32'>
                         {slides?.map((slide, index) => (
                             <DraggableSlidePreview
                                 key={slide.id || index}
