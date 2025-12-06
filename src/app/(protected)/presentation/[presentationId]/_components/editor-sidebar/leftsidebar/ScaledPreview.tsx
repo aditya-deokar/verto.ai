@@ -30,7 +30,7 @@ const ScaledPreview = ({ index, isActive, slide }: Props) => {
             }}
 
         >
-            <div className="scale-[0.5] origin-top-left w-[200%] h-[200%] overflow-hidden pointer-events-none">
+            {/* <div className="scale-[0.03] origin-top-left w-[100%] h-[100%] overflow-hidden pointer-events-none"> */}
                 <MasterRecursiveComponent
                     slideId={slide.id}
                     content={slide.content}
@@ -38,7 +38,7 @@ const ScaledPreview = ({ index, isActive, slide }: Props) => {
                     isPreview={true}
                     isEditable={false}
                 />
-            </div>
+            {/* </div> */}
 
         </div>
     )
