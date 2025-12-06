@@ -141,7 +141,7 @@ export const DraggableSlide: React.FC<DraggableSlideProps> = ({
     <div
       ref={ref}
       className={cn(
-        "w-full rounded-xl shadow-lg relative p-8 mb-8 aspect-video overflow-hidden",
+        "w-full rounded-xl shadow-lg relative p-8 mb-8 aspect-video",
         "transition-all duration-300 ease-in-out",
         "flex flex-col",
         index === currentSlide
@@ -161,7 +161,7 @@ export const DraggableSlide: React.FC<DraggableSlideProps> = ({
       }}
       data-slide-index={index}
     >
-      <div className="h-full w-full grow overflow-hidden">
+      <div className="h-full w-full grow">
         <MasterRecursiveComponent
           content={slide.content}
           isPreview={false}
@@ -269,7 +269,7 @@ const Editor = ({ isEditable }: Props) => {
   }, []);
 
   return (
-    <div className="flex-1 flex flex-col h-full w-full mx-auto px-4 mb-20 relative bg-background">
+    <div className="flex-1 flex flex-col h-full w-full mx-auto px-4 mb-20 relative">
       {loading ? (
         <div className="w-full px-4 flex flex-col space-y-6">
           <Skeleton className="h-52 w-full" />

@@ -73,19 +73,14 @@ const Navbar = ({ presentationId }: Props) => {
                 {/* selling feature */}
                 {/* <SellTemplate/> */}
 
-                <Button variant={'default'} className='flex items-center gap-2'
-                    onClick={() => setIsPresentationMode(true)}
-                >
-                    <Play className='w-4 h-4' />
-                    <span className='hidden sm:inline'>Present</span>
-                </Button>
+                <Link href={`/present/${presentationId}`}>
+                    <Button variant={'default'} className='flex items-center gap-2'>
+                        <Play className='w-4 h-4' />
+                        <span className='hidden sm:inline'>Present</span>
+                    </Button>
+                </Link>
             </div>
             {/* add presentation */}
-            {isPresentationMode && (
-                <PresentationMode
-                    onClose={() => setIsPresentationMode(false)}
-                />
-            )}
         </nav>
     )
 }

@@ -1,5 +1,5 @@
 'use client'
-import React, { useState, useRef, useEffect } from 'react'
+import React, { useState, useRef, useEffect, memo } from 'react'
 import { ContentItem } from '@/lib/types'
 import { useSlideStore } from '@/store/useSlideStore'
 import { cn } from '@/lib/utils'
@@ -14,12 +14,15 @@ type Props = {
     isPreview: boolean
 }
 
+type ResizeDirection =
+    | 'top' | 'bottom' | 'left' | 'right'
+    | 'top-left' | 'top-right' | 'bottom-left' | 'bottom-right'
+
 const ResizableComponent = ({ content, slideId, children, isEditable, isPreview }: Props) => {
     const { updateComponent, setSelectedComponent, selectedComponentId } = useSlideStore()
     const ref = useRef<HTMLDivElement>(null)
     const dragControls = useDragControls()
 
-    // Local state for smooth interactions
     const [width, setWidth] = useState<number | string>(content.width || '100%')
     const [height, setHeight] = useState<number | string>(content.height || 'auto')
     const [x, setX] = useState(content.x || 0)
@@ -28,10 +31,11 @@ const ResizableComponent = ({ content, slideId, children, isEditable, isPreview 
     useEffect(() => {
         if (content.width) setWidth(content.width)
         if (content.height) setHeight(content.height)
-        if (content.x) setX(content.x)
-        if (content.y) setY(content.y)
+        if (content.x !== undefined) setX(content.x)
+        if (content.y !== undefined) setY(content.y)
     }, [content.width, content.height, content.x, content.y])
 
+    // If preview or not editable, render static
     if (isPreview || !isEditable) {
         return (
             <div
@@ -40,7 +44,8 @@ const ResizableComponent = ({ content, slideId, children, isEditable, isPreview 
                     height: content.height || '100%',
                     position: content.x !== undefined ? 'absolute' : 'relative',
                     left: content.x,
-                    top: content.y
+                    top: content.y,
+                    zIndex: content.x !== undefined ? 10 : 1,
                 }}
                 className={cn("relative", content.className)}
             >
@@ -50,15 +55,22 @@ const ResizableComponent = ({ content, slideId, children, isEditable, isPreview 
     }
 
     const handleDragEnd = (event: MouseEvent | TouchEvent | PointerEvent, info: PanInfo) => {
-        const newX = x + info.offset.x
-        const newY = y + info.offset.y
-        setX(newX)
-        setY(newY)
-        updateComponent(slideId, content.id, { x: newX, y: newY })
+        // We need to calculate the *final* absolute position relative to the parent container
+        const parentRect = ref.current?.parentElement?.getBoundingClientRect()
+        const elementRect = ref.current?.getBoundingClientRect()
+
+        if (parentRect && elementRect) {
+            // Calculate position relative to the parent container
+            const newX = elementRect.left - parentRect.left
+            const newY = elementRect.top - parentRect.top
+
+            setX(newX)
+            setY(newY)
+            updateComponent(slideId, content.id, { x: newX, y: newY })
+        }
     }
 
-    // Simple resize implementation
-    const handleResizeStart = (e: React.MouseEvent, direction: string) => {
+    const handleResizeStart = (e: React.MouseEvent, direction: ResizeDirection) => {
         e.stopPropagation()
         e.preventDefault()
 
@@ -66,29 +78,55 @@ const ResizableComponent = ({ content, slideId, children, isEditable, isPreview 
         const startY = e.clientY
         const startWidth = ref.current?.offsetWidth || 0
         const startHeight = ref.current?.offsetHeight || 0
+        const startLeft = x
+        const startTop = y
 
         const handleMouseMove = (moveEvent: MouseEvent) => {
-            if (direction.includes('right')) {
-                const newWidth = startWidth + (moveEvent.clientX - startX)
-                setWidth(newWidth)
+            let newWidth = startWidth
+            let newHeight = startHeight
+            let newX = startLeft
+            let newY = startTop
+
+            const diffX = moveEvent.clientX - startX
+            const diffY = moveEvent.clientY - startY
+
+            // Calculate new dimensions based on direction
+            if (direction.includes('right')) newWidth = startWidth + diffX
+            if (direction.includes('left')) {
+                newWidth = startWidth - diffX
+                newX = startLeft + diffX
             }
-            if (direction.includes('bottom')) {
-                const newHeight = startHeight + (moveEvent.clientY - startY)
-                setHeight(newHeight)
+            if (direction.includes('bottom')) newHeight = startHeight + diffY
+            if (direction.includes('top')) {
+                newHeight = startHeight - diffY
+                newY = startTop + diffY
             }
-            // Add other directions if needed
+
+            setWidth(newWidth > 20 ? newWidth : 20)
+            setHeight(newHeight > 20 ? newHeight : 20)
+            if (direction.includes('left') || direction.includes('top')) {
+                setX(newX)
+                setY(newY)
+            }
         }
 
         const handleMouseUp = () => {
             document.removeEventListener('mousemove', handleMouseMove)
             document.removeEventListener('mouseup', handleMouseUp)
 
-            // Update store
             if (ref.current) {
-                updateComponent(slideId, content.id, {
+                const finalUpdates: Partial<ContentItem> = {
                     width: ref.current.offsetWidth,
                     height: ref.current.offsetHeight
-                })
+                }
+
+                // Only update position if we resized from top/left
+                if (direction.includes('left') || direction.includes('top')) {
+                    finalUpdates.x = x // Use state value which was updated during move
+                    finalUpdates.y = y
+                }
+
+                updateComponent(slideId, content.id, finalUpdates)
             }
         }
 
@@ -99,15 +137,58 @@ const ResizableComponent = ({ content, slideId, children, isEditable, isPreview 
     const isAbsolute = content.x !== undefined && content.y !== undefined
     const isSelected = selectedComponentId === content.id
 
+    // Render Resize Handles
+    const renderResizeHandle = (direction: ResizeDirection) => {
+        // Position classes
+        const positions = {
+            'top': 'top-0 left-1/2 -translate-x-1/2 -translate-y-1/2 w-8 h-1',
+            'bottom': 'bottom-0 left-1/2 -translate-x-1/2 translate-y-1/2 w-8 h-1',
+            'left': 'left-0 top-1/2 -translate-y-1/2 -translate-x-1/2 h-8 w-1',
+            'right': 'right-0 top-1/2 -translate-y-1/2 translate-x-1/2 h-8 w-1',
+            'top-left': 'top-0 left-0 -translate-x-1/2 -translate-y-1/2 w-3 h-3',
+            'top-right': 'top-0 right-0 translate-x-1/2 -translate-y-1/2 w-3 h-3',
+            'bottom-left': 'bottom-0 left-0 -translate-x-1/2 translate-y-1/2 w-3 h-3',
+            'bottom-right': 'bottom-0 right-0 translate-x-1/2 translate-y-1/2 w-3 h-3',
+        }
+
+        const cursors = {
+            'top': 'cursor-n-resize',
+            'bottom': 'cursor-s-resize',
+            'left': 'cursor-w-resize',
+            'right': 'cursor-e-resize',
+            'top-left': 'cursor-nw-resize',
+            'top-right': 'cursor-ne-resize',
+            'bottom-left': 'cursor-sw-resize',
+            'bottom-right': 'cursor-se-resize',
+        }
+
+        return (
+            <div
+                key={direction}
+                className={cn(
+                    "absolute z-50 bg-primary/80 border border-white shadow-sm transition-opacity",
+                    positions[direction],
+                    cursors[direction],
+                    // Show dots for corners, lines for edges? Or simple boxes.
+                    direction.includes('-') ? 'rounded-full' : 'rounded-sm',
+                    isSelected ? 'opacity-100' : 'opacity-0'
+                )}
+                onMouseDown={(e) => handleResizeStart(e, direction)}
+            />
+        )
+    }
+
     return (
         <motion.div
             ref={ref}
             onClick={(e) => {
+                e.preventDefault()
                 e.stopPropagation()
                 setSelectedComponent(content.id)
             }}
+            // Always allow dragging if editable. Even if it was relative, dragging it should make it absolute.
             drag={isEditable && !content.restrictToDrop}
-            dragListener={false} // Disable auto drag listener
+            dragListener={false} // Use manual controls
             dragControls={dragControls}
             dragMomentum={false}
             onDragEnd={handleDragEnd}
@@ -120,33 +201,35 @@ const ResizableComponent = ({ content, slideId, children, isEditable, isPreview 
                 zIndex: isAbsolute ? 10 : 1,
             }}
             className={cn(
-                "group/resize relative",
+                "group/resize",
                 content.className,
-                isEditable && "hover:ring-1 hover:ring-blue-500",
-                isSelected && "ring-2 ring-blue-500"
+                isSelected ? "ring-2 ring-primary" : "hover:ring-1 hover:ring-primary/50"
             )}
         >
             {children}
 
-            {isEditable && (
+            {isEditable && isSelected && (
                 <>
-                    {/* Drag Handle */}
+                    {/* Move Handle - Top Center, slightly outside */}
                     <div
-                        className="absolute -top-3 left-1/2 -translate-x-1/2 w-6 h-6 bg-white shadow-sm border rounded-full flex items-center justify-center cursor-move opacity-0 group-hover/resize:opacity-100 z-50 transition-opacity"
+                        className="absolute -top-8 left-1/2 -translate-x-1/2 w-8 h-6 bg-primary text-primary-foreground shadow-md rounded-md flex items-center justify-center cursor-move z-50"
                         onPointerDown={(e) => dragControls.start(e)}
                     >
-                        <Move className="w-3 h-3 text-blue-500" />
+                        <Move className="w-4 h-4" />
                     </div>
 
-                    {/* Resize Handle */}
-                    <div
-                        className="absolute bottom-0 right-0 w-4 h-4 bg-blue-500 cursor-se-resize opacity-0 group-hover/resize:opacity-100 z-50 rounded-tl-md transition-opacity"
-                        onMouseDown={(e) => handleResizeStart(e, 'bottom-right')}
-                    />
+                    {/* Resize Handles */}
+                    {['top-left', 'top-right', 'bottom-left', 'bottom-right'].map((dir) =>
+                        renderResizeHandle(dir as ResizeDirection)
+                    )}
+                    {/* Edge Handles (Optional, can be added if needed for precision) */}
+                    {['top', 'bottom', 'left', 'right'].map((dir) =>
+                        renderResizeHandle(dir as ResizeDirection)
+                    )}
                 </>
             )}
         </motion.div>
     )
 }
 
-export default ResizableComponent
+export default memo(ResizableComponent)

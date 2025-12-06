@@ -76,21 +76,16 @@ const page = (props: Props) => {
 
       <div className='flex flex-col min-h-screen'>
         <Navbar presentationId={params.presentationId as string} />
-        <div className='flex-1 flex overflow-hidden pt-16'
-          style={{
-            backgroundColor: currentTheme.backgroundColor,
-            color: currentTheme.accentColor,
-            fontFamily: currentTheme.fontFamily,
-
-          }}
-        >
+        <div className='flex-1 flex overflow-hidden pt-16 bg-secondary/20'>
           <EditorLeftSidebar />
 
           <div className="flex-1 ml-80 pr-16">
             <Editor isEditable={true} />
           </div>
 
-          <EditorSlidebar />
+          <div className='bg-background'>
+            <EditorSlidebar />
+          </div>
 
         </div>
       </div>

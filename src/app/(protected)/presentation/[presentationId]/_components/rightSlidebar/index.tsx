@@ -61,7 +61,7 @@ const EditorSidebar = () => {
     );
 
     return (
-        <div className="fixed right-0 top-1/2 -translate-y-1/2 z-40 flex items-start h-[80vh] pointer-events-none bg-background!">
+        <div className="fixed right-0 top-1/2 -translate-y-1/2 z-40 flex items-start h-[80vh] pointer-events-none ">
             {/* Content Panel */}
             <div
                 className={cn(
