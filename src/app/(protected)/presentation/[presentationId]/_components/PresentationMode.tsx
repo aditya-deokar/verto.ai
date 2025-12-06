@@ -134,7 +134,7 @@ const PresentationMode = ({ onClose }: Props) => {
     }
 
     return (
-        <div ref={containerRef} className='fixed inset-0 bg-black flex items-center justify-center z-50 group'>
+        <div ref={containerRef} className='fixed inset-0 bg-black flex items-center justify-center z-[9999] group'>
             <div className='relative w-full h-full overflow-hidden'
                 style={{
                     aspectRatio: '16/9',
