@@ -15,8 +15,9 @@ export default function Home() {
     <main className="min-h-screen dark:bg-black">
       <DotPattern dotColor="#94a3b8" dotSize={1.2} spacing={20} />
 
-      <Navbar/>
+      <Navbar />
       <VertoHeroSection />
+
       {/* <VertoSocialProofBar /> */}
       <VertoHowItWorksSection />
       <VertoFeaturesSection />

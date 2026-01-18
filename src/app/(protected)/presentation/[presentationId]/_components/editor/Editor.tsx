@@ -43,8 +43,13 @@ export const SlideCanvas: React.FC<SlideCanvasProps> = ({
   return (
     <div
       className={cn(
+<<<<<<< HEAD
+        "w-full rounded-xl shadow-lg relative p-8 mb-8 aspect-video",
+        "transition-all duration-300 ease-in-out",
+=======
         "w-full h-full relative bg-white shadow-2xl",
         "transition-all duration-200 ease-in-out",
+>>>>>>> 2baabf4ba177aac702da38fc9f61466fd730633e
         "flex flex-col",
         "p-10" // Added padding for better layout
       )}
@@ -59,7 +64,7 @@ export const SlideCanvas: React.FC<SlideCanvasProps> = ({
         setSelectedComponent(null)
       }}
     >
-      <div className="h-full w-full grow overflow-hidden">
+      <div className="h-full w-full grow">
         <MasterRecursiveComponent
           content={slide.content}
           isPreview={false}
@@ -120,7 +125,7 @@ const Editor = ({ isEditable }: Props) => {
   const currentSlideData = orderedSlides[currentSlide];
 
   return (
-    <div className="flex-1 flex flex-col h-full w-full mx-auto px-4 mb-20 relative bg-background">
+    <div className="flex-1 flex flex-col h-full w-full mx-auto px-4 mb-20 relative">
       {loading ? (
         <div className="w-full h-full flex items-center justify-center">
           <Skeleton className="h-[60%] w-[80%] rounded-xl" />

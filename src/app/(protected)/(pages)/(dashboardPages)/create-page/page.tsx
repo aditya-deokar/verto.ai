@@ -2,15 +2,16 @@ import React, { Suspense } from 'react'
 import { redirect } from 'next/navigation'
 import CreatePageSkeleton from './_components/CreatePageSkeleton'
 import { onAuthenticateUser } from '@/actions/user'
-import RenderPage from './_components/RenderPage'
+import { CreateModeSelector } from '@/components/global/mode-selector'
+import { CreatePageClient } from './_components/CreatePageClient'
 
-const page = async() => {
- const checkUser = await onAuthenticateUser()
- 
-   if (!checkUser.user) {
-     redirect('/sign-in')
-   }
- 
+const page = async () => {
+  const checkUser = await onAuthenticateUser()
+
+  if (!checkUser.user) {
+    redirect('/sign-in')
+  }
+
   //  if(!checkUser.user.subscription){
   //     redirect('/dashboard')
   //  }
@@ -18,7 +19,8 @@ const page = async() => {
   return (
     <main className="w-full h-full pt-6 overflow-hidden min-h-screen">
       <Suspense fallback={<CreatePageSkeleton />}>
-        <RenderPage />
+        {/* We use a client wrapper to handle the state */}
+        <CreatePageClient />
       </Suspense>
     </main>
   )
