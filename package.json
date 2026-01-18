@@ -4,6 +4,7 @@
   "private": true,
   "scripts": {
     "dev": "next dev --turbopack",
+    "inngest:dev": "inngest-cli dev -u http://127.0.0.1:3000/api/mobile-design/inngest",
     "build": "next build",
     "start": "next start",
     "lint": "next lint"
@@ -17,7 +18,7 @@
     "@inngest/realtime": "^0.4.5",
     "@langchain/google-genai": "^0.2.16",
     "@langchain/langgraph": "^0.4.8",
-    "@openrouter/ai-sdk-provider": "^1.5.4",
+    "@openrouter/ai-sdk-provider": "1.5.3",
     "@prisma/client": "^6.7.0",
     "@radix-ui/react-accordion": "^1.2.10",
     "@radix-ui/react-alert-dialog": "^1.1.13",
@@ -47,18 +48,22 @@
     "@radix-ui/react-tooltip": "^1.2.6",
     "@sparticuz/chromium-min": "^143.0.4",
     "@types/uuid": "^10.0.0",
-    "ai": "^4.3.15",
+    "ai": "5.0.113",
     "axios": "^1.10.0",
+    "bcryptjs": "^3.0.3",
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
     "cmdk": "^1.1.1",
     "date-fns": "^4.1.0",
     "embla-carousel-react": "^8.6.0",
     "framer-motion": "^12.11.0",
+    "html2canvas": "^1.4.1",
     "inngest": "^3.49.3",
     "input-otp": "^1.4.2",
     "install": "^0.13.0",
+    "jspdf": "^4.0.0",
     "lucide-react": "^0.509.0",
+    "nanoid": "^5.1.6",
     "next": "16.0.7",
     "next-themes": "^0.4.6",
     "pptxgenjs": "^4.0.0",
@@ -83,12 +88,14 @@
   },
   "devDependencies": {
     "@tailwindcss/postcss": "^4.1.17",
+    "@types/bcryptjs": "^3.0.0",
     "@types/node": "^20",
     "@types/react": "19.2.7",
     "@types/react-dom": "19.2.3",
     "babel-plugin-react-compiler": "^1.0.0",
     "eslint": "^8",
     "eslint-config-next": "16.0.7",
+    "inngest-cli": "^1.16.0",
     "postcss": "^8",
     "prisma": "6.7.0",
     "puppeteer": "^24.35.0",
@@ -98,5 +105,8 @@
   "overrides": {
     "@types/react": "19.2.7",
     "@types/react-dom": "19.2.3"
-  }
+  },
+  "trustedDependencies": [
+    "inngest-cli"
+  ]
 }

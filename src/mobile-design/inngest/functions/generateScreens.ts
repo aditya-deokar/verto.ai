@@ -1,11 +1,12 @@
-import { generateObject, generateText, stepCountIs } from "ai";
+import { generateObject, generateText } from "ai";
 import { inngest } from "../client";
 import { z } from "zod";
 import { FrameType } from "@/mobile-design/types/project";
 import { ANALYSIS_PROMPT, GENERATION_SYSTEM_PROMPT } from "@/mobile-design/lib/prompt";
-import prisma from "@/generated/prisma";
+import prisma from "@/lib/prisma";
 import { BASE_VARIABLES, THEME_LIST } from "@/mobile-design/lib/themes";
 import { unsplashTool } from "../tool";
+import { openrouter } from "@/mobile-design/lib/openrouter";
 
 const AnalysisSchema = z.object({
   theme: z
@@ -106,7 +107,7 @@ export const generateScreens = inngest.createFunction(
         `.trim();
 
       const { object } = await generateObject({
-        model: "google/gemini-3-pro-preview",
+        model: openrouter("google/gemini-3-pro-preview"),
         schema: AnalysisSchema,
         system: ANALYSIS_PROMPT,
         prompt: analysisPrompt,
@@ -164,12 +165,12 @@ export const generateScreens = inngest.createFunction(
 
       await step.run(`generated-screen-${i}`, async () => {
         const result = await generateText({
-          model: "google/gemini-3-pro-preview",
+          model: openrouter("google/gemini-3-pro-preview"),
           system: GENERATION_SYSTEM_PROMPT,
           tools: {
             searchUnsplash: unsplashTool,
           },
-          stopWhen: stepCountIs(5),
+          maxSteps: 5,
           prompt: `
           - Screen ${i + 1}/${analysis.screens.length}
           - Screen ID: ${screenPlan.id}

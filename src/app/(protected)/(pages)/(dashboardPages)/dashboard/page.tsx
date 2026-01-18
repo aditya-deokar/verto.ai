@@ -1,12 +1,10 @@
 import React from "react";
-import { getAllProjects } from "@/actions/projects";
+import { getUnifiedProjects } from "@/actions/unified-projects";
 import { NotFound } from "@/components/global/not-found";
 import Projects from "@/components/global/projects";
-import ProjectCard from "@/components/global/projects/ProjectCard";
-
 
 const page = async () => {
-  const allProjects = await getAllProjects();
+  const allProjects = await getUnifiedProjects();
   return (
     <div className="w-full flex flex-col gap-6 relative">
       <div className="flex flex-col-reverse items-start w-full gap-6  sm:flex-row sm:justify-between sm:items-center">
@@ -22,7 +20,7 @@ const page = async () => {
 
       {/* Projects */}
 
-      {allProjects.data && allProjects?.data?.length  > 0 ? (
+      {allProjects.data && allProjects?.data?.length > 0 ? (
         <Projects projects={allProjects.data} />
       ) : (
         <NotFound />

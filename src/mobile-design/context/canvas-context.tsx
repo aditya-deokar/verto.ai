@@ -1,3 +1,4 @@
+"use client";
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { useInngestSubscription } from "@inngest/realtime/hooks";
 import { fetchRealtimeSubscriptionToken } from "@/mobile-design/actions/realtime";

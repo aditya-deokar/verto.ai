@@ -82,14 +82,10 @@ const page = (props: Props) => {
             <Editor isEditable={true} />
           </div>
 
-<<<<<<< HEAD
           <div className='bg-background'>
             <EditorSlidebar />
           </div>
 
-=======
-          <EditorSlidebar />
->>>>>>> 2baabf4ba177aac702da38fc9f61466fd730633e
         </div>
       </div>
     </DndProvider>
