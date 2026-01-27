@@ -72,113 +72,106 @@ export function CanvasFloatingToolbar({
     };
 
     return (
-        <div className="fixed top-6 left-1/2 -translate-x-1/2 z-50">
-            <div className="w-full max-w-2xl bg-background dark:bg-gray-950 rounded-full shadow-xl border">
-                <div className="flex flex-row items-center gap-2 px-3">
-                    {/* AI Generate Button */}
-                    <Popover open={promptOpen} onOpenChange={setPromptOpen}>
-                        <PopoverTrigger asChild>
-                            <Button
-                                size="sm"
-                                className="px-4 bg-gradient-to-r from-purple-500 to-indigo-600 text-white rounded-2xl shadow-lg shadow-purple-200/50 cursor-pointer"
-                            >
-                                <Wand2 className="size-4" />
-                            </Button>
-                        </PopoverTrigger>
-                        <PopoverContent className="w-80 p-2 rounded-xl shadow-lg border mt-1">
-                            <Textarea
-                                placeholder="Describe the screens you want to generate..."
-                                value={promptText}
-                                onChange={(e) => setPromptText(e.target.value)}
-                                className="min-h-[100px] ring-1 ring-purple-500 rounded-xl shadow-none border-muted resize-none"
-                            />
-                            <Button
-                                disabled={isGenerating || !promptText.trim()}
-                                className="mt-2 w-full bg-gradient-to-r from-purple-500 to-indigo-600 text-white rounded-2xl shadow-lg shadow-purple-200/50 cursor-pointer"
-                                onClick={handleAIGenerate}
-                            >
-                                {isGenerating ? (
-                                    <Loader2 className="size-4 animate-spin" />
-                                ) : (
-                                    <>Design</>
-                                )}
-                            </Button>
-                        </PopoverContent>
-                    </Popover>
+        <div className="absolute bottom-6 left-1/2 -translate-x-1/2 z-50">
+            <div className="flex items-center gap-2 p-1.5 bg-background/80 dark:bg-gray-900/80 backdrop-blur-xl border border-border/50 rounded-full shadow-2xl ring-1 ring-white/10">
 
-                    {/* Theme Selector */}
-                    <Popover>
-                        <PopoverTrigger>
-                            <div className="flex items-center gap-2 px-3 py-2 cursor-pointer hover:bg-muted/50 rounded-full transition-colors">
-                                <Palette className="size-4" />
-                                <div className="flex gap-1.5">
-                                    {themes.slice(0, 4).map((theme, index) => {
-                                        const colors = parseThemeColors(theme.style);
-                                        return (
-                                            <div
-                                                role="button"
-                                                key={index}
-                                                onClick={(e) => {
-                                                    e.stopPropagation();
-                                                    setTheme(theme.id);
-                                                }}
-                                                className={cn(
-                                                    `w-6 h-6 rounded-full cursor-pointer transition-all`,
-                                                    currentTheme?.id === theme.id && "ring-2 ring-offset-1 ring-primary"
-                                                )}
-                                                style={{
-                                                    background: `linear-gradient(135deg, ${colors.primary}, ${colors.accent})`,
-                                                }}
-                                            />
-                                        );
-                                    })}
-                                </div>
-                                <div className="flex items-center gap-1 text-sm text-muted-foreground">
-                                    +{Math.max(0, themes.length - 4)} more
-                                    <ChevronDown className="size-4" />
-                                </div>
-                            </div>
-                        </PopoverTrigger>
-                        <PopoverContent className="p-0 rounded-xl shadow border w-auto">
-                            <ThemeSelector />
-                        </PopoverContent>
-                    </Popover>
-
-                    {/* Divider */}
-                    <Separator orientation="vertical" className="h-4" />
-
-                    {/* Actions */}
-                    <div className="flex items-center gap-2">
+                {/* AI Generate Button - Prominent */}
+                <Popover open={promptOpen} onOpenChange={setPromptOpen}>
+                    <PopoverTrigger asChild>
                         <Button
-                            variant="outline"
-                            size="icon"
-                            className="rounded-full cursor-pointer h-8 w-8"
-                            disabled={isScreenshotting}
-                            onClick={onScreenshot}
-                        >
-                            {isScreenshotting ? (
-                                <Loader2 className="size-4 animate-spin" />
-                            ) : (
-                                <Camera className="size-4" />
-                            )}
-                        </Button>
-                        <Button
-                            variant="default"
                             size="sm"
-                            className="rounded-full cursor-pointer"
-                            onClick={handleSaveTheme}
-                            disabled={isSaving}
+                            className="relative h-9 px-4 rounded-full bg-primary hover:bg-primary/90 text-primary-foreground shadow-lg shadow-black/5 transition-all duration-300 hover:scale-105 overflow-hidden group/ai-btn"
                         >
-                            {isSaving ? (
+                            <div className="absolute inset-0 bg-white/20 translate-x-[-100%] group-hover/ai-btn:translate-x-[100%] transition-transform duration-700 ease-in-out skew-x-12" />
+                            <Wand2 className="size-4 mr-2 group-hover/ai-btn:rotate-12 transition-transform duration-300" />
+                            <span className="font-medium relative z-10">Design AI</span>
+                        </Button>
+                    </PopoverTrigger>
+                    <PopoverContent className="w-80 p-3 rounded-2xl shadow-xl border-border/50 bg-background/95 backdrop-blur-xl mb-2" side="top" sideOffset={10}>
+                        <Textarea
+                            placeholder="Describe the screens you want to generate..."
+                            value={promptText}
+                            onChange={(e) => setPromptText(e.target.value)}
+                            className="min-h-[100px] resize-none bg-muted/50 border-0 focus-visible:ring-1 focus-visible:ring-primary rounded-xl"
+                        />
+                        <Button
+                            disabled={isGenerating || !promptText.trim()}
+                            className="mt-3 w-full rounded-xl bg-primary hover:bg-primary/90 text-primary-foreground"
+                            onClick={handleAIGenerate}
+                        >
+                            {isGenerating ? (
                                 <Loader2 className="size-4 animate-spin" />
                             ) : (
-                                <>
-                                    <Save className="size-4" />
-                                    Save
-                                </>
+                                "Generate Screens"
                             )}
                         </Button>
-                    </div>
+                    </PopoverContent>
+                </Popover>
+
+                <Separator orientation="vertical" className="h-6 mx-1 bg-border/50" />
+
+                {/* Theme Selector */}
+                <Popover>
+                    <PopoverTrigger asChild>
+                        <Button variant="ghost" className="h-9 rounded-full px-3 gap-2 hover:bg-muted/50 text-muted-foreground hover:text-foreground transition-colors group">
+                            <Palette className="size-4 group-hover:text-foreground transition-colors" />
+                            <div className="flex -space-x-1.5">
+                                {themes.slice(0, 3).map((theme, index) => {
+                                    const colors = parseThemeColors(theme.style);
+                                    return (
+                                        <div
+                                            key={index}
+                                            className="w-4 h-4 rounded-full ring-1 ring-background shadow-sm"
+                                            style={{
+                                                background: `linear-gradient(135deg, ${colors.primary}, ${colors.accent})`,
+                                            }}
+                                        />
+                                    );
+                                })}
+                            </div>
+                            <ChevronDown className="size-3 opacity-50" />
+                        </Button>
+                    </PopoverTrigger>
+                    <PopoverContent className="p-0 rounded-xl shadow-xl border-border/50 w-auto mb-2" side="top" sideOffset={10}>
+                        <ThemeSelector />
+                    </PopoverContent>
+                </Popover>
+
+                <Separator orientation="vertical" className="h-6 mx-1 bg-border/50" />
+
+                {/* Actions Group */}
+                <div className="flex items-center gap-1">
+                    <Button
+                        variant="ghost"
+                        size="icon"
+                        className="h-9 w-9 rounded-full hover:bg-muted/50 text-muted-foreground hover:text-foreground transition-colors"
+                        disabled={isScreenshotting}
+                        onClick={onScreenshot}
+                        title="Take Screenshot"
+                    >
+                        {isScreenshotting ? (
+                            <Loader2 className="size-4 animate-spin" />
+                        ) : (
+                            <Camera className="size-4" />
+                        )}
+                    </Button>
+
+                    <Button
+                        variant="ghost"
+                        size="sm"
+                        className="h-9 px-3 rounded-full hover:bg-emerald-500/10 hover:text-emerald-600 text-muted-foreground transition-colors"
+                        onClick={handleSaveTheme}
+                        disabled={isSaving}
+                    >
+                        {isSaving ? (
+                            <Loader2 className="size-4 animate-spin" />
+                        ) : (
+                            <div className="flex items-center gap-2">
+                                <Save className="size-4" />
+                                <span className="text-sm font-medium">Save</span>
+                            </div>
+                        )}
+                    </Button>
                 </div>
             </div>
         </div>
