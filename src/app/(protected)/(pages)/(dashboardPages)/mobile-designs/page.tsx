@@ -10,7 +10,7 @@ export default async function MobileDesignsPage() {
     const mobileDesigns = allProjects.data || [];
 
     return (
-        <div className="w-full flex flex-col gap-6 relative">
+        <div className="w-full flex flex-col gap-6 relative p-6">
             <MobileDesignsHeader count={mobileDesigns.length} />
 
             {mobileDesigns.length > 0 ? (

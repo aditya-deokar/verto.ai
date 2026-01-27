@@ -11,7 +11,7 @@ export default async function PresentationsPage() {
     const presentations = allProjects.data || [];
 
     return (
-        <div className="w-full flex flex-col gap-6 relative">
+        <div className="w-full flex flex-col gap-6 relative p-6">
             <PresentationsHeader count={presentations.length} />
 
             {presentations.length > 0 ? (
