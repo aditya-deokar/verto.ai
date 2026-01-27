@@ -14,64 +14,64 @@ import type { AgentStep, AgentStatus } from '@/components/global/agentic-workflo
 export const AGENT_STEPS_CONFIG_V2 = [
   {
     id: 'projectInitializer',
-    name: 'Project Initializer',
-    description: 'Creating project in database',
+    name: 'Project Setup',
+    description: 'Preparing your presentation workspace',
     icon: '🎯',
     progress: 10,
     estimatedTime: '2s'
   },
   {
     id: 'outlineGenerator',
-    name: 'Outline Generator',
-    description: 'Generating slide topics based on complexity',
+    name: 'Structure',
+    description: 'Organizing the presentation flow',
     icon: '📋',
     progress: 20,
     estimatedTime: '5s'
   },
   {
     id: 'contentWriter',
-    name: 'Content Writer',
-    description: 'Writing content for all slides',
+    name: 'Content Writing',
+    description: 'Creating engaging text for all slides',
     icon: '✍️',
     progress: 40,
     estimatedTime: '10s'
   },
   {
     id: 'layoutSelector',
-    name: 'Layout Selector',
-    description: 'AI-powered layout selection',
+    name: 'Design Layout',
+    description: 'Selecting the best look for your slides',
     icon: '🎨',
     progress: 55,
     estimatedTime: '5s'
   },
   {
     id: 'imageQueryGenerator',
-    name: 'Image Query Generator',
-    description: 'Creating image search queries',
+    name: 'Visual Search',
+    description: 'Finding the perfect images',
     icon: '🔍',
     progress: 65,
     estimatedTime: '3s'
   },
   {
     id: 'imageFetcher',
-    name: 'Image Fetcher',
-    description: 'Fetching placeholder images',
+    name: 'Image Integration',
+    description: 'Adding beautiful visuals',
     icon: '🖼️',
     progress: 75,
     estimatedTime: '8s'
   },
   {
     id: 'jsonCompiler',
-    name: 'JSON Compiler',
-    description: 'Building final presentation structure',
+    name: 'Assembly',
+    description: 'Formatting and polishing your slides',
     icon: '📦',
     progress: 85,
     estimatedTime: '5s'
   },
   {
     id: 'databasePersister',
-    name: 'Database Persister',
-    description: 'Saving presentation to database',
+    name: 'Finalization',
+    description: 'Saving your masterpiece',
     icon: '💾',
     progress: 100,
     estimatedTime: '3s'
@@ -86,11 +86,11 @@ export interface UseAgenticGenerationV2Return {
   currentAgentName: string
   currentAgentDescription: string
   error: string | null
-  
+
   // Actions
   generate: (topic: string, additionalContext?: string, theme?: string) => Promise<void>
   reset: () => void
-  
+
   // Metadata
   agentSteps: AgentStep[]
 }
@@ -101,10 +101,9 @@ export interface UseAgenticGenerationV2Return {
 function convertToAgentSteps(currentProgress: number): AgentStep[] {
   return AGENT_STEPS_CONFIG_V2.map((step, index) => {
     let status: AgentStatus = 'pending'
-    
+
     const nextStep = AGENT_STEPS_CONFIG_V2[index + 1]
-    const prevStep = AGENT_STEPS_CONFIG_V2[index - 1]
-    
+
     // Determine status based on progress
     if (currentProgress >= 100 && index === AGENT_STEPS_CONFIG_V2.length - 1) {
       // Last step and completed
@@ -116,7 +115,7 @@ function convertToAgentSteps(currentProgress: number): AgentStep[] {
       // Already completed this step
       status = 'completed'
     }
-    
+
     return {
       id: step.id,
       name: step.name,
@@ -149,7 +148,7 @@ function convertToAgentSteps(currentProgress: number): AgentStep[] {
 export function useAgenticGenerationV2(): UseAgenticGenerationV2Return {
   const router = useRouter()
   const { setProject, setSlides } = useSlideStore()
-  
+
   // State management
   const [isGenerating, setIsGenerating] = useState(false)
   const [progress, setProgress] = useState(0)
@@ -165,7 +164,7 @@ export function useAgenticGenerationV2(): UseAgenticGenerationV2Return {
       const nextStep = AGENT_STEPS_CONFIG_V2[index + 1]
       return progressValue >= step.progress && (!nextStep || progressValue < nextStep.progress)
     }) || AGENT_STEPS_CONFIG_V2[0]
-    
+
     return agent
   }, [])
 
@@ -203,11 +202,11 @@ export function useAgenticGenerationV2(): UseAgenticGenerationV2Return {
           if (prev < 95) {
             const increment = Math.random() * 5 + 2 // 2-7% increments
             const newProgress = Math.min(prev + increment, 95)
-            
+
             // Update current agent based on progress
             const agentInfo = getCurrentAgentInfo(newProgress)
             setCurrentAgent(agentInfo.id)
-            
+
             return newProgress
           }
           return prev
@@ -247,12 +246,12 @@ export function useAgenticGenerationV2(): UseAgenticGenerationV2Return {
 
     } catch (err) {
       console.error('❌ Generation error:', err)
-      
+
       const errorMessage = err instanceof Error ? err.message : 'Unknown error occurred'
       setError(errorMessage)
       setProgress(0)
       setCurrentAgent('')
-      
+
     } finally {
       setIsGenerating(false)
     }
@@ -269,11 +268,11 @@ export function useAgenticGenerationV2(): UseAgenticGenerationV2Return {
     currentAgentName: currentAgentInfo.name,
     currentAgentDescription: currentAgentInfo.description,
     error,
-    
+
     // Actions
     generate,
     reset,
-    
+
     // Metadata - Convert to AgentStep format
     agentSteps: convertToAgentSteps(progress)
   }

@@ -1,5 +1,5 @@
 import Home from "@/icons/Home";
-import { Settings } from "lucide-react";
+import { Settings, Presentation, Smartphone } from "lucide-react";
 
 import { ComponentGroup, LayoutGroup, LayoutSlides, Theme } from "@/lib/types";
 import {
@@ -87,6 +87,16 @@ export const data = {
       icon: Home,
     },
     {
+      title: "Presentations",
+      url: "/presentations",
+      icon: Presentation,
+    },
+    {
+      title: "Mobile Designs",
+      url: "/mobile-designs",
+      icon: Smartphone,
+    },
+    {
       title: "Templates",
       url: "/templates",
       icon: Template,
@@ -114,8 +124,8 @@ export const CreatePageCard = [
   },
   {
     title: "AI-Powered",
-    highlightedText: "Agentic Workflow",
-    description: "Let 5 specialized AI agents work together to create your perfect presentation",
+    highlightedText: "Advanced AI",
+    description: "Let our smart AI system build a comprehensive presentation with deep research",
     type: "agentic-workflow",
     highlight: true,
   },

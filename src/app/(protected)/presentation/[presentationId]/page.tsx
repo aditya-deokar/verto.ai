@@ -73,16 +73,25 @@ const page = (props: Props) => {
 
   return (
     <DndProvider backend={HTML5Backend}>
-      <div className='flex flex-col h-screen bg-background'>
-        <Navbar presentationId={params.presentationId as string} />
-        <div className='flex-1 flex overflow-hidden pt-16 bg-secondary/20'>
-          <EditorLeftSidebar />
+      <div className='h-screen bg-secondary/10 p-2 overflow-hidden flex flex-col gap-2'>
+        {/* Floating Navbar */}
+        <div className='h-14 rounded-xl bg-background/80 backdrop-blur-md shadow-sm border mx-auto w-full max-w-[calc(100%-1rem)] z-50 overflow-hidden'>
+          <Navbar presentationId={params.presentationId as string} />
+        </div>
 
-          <div className="flex-1 flex flex-col overflow-hidden relative bg-muted/10 min-w-0">
+        <div className='flex-1 flex gap-2 min-h-0 w-full max-w-[calc(100%-1rem)] mx-auto font-sans z-0'>
+          {/* Floating Left Sidebar */}
+          <div className='w-80 h-full rounded-xl bg-background/80 backdrop-blur-md shadow-sm border overflow-hidden'>
+            <EditorLeftSidebar />
+          </div>
+
+          {/* Main Canvas Area */}
+          <div className='flex-1 h-full rounded-xl bg-muted/30 border overflow-hidden relative shadow-inner'>
             <Editor isEditable={true} />
           </div>
 
-          <div className='bg-background'>
+          {/* Floating Right Sidebar */}
+          <div className='w-80 h-full rounded-xl bg-background/80 backdrop-blur-md shadow-sm border overflow-hidden'>
             <EditorSlidebar />
           </div>
 

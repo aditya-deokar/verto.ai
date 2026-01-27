@@ -9,7 +9,6 @@ import Link from 'next/link'
 import React, { useState } from 'react'
 import { toast } from 'sonner'
 import PresentationMode from './PresentationMode'
-import { ThemeSwitcher } from '@/components/global/mode-toggle'
 
 type Props = {
     presentationId: string
@@ -32,18 +31,17 @@ const Navbar = ({ presentationId }: Props) => {
 
 
     return (
-        <nav className='fixed top-0 left-0 right-0 z-50 w-full h-16 flex justify-between items-center py-3 px-7 border-b bg-background/80 backdrop-blur-md'>
+        <nav className='w-full h-full flex justify-between items-center py-2 px-4'>
             <Link passHref href={'/dashboard'}>
                 <Button
-                    variant={'outline'}
+                    variant={'ghost'}
+                    className="hover:bg-muted/30 p-2"
                     style={{
-                        backgroundColor: currentTheme.navbarColor || currentTheme.backgroundColor,
                         color: currentTheme.accentColor,
                     }}
                 >
-                    <Home />
-                    <span className='hidden sm:inline'>Return Home</span>
-
+                    <Home className="w-5 h-5" />
+                    <span className='hidden sm:inline ml-2'>Return Home</span>
                 </Button>
             </Link>
 
@@ -57,14 +55,15 @@ const Navbar = ({ presentationId }: Props) => {
                 </h1>
             </Link>
 
-            <div className='flex items-center gap-4'>
+            <div className='flex items-center gap-2'>
                 <Button
                     style={{
-                        backgroundColor: currentTheme.navbarColor || currentTheme.backgroundColor,
                         color: currentTheme.accentColor,
                     }}
-                    variant={'outline'}
+                    variant={'ghost'}
+                    size="icon"
                     onClick={handleCopy}
+                    className="hover:bg-muted/30"
                 >
                     <Share />
                 </Button>
@@ -75,13 +74,12 @@ const Navbar = ({ presentationId }: Props) => {
                 {/* <SellTemplate/> */}
 
                 <Link href={`/present/${presentationId}`}>
-                    <Button variant={'default'} className='flex items-center gap-2'>
+                    <Button variant={'default'} className='flex items-center gap-2 rounded-full px-6 shadow-md hover:shadow-lg transition-all'>
                         <Play className='w-4 h-4' />
                         <span className='hidden sm:inline'>Present</span>
                     </Button>
                 </Link>
             </div>
-            {/* add presentation */}
         </nav>
     )
 }

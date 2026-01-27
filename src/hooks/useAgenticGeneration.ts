@@ -7,28 +7,28 @@ import { generatePresentationGraph } from '@/agentic-workflow/actions/genai-grap
 const AGENT_STEPS_CONFIG: Omit<AgentStep, 'status' | 'details'>[] = [
   {
     id: 'outline-solid',
-    name: 'Outline Generator',
+    name: 'Structure',
     description: 'Creating presentation structure and key topics'
   },
   {
     id: 'content',
-    name: 'Content Writer',
+    name: 'Content Writing',
     description: 'Writing engaging content for each slide'
   },
   {
     id: 'layout',
-    name: 'Layout Designer',
+    name: 'Design Layout',
     description: 'Selecting optimal layouts and visual structure'
   },
   {
     id: 'image',
-    name: 'Image Query Generator',
-    description: 'Analyzing slides and generating image search queries'
+    name: 'Visual Search',
+    description: 'Analyzing slides and finding images'
   },
   {
     id: 'compiler',
-    name: 'JSON Compiler',
-    description: 'Compiling final presentation structure'
+    name: 'Assembly',
+    description: 'Compiling final presentation'
   }
 ]
 
@@ -69,8 +69,8 @@ export function useAgenticGeneration(options: UseAgenticGenerationOptions = {}) 
    * Update a specific step's status
    */
   const updateStep = useCallback((
-    stepId: string, 
-    status: AgentStatus, 
+    stepId: string,
+    status: AgentStatus,
     details?: string
   ) => {
     setSteps(prev => prev.map(step =>
@@ -83,9 +83,9 @@ export function useAgenticGeneration(options: UseAgenticGenerationOptions = {}) 
    * Reset all steps to pending state
    */
   const reset = useCallback(() => {
-    setSteps(AGENT_STEPS_CONFIG.map(step => ({ 
-      ...step, 
-      status: 'pending' as AgentStatus 
+    setSteps(AGENT_STEPS_CONFIG.map(step => ({
+      ...step,
+      status: 'pending' as AgentStatus
     })))
     setIsGenerating(false)
     setError(null)
@@ -103,11 +103,11 @@ export function useAgenticGeneration(options: UseAgenticGenerationOptions = {}) 
     const interval = setInterval(() => {
       if (currentIndex < stepIds.length) {
         updateStep(stepIds[currentIndex], 'running', `Processing ${stepIds[currentIndex]}...`)
-        
+
         setTimeout(() => {
           updateStep(stepIds[currentIndex], 'completed')
           currentIndex++
-          
+
           if (currentIndex >= stepIds.length) {
             clearInterval(interval)
           }
@@ -153,7 +153,7 @@ export function useAgenticGeneration(options: UseAgenticGenerationOptions = {}) 
       return response.data
     } catch (err) {
       const error = err instanceof Error ? err : new Error('Unknown error occurred')
-      
+
       // Mark current running step as error
       const runningStep = steps.find(s => s.status === 'running')
       if (runningStep) {
@@ -162,7 +162,7 @@ export function useAgenticGeneration(options: UseAgenticGenerationOptions = {}) 
 
       setError(error)
       options.onError?.(error)
-      
+
       throw error
     } finally {
       setIsGenerating(false)
@@ -186,18 +186,18 @@ export function useAgenticGeneration(options: UseAgenticGenerationOptions = {}) 
       for (const step of AGENT_STEPS_CONFIG) {
         updateStep(step.id, 'running')
         await trackingCallback(step.id, 'running')
-        
+
         // Here you would call the actual agent
         // For now, simulate delay
         await new Promise(resolve => setTimeout(resolve, 1000))
-        
+
         updateStep(step.id, 'completed')
         await trackingCallback(step.id, 'completed')
       }
 
       // Final compilation
       const response = await generatePresentationGraph(topic)
-      
+
       if (!response || response.status !== 200 || !response.data) {
         throw new Error(response.error || 'Failed to generate presentation')
       }
@@ -223,13 +223,13 @@ export function useAgenticGeneration(options: UseAgenticGenerationOptions = {}) 
     progress,
     error,
     result,
-    
+
     // Actions
     generate,
     generateWithTracking,
     updateStep,
     reset,
-    
+
     // Computed
     isComplete: progress === 100,
     hasError: error !== null,
