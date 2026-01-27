@@ -70,26 +70,26 @@ export function DeviceFrameToolbar({
     return (
         <div
             className={cn(
-                `absolute -mt-2 flex items-center justify-between gap-2 rounded-full z-50`,
+                "absolute -mt-2 flex items-center gap-1 z-50 transition-all duration-300 ease-out",
                 isSelected
-                    ? `left-1/2 -translate-x-1/2 border bg-card dark:bg-muted pl-2 py-1 shadow-sm min-w-[260px] h-[35px]`
-                    : "w-[150px] h-auto left-10"
+                    ? "left-1/2 -translate-x-1/2 bg-background/90 dark:bg-gray-900/90 backdrop-blur-xl border border-border/50 shadow-xl rounded-full p-1 pl-3 min-w-[280px] h-[42px] ring-1 ring-white/10"
+                    : "left-6 bg-background/60 backdrop-blur-md border border-border/30 shadow-md rounded-full px-3 py-1.5 h-auto hover:bg-background/80"
             )}
             style={{
-                top: isSelected ? "-70px" : "-38px",
-                transformOrigin: "center top",
+                top: isSelected ? "-80px" : "-40px",
+                transformOrigin: "center bottom",
                 transform: `scale(${scale})`,
             }}
         >
             <div
                 role="button"
-                className="flex flex-1 cursor-grab items-center justify-start gap-1.5 active:cursor-grabbing h-full"
+                className="flex flex-1 cursor-grab items-center justify-start gap-2 active:cursor-grabbing h-full group/drag"
             >
-                <GripVertical className="size-4 text-muted-foreground" />
+                <GripVertical className="size-4 text-muted-foreground/50 group-hover/drag:text-muted-foreground transition-colors" />
                 <div
                     className={cn(
-                        `min-w-20 font-medium text-sm mx-px truncate mt-0.5`,
-                        isSelected && "w-[100px]"
+                        "font-medium text-sm truncate transition-all duration-300",
+                        isSelected ? "max-w-[120px]" : "max-w-[100px]"
                     )}
                 >
                     {title}
@@ -98,92 +98,99 @@ export function DeviceFrameToolbar({
 
             {isSelected && (
                 <>
-                    <Separator orientation="vertical" className="h-5 bg-border" />
-                    <div className="flex gap-0.5 justify-end pr-2 h-full">
-                        <TooltipProvider>
+                    <div className="h-4 w-px bg-border/50 mx-1" />
+
+                    <div className="flex items-center gap-0.5 animate-in fade-in slide-in-from-left-2 duration-300">
+                        <TooltipProvider delayDuration={300}>
                             <Tooltip>
                                 <TooltipTrigger asChild>
                                     <Button
                                         disabled={disabled}
                                         size="icon"
                                         variant="ghost"
-                                        className="rounded-full h-6 w-6"
+                                        className="rounded-full h-8 w-8 hover:bg-muted/50 hover:text-foreground transition-colors"
                                         onClick={onOpenHtmlDialog}
                                     >
-                                        <CodeIcon className="size-3.5" />
+                                        <CodeIcon className="size-4" />
                                     </Button>
                                 </TooltipTrigger>
-                                <TooltipContent>View HTML</TooltipContent>
+                                <TooltipContent side="top" className="text-xs">View Code</TooltipContent>
                             </Tooltip>
                         </TooltipProvider>
 
-                        <TooltipProvider>
+                        <TooltipProvider delayDuration={300}>
                             <Tooltip>
                                 <TooltipTrigger asChild>
                                     <Button
                                         disabled={disabled || isDownloading}
                                         size="icon"
-                                        className="rounded-full h-6 w-6"
+                                        className="rounded-full h-8 w-8 hover:bg-muted/50 hover:text-foreground transition-colors"
                                         variant="ghost"
                                         onClick={onDownloadPng}
                                     >
                                         {isDownloading ? (
-                                            <Loader2 className="size-3.5 animate-spin" />
+                                            <Loader2 className="size-4 animate-spin" />
                                         ) : (
-                                            <DownloadIcon className="size-3.5" />
+                                            <DownloadIcon className="size-4" />
                                         )}
                                     </Button>
                                 </TooltipTrigger>
-                                <TooltipContent>Download PNG</TooltipContent>
+                                <TooltipContent side="top" className="text-xs">Download Image</TooltipContent>
                             </Tooltip>
                         </TooltipProvider>
 
                         <Popover open={isPopoverOpen} onOpenChange={setIsPopoverOpen}>
-                            <TooltipProvider>
+                            <TooltipProvider delayDuration={300}>
                                 <Tooltip>
                                     <TooltipTrigger asChild>
                                         <PopoverTrigger asChild>
                                             <Button
                                                 disabled={disabled}
                                                 size="icon"
-                                                className="rounded-full h-6 w-6"
+                                                className={cn(
+                                                    "rounded-full h-8 w-8 transition-all duration-300",
+                                                    isPopoverOpen ? "bg-primary/10 text-primary dark:bg-primary/20" : "hover:bg-muted/50 hover:text-foreground"
+                                                )}
                                                 variant="ghost"
                                             >
                                                 {isRegenerating ? (
-                                                    <Loader2 className="size-3.5 animate-spin" />
+                                                    <Loader2 className="size-4 animate-spin" />
                                                 ) : (
-                                                    <Wand2 className="size-3.5" />
+                                                    <Wand2 className="size-4" />
                                                 )}
                                             </Button>
                                         </PopoverTrigger>
                                     </TooltipTrigger>
-                                    <TooltipContent>AI Regenerate</TooltipContent>
+                                    <TooltipContent side="top" className="text-xs">AI Edit</TooltipContent>
                                 </Tooltip>
                             </TooltipProvider>
-                            <PopoverContent align="end" className="w-80 p-1 rounded-lg">
-                                <div className="flex items-center gap-2">
-                                    <Wand2 className="size-4 text-muted-foreground" />
+                            <PopoverContent align="end" className="w-80 p-1.5 rounded-xl shadow-xl border-border/50 bg-background/95 backdrop-blur-xl" sideOffset={15}>
+                                <div className="flex items-center gap-2 bg-muted/50 rounded-lg p-1">
+                                    <div className="h-8 w-8 flex items-center justify-center rounded-md bg-background shadow-sm">
+                                        <Wand2 className="size-4 text-foreground" />
+                                    </div>
                                     <Input
-                                        placeholder="Edit with AI..."
+                                        placeholder="Describe changes..."
                                         value={promptValue}
                                         onChange={(e) => setPromptValue(e.target.value)}
-                                        className="flex-1 border-0 shadow-none bg-transparent focus-visible:ring-0"
+                                        className="flex-1 border-0 shadow-none bg-transparent focus-visible:ring-0 h-9 text-sm"
                                         onKeyDown={(e) => {
                                             if (e.key === "Enter") {
                                                 handleRegenerate();
                                             }
                                         }}
+                                        autoFocus
                                     />
                                     <Button
                                         size="icon"
-                                        className="h-7 w-7"
+                                        className="h-8 w-8 rounded-md bg-primary hover:bg-primary/90 text-primary-foreground shadow-sm"
                                         disabled={!promptValue.trim() || isRegenerating}
                                         onClick={handleRegenerate}
                                     >
                                         {isRegenerating ? (
                                             <Loader2 className="size-3.5 animate-spin" />
                                         ) : (
-                                            <Send className="size-4" />
+                                            <Send className="size-3.5" />
                                         )}
                                     </Button>
                                 </div>
@@ -191,36 +198,27 @@ export function DeviceFrameToolbar({
                         </Popover>
 
                         <DropdownMenu>
-                            <TooltipProvider>
-                                <Tooltip>
-                                    <TooltipTrigger asChild>
-                                        <DropdownMenuTrigger asChild>
-                                            <Button
-                                                variant="ghost"
-                                                size="icon"
-                                                className="rounded-full h-6 w-6"
-                                            >
-                                                <MoreHorizontalIcon className="size-3.5" />
-                                            </Button>
-                                        </DropdownMenuTrigger>
-                                    </TooltipTrigger>
-                                    <TooltipContent>More options</TooltipContent>
-                                </Tooltip>
-                            </TooltipProvider>
-                            <DropdownMenuContent align="end" className="w-32 rounded-md p-0">
+                            <DropdownMenuTrigger asChild>
+                                <Button
+                                    variant="ghost"
+                                    size="icon"
+                                    className="rounded-full h-8 w-8 hover:bg-muted/50 hover:text-red-500 transition-colors"
+                                >
+                                    <MoreHorizontalIcon className="size-4" />
+                                </Button>
+                            </DropdownMenuTrigger>
+                            <DropdownMenuContent align="end" className="w-40 rounded-xl p-1 shadow-lg border-border/50 bg-background/95 backdrop-blur-xl">
                                 <DropdownMenuItem
                                     disabled={disabled || isDeleting}
                                     onClick={onDeleteFrame}
-                                    className="cursor-pointer"
+                                    className="cursor-pointer rounded-lg text-red-500 focus:text-red-600 focus:bg-red-50 dark:focus:bg-red-950/30"
                                 >
                                     {isDeleting ? (
-                                        <Loader2 className="size-4 animate-spin" />
+                                        <Loader2 className="size-4 animate-spin mr-2" />
                                     ) : (
-                                        <>
-                                            <Trash2Icon className="size-4" />
-                                            Delete
-                                        </>
+                                        <Trash2Icon className="size-4 mr-2" />
                                     )}
+                                    Delete Frame
                                 </DropdownMenuItem>
                             </DropdownMenuContent>
                         </DropdownMenu>

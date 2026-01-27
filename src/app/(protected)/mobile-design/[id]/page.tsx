@@ -1,6 +1,7 @@
 import { CanvasProvider } from "@/mobile-design/context/canvas-context";
 import { MobileCanvas } from "./_components/MobileCanvas";
 import { MobileHeader } from "./_components/MobileHeader";
+import { FramesSidebar } from "./_components/FramesSidebar";
 import { Loader2 } from "lucide-react";
 import { getMobileProject } from "@/mobile-design/actions/get-project";
 
@@ -32,23 +33,34 @@ export default async function MobileDesignPage({
     const hasInitialData = project.frames?.length > 0;
 
     return (
-        <div className="relative h-screen w-full flex flex-col overflow-hidden">
+        <div className='h-screen bg-secondary/10 p-2 overflow-hidden flex flex-col gap-2'>
             <CanvasProvider
                 initialFrames={project.frames || []}
                 initialThemeId={project.theme ?? undefined}
                 hasInitialData={hasInitialData}
                 projectId={project.id}
             >
-                <MobileHeader projectName={project.name} projectId={project.id} />
-                <div className="flex flex-1 overflow-hidden">
-                    <MobileCanvas
-                        projectId={project.id}
-                        projectName={project.name}
-                        isPending={false}
-                    />
+                {/* Floating Navbar */}
+                <div className='h-14 rounded-xl bg-background/80 backdrop-blur-md shadow-sm border mx-auto w-full max-w-[calc(100%-1rem)] z-50 overflow-hidden'>
+                    <MobileHeader projectName={project.name} projectId={project.id} />
+                </div>
+
+                <div className='flex-1 flex gap-2 min-h-0 w-full max-w-[calc(100%-1rem)] mx-auto font-sans z-0'>
+                    {/* Floating Left Sidebar */}
+                    <div className='w-80 h-full rounded-xl bg-background/80 backdrop-blur-md shadow-sm border overflow-hidden'>
+                        <FramesSidebar projectId={project.id} />
+                    </div>
+
+                    {/* Main Canvas Area */}
+                    <div className='flex-1 h-full rounded-xl bg-muted/30 border overflow-hidden relative shadow-inner'>
+                        <MobileCanvas
+                            projectId={project.id}
+                            projectName={project.name}
+                            isPending={false}
+                        />
+                    </div>
                 </div>
             </CanvasProvider>
         </div>
     );
 }
-

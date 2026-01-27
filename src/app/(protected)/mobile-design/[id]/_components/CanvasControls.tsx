@@ -21,7 +21,7 @@ export function CanvasControls({
     setToolMode,
 }: CanvasControlsProps) {
     return (
-        <div className="absolute bottom-6 right-6 flex flex-col gap-2 bg-background/95 backdrop-blur border rounded-lg p-2 shadow-lg">
+        <div className="absolute bottom-6 right-6 flex flex-col gap-2 bg-background/80 dark:bg-gray-900/80 backdrop-blur-xl border border-border/50 rounded-xl p-2 shadow-2xl ring-1 ring-white/10">
             {/* Tool Mode Toggle */}
             <div className="flex flex-col gap-1 pb-2 border-b">
                 <Button
