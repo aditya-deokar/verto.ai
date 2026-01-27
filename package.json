@@ -10,7 +10,7 @@
     "lint": "next lint"
   },
   "dependencies": {
-    "@ai-sdk/google": "^1.2.18",
+    "@ai-sdk/google": "^3.0.14",
     "@clerk/nextjs": "^6.19.2",
     "@clerk/themes": "2.2.2",
     "@google/generative-ai": "^0.24.1",
@@ -48,7 +48,7 @@
     "@radix-ui/react-tooltip": "^1.2.6",
     "@sparticuz/chromium-min": "^143.0.4",
     "@types/uuid": "^10.0.0",
-    "ai": "5.0.113",
+    "ai": "^6.0.54",
     "axios": "^1.10.0",
     "bcryptjs": "^3.0.3",
     "class-variance-authority": "^0.7.1",

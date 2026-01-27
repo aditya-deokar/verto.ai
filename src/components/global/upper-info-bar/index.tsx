@@ -10,15 +10,15 @@ import { User } from "@/generated/prisma";
 import { ThemeSwitcher } from "../mode-toggle";
 
 
-const UpperInfoBar = ({user}:{user:User}) => {
+const UpperInfoBar = ({ user }: { user: User }) => {
   return (
-    <header className="sticky top-0 z-10 flex shrink-0 flex-wrap items-center gap-2  bg-background p-4 justify-between">
+    <header className="flex shrink-0 flex-wrap items-center gap-2 bg-background/80 backdrop-blur-xl border shadow-sm rounded-xl p-4 justify-between w-full">
       <SidebarTrigger className="-ml-1" />
       <Separator orientation="vertical" className="mr-2 h-4" />
 
       <div className="w-full max-w-[95%] flex items-center justify-between gap-4 flex-wrap">
         {/* Search */}
-        <SearchBar/>
+        <SearchBar />
         {/* Mode Toggle */}
         <ThemeSwitcher />
         <div className="flex flex-wrap gap-4 items-center justify-end">
@@ -29,7 +29,7 @@ const UpperInfoBar = ({user}:{user:User}) => {
             <Uplaod />
             Import
           </Button>
-         <NewProjectButton user={user}/>
+          <NewProjectButton user={user} />
         </div>
       </div>
     </header>

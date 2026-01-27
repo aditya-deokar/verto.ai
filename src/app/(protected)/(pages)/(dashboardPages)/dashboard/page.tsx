@@ -12,7 +12,7 @@ const page = async () => {
   const mobileDesignCount = projects.filter(p => p.type === "MOBILE_DESIGN").length;
 
   return (
-    <div className="w-full flex flex-col gap-6 relative">
+    <div className="w-full flex flex-col gap-6 relative p-6">
       <DashboardHome
         projects={projects}
         userName={checkUser.user?.name || undefined}

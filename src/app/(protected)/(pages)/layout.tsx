@@ -19,14 +19,19 @@ const Layout = async ({ children }: Props) => {
 
   return (
     <SidebarProvider>
-      <AppSidebar
-        recentProjects={recentProjects?.data || []}
-        user={checkUser.user}
-      />
-      <SidebarInset>
-        <UpperInfoBar user={checkUser.user} />
-        <div className="p-4">{children}</div>
-      </SidebarInset>
+      <div className="flex h-screen w-full bg-background p-4 gap-4">
+        <AppSidebar
+          recentProjects={recentProjects?.data || []}
+          user={checkUser.user}
+          className="fixed! top-4 left-4 bottom-4 w-[--sidebar-width]! h-auto! bg-background/80! backdrop-blur-xl border rounded-xl shadow-sm hidden md:flex overflow-hidden z-50"
+        />
+        <div className="flex flex-col flex-1 h-full gap-4 overflow-hidden">
+          <UpperInfoBar user={checkUser.user} />
+          <div className="flex-1 overflow-y-auto bg-background/50 border shadow-sm rounded-xl relative">
+            {children}
+          </div>
+        </div>
+      </div>
     </SidebarProvider>
   )
 }

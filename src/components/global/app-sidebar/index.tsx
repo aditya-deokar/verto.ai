@@ -17,20 +17,21 @@ import { NavFooter } from "./nav-footer";
 import { Project, User } from "@/generated/prisma";
 import { data } from "@/lib/constants";
 import Link from "next/link";
-
+import { cn } from "@/lib/utils";
 
 export function AppSidebar({
   recentProjects,
   user,
+  className,
   ...props
-}: { recentProjects: Project[] } & {user:User} & React.ComponentProps<typeof Sidebar>) {
+}: { recentProjects: Project[] } & { user: User } & React.ComponentProps<typeof Sidebar>) {
   return (
     <Sidebar
       collapsible="icon"
+      className={cn("bg-background-90", className)}
       {...props}
-      className="bg-background-90"
     >
-      <SidebarHeader className="pt-6 px-3 pb-0">
+      <SidebarHeader className="pt-6 px-3 pb-0 gap-4">
         <SidebarMenuButton
           size="lg"
           className="data-[state=open]:text-sidebar-accent-foreground"
@@ -46,9 +47,9 @@ export function AppSidebar({
             <Link href={'/'}>Verto AI</Link>
           </span>
         </SidebarMenuButton>
-      </SidebarHeader>
-      <SidebarContent className="px-3 mt-10 gap-y-6">
         <NavMain items={data.navMain} />
+      </SidebarHeader>
+      <SidebarContent className="px-3 mt-4 gap-y-6">
         <RecentOpen recentProjects={recentProjects} />
       </SidebarContent>
       <SidebarFooter>
