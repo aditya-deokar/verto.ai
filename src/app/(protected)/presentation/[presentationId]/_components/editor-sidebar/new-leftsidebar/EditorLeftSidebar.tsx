@@ -101,9 +101,9 @@ const EditorLeftSidebar = (props: Props) => {
     }, [])
 
     return (
-        <div className='w-80 h-full border-r bg-background flex flex-col overflow-hidden'>
+        <div className='w-full h-full flex flex-col'>
             {/* Header */}
-            <div className="px-4 py-3 border-b bg-background/95 backdrop-blur z-10 flex items-center justify-between">
+            <div className="px-4 py-3 flex items-center justify-between shrink-0">
                 <span className='text-sm font-semibold'>Slides</span>
                 <div className="flex items-center gap-1">
                     <span className='text-xs text-muted-foreground mr-2'>{orderedSlides.length} slides</span>
