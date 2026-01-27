@@ -4,22 +4,37 @@ import { GENERATION_SYSTEM_PROMPT } from "@/mobile-design/lib/prompt";
 import prisma from "@/lib/prisma";
 import { BASE_VARIABLES, THEME_LIST } from "@/mobile-design/lib/themes";
 import { unsplashTool } from "../tool";
-import { openrouter } from "@/mobile-design/lib/openrouter";
+import { google } from "@/mobile-design/lib/google";
 
 export const regenerateFrame = inngest.createFunction(
   { id: "regenerate-frame" },
   { event: "ui/regenerate.frame" },
-  async ({ event, step }) => {
+  async ({ event, step, publish }) => {
     const {
       userId,
       projectId,
       frameId,
-      frameData,
+      prompt,
       theme: themeId,
+      frame,
     } = event.data;
+    const CHANNEL = `user:${userId}`;
 
-    // Generate new frame
-    await step.run("regenerate-screen", async () => {
+    // Step 1: Publish generation start
+    await step.run("publish-generation-start", async () => {
+      await publish({
+        channel: CHANNEL,
+        topic: "generation.start",
+        data: {
+          status: "generating",
+          projectId: projectId,
+        },
+      });
+      return { published: "generation.start" };
+    });
+
+    // Step 2: Generate new frame with the user's prompt
+    const result = await step.run("regenerate-screen", async () => {
       const selectedTheme = THEME_LIST.find((t) => t.id === themeId);
 
       // Combine the Theme Styles + Base Variable
@@ -28,37 +43,28 @@ export const regenerateFrame = inngest.createFunction(
         ${selectedTheme?.style || ""}
       `;
 
-      // Get existing frame for context
-      const existingFrame = await prisma.mobileFrame.findUnique({
-        where: { id: frameId },
-      });
-
-      if (!existingFrame) {
-        throw new Error("Frame not found");
-      }
-
-      const result = await generateText({
-        model: openrouter("google/gemini-3-pro-preview"),
+      const aiResult = await generateText({
+        model: google("gemini-2.5-flash"),
         system: GENERATION_SYSTEM_PROMPT,
         tools: {
           searchUnsplash: unsplashTool,
         },
         maxSteps: 5,
         prompt: `
-        REGENERATE THIS SCREEN with improvements and variations
+        USER REQUEST: ${prompt}
 
-        ORIGINAL SCREEN TITLE: ${frameData.title}
-        ORIGINAL SCREEN DESCRIPTION: ${frameData.description}
-        ORIGINAL SCREEN HTML: ${existingFrame.htmlContent}
+        ORIGINAL SCREEN TITLE: ${frame.title}
+        ORIGINAL SCREEN HTML: ${frame.htmlContent}
 
         THEME VARIABLES (Reference ONLY - already defined in parent, do NOT redeclare these): ${fullThemeCSS}
 
-        CRITICAL REQUIREMENTS - READ CAREFULLY:
-        1. **PRESERVE the overall structure and layout but improve and vary the content**
-          - Keep the same screen type and purpose
-          - Maintain similar layout but with variations
-          - Update content, images, and styling for freshness
-          - Keep the same HTML structure pattern
+
+        CRITICAL REQUIREMENTS A MUST - READ CAREFULLY:
+        1. **PRESERVE the overall structure and layout - ONLY modify what the user explicitly requested**
+          - Keep all existing components, styling, and layout that are NOT mentioned in the user request
+          - Only change the specific elements the user asked for
+          - Do not add or remove sections unless requested
+          - Maintain the exact same HTML structure and CSS classes except for requested changes
 
         2. **Generate ONLY raw HTML markup for this mobile app screen using Tailwind CSS.**
           Use Tailwind classes for layout, spacing, typography, shadows, etc.
@@ -82,7 +88,7 @@ export const regenerateFrame = inngest.createFunction(
         `.trim(),
       });
 
-      let finalHtml = result.text ?? "";
+      let finalHtml = aiResult.text ?? "";
       const match = finalHtml.match(/<div[\s\S]*<\/div>/);
       finalHtml = match ? match[0] : finalHtml;
       finalHtml = finalHtml.replace(/```/g, "");
@@ -100,6 +106,31 @@ export const regenerateFrame = inngest.createFunction(
       return { success: true, frame: updatedFrame };
     });
 
-    return { success: true };
+    // Step 3: Publish frame.created event
+    await step.run("publish-frame-created", async () => {
+      await publish({
+        channel: CHANNEL,
+        topic: "frame.created",
+        data: {
+          frame: result.frame,
+          screenId: frameId,
+          projectId: projectId,
+        },
+      });
+      return { published: "frame.created" };
+    });
+
+    // Step 4: Publish generation complete
+    await step.run("publish-generation-complete", async () => {
+      await publish({
+        channel: CHANNEL,
+        topic: "generation.complete",
+        data: {
+          status: "completed",
+          projectId: projectId,
+        },
+      });
+      return { published: "generation.complete" };
+    });
   }
 );

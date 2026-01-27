@@ -29,6 +29,7 @@ interface CanvasContextType {
   setFrames: (frames: FrameType[]) => void;
   updateFrame: (id: string, data: Partial<FrameType>) => void;
   addFrame: (frame: FrameType) => void;
+  removeFrame: (id: string) => void;
 
   selectedFrameId: string | null;
   selectedFrame: FrameType | null;
@@ -36,6 +37,9 @@ interface CanvasContextType {
 
   loadingStatus: LoadingStatusType | null;
   setLoadingStatus: (status: LoadingStatusType | null) => void;
+
+  isRegenerating: boolean;
+  setIsRegenerating: (value: boolean) => void;
 }
 
 const CanvasContext = createContext<CanvasContextType | undefined>(undefined);
@@ -61,8 +65,9 @@ export const CanvasProvider = ({
   const [selectedFrameId, setSelectedFrameId] = useState<string | null>(null);
 
   const [loadingStatus, setLoadingStatus] = useState<LoadingStatusType | null>(
-    null
+    hasInitialData ? null : "running"
   );
+  const [isRegenerating, setIsRegenerating] = useState(false);
 
   const [prevProjectId, setPrevProjectId] = useState(projectId);
   if (projectId !== prevProjectId) {
@@ -79,27 +84,37 @@ export const CanvasProvider = ({
       ? frames.find((f) => f.id === selectedFrameId) || null
       : null;
 
-  //Update the LoadingState Inngest Realtime event
+  // Subscribe to Inngest Realtime events - always enabled like XDesign
   const { freshData } = useInngestSubscription({
-    refreshToken: fetchRealtimeSubscriptionToken,
+    refreshToken: fetchRealtimeSubscriptionToken as any,
   });
 
   useEffect(() => {
     if (!freshData || freshData.length === 0) return;
 
+    console.log("[Canvas] Received realtime data:", freshData);
+
     freshData.forEach((message) => {
       const { data, topic } = message;
 
-      if (data.projectId !== projectId) return;
+      console.log("[Canvas] Processing topic:", topic, "data:", data);
+
+      if (data.projectId !== projectId) {
+        console.log("[Canvas] Skipping - projectId mismatch:", data.projectId, "vs", projectId);
+        return;
+      }
 
       switch (topic) {
         case "generation.start":
-          const status = data.status;
-          setLoadingStatus(status);
+          console.log("[Canvas] generation.start - status:", data.status);
+          setLoadingStatus(data.status);
           break;
         case "analysis.start":
+          console.log("[Canvas] analysis.start");
           setLoadingStatus("analyzing");
+          break;
         case "analysis.complete":
+          console.log("[Canvas] analysis.complete - theme:", data.theme, "screens:", data.screens?.length);
           setLoadingStatus("generating");
           if (data.theme) setThemeId(data.theme);
 
@@ -114,23 +129,37 @@ export const CanvasProvider = ({
           }
           break;
         case "frame.created":
+          console.log("[Canvas] frame.created - frame:", data.frame?.id, "screenId:", data.screenId);
           if (data.frame) {
             setFrames((prev) => {
               const newFrames = [...prev];
-              const idx = newFrames.findIndex((f) => f.id === data.screenId);
-              if (idx !== -1) newFrames[idx] = data.frame;
-              else newFrames.push(data.frame);
+              // Try to find by screenId (initial generation) or frame.id (regeneration)
+              const idx = newFrames.findIndex(
+                (f) => f.id === data.screenId || f.id === data.frame.id
+              );
+              if (idx !== -1) {
+                // Update existing frame - set isLoading to false
+                newFrames[idx] = { ...data.frame, isLoading: false };
+              } else {
+                // Add new frame
+                newFrames.push({ ...data.frame, isLoading: false });
+              }
               return newFrames;
             });
+            // Also reset regenerating state when a frame is updated
+            setIsRegenerating(false);
           }
           break;
         case "generation.complete":
+          console.log("[Canvas] generation.complete");
           setLoadingStatus("completed");
+          setIsRegenerating(false);
           setTimeout(() => {
             setLoadingStatus("idle");
           }, 100);
           break;
         default:
+          console.log("[Canvas] Unknown topic:", topic);
           break;
       }
     });
@@ -148,6 +177,13 @@ export const CanvasProvider = ({
     });
   }, []);
 
+  const removeFrame = useCallback((id: string) => {
+    setFrames((prev) => prev.filter((frame) => frame.id !== id));
+    if (selectedFrameId === id) {
+      setSelectedFrameId(null);
+    }
+  }, [selectedFrameId]);
+
   return (
     <CanvasContext.Provider
       value={{
@@ -161,8 +197,11 @@ export const CanvasProvider = ({
         setSelectedFrameId,
         updateFrame,
         addFrame,
+        removeFrame,
         loadingStatus,
         setLoadingStatus,
+        isRegenerating,
+        setIsRegenerating,
       }}
     >
       {children}

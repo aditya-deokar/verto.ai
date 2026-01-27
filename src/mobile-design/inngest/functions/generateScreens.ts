@@ -6,7 +6,7 @@ import { ANALYSIS_PROMPT, GENERATION_SYSTEM_PROMPT } from "@/mobile-design/lib/p
 import prisma from "@/lib/prisma";
 import { BASE_VARIABLES, THEME_LIST } from "@/mobile-design/lib/themes";
 import { unsplashTool } from "../tool";
-import { openrouter } from "@/mobile-design/lib/openrouter";
+import { google } from "@/mobile-design/lib/google";
 
 const AnalysisSchema = z.object({
   theme: z
@@ -58,13 +58,17 @@ export const generateScreens = inngest.createFunction(
     const CHANNEL = `user:${userId}`;
     const isExistingGeneration = Array.isArray(frames) && frames.length > 0;
 
-    await publish({
-      channel: CHANNEL,
-      topic: "generation.start",
-      data: {
-        status: "running",
-        projectId: projectId,
-      },
+    // Step 1: Publish generation start
+    await step.run("publish-generation-start", async () => {
+      await publish({
+        channel: CHANNEL,
+        topic: "generation.start",
+        data: {
+          status: "running",
+          projectId: projectId,
+        },
+      });
+      return { published: "generation.start" };
     });
 
     //Analyze or plan
@@ -107,7 +111,7 @@ export const generateScreens = inngest.createFunction(
         `.trim();
 
       const { object } = await generateObject({
-        model: openrouter("google/gemini-3-pro-preview"),
+        model: google("gemini-2.5-flash"),
         schema: AnalysisSchema,
         system: ANALYSIS_PROMPT,
         prompt: analysisPrompt,
@@ -165,7 +169,7 @@ export const generateScreens = inngest.createFunction(
 
       await step.run(`generated-screen-${i}`, async () => {
         const result = await generateText({
-          model: openrouter("google/gemini-3-pro-preview"),
+          model: google("gemini-2.5-flash"),
           system: GENERATION_SYSTEM_PROMPT,
           tools: {
             searchUnsplash: unsplashTool,
@@ -244,14 +248,17 @@ export const generateScreens = inngest.createFunction(
         return { success: true, frame: frame };
       });
     }
-
-    await publish({
-      channel: CHANNEL,
-      topic: "generation.complete",
-      data: {
-        status: "completed",
-        projectId: projectId,
-      },
+    // Final step: Publish generation complete
+    await step.run("publish-generation-complete", async () => {
+      await publish({
+        channel: CHANNEL,
+        topic: "generation.complete",
+        data: {
+          status: "completed",
+          projectId: projectId,
+        },
+      });
+      return { published: "generation.complete" };
     });
   }
 );

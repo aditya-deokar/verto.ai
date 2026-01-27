@@ -5,9 +5,13 @@ import prisma from "@/lib/prisma";
 import { inngest } from "@/mobile-design/inngest/client";
 import { revalidatePath } from "next/cache";
 
-export async function regenerateFrame(frameId: string, projectId: string) {
+export async function regenerateFrame(frameId: string, projectId: string, prompt: string) {
     const { userId } = await auth();
     if (!userId) throw new Error("Unauthorized");
+
+    if (!prompt || prompt.trim() === "") {
+        throw new Error("Prompt is required for regeneration");
+    }
 
     const user = await prisma.user.findUnique({
         where: { clerkId: userId },
@@ -15,38 +19,44 @@ export async function regenerateFrame(frameId: string, projectId: string) {
 
     if (!user) throw new Error("User not found");
 
-    // Verify ownership
+    // Verify ownership and get project with frame
     const project = await prisma.mobileProject.findFirst({
         where: {
             id: projectId,
             userId: user.id,
         },
-        include: {
-            frames: {
-                where: { id: frameId },
-            },
+    });
+
+    if (!project) {
+        throw new Error("Project not found");
+    }
+
+    // Get the actual frame data
+    const frame = await prisma.mobileFrame.findFirst({
+        where: {
+            id: frameId,
+            projectId: projectId,
         },
     });
 
-    if (!project || !project.frames.length) {
+    if (!frame) {
         throw new Error("Frame not found");
     }
 
-    const frame = project.frames[0];
-
-    // Trigger Inngest regeneration
+    // Trigger Inngest regeneration - pass full frame object like XDesign
     await inngest.send({
         name: "ui/regenerate.frame",
         data: {
             userId: user.id,
             projectId: project.id,
             frameId: frame.id,
-            frameData: {
-                id: frame.screenId,
-                title: frame.screenName,
-                description: frame.tagline || "",
-            },
+            prompt: prompt,
             theme: project.theme,
+            frame: {
+                id: frame.id,
+                title: frame.title,
+                htmlContent: frame.htmlContent,
+            },
         },
     });
 
