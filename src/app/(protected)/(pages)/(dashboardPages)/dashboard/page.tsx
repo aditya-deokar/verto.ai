@@ -1,30 +1,24 @@
 import React from "react";
 import { getUnifiedProjects } from "@/actions/unified-projects";
-import { NotFound } from "@/components/global/not-found";
-import Projects from "@/components/global/projects";
+import { onAuthenticateUser } from "@/actions/user";
+import { DashboardHome } from "@/components/global/dashboard/DashboardHome";
 
 const page = async () => {
   const allProjects = await getUnifiedProjects();
+  const checkUser = await onAuthenticateUser();
+
+  const projects = allProjects.data || [];
+  const presentationCount = projects.filter(p => p.type === "PRESENTATION").length;
+  const mobileDesignCount = projects.filter(p => p.type === "MOBILE_DESIGN").length;
+
   return (
     <div className="w-full flex flex-col gap-6 relative">
-      <div className="flex flex-col-reverse items-start w-full gap-6  sm:flex-row sm:justify-between sm:items-center">
-        <div className="flex flex-col items-start">
-          <h1 className="text-2xl font-semibold dark:text-primary backdrop-blur-lg ">
-            Projects
-          </h1>
-          <p className="text-base font-normal dark:text-secondary">
-            All of your work in one place
-          </p>
-        </div>
-      </div>
-
-      {/* Projects */}
-
-      {allProjects.data && allProjects?.data?.length > 0 ? (
-        <Projects projects={allProjects.data} />
-      ) : (
-        <NotFound />
-      )}
+      <DashboardHome
+        projects={projects}
+        userName={checkUser.user?.name || undefined}
+        presentationCount={presentationCount}
+        mobileDesignCount={mobileDesignCount}
+      />
     </div>
   );
 };

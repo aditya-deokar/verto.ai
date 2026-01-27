@@ -31,12 +31,12 @@ const simulateAgentProgress = (
         if (currentIndex < steps.length) {
             // Mark current as running
             updateCallback(steps[currentIndex], 'running', `Processing ${steps[currentIndex]}...`)
-            
+
             // After 2 seconds, mark as completed and move to next
             setTimeout(() => {
                 updateCallback(steps[currentIndex], 'completed')
                 currentIndex++
-                
+
                 if (currentIndex >= steps.length) {
                     clearInterval(interval)
                 }
@@ -62,32 +62,32 @@ const ThemePickerWithWorkflow = ({ onThemeSelect, selectedTheme, themes }: Props
     }>>([
         {
             id: 'outline-solid',
-            name: 'Outline Generator',
-            description: 'Creating presentation structure and key topics',
+            name: 'Structure',
+            description: 'Creating presentation structure',
             status: 'pending'
         },
         {
             id: 'content',
-            name: 'Content Writer',
-            description: 'Writing engaging content for each slide',
+            name: 'Content Writing',
+            description: 'Writing engaging content',
             status: 'pending'
         },
         {
             id: 'layout',
-            name: 'Layout Designer',
-            description: 'Selecting optimal layouts and visual structure',
+            name: 'Design Layout',
+            description: 'Selecting optimal layouts',
             status: 'pending'
         },
         {
             id: 'image',
-            name: 'Image Query Generator',
-            description: 'Analyzing slides and generating image search queries',
+            name: 'Visual Search',
+            description: 'Finding perfect images',
             status: 'pending'
         },
         {
             id: 'compiler',
-            name: 'JSON Compiler',
-            description: 'Compiling final presentation structure',
+            name: 'Assembly',
+            description: 'Compiling final presentation',
             status: 'pending'
         }
     ])
@@ -108,7 +108,7 @@ const ThemePickerWithWorkflow = ({ onThemeSelect, selectedTheme, themes }: Props
 
     const handleGenerateWithWorkflow = async () => {
         setLoading(true);
-        
+
         if (!selectedTheme) {
             toast.error("Error", {
                 description: "Please select a theme",
@@ -116,7 +116,7 @@ const ThemePickerWithWorkflow = ({ onThemeSelect, selectedTheme, themes }: Props
             setLoading(false);
             return;
         }
-        
+
         if (!project?.id) {
             toast.error("Error", {
                 description: "Please create a project first",
@@ -157,7 +157,7 @@ const ThemePickerWithWorkflow = ({ onThemeSelect, selectedTheme, themes }: Props
             });
 
             setSlides(res.data);
-            
+
             // Auto-close dialog after 2 seconds and navigate
             setTimeout(() => {
                 setShowWorkflowDialog(false);
@@ -170,7 +170,7 @@ const ThemePickerWithWorkflow = ({ onThemeSelect, selectedTheme, themes }: Props
             if (currentStep) {
                 updateStepStatus(currentStep.id, 'error', err.message);
             }
-            
+
             toast.error("Error", {
                 description: err.message || "Failed to generate presentation",
             });
@@ -203,7 +203,7 @@ const ThemePickerWithWorkflow = ({ onThemeSelect, selectedTheme, themes }: Props
                             Choose from our curated collection
                         </p>
                     </div>
-                    
+
                     {/* Enhanced Generate Button with AI Badge */}
                     <div className="space-y-3">
                         <Button
@@ -227,7 +227,7 @@ const ThemePickerWithWorkflow = ({ onThemeSelect, selectedTheme, themes }: Props
                                     ease: "linear",
                                 }}
                             />
-                            
+
                             <span className="relative flex items-center">
                                 {loading ? (
                                     <Loader2 className="mr-2 h-5 w-5 animate-spin" />
@@ -237,7 +237,7 @@ const ThemePickerWithWorkflow = ({ onThemeSelect, selectedTheme, themes }: Props
                                 {loading ? "Generating..." : "Generate with AI"}
                             </span>
                         </Button>
-                        
+
                         {/* AI Features Badge */}
                         <motion.div
                             initial={{ opacity: 0, y: -10 }}
@@ -246,11 +246,11 @@ const ThemePickerWithWorkflow = ({ onThemeSelect, selectedTheme, themes }: Props
                             style={{ color: `${selectedTheme.accentColor}70` }}
                         >
                             <Wand2 className="h-3 w-3" />
-                            <span>Multi-agent AI workflow</span>
+                            <span>Advanced AI generation</span>
                         </motion.div>
                     </div>
                 </div>
-                
+
                 <ScrollArea className='grow px-8 pb-8'>
                     <div className='grid grid-cols-1 gap-4 px-2'>
                         {themes.map((theme) => (

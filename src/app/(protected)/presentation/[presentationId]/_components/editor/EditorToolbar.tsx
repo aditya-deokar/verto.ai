@@ -132,7 +132,7 @@ const EditorToolbar = ({ isEditable = true }: Props) => {
     if (!isEditable) return null
 
     return (
-        <div className="fixed bottom-8 left-1/2 -translate-x-1/2 bg-background/95 backdrop-blur-sm border shadow-2xl rounded-full px-4 py-2 flex items-center gap-2 z-50 animate-in fade-in slide-in-from-bottom-4 max-w-[90vw] overflow-x-auto">
+        <div className="absolute bottom-8 left-1/2 -translate-x-1/2 bg-background/95 backdrop-blur-sm border shadow-2xl rounded-full px-4 py-2 flex items-center gap-2 z-50 animate-in fade-in slide-in-from-bottom-4 max-w-[90vw] overflow-x-auto">
 
             {/* Undo/Redo/Save Section */}
             <div className="flex items-center gap-1">

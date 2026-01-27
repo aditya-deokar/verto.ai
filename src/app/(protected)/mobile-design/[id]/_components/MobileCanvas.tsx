@@ -19,8 +19,13 @@ export function MobileCanvas({
     projectName,
     isPending,
 }: MobileCanvasProps) {
-    const { frames, selectedFrame, loadingStatus } = useCanvas();
+    const { frames, selectedFrame, selectedFrameId, loadingStatus } = useCanvas();
     const [showSidebar, setShowSidebar] = useState(true);
+
+    // Compute activeIndex from selectedFrameId
+    const activeIndex = selectedFrameId
+        ? frames.findIndex(f => f.id === selectedFrameId)
+        : 0;
 
     return (
         <div className="flex-1 relative bg-gradient-to-br from-gray-50 to-gray-100 dark:from-gray-900 dark:to-gray-950 overflow-hidden">
@@ -55,7 +60,7 @@ export function MobileCanvas({
                                     contentClass="!w-full !h-full flex items-center justify-center"
                                 >
                                     <FramePreview
-                                        frame={activeFrame}
+                                        frame={selectedFrame}
                                         frameIndex={activeIndex}
                                     />
                                 </TransformComponent>
@@ -78,3 +83,4 @@ export function MobileCanvas({
         </div>
     );
 }
+

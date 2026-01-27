@@ -35,7 +35,7 @@ export default async function MobileDesignPage({
         <div className="relative h-screen w-full flex flex-col overflow-hidden">
             <CanvasProvider
                 initialFrames={project.frames || []}
-                initialThemeId={project.theme}
+                initialThemeId={project.theme ?? undefined}
                 hasInitialData={hasInitialData}
                 projectId={project.id}
             >

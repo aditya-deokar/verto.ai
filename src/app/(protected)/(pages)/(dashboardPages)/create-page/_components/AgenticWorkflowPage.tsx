@@ -25,50 +25,50 @@ type Props = {
 const AGENT_INFO = [
   {
     icon: Target,
-    name: 'Project Initializer',
-    description: 'Creates your project in the database and sets up the foundation',
+    name: 'Project Setup',
+    description: 'Preparing your presentation workspace',
     color: 'text-purple-500'
   },
   {
     icon: Brain,
-    name: 'Outline Generator',
-    description: 'Analyzes your topic and creates a logical presentation structure',
+    name: 'Structure',
+    description: 'Organizing the presentation flow',
     color: 'text-blue-500'
   },
   {
     icon: FileText,
-    name: 'Content Writer',
-    description: 'Writes engaging titles and compelling content for each slide',
+    name: 'Content Writing',
+    description: 'Creating engaging text for each slide',
     color: 'text-cyan-500'
   },
   {
     icon: Palette,
-    name: 'Layout Selector',
-    description: 'AI-powered layout selection for optimal visual presentation',
+    name: 'Design Layout',
+    description: 'Selecting the best look for your slides',
     color: 'text-pink-500'
   },
   {
     icon: Search,
-    name: 'Image Query Generator',
-    description: 'Creates contextual image queries to enhance your slides',
+    name: 'Visual Search',
+    description: 'Finding the perfect images',
     color: 'text-green-500'
   },
   {
     icon: ImagePlus,
-    name: 'Image Fetcher',
-    description: 'Fetches high-quality images matching your content',
+    name: 'Image Integration',
+    description: 'Adding beautiful visuals to slides',
     color: 'text-yellow-500'
   },
   {
     icon: Package,
-    name: 'JSON Compiler',
-    description: 'Compiles everything into a beautiful, structured presentation',
+    name: 'Assembly',
+    description: 'Formatting and polishing your slides',
     color: 'text-orange-500'
   },
   {
     icon: Database,
-    name: 'Database Persister',
-    description: 'Saves your complete presentation to the database',
+    name: 'Finalization',
+    description: 'Saving and getting ready to present',
     color: 'text-red-500'
   }
 ]
@@ -81,9 +81,9 @@ const AgenticWorkflowPage = ({ onBack }: Props) => {
   const [additionalContext, setAdditionalContext] = useState('')
   const [selectedTheme, setSelectedTheme] = useState<Theme>(themes[0]) // Default theme
 
-  const { 
-    generate, 
-    isGenerating, 
+  const {
+    generate,
+    isGenerating,
     progress,
     currentAgentName,
     currentAgentDescription,
@@ -117,11 +117,11 @@ const AgenticWorkflowPage = ({ onBack }: Props) => {
     try {
       // V2 workflow handles everything (project creation + AI generation)
       const fullTopic = `${presentationTitle}: ${presentationTopic}`
-      
+
       await generate(fullTopic, additionalContext, selectedTheme.type)
-      
+
       // Success toast is shown after navigation in the hook
-      
+
     } catch (error) {
       toast.error("Error", {
         description: error instanceof Error ? error.message : "Failed to generate presentation",
@@ -138,14 +138,14 @@ const AgenticWorkflowPage = ({ onBack }: Props) => {
         className="space-y-8 max-w-7xl mx-auto pb-12 px-4"
       >
         {/* Header with Gradient Background */}
-        <motion.div 
-          variants={itemVariants} 
+        <motion.div
+          variants={itemVariants}
           className="relative overflow-hidden rounded-2xl border border-border/50 bg-linear-to-br from-background via-background to-background/80 p-8 shadow-lg"
         >
           {/* Animated Background Effect */}
           <div className="absolute inset-0 hero-gradient opacity-50" />
           <div className="absolute inset-0 dotted-grid" />
-          
+
           <div className="relative flex items-start gap-6">
             <Button
               variant="ghost"
@@ -155,10 +155,10 @@ const AgenticWorkflowPage = ({ onBack }: Props) => {
             >
               <ArrowLeft className="h-5 w-5" />
             </Button>
-            
+
             <div className="flex-1">
               <div className="flex items-center gap-3 mb-3">
-                <motion.div 
+                <motion.div
                   className="p-3 rounded-xl verto-bg shadow-lg"
                   whileHover={{ scale: 1.05, rotate: 5 }}
                   transition={{ type: "spring", stiffness: 300 }}
@@ -167,17 +167,17 @@ const AgenticWorkflowPage = ({ onBack }: Props) => {
                 </motion.div>
                 <div>
                   <h1 className="text-4xl md:text-5xl font-bold flex items-center gap-3">
-                    <span className="verto">Agentic Workflow</span>
+                    <span className="verto">AI Presentation</span>
                     <span className="text-primary">Generator</span>
                   </h1>
                   <Badge variant="secondary" className="mt-2">
                     <Zap className="h-3 w-3 mr-1" />
-                    Powered by 8 AI Agents
+                    Powered by Advanced AI
                   </Badge>
                 </div>
               </div>
               <p className="text-muted-foreground text-lg max-w-2xl">
-                Watch as specialized AI agents collaborate in real-time to craft your perfect presentation—from structure to visuals
+                Watch as AI builds your perfect presentation—from structure to visuals.
               </p>
             </div>
           </div>
@@ -201,7 +201,7 @@ const AgenticWorkflowPage = ({ onBack }: Props) => {
               </CardHeader>
               <CardContent className="space-y-6 pt-6">
                 {/* Title Input */}
-                <motion.div 
+                <motion.div
                   className="space-y-3"
                   whileFocus={{ scale: 1.01 }}
                   transition={{ duration: 0.2 }}
@@ -224,7 +224,7 @@ const AgenticWorkflowPage = ({ onBack }: Props) => {
                 </motion.div>
 
                 {/* Topic Input */}
-                <motion.div 
+                <motion.div
                   className="space-y-3"
                   whileFocus={{ scale: 1.01 }}
                   transition={{ duration: 0.2 }}
@@ -248,7 +248,7 @@ const AgenticWorkflowPage = ({ onBack }: Props) => {
                 </motion.div>
 
                 {/* Additional Context */}
-                <motion.div 
+                <motion.div
                   className="space-y-3"
                   whileFocus={{ scale: 1.01 }}
                   transition={{ duration: 0.2 }}
@@ -273,7 +273,7 @@ const AgenticWorkflowPage = ({ onBack }: Props) => {
                 </motion.div>
 
                 {/* Theme Selection */}
-                <motion.div 
+                <motion.div
                   className="space-y-3"
                   initial={{ opacity: 0, y: 20 }}
                   animate={{ opacity: 1, y: 0 }}
@@ -319,8 +319,8 @@ const AgenticWorkflowPage = ({ onBack }: Props) => {
                             <div className="w-full text-left">
                               <p className="font-bold text-sm mb-1">{theme.name}</p>
                               <div className="flex items-center gap-1">
-                                <Badge 
-                                  variant="secondary" 
+                                <Badge
+                                  variant="secondary"
                                   className="text-xs px-2 py-0"
                                   style={{
                                     backgroundColor: `${theme.accentColor}20`,
@@ -335,16 +335,16 @@ const AgenticWorkflowPage = ({ onBack }: Props) => {
 
                             {/* Theme Preview Dots */}
                             <div className="flex gap-1.5 mt-2">
-                              <div 
-                                className="w-3 h-3 rounded-full" 
+                              <div
+                                className="w-3 h-3 rounded-full"
                                 style={{ backgroundColor: theme.backgroundColor }}
                               />
-                              <div 
-                                className="w-3 h-3 rounded-full" 
+                              <div
+                                className="w-3 h-3 rounded-full"
                                 style={{ backgroundColor: theme.accentColor }}
                               />
-                              <div 
-                                className="w-3 h-3 rounded-full" 
+                              <div
+                                className="w-3 h-3 rounded-full"
                                 style={{ backgroundColor: theme.slideBackgroundColor || theme.backgroundColor }}
                               />
                             </div>
@@ -385,13 +385,13 @@ const AgenticWorkflowPage = ({ onBack }: Props) => {
                         }}
                       />
                     )}
-                    
+
                     <span className="relative flex items-center justify-center gap-3 text-white">
                       {isGenerating ? (
                         <>
                           <Loader2 className="h-6 w-6 animate-spin" />
                           <span className="flex items-center gap-2">
-                            Generating... 
+                            Generating...
                             <Badge variant="secondary" className="bg-white/20 text-white border-0">
                               {Math.round(progress)}%
                             </Badge>
@@ -400,7 +400,7 @@ const AgenticWorkflowPage = ({ onBack }: Props) => {
                       ) : (
                         <>
                           <Sparkles className="h-6 w-6" />
-                          Generate with AI Agents
+                          Generate with AI
                         </>
                       )}
                     </span>
@@ -419,10 +419,10 @@ const AgenticWorkflowPage = ({ onBack }: Props) => {
                   <div className="p-2 rounded-lg bg-linear-to-br from-red-500/10 to-orange-500/10 border border-red-500/20">
                     <Brain className="h-5 w-5 text-red-500" />
                   </div>
-                  AI Agent Pipeline
+                  Generation Process
                 </CardTitle>
                 <CardDescription className="text-sm">
-                  8 specialized agents working in sequence
+                  Creating your presentation step-by-step
                 </CardDescription>
               </CardHeader>
               <CardContent className="space-y-3 max-h-[calc(100vh-300px)] overflow-y-auto">
@@ -439,7 +439,7 @@ const AgenticWorkflowPage = ({ onBack }: Props) => {
                     <div className="absolute -left-2 -top-2 w-6 h-6 rounded-full verto-bg flex items-center justify-center text-white text-xs font-bold shadow-lg">
                       {index + 1}
                     </div>
-                    
+
                     <div className={`shrink-0 mt-1 ${agent.color} group-hover:scale-110 transition-transform duration-300`}>
                       <agent.icon className="h-5 w-5" />
                     </div>
@@ -451,7 +451,7 @@ const AgenticWorkflowPage = ({ onBack }: Props) => {
                         {agent.description}
                       </p>
                     </div>
-                    
+
                     {/* Hover Arrow */}
                     <div className="absolute right-3 top-1/2 -translate-y-1/2 opacity-0 group-hover:opacity-100 transition-opacity">
                       <CheckCircle2 className="h-4 w-4 text-red-500" />
@@ -503,7 +503,7 @@ const AgenticWorkflowPage = ({ onBack }: Props) => {
       {/* Agentic Workflow Dialog */}
       <AgenticWorkflowDialog
         open={isGenerating}
-        onOpenChange={() => {}}
+        onOpenChange={() => { }}
         topic={presentationTitle || "Your Presentation"}
         steps={agentSteps}
         currentProgress={progress}

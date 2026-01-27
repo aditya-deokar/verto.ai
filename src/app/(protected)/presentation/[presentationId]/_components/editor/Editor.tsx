@@ -2,7 +2,7 @@
 
 import { useSlideStore } from "@/store/useSlideStore";
 import React, { useState, useEffect } from "react";
-import { LayoutSlides } from "@/lib/types";
+import { ContentItem, LayoutSlides } from "@/lib/types";
 import { v4 as uuidv4 } from "uuid";
 import { cn } from "@/lib/utils";
 import { Skeleton } from "@/components/ui/skeleton";
@@ -15,6 +15,7 @@ import { Button } from "@/components/ui/button";
 import { EllipsisVertical, Trash, ZoomIn, ZoomOut } from "lucide-react";
 import { MasterRecursiveComponent } from "./MasterRecursiveComponent";
 import EditorToolbar from "./EditorToolbar";
+import { useDrop } from "react-dnd";
 
 interface SlideCanvasProps {
   slide: any;
@@ -23,13 +24,42 @@ interface SlideCanvasProps {
   isEditable: boolean;
 }
 
+// Helper to recursively assign new IDs to a component structure
+const recursiveIdUpdate = (content: ContentItem): ContentItem => {
+  const newId = uuidv4();
+
+  if (Array.isArray(content.content)) {
+    // Check if the array contains strings (not ContentItems)
+    const isStringArray = content.content.length > 0 && typeof content.content[0] === 'string';
+    const isStringArrayArray = content.content.length > 0 && Array.isArray(content.content[0]) && typeof (content.content[0] as any)[0] === 'string';
+
+    if (isStringArray || isStringArrayArray) {
+      return {
+        ...content,
+        id: newId
+      };
+    }
+
+    return {
+      ...content,
+      id: newId,
+      content: (content.content as ContentItem[]).map(recursiveIdUpdate)
+    }
+  }
+
+  return {
+    ...content,
+    id: newId
+  }
+}
+
 export const SlideCanvas: React.FC<SlideCanvasProps> = ({
   slide,
   index,
   handleDelete,
   isEditable,
 }) => {
-  const { currentTheme, updateContentItem, setSelectedComponent, setCurrentSlide } = useSlideStore();
+  const { currentTheme, updateContentItem, setSelectedComponent, updateSlide } = useSlideStore();
 
   const handleContentChange = (
     contentId: string,
@@ -40,18 +70,30 @@ export const SlideCanvas: React.FC<SlideCanvasProps> = ({
     }
   };
 
+  const [{ isOver, canDrop }, drop] = useDrop(() => ({
+    accept: 'layout',
+    drop: (item: { layoutType: string, component: LayoutSlides }) => {
+      if (!isEditable) return;
+
+      // Clone and update IDs to avoid collisions
+      const newContent = recursiveIdUpdate(item.component.content);
+      updateSlide(slide.id, newContent);
+    },
+    collect: (monitor) => ({
+      isOver: !!monitor.isOver(),
+      canDrop: !!monitor.canDrop(),
+    }),
+  }), [slide.id, isEditable]);
+
   return (
     <div
+      ref={drop as unknown as React.LegacyRef<HTMLDivElement>}
       className={cn(
-<<<<<<< HEAD
-        "w-full rounded-xl shadow-lg relative p-8 mb-8 aspect-video",
-        "transition-all duration-300 ease-in-out",
-=======
         "w-full h-full relative bg-white shadow-2xl",
         "transition-all duration-200 ease-in-out",
->>>>>>> 2baabf4ba177aac702da38fc9f61466fd730633e
         "flex flex-col",
-        "p-10" // Added padding for better layout
+        "p-10", // Added padding for better layout
+        isOver && canDrop && "ring-4 ring-primary/50"
       )}
       style={{
         backgroundImage: currentTheme.gradientBackground,
@@ -102,13 +144,13 @@ type Props = {
 
 const Editor = ({ isEditable }: Props) => {
   const {
-    getOrderedSlides,
     currentSlide,
     removeSlide,
-    addSlideAtIndex,
   } = useSlideStore();
 
-  const orderedSlides = getOrderedSlides();
+  const slides = useSlideStore(state => state.slides);
+  const orderedSlides = [...slides].sort((a, b) => (a.slideOrder ?? 0) - (b.slideOrder ?? 0));
+
   const [loading, setLoading] = useState(true);
   const [scale, setScale] = useState(1);
 
@@ -125,7 +167,7 @@ const Editor = ({ isEditable }: Props) => {
   const currentSlideData = orderedSlides[currentSlide];
 
   return (
-    <div className="flex-1 flex flex-col h-full w-full mx-auto px-4 mb-20 relative">
+    <div className="flex-1 flex flex-col h-full w-full mx-auto px-4 relative">
       {loading ? (
         <div className="w-full h-full flex items-center justify-center">
           <Skeleton className="h-[60%] w-[80%] rounded-xl" />
@@ -147,6 +189,7 @@ const Editor = ({ isEditable }: Props) => {
           >
             {currentSlideData ? (
               <SlideCanvas
+                key={currentSlideData.id} // Add key to force remount on slide change
                 slide={currentSlideData}
                 index={currentSlide}
                 handleDelete={handleDelete}

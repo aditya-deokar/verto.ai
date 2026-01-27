@@ -16,7 +16,9 @@ export interface DashboardProject {
     isSellable?: boolean;
 }
 
-export const getUnifiedProjects = async () => {
+export type ProjectFilter = 'all' | 'presentation' | 'mobile';
+
+export const getUnifiedProjects = async (filter: ProjectFilter = 'all') => {
     try {
         const checkUser = await onAuthenticateUser();
         if (checkUser.status !== 200 || !checkUser.user) {
@@ -28,27 +30,34 @@ export const getUnifiedProjects = async () => {
 
         const userId = checkUser.user.id;
 
-        // Fetch Presentation Projects (PPT)
-        const pptProjects = await prisma.project.findMany({
-            where: {
-                userId: userId,
-                isDeleted: false,
-            },
-        });
+        let pptProjects: any[] = [];
+        let mobileProjects: any[] = [];
 
-        // Fetch Mobile Design Projects
-        const mobileProjects = await prisma.mobileProject.findMany({
-            where: {
-                userId: userId,
-                isDeleted: false,
-            },
-            include: {
-                frames: {
-                    take: 1, // Only need the first frame for preview if needed, though card likely uses thumbnail or separate logic
-                    orderBy: { createdAt: "asc" }
+        // Fetch Presentation Projects (PPT) if needed
+        if (filter === 'all' || filter === 'presentation') {
+            pptProjects = await prisma.project.findMany({
+                where: {
+                    userId: userId,
+                    isDeleted: false,
+                },
+            });
+        }
+
+        // Fetch Mobile Design Projects if needed
+        if (filter === 'all' || filter === 'mobile') {
+            mobileProjects = await prisma.mobileProject.findMany({
+                where: {
+                    userId: userId,
+                    isDeleted: false,
+                },
+                include: {
+                    frames: {
+                        take: 1,
+                        orderBy: { createdAt: "asc" }
+                    }
                 }
-            }
-        });
+            });
+        }
 
         // Normalize and Combine
         const unifiedProjects: DashboardProject[] = [

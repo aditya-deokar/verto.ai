@@ -22,34 +22,34 @@ interface AgenticWorkflowDialogProps {
 const AGENT_STEPS_CONFIG: Omit<AgentStep, 'status' | 'details'>[] = [
   {
     id: 'outline-solid',
-    name: 'Outline Generator',
+    name: 'Structure',
     description: 'Creating presentation structure and key topics'
   },
   {
     id: 'content',
-    name: 'Content Writer',
+    name: 'Content Writing',
     description: 'Writing engaging content for each slide'
   },
   {
     id: 'layout',
-    name: 'Layout Designer',
+    name: 'Design Layout',
     description: 'Selecting optimal layouts and visual structure'
   },
   {
     id: 'image',
-    name: 'Image Query Generator',
-    description: 'Analyzing slides and generating image search queries'
+    name: 'Visual Search',
+    description: 'Analyzing slides and finding images'
   },
   {
     id: 'compiler',
-    name: 'JSON Compiler',
-    description: 'Compiling final presentation structure'
+    name: 'Assembly',
+    description: 'Compiling final presentation'
   }
 ]
 
-const AgenticWorkflowDialog = ({ 
-  open, 
-  onOpenChange, 
+const AgenticWorkflowDialog = ({
+  open,
+  onOpenChange,
   onComplete,
   topic,
   steps: externalSteps,
@@ -62,7 +62,7 @@ const AgenticWorkflowDialog = ({
   )
   const [currentStep, setCurrentStep] = useState(0)
   const [progress, setProgress] = useState(externalProgress || 0)
-  
+
   // Update steps when external steps change
   React.useEffect(() => {
     if (externalSteps) {
@@ -83,7 +83,7 @@ const AgenticWorkflowDialog = ({
   const overallProgress = (completedSteps / totalSteps) * 100
 
   const updateStepStatus = (index: number, status: AgentStatus, details?: string) => {
-    setSteps(prev => prev.map((step, i) => 
+    setSteps(prev => prev.map((step, i) =>
       i === index ? { ...step, status, details } : step
     ))
     if (status === 'running') {
@@ -114,7 +114,7 @@ const AgenticWorkflowDialog = ({
                 <Sparkles className="h-5 w-5 text-white" />
               </div>
               <div>
-                <DialogTitle className="text-xl">AI Workflow in Progress</DialogTitle>
+                <DialogTitle className="text-xl">Creating Presentation</DialogTitle>
                 <DialogDescription className="text-sm mt-1">
                   Generating presentation: <span className="font-medium text-foreground">{topic}</span>
                 </DialogDescription>
@@ -139,14 +139,14 @@ const AgenticWorkflowDialog = ({
           </div>
           <Progress value={progress} className="h-2" />
           <div className="text-xs text-muted-foreground">
-            {completedSteps} of {totalSteps} agents completed
+            {completedSteps} of {totalSteps} steps completed
           </div>
         </div>
 
         {/* Agent Steps */}
         <div className="flex-1 overflow-y-auto pr-2 -mr-2">
-          <AgenticProgressTracker 
-            steps={steps} 
+          <AgenticProgressTracker
+            steps={steps}
             currentStep={currentStep}
             className="py-4"
           />
@@ -167,7 +167,7 @@ const AgenticWorkflowDialog = ({
                   Presentation generated successfully! 🎉
                 </p>
                 <p className="text-xs text-green-600 dark:text-green-500 mt-0.5">
-                  All agents have completed their tasks
+                  All steps completed
                 </p>
               </div>
               <Button
@@ -190,7 +190,7 @@ const AgenticWorkflowDialog = ({
             >
               <div className="flex-1">
                 <p className="text-sm font-medium text-blue-700 dark:text-blue-400">
-                  AI agents are working on your presentation
+                  AI is creating your presentation
                 </p>
                 <p className="text-xs text-blue-600 dark:text-blue-500 mt-0.5">
                   This may take a few moments...
@@ -219,9 +219,9 @@ export const useAgenticWorkflow = () => {
   const [steps, setSteps] = useState<AgentStep[]>(
     AGENT_STEPS_CONFIG.map(step => ({ ...step, status: 'pending' as AgentStatus }))
   )
-  
+
   const updateStep = (stepId: string, status: AgentStatus, details?: string) => {
-    setSteps(prev => prev.map(step => 
+    setSteps(prev => prev.map(step =>
       step.id === stepId ? { ...step, status, details } : step
     ))
   }
