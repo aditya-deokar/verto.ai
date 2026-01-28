@@ -14,6 +14,7 @@ import { useRouter } from "next/navigation";
 import { User } from "@/generated/prisma";
 import { useToast } from "@/hooks/use-toast";
 import { buySubscription } from "@/actions/payment";
+import { ManageSubscription } from "@/components/global/subscription";
 
 export function NavFooter({ prismaUser }: { prismaUser: User }) {
   const { isLoaded, isSignedIn, user } = useUser();
@@ -50,8 +51,24 @@ export function NavFooter({ prismaUser }: { prismaUser: User }) {
     <SidebarMenu>
       <SidebarMenuItem>
         <div className="flex flex-col gap-y-6 items-start group-data-[collapsible=icon]:hidden">
-          {/* Get Creative Ai card */}
-          {!prismaUser.subscription && (
+          {/* Subscription Management */}
+          {prismaUser.subscription ? (
+            <div className="flex flex-col items-start p-2 pb-3 gap-4 bg-background-80 w-full">
+              <div className="flex flex-col items-start gap-1">
+                <p className="text-base font-bold">
+                  <span className="text-vivid">Creative AI</span> Pro
+                </p>
+                <span className="text-sm dark:text-secondary">
+                  You have full access to all features
+                </span>
+              </div>
+              <ManageSubscription 
+                variant="outline" 
+                size="sm" 
+                className="w-full"
+              />
+            </div>
+          ) : (
             <div className="flex flex-col items-start p-2 pb-3 gap-4 bg-background-80">
               <div className="flex flex-col items-start gap-1">
                 <p className="text-base font-bold">

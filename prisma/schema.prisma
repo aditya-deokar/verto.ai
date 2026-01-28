@@ -36,6 +36,42 @@ model User {
   Projects          Project[]       @relation("OwnedProjects")
   PurchasedProjects Project[]       @relation("PurchasedProjects")
   MobileProjects    MobileProject[] @relation("UserMobileProjects")
+  Subscription      Subscription?
+}
+
+enum SubscriptionStatus {
+  ACTIVE
+  CANCELLED
+  EXPIRED
+  PAST_DUE
+  PAUSED
+  UNPAID
+  ON_TRIAL
+}
+
+model Subscription {
+  id             String             @id @default(cuid())
+  userId         String             @unique @db.Uuid
+  lemonSqueezyId String             @unique // Subscription ID from Lemon Squeezy
+  customerId     String // Customer ID from Lemon Squeezy
+  orderId        String? // Order ID from Lemon Squeezy
+  variantId      String // Product variant ID
+  status         SubscriptionStatus @default(ACTIVE)
+
+  // Billing details
+  renewsAt    DateTime?
+  endsAt      DateTime?
+  trialEndsAt DateTime?
+
+  // Timestamps
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  // Relations
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([lemonSqueezyId])
+  @@index([customerId])
 }
 
 model Project {

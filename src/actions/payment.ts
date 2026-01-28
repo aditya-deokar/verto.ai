@@ -2,7 +2,19 @@
 import lemonSqueezyClient from "@/lib/axios";
 
 export const buySubscription = async (buyUserId: string) => {
-  console.log(process.env.LEMON_SQUEEZY_API_KEY);
+  if (!process.env.LEMON_SQUEEZY_API_KEY) {
+    console.error("Missing LEMON_SQUEEZY_API_KEY");
+    return { status: 500, error: "Payment configuration error: Missing API Key" };
+  }
+  if (!process.env.LEMON_SQUEEZY_STORE_ID) {
+    console.error("Missing LEMON_SQUEEZY_STORE_ID");
+    return { status: 500, error: "Payment configuration error: Missing Store ID" };
+  }
+  if (!process.env.LEMON_SQUEEZY_VARIANT_ID) {
+    console.error("Missing LEMON_SQUEEZY_VARIANT_ID");
+    return { status: 500, error: "Payment configuration error: Missing Variant ID" };
+  }
+
   try {
     const res = await lemonSqueezyClient(
       process.env.LEMON_SQUEEZY_API_KEY
