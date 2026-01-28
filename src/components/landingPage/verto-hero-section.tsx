@@ -13,7 +13,7 @@ export function VertoHeroSection() {
   return (
     <section className="relative min-h-screen pt-32 pb-16 overflow-hidden hero-gradient">
 
-    
+
       <InteractiveGrid containerClassName="absolute inset-0" className="opacity-30" points={40} />
 
       <div className="relative z-10 max-w-6xl mx-auto px-6">
@@ -61,7 +61,7 @@ export function VertoHeroSection() {
                 />
                 <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
                   <Button
-                  className="verto-bg hover:opacity-90 gap-2 px-6">
+                    className="verto-bg hover:opacity-90 gap-2 px-6">
                     <Link href={'/dashboard'}>Generate Your First Presentation</Link>
                     <ArrowRight className="w-4 h-4" />
                   </Button>
