@@ -8,6 +8,7 @@ import SidebarV2 from "@/components/LandingPageV2/SidebarV2";
 import MenuOverlayV2 from "@/components/LandingPageV2/MenuOverlayV2";
 import FeatureStory from "@/components/LandingPageV2/FeatureStory";
 import SmartFeatures from "@/components/LandingPageV2/SmartFeatures";
+import MobileShowcase from "@/components/LandingPageV2/MobileShowcase";
 
 import TestimonialFlow from "@/components/LandingPageV2/TestimonialFlow";
 import FooterV2 from "@/components/LandingPageV2/FooterV2";
@@ -36,6 +37,7 @@ export default function LandingPageV2() {
             <HeroV2 />
             <FeatureStory />
             <SmartFeatures />
+            <MobileShowcase />
             <TestimonialFlow />
             <FooterV2 />
         </main>
