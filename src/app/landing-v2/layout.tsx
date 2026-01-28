@@ -17,7 +17,7 @@ export default function LandingV2Layout({
     children: React.ReactNode;
 }>) {
     return (
-        <div className={`dark min-h-screen bg-[#050505] text-white ${inter.variable} ${interTight.variable} font-sans selection:bg-white/20`}>
+        <div className={`min-h-screen bg-white dark:bg-[#050505] text-black dark:text-white ${inter.variable} ${interTight.variable} font-sans selection:bg-black/10 dark:selection:bg-white/20 transition-colors duration-500`}>
             {children}
         </div>
     );

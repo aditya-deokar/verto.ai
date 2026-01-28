@@ -39,12 +39,12 @@ const testimonials = [
 
 export default function TestimonialFlow() {
     return (
-        <section className="py-24 bg-[#050505] overflow-hidden">
-            <div className="max-w-4xl mx-auto text-center mb-16 px-6">
-                <h2 className="text-3xl md:text-5xl font-bold tracking-tight text-white mb-6 font-[family-name:var(--font-inter-tight)]">
+        <section className="py-24 bg-white dark:bg-[#050505] overflow-hidden transition-colors duration-500">
+            <div className="w-full px-6 md:pl-[120px] md:pr-10 mb-16">
+                <h2 className="text-3xl md:text-5xl font-bold tracking-tight text-black dark:text-white mb-6 font-[family-name:var(--font-inter-tight)]">
                     Loved by innovators.
                 </h2>
-                <p className="text-white/50 text-lg">
+                <p className="text-black/50 dark:text-white/50 text-xl font-[family-name:var(--font-inter)]">
                     Join 50,000+ founders and leaders transforming how they present ideas.
                 </p>
             </div>
@@ -54,19 +54,19 @@ export default function TestimonialFlow() {
                     {[...testimonials, ...testimonials, ...testimonials].map((t, i) => (
                         <div
                             key={i}
-                            className="flex-shrink-0 w-[400px] bg-white/5 border border-white/5 rounded-2xl p-8 hover:bg-white/10 transition-colors"
+                            className="flex-shrink-0 w-[400px] bg-gray-50 dark:bg-white/5 border border-black/5 dark:border-white/5 rounded-[32px] p-8 hover:border-black/10 dark:hover:border-white/10 transition-colors"
                         >
                             <div className="flex gap-1 mb-6 text-[#F6BC66]">
                                 {[...Array(5)].map((_, i) => (
                                     <Star key={i} size={16} fill="currentColor" />
                                 ))}
                             </div>
-                            <p className="text-white/80 text-lg leading-relaxed mb-8 font-light">"{t.content}"</p>
+                            <p className="text-black/80 dark:text-white/80 text-lg leading-relaxed mb-8 font-light italic font-[family-name:var(--font-inter)]">"{t.content}"</p>
                             <div className="flex items-center gap-4">
                                 <img src={t.avatar} alt={t.name} className="w-10 h-10 rounded-full grayscale opacity-70" />
                                 <div>
-                                    <h4 className="text-white font-medium">{t.name}</h4>
-                                    <p className="text-white/40 text-sm">{t.role}</p>
+                                    <h4 className="text-black dark:text-white font-medium font-[family-name:var(--font-inter-tight)]">{t.name}</h4>
+                                    <p className="text-black/40 dark:text-white/40 text-sm font-[family-name:var(--font-inter)]">{t.role}</p>
                                 </div>
                             </div>
                         </div>
@@ -74,8 +74,8 @@ export default function TestimonialFlow() {
                 </div>
 
                 {/* Gradients to fade edges */}
-                <div className="absolute left-0 top-0 bottom-0 w-32 bg-gradient-to-r from-[#050505] to-transparent z-10" />
-                <div className="absolute right-0 top-0 bottom-0 w-32 bg-gradient-to-l from-[#050505] to-transparent z-10" />
+                <div className="absolute left-0 top-0 bottom-0 w-32 bg-gradient-to-r from-white dark:from-[#050505] to-transparent z-10" />
+                <div className="absolute right-0 top-0 bottom-0 w-32 bg-gradient-to-l from-white dark:from-[#050505] to-transparent z-10" />
             </div>
         </section>
     );

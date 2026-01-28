@@ -1,40 +1,50 @@
 "use client";
 
 import { useRef } from "react";
-import { X, ArrowRight } from "lucide-react";
+import { X, ArrowRight, Sun, Moon } from "lucide-react";
 import { gsap } from "gsap";
+import { Button } from "@/components/ui/button";
 import { useGSAP } from "@gsap/react";
 import Link from "next/link";
 import { cn } from "@/lib/utils";
+import { useTheme } from "next-themes";
+import { useState, useEffect } from "react";
 
 const menuItems = [
     {
-        label: "FEATURES",
-        href: "#features",
-        description: "The power of GenAI",
+        label: "CREATE PPT",
+        href: "/presentation",
+        description: "Generate Presentations",
         image: "https://images.unsplash.com/photo-1620712943543-bcc4688e7485?q=80&w=2565&auto=format&fit=crop"
+    },
+    {
+        label: "MOBILE DESIGN",
+        href: "/mobile-design",
+        description: "UI/UX Generation",
+        image: "https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?q=80&w=2564&auto=format&fit=crop"
     },
     {
         label: "SHOWCASE",
         href: "#showcase",
-        description: "Designed by AI",
-        image: "https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?q=80&w=2564&auto=format&fit=crop"
-    },
-    {
-        label: "PRICING",
-        href: "#pricing",
-        description: "Plans for everyone",
+        description: "Made with AI",
         image: "https://images.unsplash.com/photo-1550751827-4bd374c3f58b?q=80&w=2670&auto=format&fit=crop"
     },
     {
-        label: "ENTERPRISE",
-        href: "#enterprise",
-        description: "Scale your workflow",
+        label: "FEATURES",
+        href: "#features",
+        description: "Explore Capabilities",
         image: "https://images.unsplash.com/photo-1451187580459-43490279c0fa?q=80&w=2672&auto=format&fit=crop"
     },
 ];
 
 export default function MenuOverlayV2({ isOpen, onClose }: { isOpen: boolean; onClose: () => void }) {
+    const { setTheme, theme } = useTheme();
+    const [mounted, setMounted] = useState(false);
+
+    useEffect(() => {
+        setMounted(true);
+    }, []);
+
     const containerRef = useRef<HTMLDivElement>(null);
     const tl = useRef<gsap.core.Timeline | null>(null);
 
@@ -46,7 +56,7 @@ export default function MenuOverlayV2({ isOpen, onClose }: { isOpen: boolean; on
                 y: 0,
                 duration: 0.5,
                 stagger: 0.07,
-                ease: "power2.inOut"
+                ease: "power2.in"
             });
     }, { scope: containerRef });
 
@@ -73,7 +83,10 @@ export default function MenuOverlayV2({ isOpen, onClose }: { isOpen: boolean; on
                         key={index}
                         href={item.href}
                         onClick={onClose}
-                        className="menu-column relative flex-1 h-full bg-black/40 backdrop-blur-2xl border border-white/10 shadow-2xl z-101 flex flex-col items-center justify-center group overflow-hidden cursor-pointer rounded-[32px] hover:border-white/20 transition-all duration-500 hover:shadow-[0_0_40px_rgba(0,0,0,0.5)]"
+                        className={cn(
+                            "menu-column relative flex-1 bg-white/80 dark:bg-black/40 backdrop-blur-2xl border border-black/5 dark:border-white/10 shadow-2xl z-101 flex flex-col items-center justify-center group overflow-hidden cursor-pointer rounded-[32px] hover:border-black/20 dark:hover:border-white/20 transition-all duration-500 hover:shadow-[0_0_40px_rgba(0,0,0,0.1)] dark:hover:shadow-[0_0_40px_rgba(0,0,0,0.5)]",
+                            index === menuItems.length - 1 ? "md:mt-[110px] md:h-[calc(100%-110px)] h-full" : "h-full"
+                        )}
                     >
                         {/* Background Image Effect */}
                         <div className="absolute inset-0 opacity-0 group-hover:opacity-40 transition-opacity duration-700 z-0">
@@ -85,21 +98,22 @@ export default function MenuOverlayV2({ isOpen, onClose }: { isOpen: boolean; on
                             <div className="absolute inset-0 bg-linear-to-t from-black via-black/50 to-transparent" />
                         </div>
 
-                        <div className="relative z-10 p-4 text-center">
-                            <span className="menu-desc block text-xs tracking-[0.2em] text-primary mb-4 font-mono uppercase">
+                        <div className={cn("relative z-10 p-4 text-center", index === menuItems.length - 1 && "md:-translate-y-[55px]")}>
+                            <span className="menu-desc block text-xs tracking-[0.2em] text-primary dark:text-primary mb-4 font-mono uppercase">
                                 {`0${index + 1} / ${item.description}`}
                             </span>
-                            <h2 className="menu-text text-4xl md:text-5xl lg:text-6xl font-black tracking-tighter text-white group-hover:text-transparent group-hover:bg-clip-text group-hover:bg-linear-to-r group-hover:from-[#F55C7A] group-hover:to-[#F6BC66] transition-all duration-300 transform group-hover:scale-105">
+                            <h2 className="menu-text text-4xl md:text-5xl lg:text-6xl font-[family-name:var(--font-inter)] font-black tracking-tighter text-black dark:text-white transition-all duration-300 transform group-hover:scale-105">
                                 {item.label}
                             </h2>
                             <div className="mt-6 opacity-0 group-hover:opacity-100 transform translate-y-4 group-hover:translate-y-0 transition-all duration-500">
-                                <div className="w-12 h-12 rounded-full border border-white/20 flex items-center justify-center mx-auto hover:bg-white hover:text-black transition-colors bg-black/20 backdrop-blur-sm">
+                                <div className="w-12 h-12 rounded-full border border-black/10 dark:border-white/20 flex items-center justify-center mx-auto hover:bg-black hover:text-white dark:hover:bg-white dark:hover:text-black transition-colors bg-white/50 dark:bg-black/20 backdrop-blur-sm shadow-sm text-black dark:text-white">
                                     <ArrowRight className="w-5 h-5" />
                                 </div>
                             </div>
                         </div>
                     </Link>
                 ))}
+
             </div>
         </div>
     );

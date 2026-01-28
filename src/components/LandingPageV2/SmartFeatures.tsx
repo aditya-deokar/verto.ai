@@ -49,25 +49,30 @@ const features = [
     }
 ];
 
+
 export default function SmartFeatures() {
     return (
-        <section id="features" className="py-32 px-6 bg-black relative overflow-hidden">
-            <div className="max-w-6xl mx-auto">
-                <div className="mb-16 text-center">
-                    <motion.h2
-                        initial={{ opacity: 0, y: 20 }}
-                        whileInView={{ opacity: 1, y: 0 }}
-                        transition={{ duration: 0.5 }}
-                        className="text-4xl md:text-6xl font-bold tracking-tighter mb-6 font-[family-name:var(--font-inter-tight)]"
-                    >
-                        Intelligence Baked In.
-                    </motion.h2>
-                    <p className="text-white/50 max-w-2xl mx-auto text-lg">
-                        Not just a design tool. A thinking partner.
-                    </p>
-                </div>
+        <section id="features" className="py-32 bg-white dark:bg-[#050505] relative overflow-hidden transition-colors duration-500">
+            <div className="w-full px-6 md:pl-[120px] md:pr-10">
+                <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
 
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-4 md:gap-6">
+                    {/* Section Header */}
+                    <div className="col-span-1 md:col-span-4 mb-20">
+                        <motion.h2
+                            initial={{ opacity: 0, y: 20 }}
+                            whileInView={{ opacity: 1, y: 0 }}
+                            transition={{ duration: 0.5 }}
+                            className="text-4xl md:text-8xl font-bold tracking-tight text-black dark:text-white mb-6 font-[family-name:var(--font-inter-tight)] leading-[0.9]"
+                        >
+                            Intelligence <br />
+                            <span className="text-black/40 dark:text-white/40">Baked In.</span>
+                        </motion.h2>
+                        <p className="text-black/50 dark:text-white/50 max-w-xl text-xl font-[family-name:var(--font-inter)]">
+                            Not just a design tool. A thinking partner.
+                        </p>
+                    </div>
+
+                    {/* Feature Cards - Grid Layout */}
                     {features.map((feature, i) => (
                         <motion.div
                             key={i}
@@ -75,20 +80,29 @@ export default function SmartFeatures() {
                             whileInView={{ opacity: 1, y: 0 }}
                             transition={{ duration: 0.5, delay: i * 0.1 }}
                             viewport={{ once: true }}
-                            className={`group relative p-8 rounded-3xl border border-white/10 hover:border-white/20 transition-colors overflow-hidden ${feature.colSpan} ${feature.bg}`}
+                            className={`group relative p-8 rounded-[32px] border border-black/5 dark:border-white/10 hover:border-black/20 dark:hover:border-white/20 transition-all duration-500 overflow-hidden flex flex-col justify-between
+                                ${feature.colSpan === "md:col-span-1" ? "h-[320px]" : "h-[320px]"}
+                                ${feature.colSpan}
+                                ${feature.bg ? "" : "bg-gray-50 dark:bg-[#0A0A0A]"}
+                                ${feature.bg && feature.bg.includes('gradient') ? feature.bg : ''}
+                            `}
                         >
                             {/* Hover Glow */}
-                            <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500 bg-linear-to-br from-white/5 to-transparent pointer-events-none" />
+                            <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500 bg-linear-to-br from-black/5 to-transparent dark:from-white/5 pointer-events-none" />
 
-                            <div className="relative z-10">
-                                <div className="w-12 h-12 rounded-xl bg-white/10 flex items-center justify-center mb-6 text-white group-hover:scale-110 transition-transform duration-300">
-                                    <feature.icon className="w-6 h-6" />
-                                </div>
-                                <h3 className="text-xl font-bold mb-2 text-white">{feature.title}</h3>
-                                <p className="text-white/50 text-sm leading-relaxed">{feature.description}</p>
+                            {/* Icon */}
+                            <div className="relative z-10 w-12 h-12 rounded-full border border-black/10 dark:border-white/10 bg-white/50 dark:bg-white/5 flex items-center justify-center mb-6 text-black dark:text-white group-hover:scale-110 transition-transform duration-300 backdrop-blur-sm">
+                                <feature.icon className="w-5 h-5" />
+                            </div>
+
+                            {/* Content */}
+                            <div className="relative z-10 mt-auto">
+                                <h3 className="text-2xl font-bold mb-3 text-black dark:text-white font-[family-name:var(--font-inter-tight)]">{feature.title}</h3>
+                                <p className="text-black/60 dark:text-white/50 text-base leading-relaxed font-[family-name:var(--font-inter)]">{feature.description}</p>
                             </div>
                         </motion.div>
                     ))}
+
                 </div>
             </div>
         </section>
