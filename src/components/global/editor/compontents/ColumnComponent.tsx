@@ -39,20 +39,30 @@ const ColumnComponent = ({
       }))
   }
 
+  const [isMobile, setIsMobile] = useState(false)
+
   useEffect(() => {
     if (content.length === 0) {
       setColumns(createDefaultColumns(2))
     } else {
       setColumns(content)
     }
+
+    const checkMobile = () => {
+      setIsMobile(window.innerWidth < 768)
+    }
+    checkMobile()
+    window.addEventListener('resize', checkMobile)
+    return () => window.removeEventListener('resize', checkMobile)
   }, [content])
 
   return (
     <div className="relative w-full h-full">
       <ResizablePanelGroup
-        direction="horizontal"
+        direction={isMobile ? "vertical" : "horizontal"}
         className={cn(
-          'h-full w-full flex ',
+          'h-full w-full flex',
+          isMobile ? 'flex-col' : 'flex-row',
           !isEditable && 'border-0!',
           className
         )}

@@ -8,7 +8,7 @@ import { motion } from "framer-motion";
 import ProjectCard from "@/components/global/projects/ProjectCard";
 import { MobileProjectCard } from "@/components/MobileProjectCard";
 import Link from "next/link";
-import { ShineBorder } from "@/components/global/ui/shine-border";
+
 import { containerVariants, itemVariants } from "@/lib/constants";
 
 interface DashboardHomeProps {
@@ -49,75 +49,61 @@ export function DashboardHome({
 
                 {/* Create Presentation Card */}
                 <motion.div
-                    whileHover={{
-                        // scale: 1.02,
-                        transition: { duration: 0.01 },
-                    }}
-                    className="group rounded-xl p-px transition-all duration-300 ease-in-out hover:bg-vivid-gradient border border-border/50"
+                    whileHover={{ scale: 1.01, transition: { duration: 0.2 } }}
+                    whileTap={{ scale: 0.99 }}
+                    className="group relative cursor-pointer overflow-hidden rounded-[32px] border border-black/5 dark:border-white/10 bg-white dark:bg-[#0A0A0A] hover:border-black/10 dark:hover:border-white/20 transition-all duration-300 hover:shadow-xl h-[280px] flex flex-col"
                     onClick={() => router.push("/create-page")}
                 >
-                    <ShineBorder className="w-full h-full" duration={14} borderClassName="rounded-xl">
-                        <div className="w-full h-full p-6 flex flex-col gap-y-4 bg-background rounded-xl relative overflow-hidden group-hover:bg-background/90 transition-colors">
-                            <div className="flex items-center gap-4">
-                                <div className="p-3 rounded-xl bg-primary/10 group-hover:bg-primary/20 transition-colors">
-                                    <Presentation className="h-8 w-8 text-primary" />
-                                </div>
-                                <div className="space-y-1">
-                                    <p className="text-primary text-xl font-bold">Presentations</p>
-                                    <p className="text-sm text-muted-foreground">AI-powered slide decks</p>
-                                </div>
+                    {/* Hover Glow */}
+                    <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500 bg-linear-to-br from-black/5 to-transparent dark:from-white/5 pointer-events-none" />
+
+                    <div className="relative z-10 flex flex-col h-full p-8">
+                        <div className="flex items-start justify-between mb-6">
+                            <div className="p-4 rounded-2xl bg-primary/5 group-hover:bg-primary/10 transition-colors">
+                                <Presentation className="h-8 w-8 text-primary" />
                             </div>
-
-                            <p className="text-muted-foreground text-sm leading-relaxed">
-                                Create stunning presentations with Creative AI, Advanced AI, or start from scratch.
-                            </p>
-
-                            <div className="pt-2 mt-auto">
-                                <Button className="w-full group-hover:bg-primary transition-colors font-semibold">
-                                    <Sparkles className="h-4 w-4 mr-2" />
-                                    Create Presentation
-                                    <ArrowRight className="h-4 w-4 ml-2 group-hover:translate-x-1 transition-transform" />
-                                </Button>
+                            <div className="h-10 w-10 rounded-full border border-black/5 dark:border-white/10 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                                <ArrowRight className="h-5 w-5 text-primary -rotate-45 group-hover:rotate-0 transition-transform duration-300" />
                             </div>
                         </div>
-                    </ShineBorder>
+
+                        <div className="mt-auto space-y-2">
+                            <h3 className="text-2xl font-bold text-primary">Create Presentation</h3>
+                            <p className="text-muted-foreground text-base leading-relaxed max-w-[90%]">
+                                Craft stunning slides with Creative AI, Advanced AI, or start from scratch.
+                            </p>
+                        </div>
+                    </div>
                 </motion.div>
 
 
                 {/* Create Mobile Design Card */}
                 <motion.div
-                    whileHover={{
-                        // scale: 1.02,
-                        transition: { duration: 0.01 },
-                    }}
-                    className="group rounded-xl p-px transition-all duration-300 ease-in-out hover:bg-vivid-gradient border border-border/50"
+                    whileHover={{ scale: 1.01, transition: { duration: 0.2 } }}
+                    whileTap={{ scale: 0.99 }}
+                    className="group relative cursor-pointer overflow-hidden rounded-[32px] border border-black/5 dark:border-white/10 bg-white dark:bg-[#0A0A0A] hover:border-black/10 dark:hover:border-white/20 transition-all duration-300 hover:shadow-xl h-[280px] flex flex-col"
                     onClick={() => router.push("/mobile-designs/create")}
                 >
-                    <ShineBorder className="w-full h-full" duration={14} borderClassName="rounded-xl">
-                        <div className="w-full h-full p-6 flex flex-col gap-y-4 bg-background rounded-xl relative overflow-hidden group-hover:bg-background/90 transition-colors">
-                            <div className="flex items-center gap-4">
-                                <div className="p-3 rounded-xl bg-violet-100 dark:bg-violet-900/20 group-hover:bg-violet-200 dark:group-hover:bg-violet-900/40 transition-colors">
-                                    <Smartphone className="h-8 w-8 text-violet-600 dark:text-violet-400" />
-                                </div>
-                                <div className="space-y-1">
-                                    <p className="text-xl font-bold text-violet-600 dark:text-violet-400">Mobile Designs</p>
-                                    <p className="text-sm text-muted-foreground">AI-generated app interfaces</p>
-                                </div>
+                    {/* Hover Glow */}
+                    <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500 bg-linear-to-br from-violet-500/5 to-transparent dark:from-violet-400/10 pointer-events-none" />
+
+                    <div className="relative z-10 flex flex-col h-full p-8">
+                        <div className="flex items-start justify-between mb-6">
+                            <div className="p-4 rounded-2xl bg-violet-100/50 dark:bg-violet-900/20 group-hover:bg-violet-100 dark:group-hover:bg-violet-900/30 transition-colors">
+                                <Smartphone className="h-8 w-8 text-violet-600 dark:text-violet-400" />
                             </div>
-
-                            <p className="text-muted-foreground text-sm leading-relaxed">
-                                Generate beautiful mobile app interfaces and prototypes with AI assistance.
-                            </p>
-
-                            <div className="pt-2 mt-auto">
-                                <Button className="w-full bg-violet-600 hover:bg-violet-700 text-white font-semibold">
-                                    <Sparkles className="h-4 w-4 mr-2" />
-                                    Create Mobile Design
-                                    <ArrowRight className="h-4 w-4 ml-2 group-hover:translate-x-1 transition-transform" />
-                                </Button>
+                            <div className="h-10 w-10 rounded-full border border-black/5 dark:border-white/10 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                                <ArrowRight className="h-5 w-5 text-violet-600 dark:text-violet-400 -rotate-45 group-hover:rotate-0 transition-transform duration-300" />
                             </div>
                         </div>
-                    </ShineBorder>
+
+                        <div className="mt-auto space-y-2">
+                            <h3 className="text-2xl font-bold text-violet-600 dark:text-violet-400">Mobile Designs</h3>
+                            <p className="text-muted-foreground text-base leading-relaxed max-w-[90%]">
+                                Generate beautiful mobile app interfaces and prototypes with AI.
+                            </p>
+                        </div>
+                    </div>
                 </motion.div>
 
             </motion.div>

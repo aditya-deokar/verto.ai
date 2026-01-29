@@ -20,10 +20,16 @@ interface MobileProjectCardProps {
 export function MobileProjectCard({ project, className }: MobileProjectCardProps) {
     return (
         <Link href={`/mobile-design/${project.id}`}>
-            <Card className={cn("group hover:shadow-lg transition-all cursor-pointer overflow-hidden h-full flex flex-col", className)}>
-                <CardContent className="p-0 flex-1 flex flex-col">
+            <div className={cn(
+                "group relative overflow-hidden rounded-[24px] border border-black/5 dark:border-white/10 bg-white dark:bg-[#0A0A0A] hover:border-black/10 dark:hover:border-white/20 transition-all duration-300 hover:shadow-lg h-full flex flex-col",
+                className
+            )}>
+                {/* Hover Glow */}
+                <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500 bg-linear-to-br from-black/5 to-transparent dark:from-white/5 pointer-events-none rounded-[24px]" />
+
+                <div className="p-0 flex-1 flex flex-col z-10">
                     {/* Thumbnail */}
-                    <div className="relative aspect-16/10 bg-gradient-to-br from-blue-50 to-indigo-50 dark:from-blue-950 dark:to-indigo-950 overflow-hidden flex items-center justify-center">
+                    <div className="relative aspect-16/10 bg-gradient-to-br from-blue-50 to-indigo-50 dark:from-blue-950 dark:to-indigo-950 overflow-hidden flex items-center justify-center m-2 rounded-xl">
                         {project.thumbnail ? (
                             <img
                                 src={project.thumbnail}
@@ -45,27 +51,27 @@ export function MobileProjectCard({ project, className }: MobileProjectCardProps
                         )}
 
                         {/* Frame count badge */}
-                        <div className="absolute top-2 right-2 bg-black/75 text-white px-2 py-0.5 rounded text-[10px] font-medium">
+                        <div className="absolute top-2 right-2 bg-black/75 text-white px-2 py-0.5 rounded text-[10px] font-medium backdrop-blur-md">
                             {project.frames?.length || 0} screens
                         </div>
 
                         {/* Type Badge */}
-                        <div className="absolute top-2 left-2 bg-violet-600 text-white px-2 py-0.5 rounded text-[10px] font-medium">
+                        <div className="absolute top-2 left-2 bg-violet-600/90 text-white px-2 py-0.5 rounded text-[10px] font-medium backdrop-blur-md">
                             Mobile App
                         </div>
                     </div>
 
                     {/* Info */}
-                    <div className="p-3">
-                        <h3 className="font-semibold truncate text-sm mb-1">{project.name}</h3>
-                        <p className="text-xs text-muted-foreground">
+                    <div className="px-4 pb-4 pt-1">
+                        <h3 className="font-semibold truncate text-base mb-1 text-primary">{project.name}</h3>
+                        <p className="text-sm text-muted-foreground">
                             {formatDistanceToNow(new Date(project.createdAt), {
                                 addSuffix: true,
                             })}
                         </p>
                     </div>
-                </CardContent>
-            </Card>
+                </div>
+            </div>
         </Link>
     );
 }

@@ -25,6 +25,10 @@ import {
   SectionDividerIcon,
   ProcessFlowIcon,
   CallToActionIcon,
+  CreativeHeroIcon,
+  BentoGridIcon,
+  StatsRowIcon,
+  TimelineLayoutIcon,
 } from "./iconsComponent";
 
 import {
@@ -52,6 +56,10 @@ import {
   SectionDivider,
   ProcessFlow,
   CallToAction,
+  CreativeHero,
+  BentoGrid,
+  StatsRow,
+  VisualTimelineLayout
 } from "./slideLayouts";
 
 import {
@@ -66,7 +74,9 @@ import {
   Table,
   Title,
   TodoListComponent,
-  BulletListComponent
+  BulletListComponent,
+  StatBoxComponent,
+  TimelineCardComponent
 } from "@/lib/slideComponents";
 
 import { Template } from "@/icons/Template";
@@ -237,6 +247,16 @@ export const createSlideFromLayout = (layoutType: string): LayoutSlides => {
       return ProcessFlow;
     case "callToAction":
       return CallToAction;
+    case "callToAction":
+      return CallToAction;
+    case "creativeHero":
+      return CreativeHero;
+    case "bentoGrid":
+      return BentoGrid;
+    case "statsRow":
+      return StatsRow;
+    case "timeline":
+      return VisualTimelineLayout;
     default:
       return BlankCard;
   }
@@ -432,6 +452,39 @@ export const layouts: LayoutGroup[] = [
         type: "layout",
         layoutType: "callToAction",
         component: CallToAction,
+      },
+    ],
+  },
+  {
+    name: "Creative Layouts",
+    layouts: [
+      {
+        name: "Creative Hero",
+        icon: CreativeHeroIcon,
+        type: "layout",
+        layoutType: "creativeHero",
+        component: CreativeHero,
+      },
+      {
+        name: "Bento Grid",
+        icon: BentoGridIcon,
+        type: "layout",
+        layoutType: "bentoGrid",
+        component: BentoGrid,
+      },
+      {
+        name: "Stats Row",
+        icon: StatsRowIcon,
+        type: "layout",
+        layoutType: "statsRow",
+        component: StatsRow,
+      },
+      {
+        name: "Visual Timeline",
+        icon: TimelineLayoutIcon,
+        type: "layout",
+        layoutType: "timeline",
+        component: VisualTimelineLayout,
       },
     ],
   },

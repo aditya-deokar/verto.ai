@@ -4,7 +4,7 @@ import { ContentType } from "./types";
 export const BlankCard = {
   slideName: "Blank card",
   type: "blank-card",
-  className: "p-8 mx-auto flex justify-center items-center h-full w-full",
+  className: "p-4 md:p-8 mx-auto flex justify-center items-center h-full w-full",
   content: {
     id: uuidv4(),
     type: "column" as ContentType,
@@ -130,7 +130,7 @@ export const AccentRight = {
 export const ImageAndText = {
   slideName: "Image and text",
   type: "imageAndText",
-  className: "h-full w-full p-8 mx-auto flex justify-center items-center",
+  className: "h-full w-full p-4 md:p-8 mx-auto flex justify-center items-center",
   content: {
     id: uuidv4(),
     type: "column" as ContentType,
@@ -178,7 +178,7 @@ export const ImageAndText = {
                 placeholder: "start typing here",
               },
             ],
-            className: "w-full h-full p-8 flex justify-center items-center",
+            className: "w-full h-full p-4 md:p-8 flex justify-center items-center",
             placeholder: "Heading1",
           },
         ],
@@ -190,7 +190,7 @@ export const ImageAndText = {
 export const TextAndImage = {
   slideName: "Text and image",
   type: "textAndImage",
-  className: "h-full w-full p-8 mx-auto flex justify-center items-center",
+  className: "h-full w-full p-4 md:p-8 mx-auto flex justify-center items-center",
   content: {
     id: uuidv4(),
     type: "column" as ContentType,
@@ -222,7 +222,7 @@ export const TextAndImage = {
                 placeholder: "start typing here",
               },
             ],
-            className: "w-full h-full p-8 flex justify-center items-center",
+            className: "w-full h-full p-4 md:p-8 flex justify-center items-center",
             placeholder: "Heading1",
           },
           {
@@ -940,7 +940,7 @@ export const TableLayout = {
 export const TitleAndContent = {
   slideName: "Title and Content",
   type: "titleAndContent",
-  className: "p-8 mx-auto flex flex-col min-h-[400px]",
+  className: "p-4 md:p-8 mx-auto flex flex-col min-h-[400px]",
   content: {
     id: uuidv4(),
     type: "column" as ContentType,
@@ -1019,7 +1019,7 @@ export const SplitContentImage = {
 export const BigNumberLayout = {
   slideName: "Big Number Layout",
   type: "bigNumberLayout",
-  className: "p-8 mx-auto flex min-h-[400px]",
+  className: "p-4 md:p-8 mx-auto flex min-h-[400px]",
   content: {
     id: uuidv4(),
     type: "column" as ContentType,
@@ -1077,7 +1077,7 @@ export const BigNumberLayout = {
 export const ComparisonLayout = {
   slideName: "Comparison Layout",
   type: "comparisonLayout",
-  className: "p-8 mx-auto min-h-[400px]",
+  className: "p-4 md:p-8 mx-auto min-h-[400px]",
   content: {
     id: uuidv4(),
     type: "column" as ContentType,
@@ -1186,7 +1186,7 @@ export const QuoteLayout = {
 export const TimelineLayout = {
   slideName: "Timeline Layout",
   type: "timelineLayout",
-  className: "p-8 mx-auto min-h-[400px]",
+  className: "p-4 md:p-8 mx-auto min-h-[400px]",
   content: {
     id: uuidv4(),
     type: "column" as ContentType,
@@ -1329,7 +1329,7 @@ export const FullImageBackground = {
 export const IconGrid = {
   slideName: "Icon Grid",
   type: "iconGrid",
-  className: "p-8 mx-auto min-h-[400px]",
+  className: "p-4 md:p-8 mx-auto min-h-[400px]",
   content: {
     id: uuidv4(),
     type: "column" as ContentType,
@@ -1512,7 +1512,7 @@ export const SectionDivider = {
 export const ProcessFlow = {
   slideName: "Process Flow",
   type: "processFlow",
-  className: "p-8 mx-auto min-h-[400px]",
+  className: "p-4 md:p-8 mx-auto min-h-[400px]",
   content: {
     id: uuidv4(),
     type: "column" as ContentType,
@@ -1651,6 +1651,256 @@ export const CallToAction = {
         content: "",
         placeholder: "Contact Us →",
         className: "inline-block px-8 py-4 bg-primary text-primary-foreground rounded-lg font-semibold",
+      },
+    ],
+  },
+};
+
+export const CreativeHero = {
+  slideName: "Creative Hero",
+  type: "creativeHero",
+  className: "h-full w-full p-8",
+  content: {
+    id: uuidv4(),
+    type: "column" as ContentType,
+    name: "Column",
+    content: [
+      {
+        id: uuidv4(),
+        type: "resizable-column" as ContentType,
+        name: "Creative Hero",
+        content: [
+          {
+            id: uuidv4(),
+            type: "column" as ContentType,
+            name: "Left Column",
+            className: "flex flex-col justify-center",
+            content: [
+              {
+                id: uuidv4(),
+                type: "heading1" as ContentType,
+                name: "Heading1",
+                content: "",
+                placeholder: "Big Idea",
+                className: "text-6xl font-black tracking-tight",
+              },
+              {
+                id: uuidv4(),
+                type: "paragraph" as ContentType,
+                name: "Paragraph",
+                content: "",
+                placeholder: "Describe the concept...",
+                className: "text-xl text-muted-foreground mt-4",
+              },
+              {
+                id: uuidv4(),
+                type: "customButton" as ContentType,
+                name: "Button",
+                content: "Explore More",
+                link: "#",
+                bgColor: "#000000",
+                className: "mt-8 w-fit",
+              },
+            ],
+          },
+          {
+            id: uuidv4(),
+            type: "column" as ContentType,
+            name: "Right Column",
+            content: [
+              {
+                id: uuidv4(),
+                type: "image" as ContentType,
+                name: "Image",
+                content:
+                  "https://plus.unsplash.com/premium_photo-1661339265887-be15949790ff?q=80&w=2669&auto=format&fit=crop",
+                alt: "Hero Image",
+                className: "rounded-3xl object-cover h-full shadow-2xl skew-y-3 hover:skew-y-0 transition-all duration-500",
+              },
+            ],
+          },
+        ],
+      },
+    ],
+  },
+};
+
+export const BentoGrid = {
+  slideName: "Bento Grid",
+  type: "bentoGrid",
+  className: "h-full w-full p-6",
+  content: {
+    id: uuidv4(),
+    type: "column" as ContentType,
+    name: "Main Column",
+    content: [
+      {
+        id: uuidv4(),
+        type: "title" as ContentType,
+        name: "Title",
+        content: "",
+        placeholder: "Dashboard View",
+        className: "mb-6",
+      },
+      {
+        id: uuidv4(),
+        type: "resizable-column" as ContentType,
+        name: "Bento Grid Layout",
+        content: [
+          // Column 1: Tall Card
+          {
+            id: uuidv4(),
+            type: "column" as ContentType,
+            name: "Col 1",
+            content: [
+              {
+                id: uuidv4(),
+                type: "image" as ContentType,
+                name: "Image",
+                content: "https://images.unsplash.com/photo-1517292987719-0369a794ec0f?q=80&w=2574&auto=format&fit=crop",
+                className: "h-full object-cover rounded-2xl",
+              },
+            ],
+            className: "h-full bg-muted/20 rounded-3xl border border-border/50 p-2",
+          },
+          // Column 2: Stacked
+          {
+            id: uuidv4(),
+            type: "column" as ContentType,
+            name: "Col 2",
+            className: "flex flex-col gap-4",
+            content: [
+              {
+                id: uuidv4(),
+                type: "statBox" as ContentType,
+                name: "Stat Box",
+                content: "12.5k",
+                className: "flex-1",
+              },
+              {
+                id: uuidv4(),
+                type: "statBox" as ContentType,
+                name: "Stat Box",
+                content: "98%",
+                className: "flex-1",
+              },
+            ]
+          },
+          // Column 3: Text content
+          {
+            id: uuidv4(),
+            type: "column" as ContentType,
+            name: "Col 3",
+            className: "bg-primary/5 rounded-3xl p-6 flex flex-col justify-center",
+            content: [
+              {
+                id: uuidv4(),
+                type: "heading2" as ContentType,
+                name: "Heading",
+                content: "",
+                placeholder: "Key Insights",
+              },
+              {
+                id: uuidv4(),
+                type: "bulletList" as ContentType,
+                name: "List",
+                content: ["Metric A exceeded targets", "Growth in region B", "Efficiency up by 15%"],
+              },
+            ],
+          }
+        ],
+      },
+    ],
+  },
+};
+
+export const StatsRow = {
+  slideName: "Stats Row",
+  type: "statsRow",
+  className: "h-full w-full p-8 flex flex-col justify-center",
+  content: {
+    id: uuidv4(),
+    type: "column" as ContentType,
+    name: "Column",
+    content: [
+      {
+        id: uuidv4(),
+        type: "heading2" as ContentType,
+        name: "Section Title",
+        content: "",
+        placeholder: "Performance Metrics",
+        className: "text-center mb-12",
+      },
+      {
+        id: uuidv4(),
+        type: "resizable-column" as ContentType,
+        name: "Stats Grid",
+        content: [
+          {
+            id: uuidv4(),
+            type: "statBox" as ContentType,
+            name: "Stat 1",
+            content: "10M+",
+          },
+          {
+            id: uuidv4(),
+            type: "statBox" as ContentType,
+            name: "Stat 2",
+            content: "4.9/5",
+          },
+          {
+            id: uuidv4(),
+            type: "statBox" as ContentType,
+            name: "Stat 3",
+            content: "150+",
+          },
+        ],
+      },
+    ],
+  },
+};
+
+export const VisualTimelineLayout = {
+  slideName: "Timeline",
+  type: "timeline",
+  className: "h-full w-full p-8",
+  content: {
+    id: uuidv4(),
+    type: "column" as ContentType,
+    name: "Main",
+    content: [
+      {
+        id: uuidv4(),
+        type: "heading2" as ContentType,
+        name: "Title",
+        content: "",
+        placeholder: "Project Roadmap",
+        className: "mb-8 text-center",
+      },
+      {
+        id: uuidv4(),
+        type: "resizable-column" as ContentType,
+        name: "Timeline Grid",
+        content: [
+          {
+            id: uuidv4(),
+            type: "timelineCard" as ContentType,
+            name: "Q1",
+            content: "Phase 1",
+          },
+          {
+            id: uuidv4(),
+            type: "timelineCard" as ContentType,
+            name: "Q2",
+            content: "Phase 2",
+          },
+          {
+            id: uuidv4(),
+            type: "timelineCard" as ContentType,
+            name: "Q3",
+            content: "Phase 3",
+          },
+        ],
       },
     ],
   },

@@ -12,7 +12,7 @@ import { Button } from '@/components/ui/button'
 import { useToast } from '@/hooks/use-toast'
 import { deleteProject, recoverProject } from '@/actions/projects'
 import ThumnailPreview from './ThumnailPreview'
-import { ShineBorder } from '../ui/shine-border'
+
 
 
 type Props = {
@@ -33,7 +33,7 @@ const ProjectCard = ({
   slideData,
 }: Props) => {
 
-   const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState(false);
   const { toast } = useToast();
   const { setSlides } = useSlideStore();
   const router = useRouter();
@@ -117,28 +117,30 @@ const ProjectCard = ({
   };
 
   return (
-    <ShineBorder>
-      <motion.div
-    className={`group w-full flex-col flex gap-y-3 rounded-xl p-3 transition-colors ${!isDelete && 'hover:bg-muted/50'}`}
-    variants={itemVariants}
+    <motion.div
+      className={`group w-full flex flex-col gap-y-3 rounded-[24px] p-4 transition-all duration-300 relative overflow-hidden border border-black/5 dark:border-white/10 bg-white dark:bg-[#0A0A0A] hover:border-black/10 dark:hover:border-white/20 hover:shadow-lg`}
+      variants={itemVariants}
     >
-        <div className='relative aspect-16/10 overflow-hidden rounded-lg cursor-pointer'
+      {/* Hover Glow */}
+      <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500 bg-linear-to-br from-black/5 to-transparent dark:from-white/5 pointer-events-none rounded-[24px]" />
+
+      <div className='relative aspect-16/10 overflow-hidden rounded-xl cursor-pointer z-10'
         onClick={HandleNavigation}>
-            <ThumnailPreview 
-            theme={theme} 
-            slide={JSON.parse(JSON.stringify(slideData))?.[0]}
-              />
-        </div>
+        <ThumnailPreview
+          theme={theme}
+          slide={JSON.parse(JSON.stringify(slideData))?.[0]}
+        />
+      </div>
 
-        <div className='w-full'>
-            <div className='space-y-1 '>
-                <h3 className='font-semibold text-base text-primary line-clamp-1'>{title}</h3>
-                <div className='flex w-full justify-between items-center gap-2'>
-                    <p className='text-sm text-muted-foreground' suppressHydrationWarning>
-                        {timeAgo(createdAt)}
-                    </p>
+      <div className='w-full z-10'>
+        <div className='space-y-1 '>
+          <h3 className='font-semibold text-base text-primary line-clamp-1'>{title}</h3>
+          <div className='flex w-full justify-between items-center gap-2'>
+            <p className='text-sm text-muted-foreground' suppressHydrationWarning>
+              {timeAgo(createdAt)}
+            </p>
 
-                     { isDelete ? (
+            {isDelete ? (
               <AlertDialogBox
                 description="This will recover your project and restore your data."
                 className="bg-green-500 text-white dark:bg-green-600 hover:bg-green-600 dark:hover:bg-green-700"
@@ -175,11 +177,10 @@ const ProjectCard = ({
                 </Button>
               </AlertDialogBox>
             )}
-                </div>
-            </div>
+          </div>
         </div>
+      </div>
     </motion.div>
-    </ShineBorder>
   )
 }
 

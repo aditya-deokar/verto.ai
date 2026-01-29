@@ -37,6 +37,7 @@ export interface ContentItem {
   textDecoration?: string;
   color?: string;
   textAlign?: string;
+  icon?: string;
 }
 
 export type ContentType =
@@ -68,7 +69,9 @@ export type ContentType =
   | "codeBlock"
   | "customButton"
   | "table"
-  | "tableOfContents";
+  | "tableOfContents"
+  | "statBox"
+  | "timelineCard";
 
 export interface Theme {
   name: string;
