@@ -512,7 +512,43 @@ export const ResizableColumn = {
 };
 
 // ============================================================================
-// ADVANCED COMPONENT UTILITIES
+// CREATIVE COMPONENTS
+// ============================================================================
+
+export const StatBoxComponent = ComponentFactory.create(
+  {
+    type: "statBox" as ContentType,
+    name: "Stat Box",
+    content: "150%", // Value
+    // We'll store other props in metadata or separate fields if needed, 
+    // but for now let's assume content property is the main value, 
+    // and we might need to extend BaseComponent if we need structured data storage.
+    // For simplicity in this factory, we'll initialize with defaults in the renderer.
+  },
+  {
+    category: 'data',
+    styling: {
+      defaultClasses: 'w-full',
+    },
+  }
+);
+
+export const TimelineCardComponent = ComponentFactory.create(
+  {
+    type: "timelineCard" as ContentType,
+    name: "Timeline Card",
+    content: "Milestone Title",
+  },
+  {
+    category: 'data',
+    styling: {
+      defaultClasses: 'w-full',
+    },
+  }
+);
+
+// ============================================================================
+// ADAVANCED COMPONENT UTILITIES
 // ============================================================================
 
 /**
@@ -527,29 +563,31 @@ export const ComponentRegistry = {
   title: Title,
   paragraph: Paragraph,
   blockquote: Blockquote,
-  
+
   // List components
   numberedList: NumberedListComponent,
   bulletList: BulletListComponent,
   todoList: TodoListComponent,
-  
+
   // Media components
   image: CustomImage,
-  
+
   // Data components
   table: Table,
   tableOfContents: TableOfContentsComponent,
-  
+
   // Interactive components
   customButton: CustomButtonComponent,
-  
+
   // Decoration components
   calloutBox: CalloutBoxComponent,
   codeBlock: CodeBlockComponent,
   divider: DividerComponent,
-  
+
   // Layout components
   resizableColumn: ResizableColumn,
+  statBox: StatBoxComponent,
+  timelineCard: TimelineCardComponent,
 } as const;
 
 /**

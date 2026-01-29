@@ -56,7 +56,7 @@ const TableComponent = ({ content, onChange, initialColSize, initialRowSize, isE
 
     if (isPreview) {
         return (
-            <div className='w-full h-full overflow-hidden rounded-lg border border-opacity-20' style={{ borderColor: currentTheme.fontColor }}>
+            <div className='w-full h-full overflow-auto rounded-lg border border-opacity-20' style={{ borderColor: currentTheme.fontColor }}>
                 <table className='w-full h-full border-collapse'>
                     <tbody>
                         {tableData.map((row, rowIndex) => (

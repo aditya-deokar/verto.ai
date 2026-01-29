@@ -352,3 +352,67 @@ export function CallToActionIcon() {
         </div>
     );
 }
+
+export function BentoGridIcon() {
+    return (
+        <div className="w-full h-full flex gap-1 p-1">
+            <div className="w-1/3 flex flex-col gap-1">
+                <div className="h-1/2 bg-white rounded" />
+                <div className="h-1/2 bg-white/50 rounded" />
+            </div>
+            <div className="w-2/3 flex flex-col gap-1">
+                <div className="h-2/3 bg-white rounded" />
+                <div className="flex gap-1 h-1/3">
+                    <div className="w-1/2 bg-white/50 rounded" />
+                    <div className="w-1/2 bg-white rounded" />
+                </div>
+            </div>
+        </div>
+    );
+}
+
+export function CreativeHeroIcon() {
+    return (
+        <div className="w-full h-full flex flex-col p-1">
+            <div className="flex-1 flex gap-2 items-center">
+                <div className="w-1/2 flex flex-col gap-1">
+                    <div className="h-3 bg-white rounded w-full" />
+                    <div className="h-1 bg-white/50 rounded w-2/3" />
+                </div>
+                <div className="w-1/2 h-full bg-white rounded-tl-2xl rounded-bl-lg opacity-80" />
+            </div>
+        </div>
+    );
+}
+
+export function StatsRowIcon() {
+    return (
+        <div className="w-full h-full flex flex-col justify-center gap-1 p-1">
+            <div className="h-2 bg-white rounded w-1/3 mx-auto mb-1" />
+            <div className="flex gap-1 h-1/2">
+                {[...Array(3)].map((_, i) => (
+                    <div key={i} className="flex-1 bg-white/20 border border-white/40 rounded flex flex-col items-center justify-center gap-0.5">
+                        <div className="w-2 h-2 bg-white rounded-full" />
+                        <div className="h-0.5 bg-white w-1/2" />
+                    </div>
+                ))}
+            </div>
+        </div>
+    );
+}
+
+export function TimelineLayoutIcon() {
+    return (
+        <div className="w-full h-full flex flex-col justify-center p-1">
+            <div className="flex gap-1 items-center relative">
+                <div className="absolute top-1/2 left-0 w-full h-0.5 bg-white/30 -translate-y-1/2" />
+                {[...Array(3)].map((_, i) => (
+                    <div key={i} className="flex-1 z-10 flex flex-col items-center gap-0.5">
+                        <div className="w-2 h-2 bg-white rounded-full" />
+                        <div className="w-full h-4 bg-white/10 rounded border border-white/20" />
+                    </div>
+                ))}
+            </div>
+        </div>
+    );
+}
