@@ -22,6 +22,7 @@ export default function SidebarV2({
             {/* Menu Toggle */}
             <button
                 onClick={onMenuClick}
+                aria-label={isOpen ? "Close Menu" : "Open Menu"}
                 className="w-12 h-12 rounded-full flex items-center justify-center text-black/50 dark:text-white/50 hover:text-black dark:hover:text-white hover:bg-black/5 dark:hover:bg-white/10 transition-all group border border-transparent hover:border-black/5 dark:hover:border-white/5 active:scale-95"
             >
                 <AnimatePresence mode="wait">

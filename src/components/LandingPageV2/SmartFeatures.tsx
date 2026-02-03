@@ -74,7 +74,7 @@ export default function SmartFeatures() {
 
                     {/* Feature Cards - Grid Layout */}
                     {features.map((feature, i) => (
-                        <motion.div
+                        <motion.article
                             key={i}
                             initial={{ opacity: 0, y: 30 }}
                             whileInView={{ opacity: 1, y: 0 }}
@@ -100,7 +100,7 @@ export default function SmartFeatures() {
                                 <h3 className="text-2xl font-bold mb-3 text-black dark:text-white font-[family-name:var(--font-inter-tight)]">{feature.title}</h3>
                                 <p className="text-black/60 dark:text-white/50 text-base leading-relaxed font-[family-name:var(--font-inter)]">{feature.description}</p>
                             </div>
-                        </motion.div>
+                        </motion.article>
                     ))}
 
                 </div>

@@ -52,24 +52,26 @@ export default function TestimonialFlow() {
             <div className="relative flex overflow-hidden group">
                 <div className="flex animate-scroll hover:pause gap-6 px-6">
                     {[...testimonials, ...testimonials, ...testimonials].map((t, i) => (
-                        <div
+                        <figure
                             key={i}
                             className="flex-shrink-0 w-[400px] bg-gray-50 dark:bg-white/5 border border-black/5 dark:border-white/5 rounded-[32px] p-8 hover:border-black/10 dark:hover:border-white/10 transition-colors"
                         >
-                            <div className="flex gap-1 mb-6 text-[#F6BC66]">
+                            <div className="flex gap-1 mb-6 text-[#F6BC66]" aria-label="5 out of 5 stars">
                                 {[...Array(5)].map((_, i) => (
                                     <Star key={i} size={16} fill="currentColor" />
                                 ))}
                             </div>
-                            <p className="text-black/80 dark:text-white/80 text-lg leading-relaxed mb-8 font-light italic font-[family-name:var(--font-inter)]">"{t.content}"</p>
-                            <div className="flex items-center gap-4">
+                            <blockquote className="text-black/80 dark:text-white/80 text-lg leading-relaxed mb-8 font-light italic font-[family-name:var(--font-inter)]">
+                                "{t.content}"
+                            </blockquote>
+                            <figcaption className="flex items-center gap-4">
                                 <img src={t.avatar} alt={t.name} className="w-10 h-10 rounded-full grayscale opacity-70" />
                                 <div>
-                                    <h4 className="text-black dark:text-white font-medium font-[family-name:var(--font-inter-tight)]">{t.name}</h4>
-                                    <p className="text-black/40 dark:text-white/40 text-sm font-[family-name:var(--font-inter)]">{t.role}</p>
+                                    <h4 className="text-black dark:text-white font-medium font-[family-name:var(--font-inter-tight)] not-italic">{t.name}</h4>
+                                    <p className="text-black/40 dark:text-white/40 text-sm font-[family-name:var(--font-inter)] not-italic">{t.role}</p>
                                 </div>
-                            </div>
-                        </div>
+                            </figcaption>
+                        </figure>
                     ))}
                 </div>
 

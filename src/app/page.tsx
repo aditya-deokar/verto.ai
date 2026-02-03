@@ -1,31 +1,11 @@
-import { DotPattern } from "@/components/global/ui/DotPattern";
-import Navbar from "@/components/landingPage/navbar";
-import { VertoFaqSection } from "@/components/landingPage/verto-faq-section";
-import { VertoFeaturesSection } from "@/components/landingPage/verto-features-section";
-import { VertoFinalCtaSection } from "@/components/landingPage/verto-final-cta-section";
-import { VertoHeroSection } from "@/components/landingPage/verto-hero-section";
-import { VertoHowItWorksSection } from "@/components/landingPage/verto-how-it-works-section";
-import { VertoPricingSection } from "@/components/landingPage/verto-pricing-section";
-import { VertoSocialProofBar } from "@/components/landingPage/verto-social-proof-bar";
-import { VertoTestimonialsSection } from "@/components/landingPage/verto-testimonials-section";
-import { VertoUseCasesSection } from "@/components/landingPage/verto-use-cases-section";
+import LandingPage from "@/components/LandingPageV2/LandingPage";
+import { Metadata } from "next";
+
+export const metadata: Metadata = {
+  title: "Verto AI - The Future of Presentations",
+  description: "Experience the next generation of presentation design. AI-powered, beautiful, and instant. Start creating for free today.",
+};
 
 export default function Home() {
-  return (
-    <main className="min-h-screen dark:bg-black">
-      <DotPattern dotColor="#94a3b8" dotSize={1.2} spacing={20} />
-
-      <Navbar />
-      <VertoHeroSection />
-
-      {/* <VertoSocialProofBar /> */}
-      <VertoHowItWorksSection />
-      <VertoFeaturesSection />
-      <VertoUseCasesSection />
-      <VertoTestimonialsSection />
-      {/* <VertoPricingSection /> */}
-      <VertoFaqSection />
-      <VertoFinalCtaSection />
-    </main>
-  );
+  return <LandingPage />;
 }
