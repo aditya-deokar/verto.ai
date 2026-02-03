@@ -17,7 +17,7 @@ const page = async () => {
   //  }
 
   return (
-    <main className="w-full h-full pt-6 overflow-hidden min-h-screen">
+    <main className="w-full pt-6 min-h-screen pb-20">
       <Suspense fallback={<CreatePageSkeleton />}>
         {/* We use a client wrapper to handle the state */}
         <CreatePageClient />

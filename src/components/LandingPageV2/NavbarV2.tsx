@@ -30,6 +30,7 @@ export default function NavbarV2() {
                 <div className="flex items-center gap-4">
                     <button
                         onClick={() => setTheme(theme === "dark" ? "light" : "dark")}
+                        aria-label="Toggle theme"
                         className="w-8 h-8 rounded-full bg-black/5 dark:bg-white/5 flex items-center justify-center text-black/60 dark:text-white/60 hover:text-black dark:hover:text-white transition-colors relative"
                     >
                         <div className="absolute inset-0 flex items-center justify-center">
@@ -37,14 +38,14 @@ export default function NavbarV2() {
                             <Moon className="absolute h-[1.2rem] w-[1.2rem] rotate-90 scale-0 transition-all dark:rotate-0 dark:scale-100 text-black dark:text-white" />
                         </div>
                     </button>
-                    <Link href="/login" className="text-xs font-bold tracking-widest text-black/60 dark:text-white/60 hover:text-black dark:hover:text-white transition-colors uppercase">
-                        Login
+                    <Link href="/sign-in" className="text-xs font-bold tracking-widest text-black/60 dark:text-white/60 hover:text-black dark:hover:text-white transition-colors uppercase">
+                        Sign In
                     </Link>
                 </div>
 
                 <Button
                     variant="outline"
-                    className="rounded-full h-10 px-6 border-black/10 dark:border-white/10 bg-black text-white hover:bg-black/90 dark:bg-white dark:text-black dark:hover:bg-white/90 transition-all font-semibold"
+                    className="rounded-full h-10 px-6 border-black/10 dark:border-white/10 bg-black text-white hover:bg-black/90 dark:bg-white  dark:hover:bg-white/90 transition-all font-semibold hover:text-white"
                 >
                     Get Started
                 </Button>

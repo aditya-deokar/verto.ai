@@ -50,14 +50,16 @@ export default function MenuOverlayV2({ isOpen, onClose }: { isOpen: boolean; on
 
     useGSAP(() => {
         gsap.set(".menu-column", { y: "100%" });
+        gsap.set(".overlay-bg", { opacity: 0 });
 
         tl.current = gsap.timeline({ paused: true })
+            .to(".overlay-bg", { opacity: 1, duration: 0.5, ease: "power2.out" })
             .to(".menu-column", {
                 y: 0,
                 duration: 0.5,
                 stagger: 0.07,
                 ease: "power2.in"
-            });
+            }, "-=0.5");
     }, { scope: containerRef });
 
     useGSAP(() => {
@@ -69,22 +71,24 @@ export default function MenuOverlayV2({ isOpen, onClose }: { isOpen: boolean; on
     }, [isOpen]);
 
     return (
-        <div
+        <nav
             ref={containerRef}
+            aria-label="Main Menu Overlay"
             className={cn(
                 "fixed inset-0 z-100 flex pl-[96px] md:pl-[120px] pr-6 py-6 overflow-hidden md:pr-10 transition-all duration-0",
                 isOpen ? "visible pointer-events-auto delay-0" : "invisible pointer-events-none delay-500"
             )}
         >
 
-            <div className="flex-1 flex h-full pointer-events-auto gap-4 md:gap-6">
+            <div className="overlay-bg absolute inset-0 bg-background/40 backdrop-blur-md z-0" />
+            <div className="flex-1 flex h-full pointer-events-auto gap-4 md:gap-6 relative z-10">
                 {menuItems.map((item, index) => (
                     <Link
                         key={index}
                         href={item.href}
                         onClick={onClose}
                         className={cn(
-                            "menu-column relative flex-1 bg-white/80 dark:bg-black/40 backdrop-blur-2xl border border-black/5 dark:border-white/10 shadow-2xl z-101 flex flex-col items-center justify-center group overflow-hidden cursor-pointer rounded-[32px] hover:border-black/20 dark:hover:border-white/20 transition-all duration-500 hover:shadow-[0_0_40px_rgba(0,0,0,0.1)] dark:hover:shadow-[0_0_40px_rgba(0,0,0,0.5)]",
+                            "menu-column relative flex-1 bg-background/80 backdrop-blur-2xl border border-black/5 dark:border-white/10 shadow-2xl z-101 flex flex-col items-center justify-center group overflow-hidden cursor-pointer rounded-[32px] hover:border-black/20 dark:hover:border-white/20 transition-all duration-500 hover:shadow-[0_0_40px_rgba(0,0,0,0.1)] dark:hover:shadow-[0_0_40px_rgba(0,0,0,0.5)]",
                             index === menuItems.length - 1 ? "md:mt-[110px] md:h-[calc(100%-110px)] h-full" : "h-full"
                         )}
                     >
@@ -115,6 +119,6 @@ export default function MenuOverlayV2({ isOpen, onClose }: { isOpen: boolean; on
                 ))}
 
             </div>
-        </div>
+        </nav>
     );
 }

@@ -39,7 +39,7 @@ export default function FeatureStory() {
                     <div className="col-span-1 md:col-span-4 grid grid-cols-1 md:grid-cols-2 gap-6">
 
                         {/* The Old Way - The Efficiency Trap */}
-                        <motion.div
+                        <motion.article
                             initial={{ opacity: 0, x: -50 }}
                             whileInView={{ opacity: 1, x: 0 }}
                             viewport={{ once: true }}
@@ -64,15 +64,15 @@ export default function FeatureStory() {
                             </div>
 
                             {/* Visual - Chaos Files */}
-                            <div className="relative h-64 mt-12 opacity-40 grayscale group-hover:grayscale-0 transition-all duration-700">
+                            <figure className="relative h-64 mt-12 opacity-40 grayscale group-hover:grayscale-0 transition-all duration-700">
                                 <div className="absolute top-4 left-10 py-2 px-4 bg-black/5 dark:bg-white/5 border border-black/10 dark:border-white/10 rounded text-xs font-mono text-black/30 dark:text-white/30 rotate-3">pitch_v1.ppt</div>
                                 <div className="absolute top-12 left-32 py-2 px-4 bg-black/5 dark:bg-white/5 border border-black/10 dark:border-white/10 rounded text-xs font-mono text-black/30 dark:text-white/30 -rotate-6">pitch_final.ppt</div>
                                 <div className="absolute top-24 left-16 py-2 px-4 bg-red-500/10 border border-red-500/20 rounded text-xs font-mono text-red-600 dark:text-red-400 rotate-12">pitch_FINAL_REAL.ppt</div>
-                            </div>
-                        </motion.div>
+                            </figure>
+                        </motion.article>
 
                         {/* The Verto Way - The Strategic Edge */}
-                        <motion.div
+                        <motion.article
                             initial={{ opacity: 0, x: 50 }}
                             whileInView={{ opacity: 1, x: 0 }}
                             viewport={{ once: true }}
@@ -98,7 +98,7 @@ export default function FeatureStory() {
                             </div>
 
                             {/* Visual - Clean Output */}
-                            <div className="relative h-64 mt-12 flex items-center justify-center">
+                            <figure className="relative h-64 mt-12 flex items-center justify-center">
                                 <div className="w-full max-w-[280px] bg-white dark:bg-[#111] border border-black/10 dark:border-white/10 rounded-xl p-4 shadow-2xl skew-y-1">
                                     <div className="flex items-center gap-2 mb-3">
                                         <div className="w-2 h-2 rounded-full bg-green-500" />
@@ -113,8 +113,8 @@ export default function FeatureStory() {
                                         <div className="px-2 py-0.5 rounded bg-[#F6BC66]/20 text-[#F6BC66] text-[8px] font-mono">EXPORT READY</div>
                                     </div>
                                 </div>
-                            </div>
-                        </motion.div>
+                            </figure>
+                        </motion.article>
 
                     </div>
                 </div>

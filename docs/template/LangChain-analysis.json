@@ -1,0 +1,7891 @@
+{
+  "structure": {
+    ".": [
+      "[Content_Types].xml"
+    ],
+    "ppt": [
+      "presentation.xml",
+      "presProps.xml",
+      "tableStyles.xml",
+      "viewProps.xml"
+    ],
+    "ppt/fonts": [
+      "font1.fntdata",
+      "font2.fntdata"
+    ],
+    "ppt/charts": [],
+    "ppt/slideLayouts": [
+      "slideLayout1.xml",
+      "slideLayout2.xml"
+    ],
+    "ppt/slideMasters": [
+      "slideMaster1.xml"
+    ],
+    "ppt/slides": [
+      "slide1.xml",
+      "slide2.xml",
+      "slide3.xml",
+      "slide4.xml",
+      "slide5.xml",
+      "slide6.xml",
+      "slide7.xml",
+      "slide8.xml",
+      "slide9.xml",
+      "slide10.xml",
+      "slide11.xml",
+      "slide12.xml"
+    ],
+    "ppt/notesMasters": [
+      "notesMaster1.xml"
+    ],
+    "ppt/notesSlides": [
+      "notesSlide1.xml",
+      "notesSlide2.xml",
+      "notesSlide3.xml",
+      "notesSlide4.xml",
+      "notesSlide5.xml",
+      "notesSlide6.xml",
+      "notesSlide7.xml",
+      "notesSlide8.xml",
+      "notesSlide9.xml",
+      "notesSlide10.xml",
+      "notesSlide11.xml",
+      "notesSlide12.xml"
+    ],
+    "_rels": [
+      ".rels"
+    ],
+    "docProps": [
+      "app.xml",
+      "custom.xml",
+      "core.xml"
+    ],
+    "ppt/_rels": [
+      "presentation.xml.rels"
+    ],
+    "ppt/theme": [
+      "theme1.xml"
+    ],
+    "ppt/slideLayouts/_rels": [
+      "slideLayout1.xml.rels",
+      "slideLayout2.xml.rels"
+    ],
+    "ppt/slides/_rels": [
+      "slide1.xml.rels",
+      "slide2.xml.rels",
+      "slide3.xml.rels",
+      "slide4.xml.rels",
+      "slide5.xml.rels",
+      "slide6.xml.rels",
+      "slide7.xml.rels",
+      "slide8.xml.rels",
+      "slide9.xml.rels",
+      "slide10.xml.rels",
+      "slide11.xml.rels",
+      "slide12.xml.rels"
+    ],
+    "ppt/notesSlides/_rels": [
+      "notesSlide1.xml.rels",
+      "notesSlide2.xml.rels",
+      "notesSlide3.xml.rels",
+      "notesSlide4.xml.rels",
+      "notesSlide5.xml.rels",
+      "notesSlide6.xml.rels",
+      "notesSlide7.xml.rels",
+      "notesSlide8.xml.rels",
+      "notesSlide9.xml.rels",
+      "notesSlide10.xml.rels",
+      "notesSlide11.xml.rels",
+      "notesSlide12.xml.rels"
+    ],
+    "ppt/slideMasters/_rels": [
+      "slideMaster1.xml.rels"
+    ],
+    "ppt/notesMasters/_rels": [
+      "notesMaster1.xml.rels"
+    ],
+    "ppt/media": [
+      "image-1-1.jpg",
+      "image-12-1.jpg"
+    ]
+  },
+  "slides": [
+    {
+      "name": "slide1.xml",
+      "shapes": [
+        {
+          "id": "3",
+          "name": "Shape 0",
+          "type": "shape",
+          "position": {
+            "x": 0,
+            "y": 0,
+            "w": 13.33,
+            "h": 7.5
+          },
+          "style": {}
+        },
+        {
+          "id": "4",
+          "name": "Shape 1",
+          "type": "shape",
+          "position": {
+            "x": 1.08,
+            "y": 0.88,
+            "w": 1,
+            "h": 0.04
+          },
+          "style": {
+            "fill": "#8B8680"
+          }
+        },
+        {
+          "id": "5",
+          "name": "Text 2",
+          "type": "shape",
+          "text": "Framework for LLM Applications",
+          "position": {
+            "x": 1.08,
+            "y": 1.17,
+            "w": 11.92,
+            "h": 0.25
+          },
+          "style": {
+            "fontSize": 12,
+            "fontColor": "#8B8680"
+          }
+        },
+        {
+          "id": "6",
+          "name": "Text 3",
+          "type": "shape",
+          "text": "Lang\nChain",
+          "position": {
+            "x": 1.08,
+            "y": 1.76,
+            "w": 12.46,
+            "h": 2.5
+          },
+          "style": {
+            "fontSize": 90,
+            "fontColor": "#1A1A1A"
+          }
+        },
+        {
+          "id": "7",
+          "name": "Shape 4",
+          "type": "shape",
+          "position": {
+            "x": 1.08,
+            "y": 4.59,
+            "w": 2,
+            "h": 0.01
+          },
+          "style": {
+            "fill": "#C4B7A6"
+          }
+        },
+        {
+          "id": "8",
+          "name": "Text 5",
+          "type": "shape",
+          "text": "The Framework for Building\nLLM-Powered Applications",
+          "position": {
+            "x": 1.08,
+            "y": 4.93,
+            "w": 5.46,
+            "h": 0.81
+          },
+          "style": {
+            "fontSize": 18,
+            "fontColor": "#3D3D3D"
+          }
+        },
+        {
+          "id": "9",
+          "name": "Shape 6",
+          "type": "shape",
+          "position": {
+            "x": 1.08,
+            "y": 6.47,
+            "w": 0.08,
+            "h": 0.08
+          },
+          "style": {
+            "fill": "#8B8680"
+          }
+        },
+        {
+          "id": "10",
+          "name": "Text 7",
+          "type": "shape",
+          "text": "Python & JavaScript",
+          "position": {
+            "x": 1.29,
+            "y": 6.41,
+            "w": 1.38,
+            "h": 0.21
+          },
+          "style": {
+            "fontSize": 10.5,
+            "fontColor": "#A8A29E"
+          }
+        },
+        {
+          "id": "11",
+          "name": "Shape 8",
+          "type": "shape",
+          "position": {
+            "x": 2.93,
+            "y": 6.47,
+            "w": 0.08,
+            "h": 0.08
+          },
+          "style": {
+            "fill": "#C4B7A6"
+          }
+        },
+        {
+          "id": "12",
+          "name": "Text 9",
+          "type": "shape",
+          "text": "1000+ Integrations",
+          "position": {
+            "x": 3.14,
+            "y": 6.41,
+            "w": 1.29,
+            "h": 0.21
+          },
+          "style": {
+            "fontSize": 10.5,
+            "fontColor": "#A8A29E"
+          }
+        }
+      ],
+      "images": [],
+      "tables": 0,
+      "charts": 0,
+      "background": "#FAF9F6"
+    },
+    {
+      "name": "slide2.xml",
+      "shapes": [
+        {
+          "id": "2",
+          "name": "Shape 0",
+          "type": "shape",
+          "position": {
+            "x": 0.42,
+            "y": 0.56,
+            "w": 0.5,
+            "h": 0.01
+          },
+          "style": {
+            "fill": "#8B8680"
+          }
+        },
+        {
+          "id": "3",
+          "name": "Text 1",
+          "type": "shape",
+          "text": "Introduction",
+          "position": {
+            "x": 1.08,
+            "y": 0.42,
+            "w": 1.5,
+            "h": 0.21
+          },
+          "style": {
+            "fontSize": 10.5,
+            "fontColor": "#8B8680"
+          }
+        },
+        {
+          "id": "4",
+          "name": "Text 2",
+          "type": "shape",
+          "text": "What is LangChain?",
+          "position": {
+            "x": 0.42,
+            "y": 0.75,
+            "w": 12.75,
+            "h": 0.5
+          },
+          "style": {
+            "fontSize": 36,
+            "fontColor": "#1A1A1A"
+          }
+        },
+        {
+          "id": "5",
+          "name": "Text 3",
+          "type": "shape",
+          "text": "LangChainis a Python and JavaScript framework that simplifies the creation of applications powered by Large Language Models. It provides modular building blocks—chains, agents, memory, and tools—that developers can compose into sophisticated AI workflows.",
+          "position": {
+            "x": 0.42,
+            "y": 2.36,
+            "w": 7.3,
+            "h": 1.35
+          },
+          "style": {
+            "fontSize": 15,
+            "bold": true,
+            "fontColor": "#1A1A1A"
+          }
+        },
+        {
+          "id": "6",
+          "name": "Shape 4",
+          "type": "shape",
+          "position": {
+            "x": 0.42,
+            "y": 4.09,
+            "w": 0.42,
+            "h": 0.42
+          },
+          "style": {
+            "fill": "#8B8680"
+          }
+        },
+        {
+          "id": "7",
+          "name": "Shape 5",
+          "type": "shape",
+          "position": {
+            "x": 0.55,
+            "y": 4.23,
+            "w": 0.15,
+            "h": 0.15
+          },
+          "style": {
+            "fill": "#8B8680"
+          }
+        },
+        {
+          "id": "8",
+          "name": "Text 6",
+          "type": "shape",
+          "text": "October 2022",
+          "position": {
+            "x": 1,
+            "y": 4.05,
+            "w": 4.93,
+            "h": 0.29
+          },
+          "style": {
+            "fontSize": 13.5,
+            "bold": true,
+            "fontColor": "#1A1A1A"
+          }
+        },
+        {
+          "id": "9",
+          "name": "Text 7",
+          "type": "shape",
+          "text": "Created by Harrison Chase as a simple tool-connection framework",
+          "position": {
+            "x": 1,
+            "y": 4.39,
+            "w": 4.92,
+            "h": 0.25
+          },
+          "style": {
+            "fontSize": 12,
+            "fontColor": "#3D3D3D"
+          }
+        },
+        {
+          "id": "10",
+          "name": "Shape 8",
+          "type": "shape",
+          "position": {
+            "x": 0.42,
+            "y": 4.89,
+            "w": 0.42,
+            "h": 0.42
+          },
+          "style": {
+            "fill": "#C4B7A6"
+          }
+        },
+        {
+          "id": "11",
+          "name": "Shape 9",
+          "type": "shape",
+          "position": {
+            "x": 0.55,
+            "y": 5.02,
+            "w": 0.15,
+            "h": 0.15
+          },
+          "style": {
+            "fill": "#8B8680"
+          }
+        },
+        {
+          "id": "12",
+          "name": "Text 10",
+          "type": "shape",
+          "text": "Rapid Growth",
+          "position": {
+            "x": 1,
+            "y": 4.84,
+            "w": 5.91,
+            "h": 0.29
+          },
+          "style": {
+            "fontSize": 13.5,
+            "bold": true,
+            "fontColor": "#1A1A1A"
+          }
+        },
+        {
+          "id": "13",
+          "name": "Text 11",
+          "type": "shape",
+          "text": "30,000+ new users monthly; 43% of organizations use LangGraph in production",
+          "position": {
+            "x": 1,
+            "y": 5.18,
+            "w": 5.9,
+            "h": 0.25
+          },
+          "style": {
+            "fontSize": 12,
+            "fontColor": "#3D3D3D"
+          }
+        },
+        {
+          "id": "14",
+          "name": "Shape 12",
+          "type": "shape",
+          "position": {
+            "x": 0.42,
+            "y": 5.68,
+            "w": 0.42,
+            "h": 0.42
+          },
+          "style": {
+            "fill": "#8B8680"
+          }
+        },
+        {
+          "id": "15",
+          "name": "Shape 13",
+          "type": "shape",
+          "position": {
+            "x": 0.55,
+            "y": 5.81,
+            "w": 0.15,
+            "h": 0.15
+          },
+          "style": {
+            "fill": "#8B8680"
+          }
+        },
+        {
+          "id": "16",
+          "name": "Text 14",
+          "type": "shape",
+          "text": "Complete Ecosystem",
+          "position": {
+            "x": 1,
+            "y": 5.64,
+            "w": 5.18,
+            "h": 0.29
+          },
+          "style": {
+            "fontSize": 13.5,
+            "bold": true,
+            "fontColor": "#1A1A1A"
+          }
+        },
+        {
+          "id": "17",
+          "name": "Text 15",
+          "type": "shape",
+          "text": "From prototyping to production deployment with full lifecycle support",
+          "position": {
+            "x": 1,
+            "y": 5.97,
+            "w": 5.17,
+            "h": 0.25
+          },
+          "style": {
+            "fontSize": 12,
+            "fontColor": "#3D3D3D"
+          }
+        },
+        {
+          "id": "18",
+          "name": "Shape 16",
+          "type": "shape",
+          "position": {
+            "x": 8.12,
+            "y": 2.63,
+            "w": 4.8,
+            "h": 3.33
+          },
+          "style": {
+            "fill": "#8B8680"
+          }
+        },
+        {
+          "id": "19",
+          "name": "Shape 17",
+          "type": "shape",
+          "position": {
+            "x": 8.45,
+            "y": 2.96,
+            "w": 0.04,
+            "h": 0.33
+          },
+          "style": {
+            "fill": "#8B8680"
+          }
+        },
+        {
+          "id": "20",
+          "name": "Text 18",
+          "type": "shape",
+          "text": "Evolution Timeline",
+          "position": {
+            "x": 8.62,
+            "y": 2.98,
+            "w": 1.79,
+            "h": 0.29
+          },
+          "style": {
+            "fontSize": 15,
+            "bold": true,
+            "fontColor": "#1A1A1A"
+          }
+        },
+        {
+          "id": "21",
+          "name": "Text 19",
+          "type": "shape",
+          "text": "Oct 2022",
+          "position": {
+            "x": 8.45,
+            "y": 3.54,
+            "w": 0.74,
+            "h": 0.25
+          },
+          "style": {
+            "fontSize": 10.5,
+            "bold": true,
+            "fontColor": "#8B8680"
+          }
+        },
+        {
+          "id": "22",
+          "name": "Text 20",
+          "type": "shape",
+          "text": "Initial release—connect LLMs with tools",
+          "position": {
+            "x": 9.28,
+            "y": 3.54,
+            "w": 2.98,
+            "h": 0.25
+          },
+          "style": {
+            "fontSize": 12,
+            "fontColor": "#3D3D3D"
+          }
+        },
+        {
+          "id": "23",
+          "name": "Text 21",
+          "type": "shape",
+          "text": "2023",
+          "position": {
+            "x": 8.45,
+            "y": 4,
+            "w": 0.74,
+            "h": 0.25
+          },
+          "style": {
+            "fontSize": 10.5,
+            "bold": true,
+            "fontColor": "#8B8680"
+          }
+        },
+        {
+          "id": "24",
+          "name": "Text 22",
+          "type": "shape",
+          "text": "LCEL introduced for declarative chains",
+          "position": {
+            "x": 9.28,
+            "y": 4,
+            "w": 2.91,
+            "h": 0.25
+          },
+          "style": {
+            "fontSize": 12,
+            "fontColor": "#3D3D3D"
+          }
+        },
+        {
+          "id": "25",
+          "name": "Text 23",
+          "type": "shape",
+          "text": "Oct 2023",
+          "position": {
+            "x": 8.45,
+            "y": 4.46,
+            "w": 0.74,
+            "h": 0.25
+          },
+          "style": {
+            "fontSize": 10.5,
+            "bold": true,
+            "fontColor": "#8B8680"
+          }
+        },
+        {
+          "id": "26",
+          "name": "Text 24",
+          "type": "shape",
+          "text": "LangServe for scalable API deployment",
+          "position": {
+            "x": 9.28,
+            "y": 4.46,
+            "w": 2.95,
+            "h": 0.25
+          },
+          "style": {
+            "fontSize": 12,
+            "fontColor": "#3D3D3D"
+          }
+        },
+        {
+          "id": "27",
+          "name": "Text 25",
+          "type": "shape",
+          "text": "Feb 2024",
+          "position": {
+            "x": 8.45,
+            "y": 4.92,
+            "w": 0.74,
+            "h": 0.25
+          },
+          "style": {
+            "fontSize": 10.5,
+            "bold": true,
+            "fontColor": "#8B8680"
+          }
+        },
+        {
+          "id": "28",
+          "name": "Text 26",
+          "type": "shape",
+          "text": "LangSmith observability platform",
+          "position": {
+            "x": 9.28,
+            "y": 4.92,
+            "w": 2.52,
+            "h": 0.25
+          },
+          "style": {
+            "fontSize": 12,
+            "fontColor": "#3D3D3D"
+          }
+        },
+        {
+          "id": "29",
+          "name": "Text 27",
+          "type": "shape",
+          "text": "May 2025",
+          "position": {
+            "x": 8.45,
+            "y": 5.38,
+            "w": 0.74,
+            "h": 0.25
+          },
+          "style": {
+            "fontSize": 10.5,
+            "bold": true,
+            "fontColor": "#8B8680"
+          }
+        },
+        {
+          "id": "30",
+          "name": "Text 28",
+          "type": "shape",
+          "text": "LangGraph for stateful agent orchestration",
+          "position": {
+            "x": 9.28,
+            "y": 5.38,
+            "w": 3.2,
+            "h": 0.25
+          },
+          "style": {
+            "fontSize": 12,
+            "fontColor": "#3D3D3D"
+          }
+        }
+      ],
+      "images": [],
+      "tables": 0,
+      "charts": 0,
+      "background": "#FAF9F6"
+    },
+    {
+      "name": "slide3.xml",
+      "shapes": [
+        {
+          "id": "2",
+          "name": "Shape 0",
+          "type": "shape",
+          "position": {
+            "x": 0.42,
+            "y": 0.56,
+            "w": 0.5,
+            "h": 0.01
+          },
+          "style": {
+            "fill": "#8B8680"
+          }
+        },
+        {
+          "id": "3",
+          "name": "Text 1",
+          "type": "shape",
+          "text": "Architecture",
+          "position": {
+            "x": 1.08,
+            "y": 0.42,
+            "w": 1.5,
+            "h": 0.21
+          },
+          "style": {
+            "fontSize": 10.5,
+            "fontColor": "#8B8680"
+          }
+        },
+        {
+          "id": "4",
+          "name": "Text 2",
+          "type": "shape",
+          "text": "The LangChain Ecosystem",
+          "position": {
+            "x": 0.42,
+            "y": 0.75,
+            "w": 12.75,
+            "h": 0.5
+          },
+          "style": {
+            "fontSize": 36,
+            "fontColor": "#1A1A1A"
+          }
+        },
+        {
+          "id": "5",
+          "name": "Text 3",
+          "type": "shape",
+          "text": "Four complementary tools forming a complete toolkit for modern LLM application development",
+          "position": {
+            "x": 0.42,
+            "y": 1.38,
+            "w": 8.09,
+            "h": 0.29
+          },
+          "style": {
+            "fontSize": 13.5,
+            "fontColor": "#3D3D3D"
+          }
+        },
+        {
+          "id": "6",
+          "name": "Shape 4",
+          "type": "shape",
+          "position": {
+            "x": 0.42,
+            "y": 2,
+            "w": 6.13,
+            "h": 2.42
+          },
+          "style": {
+            "fill": "#8B8680"
+          }
+        },
+        {
+          "id": "7",
+          "name": "Shape 5",
+          "type": "shape",
+          "position": {
+            "x": 0.67,
+            "y": 2.25,
+            "w": 0.5,
+            "h": 0.5
+          },
+          "style": {
+            "fill": "#8B8680"
+          }
+        },
+        {
+          "id": "8",
+          "name": "Text 6",
+          "type": "shape",
+          "text": "LC",
+          "position": {
+            "x": 0.79,
+            "y": 2.35,
+            "w": 0.36,
+            "h": 0.29
+          },
+          "style": {
+            "fontSize": 15,
+            "bold": true,
+            "fontColor": "#FFFFFF"
+          }
+        },
+        {
+          "id": "9",
+          "name": "Text 7",
+          "type": "shape",
+          "text": "LangChain",
+          "position": {
+            "x": 1.33,
+            "y": 2.25,
+            "w": 1.6,
+            "h": 0.33
+          },
+          "style": {
+            "fontSize": 18,
+            "bold": true,
+            "fontColor": "#1A1A1A"
+          }
+        },
+        {
+          "id": "10",
+          "name": "Text 8",
+          "type": "shape",
+          "text": "Foundation Framework",
+          "position": {
+            "x": 1.33,
+            "y": 2.62,
+            "w": 1.55,
+            "h": 0.21
+          },
+          "style": {
+            "fontSize": 10.5,
+            "fontColor": "#8B8680"
+          }
+        },
+        {
+          "id": "11",
+          "name": "Text 9",
+          "type": "shape",
+          "text": "Build modular LLM workflows using prompts, models, tools, and memory. Best for prototyping and linear applications with simple APIs.",
+          "position": {
+            "x": 0.67,
+            "y": 3,
+            "w": 5.71,
+            "h": 0.61
+          },
+          "style": {
+            "fontSize": 12,
+            "fontColor": "#3D3D3D"
+          }
+        },
+        {
+          "id": "12",
+          "name": "Shape 10",
+          "type": "shape",
+          "position": {
+            "x": 0.67,
+            "y": 3.79,
+            "w": 5.63,
+            "h": 0.01
+          },
+          "style": {
+            "fill": "#C4B7A6"
+          }
+        },
+        {
+          "id": "13",
+          "name": "Text 11",
+          "type": "shape",
+          "text": "Use:Chatbots, Q&A systems, RAG pipelines",
+          "position": {
+            "x": 0.67,
+            "y": 3.96,
+            "w": 5.7,
+            "h": 0.21
+          },
+          "style": {
+            "fontSize": 10.5,
+            "bold": true,
+            "fontColor": "#3D3D3D"
+          }
+        },
+        {
+          "id": "14",
+          "name": "Shape 12",
+          "type": "shape",
+          "position": {
+            "x": 6.79,
+            "y": 2,
+            "w": 6.13,
+            "h": 2.42
+          },
+          "style": {
+            "fill": "#C4B7A6"
+          }
+        },
+        {
+          "id": "15",
+          "name": "Shape 13",
+          "type": "shape",
+          "position": {
+            "x": 7.04,
+            "y": 2.25,
+            "w": 0.5,
+            "h": 0.5
+          },
+          "style": {
+            "fill": "#C4B7A6"
+          }
+        },
+        {
+          "id": "16",
+          "name": "Text 14",
+          "type": "shape",
+          "text": "LG",
+          "position": {
+            "x": 7.16,
+            "y": 2.35,
+            "w": 0.36,
+            "h": 0.29
+          },
+          "style": {
+            "fontSize": 15,
+            "bold": true,
+            "fontColor": "#3D3D3D"
+          }
+        },
+        {
+          "id": "17",
+          "name": "Text 15",
+          "type": "shape",
+          "text": "LangGraph",
+          "position": {
+            "x": 7.71,
+            "y": 2.25,
+            "w": 1.48,
+            "h": 0.33
+          },
+          "style": {
+            "fontSize": 18,
+            "bold": true,
+            "fontColor": "#1A1A1A"
+          }
+        },
+        {
+          "id": "18",
+          "name": "Text 16",
+          "type": "shape",
+          "text": "Orchestration Engine",
+          "position": {
+            "x": 7.71,
+            "y": 2.62,
+            "w": 1.43,
+            "h": 0.21
+          },
+          "style": {
+            "fontSize": 10.5,
+            "fontColor": "#8B8680"
+          }
+        },
+        {
+          "id": "19",
+          "name": "Text 17",
+          "type": "shape",
+          "text": "Manage complex, stateful workflows with branching, looping, and persistence. Built on LangChain components for production-grade agents.",
+          "position": {
+            "x": 7.04,
+            "y": 3,
+            "w": 5.71,
+            "h": 0.61
+          },
+          "style": {
+            "fontSize": 12,
+            "fontColor": "#3D3D3D"
+          }
+        },
+        {
+          "id": "20",
+          "name": "Shape 18",
+          "type": "shape",
+          "position": {
+            "x": 7.04,
+            "y": 3.79,
+            "w": 5.63,
+            "h": 0.01
+          },
+          "style": {
+            "fill": "#C4B7A6"
+          }
+        },
+        {
+          "id": "21",
+          "name": "Text 19",
+          "type": "shape",
+          "text": "Use:Multi-agent systems, approval workflows",
+          "position": {
+            "x": 7.04,
+            "y": 3.96,
+            "w": 5.7,
+            "h": 0.21
+          },
+          "style": {
+            "fontSize": 10.5,
+            "bold": true,
+            "fontColor": "#3D3D3D"
+          }
+        },
+        {
+          "id": "22",
+          "name": "Shape 20",
+          "type": "shape",
+          "position": {
+            "x": 0.42,
+            "y": 4.67,
+            "w": 6.13,
+            "h": 2.42
+          },
+          "style": {
+            "fill": "#8B8680"
+          }
+        },
+        {
+          "id": "23",
+          "name": "Shape 21",
+          "type": "shape",
+          "position": {
+            "x": 0.67,
+            "y": 4.92,
+            "w": 0.5,
+            "h": 0.5
+          },
+          "style": {
+            "fill": "#8B8680"
+          }
+        },
+        {
+          "id": "24",
+          "name": "Text 22",
+          "type": "shape",
+          "text": "LS",
+          "position": {
+            "x": 0.79,
+            "y": 5.02,
+            "w": 0.34,
+            "h": 0.29
+          },
+          "style": {
+            "fontSize": 15,
+            "bold": true,
+            "fontColor": "#FFFFFF"
+          }
+        },
+        {
+          "id": "25",
+          "name": "Text 23",
+          "type": "shape",
+          "text": "LangSmith",
+          "position": {
+            "x": 1.33,
+            "y": 4.92,
+            "w": 1.56,
+            "h": 0.33
+          },
+          "style": {
+            "fontSize": 18,
+            "bold": true,
+            "fontColor": "#1A1A1A"
+          }
+        },
+        {
+          "id": "26",
+          "name": "Text 24",
+          "type": "shape",
+          "text": "Observability Platform",
+          "position": {
+            "x": 1.33,
+            "y": 5.29,
+            "w": 1.51,
+            "h": 0.21
+          },
+          "style": {
+            "fontSize": 10.5,
+            "fontColor": "#8B8680"
+          }
+        },
+        {
+          "id": "27",
+          "name": "Text 25",
+          "type": "shape",
+          "text": "Trace, evaluate, and monitor LLM applications with detailed insights. Framework-agnostic debugging and performance tracking.",
+          "position": {
+            "x": 0.67,
+            "y": 5.67,
+            "w": 5.71,
+            "h": 0.61
+          },
+          "style": {
+            "fontSize": 12,
+            "fontColor": "#3D3D3D"
+          }
+        },
+        {
+          "id": "28",
+          "name": "Shape 26",
+          "type": "shape",
+          "position": {
+            "x": 0.67,
+            "y": 6.45,
+            "w": 5.63,
+            "h": 0.01
+          },
+          "style": {
+            "fill": "#C4B7A6"
+          }
+        },
+        {
+          "id": "29",
+          "name": "Text 27",
+          "type": "shape",
+          "text": "Use:Debugging, A/B testing, production monitoring",
+          "position": {
+            "x": 0.67,
+            "y": 6.63,
+            "w": 5.7,
+            "h": 0.21
+          },
+          "style": {
+            "fontSize": 10.5,
+            "bold": true,
+            "fontColor": "#3D3D3D"
+          }
+        },
+        {
+          "id": "30",
+          "name": "Shape 28",
+          "type": "shape",
+          "position": {
+            "x": 6.79,
+            "y": 4.67,
+            "w": 6.13,
+            "h": 2.42
+          },
+          "style": {
+            "fill": "#C4B7A6"
+          }
+        },
+        {
+          "id": "31",
+          "name": "Shape 29",
+          "type": "shape",
+          "position": {
+            "x": 7.04,
+            "y": 4.92,
+            "w": 0.5,
+            "h": 0.5
+          },
+          "style": {
+            "fill": "#C4B7A6"
+          }
+        },
+        {
+          "id": "32",
+          "name": "Text 30",
+          "type": "shape",
+          "text": "LF",
+          "position": {
+            "x": 7.18,
+            "y": 5.02,
+            "w": 0.33,
+            "h": 0.29
+          },
+          "style": {
+            "fontSize": 15,
+            "bold": true,
+            "fontColor": "#3D3D3D"
+          }
+        },
+        {
+          "id": "33",
+          "name": "Text 31",
+          "type": "shape",
+          "text": "LangFlow",
+          "position": {
+            "x": 7.71,
+            "y": 4.92,
+            "w": 1.21,
+            "h": 0.33
+          },
+          "style": {
+            "fontSize": 18,
+            "bold": true,
+            "fontColor": "#1A1A1A"
+          }
+        },
+        {
+          "id": "34",
+          "name": "Text 32",
+          "type": "shape",
+          "text": "Visual Builder",
+          "position": {
+            "x": 7.71,
+            "y": 5.29,
+            "w": 1.16,
+            "h": 0.21
+          },
+          "style": {
+            "fontSize": 10.5,
+            "fontColor": "#8B8680"
+          }
+        },
+        {
+          "id": "35",
+          "name": "Text 33",
+          "type": "shape",
+          "text": "Drag-and-drop interface for rapid prototyping and stakeholder collaboration. Export flows to production-ready LangChain code.",
+          "position": {
+            "x": 7.04,
+            "y": 5.67,
+            "w": 5.71,
+            "h": 0.61
+          },
+          "style": {
+            "fontSize": 12,
+            "fontColor": "#3D3D3D"
+          }
+        },
+        {
+          "id": "36",
+          "name": "Shape 34",
+          "type": "shape",
+          "position": {
+            "x": 7.04,
+            "y": 6.45,
+            "w": 5.63,
+            "h": 0.01
+          },
+          "style": {
+            "fill": "#C4B7A6"
+          }
+        },
+        {
+          "id": "37",
+          "name": "Text 35",
+          "type": "shape",
+          "text": "Use:Workshops, non-coders, architecture sketching",
+          "position": {
+            "x": 7.04,
+            "y": 6.63,
+            "w": 5.7,
+            "h": 0.21
+          },
+          "style": {
+            "fontSize": 10.5,
+            "bold": true,
+            "fontColor": "#3D3D3D"
+          }
+        }
+      ],
+      "images": [],
+      "tables": 0,
+      "charts": 0,
+      "background": "#FAF9F6"
+    },
+    {
+      "name": "slide4.xml",
+      "shapes": [
+        {
+          "id": "2",
+          "name": "Shape 0",
+          "type": "shape",
+          "position": {
+            "x": 0.42,
+            "y": 0.56,
+            "w": 0.5,
+            "h": 0.01
+          },
+          "style": {
+            "fill": "#8B8680"
+          }
+        },
+        {
+          "id": "3",
+          "name": "Text 1",
+          "type": "shape",
+          "text": "Building Blocks",
+          "position": {
+            "x": 1.08,
+            "y": 0.42,
+            "w": 1.76,
+            "h": 0.21
+          },
+          "style": {
+            "fontSize": 10.5,
+            "fontColor": "#8B8680"
+          }
+        },
+        {
+          "id": "4",
+          "name": "Text 2",
+          "type": "shape",
+          "text": "Core Components",
+          "position": {
+            "x": 0.42,
+            "y": 0.75,
+            "w": 12.75,
+            "h": 0.5
+          },
+          "style": {
+            "fontSize": 36,
+            "fontColor": "#1A1A1A"
+          }
+        },
+        {
+          "id": "5",
+          "name": "Text 3",
+          "type": "shape",
+          "text": "How LangChain's components connect to form complete AI applications",
+          "position": {
+            "x": 0.42,
+            "y": 1.38,
+            "w": 12.59,
+            "h": 0.29
+          },
+          "style": {
+            "fontSize": 13.5,
+            "fontColor": "#3D3D3D"
+          }
+        },
+        {
+          "id": "6",
+          "name": "Shape 4",
+          "type": "shape",
+          "position": {
+            "x": 0.42,
+            "y": 1.92,
+            "w": 6.69,
+            "h": 1.21
+          },
+          "style": {
+            "fill": "#8B8680"
+          }
+        },
+        {
+          "id": "7",
+          "name": "Shape 5",
+          "type": "shape",
+          "position": {
+            "x": 0.58,
+            "y": 2.08,
+            "w": 0.42,
+            "h": 0.42
+          },
+          "style": {
+            "fill": "#8B8680"
+          }
+        },
+        {
+          "id": "8",
+          "name": "Shape 6",
+          "type": "shape",
+          "position": {
+            "x": 0.72,
+            "y": 2.22,
+            "w": 0.15,
+            "h": 0.15
+          },
+          "style": {
+            "fill": "#FFFFFF"
+          }
+        },
+        {
+          "id": "9",
+          "name": "Text 7",
+          "type": "shape",
+          "text": "Models",
+          "position": {
+            "x": 1.17,
+            "y": 2.08,
+            "w": 5.86,
+            "h": 0.29
+          },
+          "style": {
+            "fontSize": 13.5,
+            "bold": true,
+            "fontColor": "#1A1A1A"
+          }
+        },
+        {
+          "id": "10",
+          "name": "Text 8",
+          "type": "shape",
+          "text": "LLMs, Chat Models, and Embedding models from OpenAI, Anthropic, Google, Hugging Face, and 100+ providers",
+          "position": {
+            "x": 1.17,
+            "y": 2.42,
+            "w": 5.85,
+            "h": 0.54
+          },
+          "style": {
+            "fontSize": 12,
+            "fontColor": "#3D3D3D"
+          }
+        },
+        {
+          "id": "11",
+          "name": "Shape 9",
+          "type": "shape",
+          "position": {
+            "x": 0.42,
+            "y": 3.25,
+            "w": 6.69,
+            "h": 1.21
+          },
+          "style": {
+            "fill": "#C4B7A6"
+          }
+        },
+        {
+          "id": "12",
+          "name": "Shape 10",
+          "type": "shape",
+          "position": {
+            "x": 0.58,
+            "y": 3.42,
+            "w": 0.42,
+            "h": 0.42
+          },
+          "style": {
+            "fill": "#C4B7A6"
+          }
+        },
+        {
+          "id": "13",
+          "name": "Shape 11",
+          "type": "shape",
+          "position": {
+            "x": 0.72,
+            "y": 3.55,
+            "w": 0.15,
+            "h": 0.15
+          },
+          "style": {
+            "fill": "#3D3D3D"
+          }
+        },
+        {
+          "id": "14",
+          "name": "Text 12",
+          "type": "shape",
+          "text": "Prompts & PromptTemplates",
+          "position": {
+            "x": 1.17,
+            "y": 3.42,
+            "w": 5.86,
+            "h": 0.29
+          },
+          "style": {
+            "fontSize": 13.5,
+            "bold": true,
+            "fontColor": "#1A1A1A"
+          }
+        },
+        {
+          "id": "15",
+          "name": "Text 13",
+          "type": "shape",
+          "text": "Manage and customize prompts with dynamic variables, few-shot examples, and structured formatting",
+          "position": {
+            "x": 1.17,
+            "y": 3.75,
+            "w": 5.85,
+            "h": 0.54
+          },
+          "style": {
+            "fontSize": 12,
+            "fontColor": "#3D3D3D"
+          }
+        },
+        {
+          "id": "16",
+          "name": "Shape 14",
+          "type": "shape",
+          "position": {
+            "x": 0.42,
+            "y": 4.58,
+            "w": 6.69,
+            "h": 1.21
+          },
+          "style": {
+            "fill": "#8B8680"
+          }
+        },
+        {
+          "id": "17",
+          "name": "Shape 15",
+          "type": "shape",
+          "position": {
+            "x": 0.58,
+            "y": 4.75,
+            "w": 0.42,
+            "h": 0.42
+          },
+          "style": {
+            "fill": "#8B8680"
+          }
+        },
+        {
+          "id": "18",
+          "name": "Shape 16",
+          "type": "shape",
+          "position": {
+            "x": 0.71,
+            "y": 4.89,
+            "w": 0.16,
+            "h": 0.15
+          },
+          "style": {
+            "fill": "#FFFFFF"
+          }
+        },
+        {
+          "id": "19",
+          "name": "Text 17",
+          "type": "shape",
+          "text": "Chains",
+          "position": {
+            "x": 1.17,
+            "y": 4.75,
+            "w": 5.86,
+            "h": 0.29
+          },
+          "style": {
+            "fontSize": 13.5,
+            "bold": true,
+            "fontColor": "#1A1A1A"
+          }
+        },
+        {
+          "id": "20",
+          "name": "Text 18",
+          "type": "shape",
+          "text": "Sequential workflows combining multiple components—simple chains for single LLM calls, multi-step chains for complex pipelines",
+          "position": {
+            "x": 1.17,
+            "y": 5.08,
+            "w": 5.85,
+            "h": 0.54
+          },
+          "style": {
+            "fontSize": 12,
+            "fontColor": "#3D3D3D"
+          }
+        },
+        {
+          "id": "21",
+          "name": "Shape 19",
+          "type": "shape",
+          "position": {
+            "x": 0.42,
+            "y": 5.92,
+            "w": 6.69,
+            "h": 1.21
+          },
+          "style": {
+            "fill": "#C4B7A6"
+          }
+        },
+        {
+          "id": "22",
+          "name": "Shape 20",
+          "type": "shape",
+          "position": {
+            "x": 0.58,
+            "y": 6.08,
+            "w": 0.42,
+            "h": 0.42
+          },
+          "style": {
+            "fill": "#C4B7A6"
+          }
+        },
+        {
+          "id": "23",
+          "name": "Shape 21",
+          "type": "shape",
+          "position": {
+            "x": 0.7,
+            "y": 6.22,
+            "w": 0.18,
+            "h": 0.15
+          },
+          "style": {
+            "fill": "#3D3D3D"
+          }
+        },
+        {
+          "id": "24",
+          "name": "Text 22",
+          "type": "shape",
+          "text": "Agents",
+          "position": {
+            "x": 1.17,
+            "y": 6.08,
+            "w": 5.86,
+            "h": 0.29
+          },
+          "style": {
+            "fontSize": 13.5,
+            "bold": true,
+            "fontColor": "#1A1A1A"
+          }
+        },
+        {
+          "id": "25",
+          "name": "Text 23",
+          "type": "shape",
+          "text": "Autonomous systems that reason about problems, decide which tools to use, and take actions dynamically",
+          "position": {
+            "x": 1.17,
+            "y": 6.42,
+            "w": 5.85,
+            "h": 0.54
+          },
+          "style": {
+            "fontSize": 12,
+            "fontColor": "#3D3D3D"
+          }
+        },
+        {
+          "id": "26",
+          "name": "Shape 24",
+          "type": "shape",
+          "position": {
+            "x": 7.44,
+            "y": 1.92,
+            "w": 5.48,
+            "h": 1.21
+          },
+          "style": {
+            "fill": "#8B8680"
+          }
+        },
+        {
+          "id": "27",
+          "name": "Shape 25",
+          "type": "shape",
+          "position": {
+            "x": 7.61,
+            "y": 2.08,
+            "w": 0.42,
+            "h": 0.42
+          },
+          "style": {
+            "fill": "#8B8680"
+          }
+        },
+        {
+          "id": "28",
+          "name": "Shape 26",
+          "type": "shape",
+          "position": {
+            "x": 7.75,
+            "y": 2.22,
+            "w": 0.15,
+            "h": 0.15
+          },
+          "style": {
+            "fill": "#FFFFFF"
+          }
+        },
+        {
+          "id": "29",
+          "name": "Text 27",
+          "type": "shape",
+          "text": "Memory",
+          "position": {
+            "x": 8.19,
+            "y": 2.08,
+            "w": 4.66,
+            "h": 0.29
+          },
+          "style": {
+            "fontSize": 13.5,
+            "bold": true,
+            "fontColor": "#1A1A1A"
+          }
+        },
+        {
+          "id": "30",
+          "name": "Text 28",
+          "type": "shape",
+          "text": "Preserve conversation context with buffer, window, summary, and custom memory types",
+          "position": {
+            "x": 8.19,
+            "y": 2.42,
+            "w": 4.65,
+            "h": 0.54
+          },
+          "style": {
+            "fontSize": 12,
+            "fontColor": "#3D3D3D"
+          }
+        },
+        {
+          "id": "31",
+          "name": "Shape 29",
+          "type": "shape",
+          "position": {
+            "x": 7.44,
+            "y": 3.25,
+            "w": 5.48,
+            "h": 1.21
+          },
+          "style": {
+            "fill": "#C4B7A6"
+          }
+        },
+        {
+          "id": "32",
+          "name": "Shape 30",
+          "type": "shape",
+          "position": {
+            "x": 7.61,
+            "y": 3.42,
+            "w": 0.42,
+            "h": 0.42
+          },
+          "style": {
+            "fill": "#C4B7A6"
+          }
+        },
+        {
+          "id": "33",
+          "name": "Shape 31",
+          "type": "shape",
+          "position": {
+            "x": 7.75,
+            "y": 3.55,
+            "w": 0.15,
+            "h": 0.15
+          },
+          "style": {
+            "fill": "#3D3D3D"
+          }
+        },
+        {
+          "id": "34",
+          "name": "Text 32",
+          "type": "shape",
+          "text": "Retrievers & Vector Stores",
+          "position": {
+            "x": 8.19,
+            "y": 3.42,
+            "w": 4.66,
+            "h": 0.29
+          },
+          "style": {
+            "fontSize": 13.5,
+            "bold": true,
+            "fontColor": "#1A1A1A"
+          }
+        },
+        {
+          "id": "35",
+          "name": "Text 33",
+          "type": "shape",
+          "text": "Store and search embeddings for semantic similarity—integrates with Pinecone, Chroma, Weaviate, FAISS",
+          "position": {
+            "x": 8.19,
+            "y": 3.75,
+            "w": 4.65,
+            "h": 0.54
+          },
+          "style": {
+            "fontSize": 12,
+            "fontColor": "#3D3D3D"
+          }
+        },
+        {
+          "id": "36",
+          "name": "Shape 34",
+          "type": "shape",
+          "position": {
+            "x": 7.44,
+            "y": 4.58,
+            "w": 5.48,
+            "h": 1.21
+          },
+          "style": {
+            "fill": "#8B8680"
+          }
+        },
+        {
+          "id": "37",
+          "name": "Shape 35",
+          "type": "shape",
+          "position": {
+            "x": 7.61,
+            "y": 4.75,
+            "w": 0.42,
+            "h": 0.42
+          },
+          "style": {
+            "fill": "#8B8680"
+          }
+        },
+        {
+          "id": "38",
+          "name": "Shape 36",
+          "type": "shape",
+          "position": {
+            "x": 7.74,
+            "y": 4.89,
+            "w": 0.16,
+            "h": 0.15
+          },
+          "style": {
+            "fill": "#FFFFFF"
+          }
+        },
+        {
+          "id": "39",
+          "name": "Text 37",
+          "type": "shape",
+          "text": "Tools & Document Loaders",
+          "position": {
+            "x": 8.19,
+            "y": 4.75,
+            "w": 4.66,
+            "h": 0.29
+          },
+          "style": {
+            "fontSize": 13.5,
+            "bold": true,
+            "fontColor": "#1A1A1A"
+          }
+        },
+        {
+          "id": "40",
+          "name": "Text 38",
+          "type": "shape",
+          "text": "External capabilities (APIs, databases, search) and data ingestion (PDFs, web pages, databases)",
+          "position": {
+            "x": 8.19,
+            "y": 5.08,
+            "w": 4.65,
+            "h": 0.54
+          },
+          "style": {
+            "fontSize": 12,
+            "fontColor": "#3D3D3D"
+          }
+        },
+        {
+          "id": "41",
+          "name": "Shape 39",
+          "type": "shape",
+          "position": {
+            "x": 7.44,
+            "y": 5.98,
+            "w": 5.48,
+            "h": 1.15
+          },
+          "style": {
+            "fill": "#C4B7A6"
+          }
+        },
+        {
+          "id": "42",
+          "name": "Shape 40",
+          "type": "shape",
+          "position": {
+            "x": 7.61,
+            "y": 6.15,
+            "w": 0.04,
+            "h": 0.25
+          },
+          "style": {
+            "fill": "#8B8680"
+          }
+        },
+        {
+          "id": "43",
+          "name": "Text 41",
+          "type": "shape",
+          "text": "Component Flow",
+          "position": {
+            "x": 7.73,
+            "y": 6.15,
+            "w": 1.33,
+            "h": 0.25
+          },
+          "style": {
+            "fontSize": 12,
+            "bold": true,
+            "fontColor": "#1A1A1A"
+          }
+        },
+        {
+          "id": "44",
+          "name": "Text 42",
+          "type": "shape",
+          "text": "Input → Document Processing → Embedding & Storage → Retrieval → Generation (with Tools/Agents) → Output",
+          "position": {
+            "x": 7.61,
+            "y": 6.48,
+            "w": 5.22,
+            "h": 0.48
+          },
+          "style": {
+            "fontSize": 10.5,
+            "fontColor": "#3D3D3D"
+          }
+        }
+      ],
+      "images": [],
+      "tables": 0,
+      "charts": 0,
+      "background": "#FAF9F6"
+    },
+    {
+      "name": "slide5.xml",
+      "shapes": [
+        {
+          "id": "2",
+          "name": "Shape 0",
+          "type": "shape",
+          "position": {
+            "x": 0.38,
+            "y": 0.5,
+            "w": 0.45,
+            "h": 0.01
+          },
+          "style": {
+            "fill": "#8B8680"
+          }
+        },
+        {
+          "id": "3",
+          "name": "Text 1",
+          "type": "shape",
+          "text": "Declarative Composition",
+          "position": {
+            "x": 0.98,
+            "y": 0.38,
+            "w": 2.48,
+            "h": 0.19
+          },
+          "style": {
+            "fontSize": 9.52,
+            "fontColor": "#8B8680"
+          }
+        },
+        {
+          "id": "4",
+          "name": "Text 2",
+          "type": "shape",
+          "text": "LangChain Expression Language",
+          "position": {
+            "x": 0.38,
+            "y": 0.68,
+            "w": 12.8,
+            "h": 0.45
+          },
+          "style": {
+            "fontSize": 32.63,
+            "fontColor": "#1A1A1A"
+          }
+        },
+        {
+          "id": "5",
+          "name": "Text 3",
+          "type": "shape",
+          "text": "Compose chains with the pipe operator for readable, maintainable workflows",
+          "position": {
+            "x": 0.38,
+            "y": 1.25,
+            "w": 12.66,
+            "h": 0.26
+          },
+          "style": {
+            "fontSize": 12.24,
+            "fontColor": "#3D3D3D"
+          }
+        },
+        {
+          "id": "6",
+          "name": "Shape 4",
+          "type": "shape",
+          "position": {
+            "x": 0.38,
+            "y": 1.74,
+            "w": 6.14,
+            "h": 3.51
+          },
+          "style": {
+            "fill": "#1A1A1A"
+          }
+        },
+        {
+          "id": "7",
+          "name": "Shape 5",
+          "type": "shape",
+          "position": {
+            "x": 0.6,
+            "y": 1.96,
+            "w": 0.11,
+            "h": 0.11
+          },
+          "style": {
+            "fill": "#8B8680"
+          }
+        },
+        {
+          "id": "8",
+          "name": "Shape 6",
+          "type": "shape",
+          "position": {
+            "x": 0.79,
+            "y": 1.96,
+            "w": 0.11,
+            "h": 0.11
+          },
+          "style": {
+            "fill": "#C4B7A6"
+          }
+        },
+        {
+          "id": "9",
+          "name": "Shape 7",
+          "type": "shape",
+          "position": {
+            "x": 0.98,
+            "y": 1.96,
+            "w": 0.11,
+            "h": 0.11
+          },
+          "style": {
+            "fill": "#A8A29E"
+          }
+        },
+        {
+          "id": "10",
+          "name": "Text 8",
+          "type": "shape",
+          "text": "# Define components\ntemplate =\"\"\"Question: {question}\nAnswer: Let's think step by step.\"\"\"\nprompt = PromptTemplate.from_template(template)\noutput_parser = StrOutputParser()\n# Compose with LCEL pipe operator\nchain = prompt | llm | output_parser\n# Execute\nresponse = chain.invoke({\n\"question\":\"How many apples?\"\n})",
+          "position": {
+            "x": 0.6,
+            "y": 2.23,
+            "w": 5.75,
+            "h": 2.8
+          },
+          "style": {
+            "fontSize": 9.52,
+            "fontColor": "#C4B7A6"
+          }
+        },
+        {
+          "id": "11",
+          "name": "Shape 9",
+          "type": "shape",
+          "position": {
+            "x": 0.38,
+            "y": 5.4,
+            "w": 6.14,
+            "h": 2.49
+          },
+          "style": {
+            "fill": "#8B8680"
+          }
+        },
+        {
+          "id": "12",
+          "name": "Shape 10",
+          "type": "shape",
+          "position": {
+            "x": 0.6,
+            "y": 5.64,
+            "w": 0.11,
+            "h": 0.15
+          },
+          "style": {
+            "fill": "#8B8680"
+          }
+        },
+        {
+          "id": "13",
+          "name": "Text 11",
+          "type": "shape",
+          "text": "Example Output",
+          "position": {
+            "x": 0.83,
+            "y": 5.59,
+            "w": 1.28,
+            "h": 0.26
+          },
+          "style": {
+            "fontSize": 12.24,
+            "bold": true,
+            "fontColor": "#1A1A1A"
+          }
+        },
+        {
+          "id": "14",
+          "name": "Shape 12",
+          "type": "shape",
+          "position": {
+            "x": 0.59,
+            "y": 5.97,
+            "w": 5.74,
+            "h": 1.04
+          },
+          "style": {
+            "fill": "#FAF9F6"
+          }
+        },
+        {
+          "id": "15",
+          "name": "Shape 13",
+          "type": "shape",
+          "position": {
+            "x": 0.59,
+            "y": 5.97,
+            "w": 0.04,
+            "h": 1.04
+          },
+          "style": {
+            "fill": "#8B8680"
+          }
+        },
+        {
+          "id": "16",
+          "name": "Text 14",
+          "type": "shape",
+          "text": "\"You started with five apples, removed two by throwing them away and then consumed one more, which leaves you with two apples. So, the final answer is you have two apples left.\"",
+          "position": {
+            "x": 0.76,
+            "y": 6.12,
+            "w": 5.5,
+            "h": 0.74
+          },
+          "style": {
+            "fontSize": 10.88,
+            "fontColor": "#3D3D3D"
+          }
+        },
+        {
+          "id": "17",
+          "name": "Text 15",
+          "type": "shape",
+          "text": "The LLM applies step-by-step reasoning automatically through prompt engineering",
+          "position": {
+            "x": 0.57,
+            "y": 7.12,
+            "w": 5.83,
+            "h": 0.19
+          },
+          "style": {
+            "fontSize": 9.52,
+            "fontColor": "#A8A29E"
+          }
+        },
+        {
+          "id": "18",
+          "name": "Text 16",
+          "type": "shape",
+          "text": "LCEL Benefits",
+          "position": {
+            "x": 6.82,
+            "y": 1.74,
+            "w": 6.23,
+            "h": 0.26
+          },
+          "style": {
+            "fontSize": 13.6,
+            "bold": true,
+            "fontColor": "#1A1A1A"
+          }
+        },
+        {
+          "id": "19",
+          "name": "Shape 17",
+          "type": "shape",
+          "position": {
+            "x": 6.82,
+            "y": 2.12,
+            "w": 6.14,
+            "h": 0.68
+          },
+          "style": {
+            "fill": "#8B8680"
+          }
+        },
+        {
+          "id": "20",
+          "name": "Shape 18",
+          "type": "shape",
+          "position": {
+            "x": 6.93,
+            "y": 2.27,
+            "w": 0.3,
+            "h": 0.3
+          },
+          "style": {
+            "fill": "#8B8680"
+          }
+        },
+        {
+          "id": "21",
+          "name": "Shape 19",
+          "type": "shape",
+          "position": {
+            "x": 7.02,
+            "y": 2.36,
+            "w": 0.11,
+            "h": 0.11
+          },
+          "style": {
+            "fill": "#FFFFFF"
+          }
+        },
+        {
+          "id": "22",
+          "name": "Text 20",
+          "type": "shape",
+          "text": "Streaming Support",
+          "position": {
+            "x": 7.34,
+            "y": 2.23,
+            "w": 2.98,
+            "h": 0.23
+          },
+          "style": {
+            "fontSize": 10.88,
+            "bold": true,
+            "fontColor": "#1A1A1A"
+          }
+        },
+        {
+          "id": "23",
+          "name": "Text 21",
+          "type": "shape",
+          "text": "Get tokens as they're generated for responsive UIs",
+          "position": {
+            "x": 7.34,
+            "y": 2.49,
+            "w": 2.97,
+            "h": 0.19
+          },
+          "style": {
+            "fontSize": 9.52,
+            "fontColor": "#3D3D3D"
+          }
+        },
+        {
+          "id": "24",
+          "name": "Shape 22",
+          "type": "shape",
+          "position": {
+            "x": 6.82,
+            "y": 2.91,
+            "w": 6.14,
+            "h": 0.68
+          },
+          "style": {
+            "fill": "#C4B7A6"
+          }
+        },
+        {
+          "id": "25",
+          "name": "Shape 23",
+          "type": "shape",
+          "position": {
+            "x": 6.93,
+            "y": 3.06,
+            "w": 0.3,
+            "h": 0.3
+          },
+          "style": {
+            "fill": "#C4B7A6"
+          }
+        },
+        {
+          "id": "26",
+          "name": "Shape 24",
+          "type": "shape",
+          "position": {
+            "x": 7.03,
+            "y": 3.15,
+            "w": 0.1,
+            "h": 0.11
+          },
+          "style": {
+            "fill": "#3D3D3D"
+          }
+        },
+        {
+          "id": "27",
+          "name": "Text 25",
+          "type": "shape",
+          "text": "Async Operations",
+          "position": {
+            "x": 7.34,
+            "y": 3.02,
+            "w": 2.75,
+            "h": 0.23
+          },
+          "style": {
+            "fontSize": 10.88,
+            "bold": true,
+            "fontColor": "#1A1A1A"
+          }
+        },
+        {
+          "id": "28",
+          "name": "Text 26",
+          "type": "shape",
+          "text": "Built-in async/await for concurrent processing",
+          "position": {
+            "x": 7.34,
+            "y": 3.29,
+            "w": 2.74,
+            "h": 0.19
+          },
+          "style": {
+            "fontSize": 9.52,
+            "fontColor": "#3D3D3D"
+          }
+        },
+        {
+          "id": "29",
+          "name": "Shape 27",
+          "type": "shape",
+          "position": {
+            "x": 6.82,
+            "y": 3.7,
+            "w": 6.14,
+            "h": 0.68
+          },
+          "style": {
+            "fill": "#8B8680"
+          }
+        },
+        {
+          "id": "30",
+          "name": "Shape 28",
+          "type": "shape",
+          "position": {
+            "x": 6.93,
+            "y": 3.85,
+            "w": 0.3,
+            "h": 0.3
+          },
+          "style": {
+            "fill": "#8B8680"
+          }
+        },
+        {
+          "id": "31",
+          "name": "Shape 29",
+          "type": "shape",
+          "position": {
+            "x": 7.02,
+            "y": 3.95,
+            "w": 0.11,
+            "h": 0.11
+          },
+          "style": {
+            "fill": "#FFFFFF"
+          }
+        },
+        {
+          "id": "32",
+          "name": "Text 30",
+          "type": "shape",
+          "text": "Parallel Execution",
+          "position": {
+            "x": 7.34,
+            "y": 3.81,
+            "w": 3.12,
+            "h": 0.23
+          },
+          "style": {
+            "fontSize": 10.88,
+            "bold": true,
+            "fontColor": "#1A1A1A"
+          }
+        },
+        {
+          "id": "33",
+          "name": "Text 31",
+          "type": "shape",
+          "text": "Run independent steps simultaneously for efficiency",
+          "position": {
+            "x": 7.34,
+            "y": 4.08,
+            "w": 3.11,
+            "h": 0.19
+          },
+          "style": {
+            "fontSize": 9.52,
+            "fontColor": "#3D3D3D"
+          }
+        },
+        {
+          "id": "34",
+          "name": "Shape 32",
+          "type": "shape",
+          "position": {
+            "x": 6.82,
+            "y": 4.49,
+            "w": 6.14,
+            "h": 0.68
+          },
+          "style": {
+            "fill": "#C4B7A6"
+          }
+        },
+        {
+          "id": "35",
+          "name": "Shape 33",
+          "type": "shape",
+          "position": {
+            "x": 6.93,
+            "y": 4.65,
+            "w": 0.3,
+            "h": 0.3
+          },
+          "style": {
+            "fill": "#C4B7A6"
+          }
+        },
+        {
+          "id": "36",
+          "name": "Shape 34",
+          "type": "shape",
+          "position": {
+            "x": 7.02,
+            "y": 4.74,
+            "w": 0.13,
+            "h": 0.11
+          },
+          "style": {
+            "fill": "#3D3D3D"
+          }
+        },
+        {
+          "id": "37",
+          "name": "Text 35",
+          "type": "shape",
+          "text": "Composability",
+          "position": {
+            "x": 7.34,
+            "y": 4.61,
+            "w": 2.49,
+            "h": 0.23
+          },
+          "style": {
+            "fontSize": 10.88,
+            "bold": true,
+            "fontColor": "#1A1A1A"
+          }
+        },
+        {
+          "id": "38",
+          "name": "Text 36",
+          "type": "shape",
+          "text": "Reuse and nest chains like building blocks",
+          "position": {
+            "x": 7.34,
+            "y": 4.87,
+            "w": 2.48,
+            "h": 0.19
+          },
+          "style": {
+            "fontSize": 9.52,
+            "fontColor": "#3D3D3D"
+          }
+        },
+        {
+          "id": "39",
+          "name": "Shape 37",
+          "type": "shape",
+          "position": {
+            "x": 6.82,
+            "y": 6.85,
+            "w": 6.14,
+            "h": 1.04
+          },
+          "style": {
+            "fill": "#8B8680"
+          }
+        },
+        {
+          "id": "40",
+          "name": "Shape 38",
+          "type": "shape",
+          "position": {
+            "x": 6.99,
+            "y": 7.04,
+            "w": 0.15,
+            "h": 0.15
+          },
+          "style": {
+            "fill": "#8B8680"
+          }
+        },
+        {
+          "id": "41",
+          "name": "Text 39",
+          "type": "shape",
+          "text": "The Pipe Operator",
+          "position": {
+            "x": 7.23,
+            "y": 7,
+            "w": 1.28,
+            "h": 0.23
+          },
+          "style": {
+            "fontSize": 10.88,
+            "bold": true,
+            "fontColor": "#1A1A1A"
+          }
+        },
+        {
+          "id": "42",
+          "name": "Text 40",
+          "type": "shape",
+          "text": "The|operator passes output from one component as input to the next, creating clean, readable data pipelines that mirror Unix philosophy",
+          "position": {
+            "x": 6.97,
+            "y": 7.3,
+            "w": 5.9,
+            "h": 0.43
+          },
+          "style": {
+            "fontSize": 9.52,
+            "fontColor": "#3D3D3D"
+          }
+        }
+      ],
+      "images": [],
+      "tables": 0,
+      "charts": 0,
+      "background": "#FAF9F6"
+    },
+    {
+      "name": "slide6.xml",
+      "shapes": [
+        {
+          "id": "2",
+          "name": "Shape 0",
+          "type": "shape",
+          "position": {
+            "x": 0.4,
+            "y": 0.53,
+            "w": 0.48,
+            "h": 0.01
+          },
+          "style": {
+            "fill": "#8B8680"
+          }
+        },
+        {
+          "id": "3",
+          "name": "Text 1",
+          "type": "shape",
+          "text": "Knowledge Integration",
+          "position": {
+            "x": 1.04,
+            "y": 0.4,
+            "w": 2.46,
+            "h": 0.2
+          },
+          "style": {
+            "fontSize": 10.07,
+            "fontColor": "#8B8680"
+          }
+        },
+        {
+          "id": "4",
+          "name": "Text 2",
+          "type": "shape",
+          "text": "Retrieval-Augmented Generation",
+          "position": {
+            "x": 0.4,
+            "y": 0.72,
+            "w": 12.77,
+            "h": 0.48
+          },
+          "style": {
+            "fontSize": 34.52,
+            "fontColor": "#1A1A1A"
+          }
+        },
+        {
+          "id": "5",
+          "name": "Text 3",
+          "type": "shape",
+          "text": "Ground LLM outputs in external knowledge to reduce hallucinations and enable domain-specific applications",
+          "position": {
+            "x": 0.4,
+            "y": 1.32,
+            "w": 12.62,
+            "h": 0.28
+          },
+          "style": {
+            "fontSize": 12.94,
+            "fontColor": "#3D3D3D"
+          }
+        },
+        {
+          "id": "6",
+          "name": "Shape 4",
+          "type": "shape",
+          "position": {
+            "x": 0.52,
+            "y": 1.84,
+            "w": 0.56,
+            "h": 0.56
+          },
+          "style": {
+            "fill": "#8B8680"
+          }
+        },
+        {
+          "id": "7",
+          "name": "Shape 5",
+          "type": "shape",
+          "position": {
+            "x": 0.73,
+            "y": 2.03,
+            "w": 0.13,
+            "h": 0.18
+          },
+          "style": {
+            "fill": "#FFFFFF"
+          }
+        },
+        {
+          "id": "8",
+          "name": "Text 6",
+          "type": "shape",
+          "text": "Load",
+          "position": {
+            "x": 0.36,
+            "y": 2.48,
+            "w": 0.87,
+            "h": 0.2
+          },
+          "style": {
+            "fontSize": 10.07,
+            "bold": true,
+            "fontColor": "#1A1A1A",
+            "align": "ctr"
+          }
+        },
+        {
+          "id": "9",
+          "name": "Text 7",
+          "type": "shape",
+          "text": "PDFs, Web, DB",
+          "position": {
+            "x": 0.37,
+            "y": 2.68,
+            "w": 0.86,
+            "h": 0.16
+          },
+          "style": {
+            "fontSize": 8.63,
+            "fontColor": "#A8A29E",
+            "align": "ctr"
+          }
+        },
+        {
+          "id": "10",
+          "name": "Shape 8",
+          "type": "shape",
+          "position": {
+            "x": 1.31,
+            "y": 2.33,
+            "w": 1.18,
+            "h": 0.01
+          },
+          "style": {
+            "fill": "#C4B7A6"
+          }
+        },
+        {
+          "id": "11",
+          "name": "Shape 9",
+          "type": "shape",
+          "position": {
+            "x": 2.61,
+            "y": 1.84,
+            "w": 0.56,
+            "h": 0.56
+          },
+          "style": {
+            "fill": "#C4B7A6"
+          }
+        },
+        {
+          "id": "12",
+          "name": "Shape 10",
+          "type": "shape",
+          "position": {
+            "x": 2.8,
+            "y": 2.03,
+            "w": 0.18,
+            "h": 0.18
+          },
+          "style": {
+            "fill": "#3D3D3D"
+          }
+        },
+        {
+          "id": "13",
+          "name": "Text 11",
+          "type": "shape",
+          "text": "Chunk",
+          "position": {
+            "x": 2.57,
+            "y": 2.48,
+            "w": 0.63,
+            "h": 0.2
+          },
+          "style": {
+            "fontSize": 10.07,
+            "bold": true,
+            "fontColor": "#1A1A1A",
+            "align": "ctr"
+          }
+        },
+        {
+          "id": "14",
+          "name": "Text 12",
+          "type": "shape",
+          "text": "Split Text",
+          "position": {
+            "x": 2.58,
+            "y": 2.68,
+            "w": 0.62,
+            "h": 0.16
+          },
+          "style": {
+            "fontSize": 8.63,
+            "fontColor": "#A8A29E",
+            "align": "ctr"
+          }
+        },
+        {
+          "id": "15",
+          "name": "Shape 13",
+          "type": "shape",
+          "position": {
+            "x": 3.29,
+            "y": 2.33,
+            "w": 1.18,
+            "h": 0.01
+          },
+          "style": {
+            "fill": "#C4B7A6"
+          }
+        },
+        {
+          "id": "16",
+          "name": "Shape 14",
+          "type": "shape",
+          "position": {
+            "x": 4.58,
+            "y": 1.84,
+            "w": 0.56,
+            "h": 0.56
+          },
+          "style": {
+            "fill": "#8B8680"
+          }
+        },
+        {
+          "id": "17",
+          "name": "Shape 15",
+          "type": "shape",
+          "position": {
+            "x": 4.78,
+            "y": 2.03,
+            "w": 0.18,
+            "h": 0.18
+          },
+          "style": {
+            "fill": "#FFFFFF"
+          }
+        },
+        {
+          "id": "18",
+          "name": "Text 16",
+          "type": "shape",
+          "text": "Embed",
+          "position": {
+            "x": 4.55,
+            "y": 2.48,
+            "w": 0.63,
+            "h": 0.2
+          },
+          "style": {
+            "fontSize": 10.07,
+            "bold": true,
+            "fontColor": "#1A1A1A",
+            "align": "ctr"
+          }
+        },
+        {
+          "id": "19",
+          "name": "Text 17",
+          "type": "shape",
+          "text": "Vectors",
+          "position": {
+            "x": 4.55,
+            "y": 2.68,
+            "w": 0.62,
+            "h": 0.16
+          },
+          "style": {
+            "fontSize": 8.63,
+            "fontColor": "#A8A29E",
+            "align": "ctr"
+          }
+        },
+        {
+          "id": "20",
+          "name": "Shape 18",
+          "type": "shape",
+          "position": {
+            "x": 5.26,
+            "y": 2.33,
+            "w": 1.18,
+            "h": 0.01
+          },
+          "style": {
+            "fill": "#C4B7A6"
+          }
+        },
+        {
+          "id": "21",
+          "name": "Shape 19",
+          "type": "shape",
+          "position": {
+            "x": 6.56,
+            "y": 1.84,
+            "w": 0.56,
+            "h": 0.56
+          },
+          "style": {
+            "fill": "#C4B7A6"
+          }
+        },
+        {
+          "id": "22",
+          "name": "Shape 20",
+          "type": "shape",
+          "position": {
+            "x": 6.76,
+            "y": 2.03,
+            "w": 0.16,
+            "h": 0.18
+          },
+          "style": {
+            "fill": "#3D3D3D"
+          }
+        },
+        {
+          "id": "23",
+          "name": "Text 21",
+          "type": "shape",
+          "text": "Store",
+          "position": {
+            "x": 6.52,
+            "y": 2.48,
+            "w": 0.63,
+            "h": 0.2
+          },
+          "style": {
+            "fontSize": 10.07,
+            "bold": true,
+            "fontColor": "#1A1A1A",
+            "align": "ctr"
+          }
+        },
+        {
+          "id": "24",
+          "name": "Text 22",
+          "type": "shape",
+          "text": "Vector DB",
+          "position": {
+            "x": 6.53,
+            "y": 2.68,
+            "w": 0.62,
+            "h": 0.16
+          },
+          "style": {
+            "fontSize": 8.63,
+            "fontColor": "#A8A29E",
+            "align": "ctr"
+          }
+        },
+        {
+          "id": "25",
+          "name": "Shape 23",
+          "type": "shape",
+          "position": {
+            "x": 3.52,
+            "y": 3.08,
+            "w": 0.48,
+            "h": 0.48
+          },
+          "style": {
+            "fill": "#8B8680"
+          }
+        },
+        {
+          "id": "26",
+          "name": "Shape 24",
+          "type": "shape",
+          "position": {
+            "x": 3.68,
+            "y": 3.22,
+            "w": 0.15,
+            "h": 0.2
+          },
+          "style": {
+            "fill": "#8B8680"
+          }
+        },
+        {
+          "id": "27",
+          "name": "Shape 25",
+          "type": "shape",
+          "position": {
+            "x": 0.4,
+            "y": 3.8,
+            "w": 0.56,
+            "h": 0.56
+          },
+          "style": {
+            "fill": "#8B8680"
+          }
+        },
+        {
+          "id": "28",
+          "name": "Shape 26",
+          "type": "shape",
+          "position": {
+            "x": 0.59,
+            "y": 3.98,
+            "w": 0.18,
+            "h": 0.18
+          },
+          "style": {
+            "fill": "#FFFFFF"
+          }
+        },
+        {
+          "id": "29",
+          "name": "Text 27",
+          "type": "shape",
+          "text": "Query",
+          "position": {
+            "x": 0.36,
+            "y": 4.43,
+            "w": 0.63,
+            "h": 0.2
+          },
+          "style": {
+            "fontSize": 10.07,
+            "bold": true,
+            "fontColor": "#1A1A1A",
+            "align": "ctr"
+          }
+        },
+        {
+          "id": "30",
+          "name": "Text 28",
+          "type": "shape",
+          "text": "User Input",
+          "position": {
+            "x": 0.37,
+            "y": 4.63,
+            "w": 0.62,
+            "h": 0.16
+          },
+          "style": {
+            "fontSize": 8.63,
+            "fontColor": "#A8A29E",
+            "align": "ctr"
+          }
+        },
+        {
+          "id": "31",
+          "name": "Shape 29",
+          "type": "shape",
+          "position": {
+            "x": 1.08,
+            "y": 4.29,
+            "w": 2.28,
+            "h": 0.01
+          },
+          "style": {
+            "fill": "#C4B7A6"
+          }
+        },
+        {
+          "id": "32",
+          "name": "Shape 30",
+          "type": "shape",
+          "position": {
+            "x": 3.48,
+            "y": 3.8,
+            "w": 0.56,
+            "h": 0.56
+          },
+          "style": {
+            "fill": "#C4B7A6"
+          }
+        },
+        {
+          "id": "33",
+          "name": "Shape 31",
+          "type": "shape",
+          "position": {
+            "x": 3.67,
+            "y": 3.98,
+            "w": 0.18,
+            "h": 0.18
+          },
+          "style": {
+            "fill": "#3D3D3D"
+          }
+        },
+        {
+          "id": "34",
+          "name": "Text 32",
+          "type": "shape",
+          "text": "Retrieve",
+          "position": {
+            "x": 3.44,
+            "y": 4.43,
+            "w": 0.63,
+            "h": 0.2
+          },
+          "style": {
+            "fontSize": 10.07,
+            "bold": true,
+            "fontColor": "#1A1A1A",
+            "align": "ctr"
+          }
+        },
+        {
+          "id": "35",
+          "name": "Text 33",
+          "type": "shape",
+          "text": "Similarity",
+          "position": {
+            "x": 3.45,
+            "y": 4.63,
+            "w": 0.62,
+            "h": 0.16
+          },
+          "style": {
+            "fontSize": 8.63,
+            "fontColor": "#A8A29E",
+            "align": "ctr"
+          }
+        },
+        {
+          "id": "36",
+          "name": "Shape 34",
+          "type": "shape",
+          "position": {
+            "x": 4.16,
+            "y": 4.29,
+            "w": 2.28,
+            "h": 0.01
+          },
+          "style": {
+            "fill": "#C4B7A6"
+          }
+        },
+        {
+          "id": "37",
+          "name": "Shape 35",
+          "type": "shape",
+          "position": {
+            "x": 6.56,
+            "y": 3.8,
+            "w": 0.56,
+            "h": 0.56
+          },
+          "style": {
+            "fill": "#8B8680"
+          }
+        },
+        {
+          "id": "38",
+          "name": "Shape 36",
+          "type": "shape",
+          "position": {
+            "x": 6.75,
+            "y": 3.98,
+            "w": 0.18,
+            "h": 0.18
+          },
+          "style": {
+            "fill": "#FFFFFF"
+          }
+        },
+        {
+          "id": "39",
+          "name": "Text 37",
+          "type": "shape",
+          "text": "Generate",
+          "position": {
+            "x": 6.52,
+            "y": 4.43,
+            "w": 0.64,
+            "h": 0.2
+          },
+          "style": {
+            "fontSize": 10.07,
+            "bold": true,
+            "fontColor": "#1A1A1A",
+            "align": "ctr"
+          }
+        },
+        {
+          "id": "40",
+          "name": "Text 38",
+          "type": "shape",
+          "text": "Grounded",
+          "position": {
+            "x": 6.52,
+            "y": 4.63,
+            "w": 0.63,
+            "h": 0.16
+          },
+          "style": {
+            "fontSize": 8.63,
+            "fontColor": "#A8A29E",
+            "align": "ctr"
+          }
+        },
+        {
+          "id": "41",
+          "name": "Shape 39",
+          "type": "shape",
+          "position": {
+            "x": 0.4,
+            "y": 5.03,
+            "w": 6.72,
+            "h": 1.1
+          },
+          "style": {
+            "fill": "#8B8680"
+          }
+        },
+        {
+          "id": "42",
+          "name": "Shape 40",
+          "type": "shape",
+          "position": {
+            "x": 0.55,
+            "y": 5.23,
+            "w": 0.16,
+            "h": 0.18
+          },
+          "style": {
+            "fill": "#8B8680"
+          }
+        },
+        {
+          "id": "43",
+          "name": "Text 41",
+          "type": "shape",
+          "text": "\"Instead of relying solely on the LLM's internal parameters, the model queries an external retriever, searches through a corpus, and conditions its generation on retrieved documents—grounding output in concrete, up-to-date data.\"",
+          "position": {
+            "x": 0.82,
+            "y": 5.19,
+            "w": 6.22,
+            "h": 0.78
+          },
+          "style": {
+            "fontSize": 11.51,
+            "fontColor": "#3D3D3D"
+          }
+        },
+        {
+          "id": "44",
+          "name": "Text 42",
+          "type": "shape",
+          "text": "RAG Benefits",
+          "position": {
+            "x": 7.44,
+            "y": 1.84,
+            "w": 5.59,
+            "h": 0.28
+          },
+          "style": {
+            "fontSize": 14.38,
+            "bold": true,
+            "fontColor": "#1A1A1A"
+          }
+        },
+        {
+          "id": "45",
+          "name": "Shape 43",
+          "type": "shape",
+          "position": {
+            "x": 7.44,
+            "y": 2.24,
+            "w": 5.49,
+            "h": 1.1
+          },
+          "style": {
+            "fill": "#8B8680"
+          }
+        },
+        {
+          "id": "46",
+          "name": "Shape 44",
+          "type": "shape",
+          "position": {
+            "x": 7.62,
+            "y": 2.44,
+            "w": 0.16,
+            "h": 0.16
+          },
+          "style": {
+            "fill": "#8B8680"
+          }
+        },
+        {
+          "id": "47",
+          "name": "Text 45",
+          "type": "shape",
+          "text": "Reduced Hallucinations",
+          "position": {
+            "x": 7.88,
+            "y": 2.4,
+            "w": 1.74,
+            "h": 0.24
+          },
+          "style": {
+            "fontSize": 11.51,
+            "bold": true,
+            "fontColor": "#1A1A1A"
+          }
+        },
+        {
+          "id": "48",
+          "name": "Text 46",
+          "type": "shape",
+          "text": "Ground responses in real data rather than model parameters, dramatically improving factual accuracy",
+          "position": {
+            "x": 7.6,
+            "y": 2.72,
+            "w": 5.24,
+            "h": 0.46
+          },
+          "style": {
+            "fontSize": 10.07,
+            "fontColor": "#3D3D3D"
+          }
+        },
+        {
+          "id": "49",
+          "name": "Shape 47",
+          "type": "shape",
+          "position": {
+            "x": 7.44,
+            "y": 3.45,
+            "w": 5.49,
+            "h": 1.1
+          },
+          "style": {
+            "fill": "#C4B7A6"
+          }
+        },
+        {
+          "id": "50",
+          "name": "Shape 48",
+          "type": "shape",
+          "position": {
+            "x": 7.62,
+            "y": 3.65,
+            "w": 0.16,
+            "h": 0.16
+          },
+          "style": {
+            "fill": "#8B8680"
+          }
+        },
+        {
+          "id": "51",
+          "name": "Text 49",
+          "type": "shape",
+          "text": "Dynamic Knowledge",
+          "position": {
+            "x": 7.88,
+            "y": 3.61,
+            "w": 1.52,
+            "h": 0.24
+          },
+          "style": {
+            "fontSize": 11.51,
+            "bold": true,
+            "fontColor": "#1A1A1A"
+          }
+        },
+        {
+          "id": "52",
+          "name": "Text 50",
+          "type": "shape",
+          "text": "Update knowledge bases without retraining expensive models—simply add new documents",
+          "position": {
+            "x": 7.6,
+            "y": 3.93,
+            "w": 5.24,
+            "h": 0.46
+          },
+          "style": {
+            "fontSize": 10.07,
+            "fontColor": "#3D3D3D"
+          }
+        },
+        {
+          "id": "53",
+          "name": "Shape 51",
+          "type": "shape",
+          "position": {
+            "x": 7.44,
+            "y": 4.66,
+            "w": 5.49,
+            "h": 1.1
+          },
+          "style": {
+            "fill": "#8B8680"
+          }
+        },
+        {
+          "id": "54",
+          "name": "Shape 52",
+          "type": "shape",
+          "position": {
+            "x": 7.62,
+            "y": 4.86,
+            "w": 0.16,
+            "h": 0.16
+          },
+          "style": {
+            "fill": "#8B8680"
+          }
+        },
+        {
+          "id": "55",
+          "name": "Text 53",
+          "type": "shape",
+          "text": "Domain Specificity",
+          "position": {
+            "x": 7.88,
+            "y": 4.82,
+            "w": 1.41,
+            "h": 0.24
+          },
+          "style": {
+            "fontSize": 11.51,
+            "bold": true,
+            "fontColor": "#1A1A1A"
+          }
+        },
+        {
+          "id": "56",
+          "name": "Text 54",
+          "type": "shape",
+          "text": "Enable LLMs to answer questions about private or specialized data not in training sets",
+          "position": {
+            "x": 7.6,
+            "y": 5.14,
+            "w": 5.24,
+            "h": 0.46
+          },
+          "style": {
+            "fontSize": 10.07,
+            "fontColor": "#3D3D3D"
+          }
+        },
+        {
+          "id": "57",
+          "name": "Shape 55",
+          "type": "shape",
+          "position": {
+            "x": 7.44,
+            "y": 5.88,
+            "w": 5.49,
+            "h": 0.87
+          },
+          "style": {
+            "fill": "#C4B7A6"
+          }
+        },
+        {
+          "id": "58",
+          "name": "Shape 56",
+          "type": "shape",
+          "position": {
+            "x": 7.62,
+            "y": 6.08,
+            "w": 0.16,
+            "h": 0.16
+          },
+          "style": {
+            "fill": "#8B8680"
+          }
+        },
+        {
+          "id": "59",
+          "name": "Text 57",
+          "type": "shape",
+          "text": "Source Attribution",
+          "position": {
+            "x": 7.88,
+            "y": 6.04,
+            "w": 1.37,
+            "h": 0.24
+          },
+          "style": {
+            "fontSize": 11.51,
+            "bold": true,
+            "fontColor": "#1A1A1A"
+          }
+        },
+        {
+          "id": "60",
+          "name": "Text 58",
+          "type": "shape",
+          "text": "Trace responses back to source documents for transparency and verification",
+          "position": {
+            "x": 7.6,
+            "y": 6.36,
+            "w": 5.24,
+            "h": 0.23
+          },
+          "style": {
+            "fontSize": 10.07,
+            "fontColor": "#3D3D3D"
+          }
+        },
+        {
+          "id": "61",
+          "name": "Shape 59",
+          "type": "shape",
+          "position": {
+            "x": 7.44,
+            "y": 6.86,
+            "w": 5.49,
+            "h": 0.64
+          },
+          "style": {
+            "fill": "#8B8680"
+          }
+        },
+        {
+          "id": "62",
+          "name": "Text 60",
+          "type": "shape",
+          "text": "Supported Vector Stores:Pinecone, Chroma, Weaviate, FAISS, Qdrant, Milvus, pgvector, and 20+ more",
+          "position": {
+            "x": 7.56,
+            "y": 6.98,
+            "w": 5.32,
+            "h": 0.4
+          },
+          "style": {
+            "fontSize": 10.07,
+            "bold": true,
+            "fontColor": "#1A1A1A"
+          }
+        }
+      ],
+      "images": [],
+      "tables": 0,
+      "charts": 0,
+      "background": "#FAF9F6"
+    },
+    {
+      "name": "slide7.xml",
+      "shapes": [
+        {
+          "id": "2",
+          "name": "Shape 0",
+          "type": "shape",
+          "position": {
+            "x": 0.35,
+            "y": 0.46,
+            "w": 0.42,
+            "h": 0.01
+          },
+          "style": {
+            "fill": "#8B8680"
+          }
+        },
+        {
+          "id": "3",
+          "name": "Text 1",
+          "type": "shape",
+          "text": "Autonomous Systems",
+          "position": {
+            "x": 0.9,
+            "y": 0.35,
+            "w": 1.94,
+            "h": 0.17
+          },
+          "style": {
+            "fontSize": 8.75,
+            "fontColor": "#8B8680"
+          }
+        },
+        {
+          "id": "4",
+          "name": "Text 2",
+          "type": "shape",
+          "text": "Agents and Tool Calling",
+          "position": {
+            "x": 0.35,
+            "y": 0.63,
+            "w": 12.85,
+            "h": 0.42
+          },
+          "style": {
+            "fontSize": 30,
+            "fontColor": "#1A1A1A"
+          }
+        },
+        {
+          "id": "5",
+          "name": "Text 3",
+          "type": "shape",
+          "text": "Enable LLMs to reason, decide, and execute actions dynamically",
+          "position": {
+            "x": 0.35,
+            "y": 1.15,
+            "w": 12.72,
+            "h": 0.24
+          },
+          "style": {
+            "fontSize": 11.25,
+            "fontColor": "#3D3D3D"
+          }
+        },
+        {
+          "id": "6",
+          "name": "Shape 4",
+          "type": "shape",
+          "position": {
+            "x": 0.35,
+            "y": 1.6,
+            "w": 6.18,
+            "h": 3.44
+          },
+          "style": {
+            "fill": "#1A1A1A"
+          }
+        },
+        {
+          "id": "7",
+          "name": "Shape 5",
+          "type": "shape",
+          "position": {
+            "x": 0.52,
+            "y": 1.77,
+            "w": 0.1,
+            "h": 0.1
+          },
+          "style": {
+            "fill": "#8B8680"
+          }
+        },
+        {
+          "id": "8",
+          "name": "Shape 6",
+          "type": "shape",
+          "position": {
+            "x": 0.69,
+            "y": 1.77,
+            "w": 0.1,
+            "h": 0.1
+          },
+          "style": {
+            "fill": "#C4B7A6"
+          }
+        },
+        {
+          "id": "9",
+          "name": "Shape 7",
+          "type": "shape",
+          "position": {
+            "x": 0.87,
+            "y": 1.77,
+            "w": 0.1,
+            "h": 0.1
+          },
+          "style": {
+            "fill": "#A8A29E"
+          }
+        },
+        {
+          "id": "10",
+          "name": "Text 8",
+          "type": "shape",
+          "text": "# Define tools with Pydantic schemasclassWeatherInput(BaseModel):\nlocation:str= Field(...)\nunit:str=\"celsius\"\nweather_tool = StructuredTool.from_function(\nfunc=get_weather,\nname=\"get_weather\",\nargs_schema=WeatherInput\n)\n# Create ReAct agent with memory\nagent = create_react_agent({\n\"llm\": llm,\n\"tools\": [weather_tool, search_tool],\n\"checkpointSaver\": memory\n})",
+          "position": {
+            "x": 0.52,
+            "y": 1.98,
+            "w": 5.89,
+            "h": 2.88
+          },
+          "style": {
+            "fontSize": 7.5,
+            "fontColor": "#C4B7A6"
+          }
+        },
+        {
+          "id": "11",
+          "name": "Shape 9",
+          "type": "shape",
+          "position": {
+            "x": 0.35,
+            "y": 5.17,
+            "w": 6.18,
+            "h": 3.48
+          },
+          "style": {
+            "fill": "#8B8680"
+          }
+        },
+        {
+          "id": "12",
+          "name": "Shape 10",
+          "type": "shape",
+          "position": {
+            "x": 0.54,
+            "y": 5.39,
+            "w": 0.14,
+            "h": 0.14
+          },
+          "style": {
+            "fill": "#8B8680"
+          }
+        },
+        {
+          "id": "13",
+          "name": "Text 11",
+          "type": "shape",
+          "text": "ReAct Pattern",
+          "position": {
+            "x": 0.76,
+            "y": 5.34,
+            "w": 1.03,
+            "h": 0.24
+          },
+          "style": {
+            "fontSize": 11.25,
+            "bold": true,
+            "fontColor": "#1A1A1A"
+          }
+        },
+        {
+          "id": "14",
+          "name": "Text 12",
+          "type": "shape",
+          "text": "Reasoning +Acting: The agent thinks through problems step-by-step, decides which tools to use, executes them, and observes results before continuing.",
+          "position": {
+            "x": 0.52,
+            "y": 5.69,
+            "w": 5.9,
+            "h": 0.45
+          },
+          "style": {
+            "fontSize": 10,
+            "bold": true,
+            "fontColor": "#1A1A1A"
+          }
+        },
+        {
+          "id": "15",
+          "name": "Shape 13",
+          "type": "shape",
+          "position": {
+            "x": 0.52,
+            "y": 6.28,
+            "w": 0.21,
+            "h": 0.21
+          },
+          "style": {
+            "fill": "#8B8680"
+          }
+        },
+        {
+          "id": "16",
+          "name": "Text 14",
+          "type": "shape",
+          "text": "1",
+          "position": {
+            "x": 0.49,
+            "y": 6.28,
+            "w": 0.26,
+            "h": 0.21
+          },
+          "style": {
+            "fontSize": 7.5,
+            "bold": true,
+            "fontColor": "#FFFFFF",
+            "align": "ctr"
+          }
+        },
+        {
+          "id": "17",
+          "name": "Text 15",
+          "type": "shape",
+          "text": "Thought: Analyze the problem",
+          "position": {
+            "x": 0.83,
+            "y": 6.3,
+            "w": 1.66,
+            "h": 0.17
+          },
+          "style": {
+            "fontSize": 8.75,
+            "fontColor": "#3D3D3D"
+          }
+        },
+        {
+          "id": "18",
+          "name": "Shape 16",
+          "type": "shape",
+          "position": {
+            "x": 0.52,
+            "y": 6.56,
+            "w": 0.21,
+            "h": 0.21
+          },
+          "style": {
+            "fill": "#C4B7A6"
+          }
+        },
+        {
+          "id": "19",
+          "name": "Text 17",
+          "type": "shape",
+          "text": "2",
+          "position": {
+            "x": 0.49,
+            "y": 6.56,
+            "w": 0.26,
+            "h": 0.21
+          },
+          "style": {
+            "fontSize": 7.5,
+            "bold": true,
+            "fontColor": "#3D3D3D",
+            "align": "ctr"
+          }
+        },
+        {
+          "id": "20",
+          "name": "Text 18",
+          "type": "shape",
+          "text": "Action: Select and call tool",
+          "position": {
+            "x": 0.83,
+            "y": 6.58,
+            "w": 1.47,
+            "h": 0.17
+          },
+          "style": {
+            "fontSize": 8.75,
+            "fontColor": "#3D3D3D"
+          }
+        },
+        {
+          "id": "21",
+          "name": "Shape 19",
+          "type": "shape",
+          "position": {
+            "x": 0.52,
+            "y": 6.84,
+            "w": 0.21,
+            "h": 0.21
+          },
+          "style": {
+            "fill": "#8B8680"
+          }
+        },
+        {
+          "id": "22",
+          "name": "Text 20",
+          "type": "shape",
+          "text": "3",
+          "position": {
+            "x": 0.49,
+            "y": 6.84,
+            "w": 0.26,
+            "h": 0.21
+          },
+          "style": {
+            "fontSize": 7.5,
+            "bold": true,
+            "fontColor": "#FFFFFF",
+            "align": "ctr"
+          }
+        },
+        {
+          "id": "23",
+          "name": "Text 21",
+          "type": "shape",
+          "text": "Observation: Process result",
+          "position": {
+            "x": 0.83,
+            "y": 6.85,
+            "w": 1.53,
+            "h": 0.17
+          },
+          "style": {
+            "fontSize": 8.75,
+            "fontColor": "#3D3D3D"
+          }
+        },
+        {
+          "id": "24",
+          "name": "Shape 22",
+          "type": "shape",
+          "position": {
+            "x": 0.52,
+            "y": 7.11,
+            "w": 0.21,
+            "h": 0.21
+          },
+          "style": {
+            "fill": "#C4B7A6"
+          }
+        },
+        {
+          "id": "25",
+          "name": "Text 23",
+          "type": "shape",
+          "text": "4",
+          "position": {
+            "x": 0.49,
+            "y": 7.11,
+            "w": 0.26,
+            "h": 0.21
+          },
+          "style": {
+            "fontSize": 7.5,
+            "bold": true,
+            "fontColor": "#3D3D3D",
+            "align": "ctr"
+          }
+        },
+        {
+          "id": "26",
+          "name": "Text 24",
+          "type": "shape",
+          "text": "Repeat or Final Answer",
+          "position": {
+            "x": 0.83,
+            "y": 7.13,
+            "w": 1.28,
+            "h": 0.17
+          },
+          "style": {
+            "fontSize": 8.75,
+            "fontColor": "#3D3D3D"
+          }
+        },
+        {
+          "id": "27",
+          "name": "Text 25",
+          "type": "shape",
+          "text": "Agent Capabilities",
+          "position": {
+            "x": 6.81,
+            "y": 1.6,
+            "w": 6.27,
+            "h": 0.24
+          },
+          "style": {
+            "fontSize": 12.5,
+            "bold": true,
+            "fontColor": "#1A1A1A"
+          }
+        },
+        {
+          "id": "28",
+          "name": "Shape 26",
+          "type": "shape",
+          "position": {
+            "x": 6.81,
+            "y": 1.94,
+            "w": 6.18,
+            "h": 0.73
+          },
+          "style": {
+            "fill": "#8B8680"
+          }
+        },
+        {
+          "id": "29",
+          "name": "Shape 27",
+          "type": "shape",
+          "position": {
+            "x": 6.96,
+            "y": 2.12,
+            "w": 0.14,
+            "h": 0.14
+          },
+          "style": {
+            "fill": "#8B8680"
+          }
+        },
+        {
+          "id": "30",
+          "name": "Text 28",
+          "type": "shape",
+          "text": "Web Search",
+          "position": {
+            "x": 7.19,
+            "y": 2.08,
+            "w": 0.82,
+            "h": 0.21
+          },
+          "style": {
+            "fontSize": 10,
+            "bold": true,
+            "fontColor": "#1A1A1A"
+          }
+        },
+        {
+          "id": "31",
+          "name": "Text 29",
+          "type": "shape",
+          "text": "Retrieve current information not in training data, verify facts, research topics dynamically",
+          "position": {
+            "x": 6.94,
+            "y": 2.36,
+            "w": 5.96,
+            "h": 0.17
+          },
+          "style": {
+            "fontSize": 8.75,
+            "fontColor": "#3D3D3D"
+          }
+        },
+        {
+          "id": "32",
+          "name": "Shape 30",
+          "type": "shape",
+          "position": {
+            "x": 6.81,
+            "y": 2.78,
+            "w": 6.18,
+            "h": 0.73
+          },
+          "style": {
+            "fill": "#C4B7A6"
+          }
+        },
+        {
+          "id": "33",
+          "name": "Shape 31",
+          "type": "shape",
+          "position": {
+            "x": 6.97,
+            "y": 2.95,
+            "w": 0.12,
+            "h": 0.14
+          },
+          "style": {
+            "fill": "#8B8680"
+          }
+        },
+        {
+          "id": "34",
+          "name": "Text 32",
+          "type": "shape",
+          "text": "Database Queries",
+          "position": {
+            "x": 7.19,
+            "y": 2.92,
+            "w": 1.15,
+            "h": 0.21
+          },
+          "style": {
+            "fontSize": 10,
+            "bold": true,
+            "fontColor": "#1A1A1A"
+          }
+        },
+        {
+          "id": "35",
+          "name": "Text 33",
+          "type": "shape",
+          "text": "Execute SQL, query APIs, access enterprise systems for real-time data retrieval",
+          "position": {
+            "x": 6.94,
+            "y": 3.19,
+            "w": 5.96,
+            "h": 0.17
+          },
+          "style": {
+            "fontSize": 8.75,
+            "fontColor": "#3D3D3D"
+          }
+        },
+        {
+          "id": "36",
+          "name": "Shape 34",
+          "type": "shape",
+          "position": {
+            "x": 6.81,
+            "y": 3.61,
+            "w": 6.18,
+            "h": 0.73
+          },
+          "style": {
+            "fill": "#8B8680"
+          }
+        },
+        {
+          "id": "37",
+          "name": "Shape 35",
+          "type": "shape",
+          "position": {
+            "x": 6.98,
+            "y": 3.78,
+            "w": 0.1,
+            "h": 0.14
+          },
+          "style": {
+            "fill": "#8B8680"
+          }
+        },
+        {
+          "id": "38",
+          "name": "Text 36",
+          "type": "shape",
+          "text": "Calculations",
+          "position": {
+            "x": 7.19,
+            "y": 3.75,
+            "w": 0.82,
+            "h": 0.21
+          },
+          "style": {
+            "fontSize": 10,
+            "bold": true,
+            "fontColor": "#1A1A1A"
+          }
+        },
+        {
+          "id": "39",
+          "name": "Text 37",
+          "type": "shape",
+          "text": "Perform precise mathematical operations, data analysis, and statistical computations",
+          "position": {
+            "x": 6.94,
+            "y": 4.03,
+            "w": 5.96,
+            "h": 0.17
+          },
+          "style": {
+            "fontSize": 8.75,
+            "fontColor": "#3D3D3D"
+          }
+        },
+        {
+          "id": "40",
+          "name": "Shape 38",
+          "type": "shape",
+          "position": {
+            "x": 6.81,
+            "y": 4.44,
+            "w": 6.18,
+            "h": 0.73
+          },
+          "style": {
+            "fill": "#C4B7A6"
+          }
+        },
+        {
+          "id": "41",
+          "name": "Shape 39",
+          "type": "shape",
+          "position": {
+            "x": 6.95,
+            "y": 4.62,
+            "w": 0.16,
+            "h": 0.14
+          },
+          "style": {
+            "fill": "#8B8680"
+          }
+        },
+        {
+          "id": "42",
+          "name": "Text 40",
+          "type": "shape",
+          "text": "Code Execution",
+          "position": {
+            "x": 7.19,
+            "y": 4.58,
+            "w": 1.03,
+            "h": 0.21
+          },
+          "style": {
+            "fontSize": 10,
+            "bold": true,
+            "fontColor": "#1A1A1A"
+          }
+        },
+        {
+          "id": "43",
+          "name": "Text 41",
+          "type": "shape",
+          "text": "Run Python, JavaScript, or shell commands to solve programming tasks",
+          "position": {
+            "x": 6.94,
+            "y": 4.86,
+            "w": 5.96,
+            "h": 0.17
+          },
+          "style": {
+            "fontSize": 8.75,
+            "fontColor": "#3D3D3D"
+          }
+        },
+        {
+          "id": "44",
+          "name": "Shape 42",
+          "type": "shape",
+          "position": {
+            "x": 6.81,
+            "y": 5.28,
+            "w": 6.18,
+            "h": 0.95
+          },
+          "style": {
+            "fill": "#8B8680"
+          }
+        },
+        {
+          "id": "45",
+          "name": "Shape 43",
+          "type": "shape",
+          "position": {
+            "x": 6.96,
+            "y": 5.45,
+            "w": 0.14,
+            "h": 0.14
+          },
+          "style": {
+            "fill": "#8B8680"
+          }
+        },
+        {
+          "id": "46",
+          "name": "Text 44",
+          "type": "shape",
+          "text": "Safety Controls",
+          "position": {
+            "x": 7.19,
+            "y": 5.42,
+            "w": 1.02,
+            "h": 0.21
+          },
+          "style": {
+            "fontSize": 10,
+            "bold": true,
+            "fontColor": "#1A1A1A"
+          }
+        },
+        {
+          "id": "47",
+          "name": "Text 45",
+          "type": "shape",
+          "text": "Set max_iterations to prevent infinite loops, implement human-in-the-loop checkpoints for sensitive operations, and validate tool outputs before use",
+          "position": {
+            "x": 6.94,
+            "y": 5.69,
+            "w": 5.96,
+            "h": 0.4
+          },
+          "style": {
+            "fontSize": 8.75,
+            "fontColor": "#3D3D3D"
+          }
+        }
+      ],
+      "images": [],
+      "tables": 0,
+      "charts": 0,
+      "background": "#FAF9F6"
+    },
+    {
+      "name": "slide8.xml",
+      "shapes": [
+        {
+          "id": "2",
+          "name": "Shape 0",
+          "type": "shape",
+          "position": {
+            "x": 0.42,
+            "y": 0.56,
+            "w": 0.5,
+            "h": 0.01
+          },
+          "style": {
+            "fill": "#8B8680"
+          }
+        },
+        {
+          "id": "3",
+          "name": "Text 1",
+          "type": "shape",
+          "text": "Context Preservation",
+          "position": {
+            "x": 1.08,
+            "y": 0.42,
+            "w": 2.42,
+            "h": 0.21
+          },
+          "style": {
+            "fontSize": 10.5,
+            "fontColor": "#8B8680"
+          }
+        },
+        {
+          "id": "4",
+          "name": "Text 2",
+          "type": "shape",
+          "text": "Memory and Conversation",
+          "position": {
+            "x": 0.42,
+            "y": 0.75,
+            "w": 12.75,
+            "h": 0.5
+          },
+          "style": {
+            "fontSize": 36,
+            "fontColor": "#1A1A1A"
+          }
+        },
+        {
+          "id": "5",
+          "name": "Text 3",
+          "type": "shape",
+          "text": "Maintain context across interactions for coherent, multi-turn conversations",
+          "position": {
+            "x": 0.42,
+            "y": 1.38,
+            "w": 12.59,
+            "h": 0.29
+          },
+          "style": {
+            "fontSize": 13.5,
+            "fontColor": "#3D3D3D"
+          }
+        },
+        {
+          "id": "6",
+          "name": "Shape 4",
+          "type": "shape",
+          "position": {
+            "x": 0.42,
+            "y": 1.92,
+            "w": 6.17,
+            "h": 1.99
+          },
+          "style": {
+            "fill": "#8B8680"
+          }
+        },
+        {
+          "id": "7",
+          "name": "Shape 5",
+          "type": "shape",
+          "position": {
+            "x": 0.63,
+            "y": 2.15,
+            "w": 0.42,
+            "h": 0.42
+          },
+          "style": {
+            "fill": "#8B8680"
+          }
+        },
+        {
+          "id": "8",
+          "name": "Shape 6",
+          "type": "shape",
+          "position": {
+            "x": 0.75,
+            "y": 2.28,
+            "w": 0.16,
+            "h": 0.15
+          },
+          "style": {
+            "fill": "#FFFFFF"
+          }
+        },
+        {
+          "id": "9",
+          "name": "Text 7",
+          "type": "shape",
+          "text": "Buffer Memory",
+          "position": {
+            "x": 1.17,
+            "y": 2.13,
+            "w": 1.48,
+            "h": 0.29
+          },
+          "style": {
+            "fontSize": 13.5,
+            "bold": true,
+            "fontColor": "#1A1A1A"
+          }
+        },
+        {
+          "id": "10",
+          "name": "Text 8",
+          "type": "shape",
+          "text": "Full Conversation History",
+          "position": {
+            "x": 1.17,
+            "y": 2.42,
+            "w": 1.45,
+            "h": 0.17
+          },
+          "style": {
+            "fontSize": 9,
+            "fontColor": "#A8A29E"
+          }
+        },
+        {
+          "id": "11",
+          "name": "Text 9",
+          "type": "shape",
+          "text": "Stores the entire conversation without modification. Simplest and most intuitive approach—preserves exact context but can grow large for long conversations.",
+          "position": {
+            "x": 0.63,
+            "y": 2.71,
+            "w": 5.82,
+            "h": 0.56
+          },
+          "style": {
+            "fontSize": 10.5,
+            "fontColor": "#3D3D3D"
+          }
+        },
+        {
+          "id": "12",
+          "name": "Shape 10",
+          "type": "shape",
+          "position": {
+            "x": 0.63,
+            "y": 3.4,
+            "w": 5.75,
+            "h": 0.01
+          },
+          "style": {
+            "fill": "#C4B7A6"
+          }
+        },
+        {
+          "id": "13",
+          "name": "Text 11",
+          "type": "shape",
+          "text": "Best for:Short conversations where exact history matters",
+          "position": {
+            "x": 0.63,
+            "y": 3.53,
+            "w": 5.81,
+            "h": 0.17
+          },
+          "style": {
+            "fontSize": 9,
+            "bold": true,
+            "fontColor": "#3D3D3D"
+          }
+        },
+        {
+          "id": "14",
+          "name": "Shape 12",
+          "type": "shape",
+          "position": {
+            "x": 6.75,
+            "y": 1.92,
+            "w": 6.17,
+            "h": 1.99
+          },
+          "style": {
+            "fill": "#C4B7A6"
+          }
+        },
+        {
+          "id": "15",
+          "name": "Shape 13",
+          "type": "shape",
+          "position": {
+            "x": 6.96,
+            "y": 2.15,
+            "w": 0.42,
+            "h": 0.42
+          },
+          "style": {
+            "fill": "#C4B7A6"
+          }
+        },
+        {
+          "id": "16",
+          "name": "Shape 14",
+          "type": "shape",
+          "position": {
+            "x": 7.1,
+            "y": 2.28,
+            "w": 0.15,
+            "h": 0.15
+          },
+          "style": {
+            "fill": "#3D3D3D"
+          }
+        },
+        {
+          "id": "17",
+          "name": "Text 15",
+          "type": "shape",
+          "text": "Window Memory",
+          "position": {
+            "x": 7.5,
+            "y": 2.13,
+            "w": 1.51,
+            "h": 0.29
+          },
+          "style": {
+            "fontSize": 13.5,
+            "bold": true,
+            "fontColor": "#1A1A1A"
+          }
+        },
+        {
+          "id": "18",
+          "name": "Text 16",
+          "type": "shape",
+          "text": "Recent k Messages",
+          "position": {
+            "x": 7.5,
+            "y": 2.42,
+            "w": 1.48,
+            "h": 0.17
+          },
+          "style": {
+            "fontSize": 9,
+            "fontColor": "#A8A29E"
+          }
+        },
+        {
+          "id": "19",
+          "name": "Text 17",
+          "type": "shape",
+          "text": "Keeps only the last k interactions (e.g., last 4 exchanges). Drops older messages to manage token usage. FIFO queue behavior—oldest messages removed first.",
+          "position": {
+            "x": 6.96,
+            "y": 2.71,
+            "w": 5.82,
+            "h": 0.56
+          },
+          "style": {
+            "fontSize": 10.5,
+            "fontColor": "#3D3D3D"
+          }
+        },
+        {
+          "id": "20",
+          "name": "Shape 18",
+          "type": "shape",
+          "position": {
+            "x": 6.96,
+            "y": 3.4,
+            "w": 5.75,
+            "h": 0.01
+          },
+          "style": {
+            "fill": "#C4B7A6"
+          }
+        },
+        {
+          "id": "21",
+          "name": "Text 19",
+          "type": "shape",
+          "text": "Best for:Ongoing conversations where recent context matters most",
+          "position": {
+            "x": 6.96,
+            "y": 3.53,
+            "w": 5.81,
+            "h": 0.17
+          },
+          "style": {
+            "fontSize": 9,
+            "bold": true,
+            "fontColor": "#3D3D3D"
+          }
+        },
+        {
+          "id": "22",
+          "name": "Shape 20",
+          "type": "shape",
+          "position": {
+            "x": 0.42,
+            "y": 4.07,
+            "w": 6.17,
+            "h": 1.99
+          },
+          "style": {
+            "fill": "#8B8680"
+          }
+        },
+        {
+          "id": "23",
+          "name": "Shape 21",
+          "type": "shape",
+          "position": {
+            "x": 0.63,
+            "y": 4.3,
+            "w": 0.42,
+            "h": 0.42
+          },
+          "style": {
+            "fill": "#8B8680"
+          }
+        },
+        {
+          "id": "24",
+          "name": "Shape 22",
+          "type": "shape",
+          "position": {
+            "x": 0.76,
+            "y": 4.43,
+            "w": 0.15,
+            "h": 0.15
+          },
+          "style": {
+            "fill": "#FFFFFF"
+          }
+        },
+        {
+          "id": "25",
+          "name": "Text 23",
+          "type": "shape",
+          "text": "Summary Memory",
+          "position": {
+            "x": 1.17,
+            "y": 4.28,
+            "w": 1.61,
+            "h": 0.29
+          },
+          "style": {
+            "fontSize": 13.5,
+            "bold": true,
+            "fontColor": "#1A1A1A"
+          }
+        },
+        {
+          "id": "26",
+          "name": "Text 24",
+          "type": "shape",
+          "text": "Condensed Summaries",
+          "position": {
+            "x": 1.17,
+            "y": 4.57,
+            "w": 1.58,
+            "h": 0.17
+          },
+          "style": {
+            "fontSize": 9,
+            "fontColor": "#A8A29E"
+          }
+        },
+        {
+          "id": "27",
+          "name": "Text 25",
+          "type": "shape",
+          "text": "Uses an LLM to create concise summaries of conversations. Incrementally updates as new messages arrive. Preserves key information while dramatically reducing tokens.",
+          "position": {
+            "x": 0.63,
+            "y": 4.86,
+            "w": 5.82,
+            "h": 0.56
+          },
+          "style": {
+            "fontSize": 10.5,
+            "fontColor": "#3D3D3D"
+          }
+        },
+        {
+          "id": "28",
+          "name": "Shape 26",
+          "type": "shape",
+          "position": {
+            "x": 0.63,
+            "y": 5.55,
+            "w": 5.75,
+            "h": 0.01
+          },
+          "style": {
+            "fill": "#C4B7A6"
+          }
+        },
+        {
+          "id": "29",
+          "name": "Text 27",
+          "type": "shape",
+          "text": "Best for:Long conversations where key points matter more than exact words",
+          "position": {
+            "x": 0.63,
+            "y": 5.68,
+            "w": 5.81,
+            "h": 0.17
+          },
+          "style": {
+            "fontSize": 9,
+            "bold": true,
+            "fontColor": "#3D3D3D"
+          }
+        },
+        {
+          "id": "30",
+          "name": "Shape 28",
+          "type": "shape",
+          "position": {
+            "x": 6.75,
+            "y": 4.07,
+            "w": 6.17,
+            "h": 1.99
+          },
+          "style": {
+            "fill": "#C4B7A6"
+          }
+        },
+        {
+          "id": "31",
+          "name": "Shape 29",
+          "type": "shape",
+          "position": {
+            "x": 6.96,
+            "y": 4.3,
+            "w": 0.42,
+            "h": 0.42
+          },
+          "style": {
+            "fill": "#C4B7A6"
+          }
+        },
+        {
+          "id": "32",
+          "name": "Shape 30",
+          "type": "shape",
+          "position": {
+            "x": 7.1,
+            "y": 4.43,
+            "w": 0.15,
+            "h": 0.15
+          },
+          "style": {
+            "fill": "#3D3D3D"
+          }
+        },
+        {
+          "id": "33",
+          "name": "Text 31",
+          "type": "shape",
+          "text": "Hybrid Memory",
+          "position": {
+            "x": 7.5,
+            "y": 4.28,
+            "w": 1.39,
+            "h": 0.29
+          },
+          "style": {
+            "fontSize": 13.5,
+            "bold": true,
+            "fontColor": "#1A1A1A"
+          }
+        },
+        {
+          "id": "34",
+          "name": "Text 32",
+          "type": "shape",
+          "text": "Summary + Buffer",
+          "position": {
+            "x": 7.5,
+            "y": 4.57,
+            "w": 1.35,
+            "h": 0.17
+          },
+          "style": {
+            "fontSize": 9,
+            "fontColor": "#A8A29E"
+          }
+        },
+        {
+          "id": "35",
+          "name": "Text 33",
+          "type": "shape",
+          "text": "Combines approaches—keeps recent messages in full detail while summarizing older ones. Smart threshold triggers summarization when token limit exceeded.",
+          "position": {
+            "x": 6.96,
+            "y": 4.86,
+            "w": 5.82,
+            "h": 0.56
+          },
+          "style": {
+            "fontSize": 10.5,
+            "fontColor": "#3D3D3D"
+          }
+        },
+        {
+          "id": "36",
+          "name": "Shape 34",
+          "type": "shape",
+          "position": {
+            "x": 6.96,
+            "y": 5.55,
+            "w": 5.75,
+            "h": 0.01
+          },
+          "style": {
+            "fill": "#C4B7A6"
+          }
+        },
+        {
+          "id": "37",
+          "name": "Text 35",
+          "type": "shape",
+          "text": "Best for:Technical discussions needing both detail and history",
+          "position": {
+            "x": 6.96,
+            "y": 5.68,
+            "w": 5.81,
+            "h": 0.17
+          },
+          "style": {
+            "fontSize": 9,
+            "bold": true,
+            "fontColor": "#3D3D3D"
+          }
+        },
+        {
+          "id": "38",
+          "name": "Shape 36",
+          "type": "shape",
+          "position": {
+            "x": 0.42,
+            "y": 6.22,
+            "w": 12.5,
+            "h": 0.86
+          },
+          "style": {
+            "fill": "#8B8680"
+          }
+        },
+        {
+          "id": "39",
+          "name": "Shape 37",
+          "type": "shape",
+          "position": {
+            "x": 0.6,
+            "y": 6.43,
+            "w": 0.21,
+            "h": 0.19
+          },
+          "style": {
+            "fill": "#8B8680"
+          }
+        },
+        {
+          "id": "40",
+          "name": "Text 38",
+          "type": "shape",
+          "text": "Modern Implementation: RunnableWithMessageHistory",
+          "position": {
+            "x": 0.94,
+            "y": 6.39,
+            "w": 11.47,
+            "h": 0.25
+          },
+          "style": {
+            "fontSize": 12,
+            "bold": true,
+            "fontColor": "#1A1A1A"
+          }
+        },
+        {
+          "id": "41",
+          "name": "Text 39",
+          "type": "shape",
+          "text": "The recommended approach for production applications—automatic history management, session support for multiple users, clean LCEL integration, and future-proof architecture",
+          "position": {
+            "x": 0.94,
+            "y": 6.68,
+            "w": 11.46,
+            "h": 0.24
+          },
+          "style": {
+            "fontSize": 10.5,
+            "fontColor": "#3D3D3D"
+          }
+        }
+      ],
+      "images": [],
+      "tables": 0,
+      "charts": 0,
+      "background": "#FAF9F6"
+    },
+    {
+      "name": "slide9.xml",
+      "shapes": [
+        {
+          "id": "2",
+          "name": "Shape 0",
+          "type": "shape",
+          "position": {
+            "x": 0.42,
+            "y": 0.56,
+            "w": 0.5,
+            "h": 0.01
+          },
+          "style": {
+            "fill": "#8B8680"
+          }
+        },
+        {
+          "id": "3",
+          "name": "Text 1",
+          "type": "shape",
+          "text": "Decision Framework",
+          "position": {
+            "x": 1.08,
+            "y": 0.42,
+            "w": 2.21,
+            "h": 0.21
+          },
+          "style": {
+            "fontSize": 10.5,
+            "fontColor": "#8B8680"
+          }
+        },
+        {
+          "id": "4",
+          "name": "Text 2",
+          "type": "shape",
+          "text": "Choosing the Right Tool",
+          "position": {
+            "x": 0.42,
+            "y": 0.75,
+            "w": 12.75,
+            "h": 0.5
+          },
+          "style": {
+            "fontSize": 36,
+            "fontColor": "#1A1A1A"
+          }
+        },
+        {
+          "id": "5",
+          "name": "Text 3",
+          "type": "shape",
+          "text": "Clear differentiation between LangChain, LangGraph, and LangSmith",
+          "position": {
+            "x": 0.42,
+            "y": 1.38,
+            "w": 12.59,
+            "h": 0.29
+          },
+          "style": {
+            "fontSize": 13.5,
+            "fontColor": "#3D3D3D"
+          }
+        },
+        {
+          "id": "7",
+          "name": "Shape 4",
+          "type": "shape",
+          "position": {
+            "x": 0.42,
+            "y": 5.36,
+            "w": 4.05,
+            "h": 1.15
+          },
+          "style": {
+            "fill": "#8B8680"
+          }
+        },
+        {
+          "id": "8",
+          "name": "Shape 5",
+          "type": "shape",
+          "position": {
+            "x": 0.6,
+            "y": 5.57,
+            "w": 0.17,
+            "h": 0.17
+          },
+          "style": {
+            "fill": "#8B8680"
+          }
+        },
+        {
+          "id": "9",
+          "name": "Text 6",
+          "type": "shape",
+          "text": "Start Here",
+          "position": {
+            "x": 0.88,
+            "y": 5.52,
+            "w": 0.83,
+            "h": 0.25
+          },
+          "style": {
+            "fontSize": 12,
+            "bold": true,
+            "fontColor": "#1A1A1A"
+          }
+        },
+        {
+          "id": "10",
+          "name": "Text 7",
+          "type": "shape",
+          "text": "UseLangChainwhen your workflow is linear or you're prototyping",
+          "position": {
+            "x": 0.58,
+            "y": 5.86,
+            "w": 3.79,
+            "h": 0.48
+          },
+          "style": {
+            "fontSize": 10.5,
+            "fontColor": "#3D3D3D"
+          }
+        },
+        {
+          "id": "11",
+          "name": "Shape 8",
+          "type": "shape",
+          "position": {
+            "x": 4.64,
+            "y": 5.36,
+            "w": 4.05,
+            "h": 1.15
+          },
+          "style": {
+            "fill": "#C4B7A6"
+          }
+        },
+        {
+          "id": "12",
+          "name": "Shape 9",
+          "type": "shape",
+          "position": {
+            "x": 4.83,
+            "y": 5.57,
+            "w": 0.17,
+            "h": 0.17
+          },
+          "style": {
+            "fill": "#8B8680"
+          }
+        },
+        {
+          "id": "13",
+          "name": "Text 10",
+          "type": "shape",
+          "text": "Scale Up",
+          "position": {
+            "x": 5.1,
+            "y": 5.52,
+            "w": 0.74,
+            "h": 0.25
+          },
+          "style": {
+            "fontSize": 12,
+            "bold": true,
+            "fontColor": "#1A1A1A"
+          }
+        },
+        {
+          "id": "14",
+          "name": "Text 11",
+          "type": "shape",
+          "text": "Move toLangGraphwhen you need branching, retries, or persistence",
+          "position": {
+            "x": 4.81,
+            "y": 5.86,
+            "w": 3.79,
+            "h": 0.48
+          },
+          "style": {
+            "fontSize": 10.5,
+            "fontColor": "#3D3D3D"
+          }
+        },
+        {
+          "id": "15",
+          "name": "Shape 12",
+          "type": "shape",
+          "position": {
+            "x": 8.86,
+            "y": 5.36,
+            "w": 4.05,
+            "h": 1.15
+          },
+          "style": {
+            "fill": "#8B8680"
+          }
+        },
+        {
+          "id": "16",
+          "name": "Shape 13",
+          "type": "shape",
+          "position": {
+            "x": 9.04,
+            "y": 5.57,
+            "w": 0.19,
+            "h": 0.17
+          },
+          "style": {
+            "fill": "#8B8680"
+          }
+        },
+        {
+          "id": "17",
+          "name": "Text 14",
+          "type": "shape",
+          "text": "Monitor Always",
+          "position": {
+            "x": 9.32,
+            "y": 5.52,
+            "w": 1.23,
+            "h": 0.25
+          },
+          "style": {
+            "fontSize": 12,
+            "bold": true,
+            "fontColor": "#1A1A1A"
+          }
+        },
+        {
+          "id": "18",
+          "name": "Text 15",
+          "type": "shape",
+          "text": "LayerLangSmithwhen testing, debugging, or moving to production",
+          "position": {
+            "x": 9.03,
+            "y": 5.86,
+            "w": 3.79,
+            "h": 0.48
+          },
+          "style": {
+            "fontSize": 10.5,
+            "fontColor": "#3D3D3D"
+          }
+        }
+      ],
+      "images": [],
+      "tables": 1,
+      "charts": 0,
+      "background": "#FAF9F6"
+    },
+    {
+      "name": "slide10.xml",
+      "shapes": [
+        {
+          "id": "2",
+          "name": "Shape 0",
+          "type": "shape",
+          "position": {
+            "x": 0.42,
+            "y": 0.56,
+            "w": 0.5,
+            "h": 0.01
+          },
+          "style": {
+            "fill": "#8B8680"
+          }
+        },
+        {
+          "id": "3",
+          "name": "Text 1",
+          "type": "shape",
+          "text": "Real-World Impact",
+          "position": {
+            "x": 1.08,
+            "y": 0.42,
+            "w": 2.07,
+            "h": 0.21
+          },
+          "style": {
+            "fontSize": 10.5,
+            "fontColor": "#8B8680"
+          }
+        },
+        {
+          "id": "4",
+          "name": "Text 2",
+          "type": "shape",
+          "text": "Production Use Cases",
+          "position": {
+            "x": 0.42,
+            "y": 0.75,
+            "w": 12.75,
+            "h": 0.5
+          },
+          "style": {
+            "fontSize": 36,
+            "fontColor": "#1A1A1A"
+          }
+        },
+        {
+          "id": "5",
+          "name": "Text 3",
+          "type": "shape",
+          "text": "Enterprise applications delivering measurable business value",
+          "position": {
+            "x": 0.42,
+            "y": 1.38,
+            "w": 12.59,
+            "h": 0.29
+          },
+          "style": {
+            "fontSize": 13.5,
+            "fontColor": "#3D3D3D"
+          }
+        },
+        {
+          "id": "6",
+          "name": "Shape 4",
+          "type": "shape",
+          "position": {
+            "x": 0.42,
+            "y": 1.92,
+            "w": 6.15,
+            "h": 2.59
+          },
+          "style": {
+            "fill": "#8B8680"
+          }
+        },
+        {
+          "id": "7",
+          "name": "Shape 5",
+          "type": "shape",
+          "position": {
+            "x": 0.63,
+            "y": 2.13,
+            "w": 0.5,
+            "h": 0.5
+          },
+          "style": {
+            "fill": "#8B8680"
+          }
+        },
+        {
+          "id": "8",
+          "name": "Shape 6",
+          "type": "shape",
+          "position": {
+            "x": 0.8,
+            "y": 2.28,
+            "w": 0.16,
+            "h": 0.19
+          },
+          "style": {
+            "fill": "#FFFFFF"
+          }
+        },
+        {
+          "id": "9",
+          "name": "Text 7",
+          "type": "shape",
+          "text": "Knowledge Management",
+          "position": {
+            "x": 1.29,
+            "y": 2.13,
+            "w": 2.4,
+            "h": 0.29
+          },
+          "style": {
+            "fontSize": 15,
+            "bold": true,
+            "fontColor": "#1A1A1A"
+          }
+        },
+        {
+          "id": "10",
+          "name": "Text 8",
+          "type": "shape",
+          "text": "Fortune 500 Manufacturing",
+          "position": {
+            "x": 1.29,
+            "y": 2.46,
+            "w": 2.35,
+            "h": 0.17
+          },
+          "style": {
+            "fontSize": 9,
+            "fontColor": "#A8A29E"
+          }
+        },
+        {
+          "id": "11",
+          "name": "Text 9",
+          "type": "shape",
+          "text": "Unified access to siloed corporate knowledge across document stores, knowledge bases, and employee expertise. Optimized chunking and metadata enrichment contextualize data.",
+          "position": {
+            "x": 0.63,
+            "y": 2.75,
+            "w": 5.8,
+            "h": 0.8
+          },
+          "style": {
+            "fontSize": 10.5,
+            "fontColor": "#3D3D3D"
+          }
+        },
+        {
+          "id": "12",
+          "name": "Shape 10",
+          "type": "shape",
+          "position": {
+            "x": 0.63,
+            "y": 3.68,
+            "w": 5.73,
+            "h": 0.01
+          },
+          "style": {
+            "fill": "#C4B7A6"
+          }
+        },
+        {
+          "id": "13",
+          "name": "Text 11",
+          "type": "shape",
+          "text": "45min",
+          "position": {
+            "x": 0.63,
+            "y": 3.81,
+            "w": 2.93,
+            "h": 0.33
+          },
+          "style": {
+            "fontSize": 18,
+            "fontColor": "#8B8680"
+          }
+        },
+        {
+          "id": "14",
+          "name": "Text 12",
+          "type": "shape",
+          "text": "→ 30sec",
+          "position": {
+            "x": 0.63,
+            "y": 4.14,
+            "w": 2.86,
+            "h": 0.17
+          },
+          "style": {
+            "fontSize": 9,
+            "fontColor": "#A8A29E"
+          }
+        },
+        {
+          "id": "15",
+          "name": "Text 13",
+          "type": "shape",
+          "text": "$4.2M",
+          "position": {
+            "x": 3.55,
+            "y": 3.81,
+            "w": 2.93,
+            "h": 0.33
+          },
+          "style": {
+            "fontSize": 18,
+            "fontColor": "#8B8680"
+          }
+        },
+        {
+          "id": "16",
+          "name": "Text 14",
+          "type": "shape",
+          "text": "Annual Savings",
+          "position": {
+            "x": 3.55,
+            "y": 4.14,
+            "w": 2.86,
+            "h": 0.17
+          },
+          "style": {
+            "fontSize": 9,
+            "fontColor": "#A8A29E"
+          }
+        },
+        {
+          "id": "17",
+          "name": "Shape 15",
+          "type": "shape",
+          "position": {
+            "x": 6.77,
+            "y": 1.92,
+            "w": 6.15,
+            "h": 2.59
+          },
+          "style": {
+            "fill": "#C4B7A6"
+          }
+        },
+        {
+          "id": "18",
+          "name": "Shape 16",
+          "type": "shape",
+          "position": {
+            "x": 6.98,
+            "y": 2.13,
+            "w": 0.5,
+            "h": 0.5
+          },
+          "style": {
+            "fill": "#C4B7A6"
+          }
+        },
+        {
+          "id": "19",
+          "name": "Shape 17",
+          "type": "shape",
+          "position": {
+            "x": 7.15,
+            "y": 2.28,
+            "w": 0.16,
+            "h": 0.19
+          },
+          "style": {
+            "fill": "#3D3D3D"
+          }
+        },
+        {
+          "id": "20",
+          "name": "Text 18",
+          "type": "shape",
+          "text": "Customer Support",
+          "position": {
+            "x": 7.65,
+            "y": 2.13,
+            "w": 1.79,
+            "h": 0.29
+          },
+          "style": {
+            "fontSize": 15,
+            "bold": true,
+            "fontColor": "#1A1A1A"
+          }
+        },
+        {
+          "id": "21",
+          "name": "Text 19",
+          "type": "shape",
+          "text": "Financial Services",
+          "position": {
+            "x": 7.65,
+            "y": 2.46,
+            "w": 1.75,
+            "h": 0.17
+          },
+          "style": {
+            "fontSize": 9,
+            "fontColor": "#A8A29E"
+          }
+        },
+        {
+          "id": "22",
+          "name": "Text 20",
+          "type": "shape",
+          "text": "Automated loan processing with multi-step verification, compliance checks, and human-in-the-loop approvals. LangChain orchestrates automated and manual components.",
+          "position": {
+            "x": 6.98,
+            "y": 2.75,
+            "w": 5.8,
+            "h": 0.8
+          },
+          "style": {
+            "fontSize": 10.5,
+            "fontColor": "#3D3D3D"
+          }
+        },
+        {
+          "id": "23",
+          "name": "Shape 21",
+          "type": "shape",
+          "position": {
+            "x": 6.98,
+            "y": 3.68,
+            "w": 5.73,
+            "h": 0.01
+          },
+          "style": {
+            "fill": "#C4B7A6"
+          }
+        },
+        {
+          "id": "24",
+          "name": "Text 22",
+          "type": "shape",
+          "text": "2 days",
+          "position": {
+            "x": 6.98,
+            "y": 3.81,
+            "w": 2.93,
+            "h": 0.33
+          },
+          "style": {
+            "fontSize": 18,
+            "fontColor": "#8B8680"
+          }
+        },
+        {
+          "id": "25",
+          "name": "Text 23",
+          "type": "shape",
+          "text": "→ 2 hours",
+          "position": {
+            "x": 6.98,
+            "y": 4.14,
+            "w": 2.86,
+            "h": 0.17
+          },
+          "style": {
+            "fontSize": 9,
+            "fontColor": "#A8A29E"
+          }
+        },
+        {
+          "id": "26",
+          "name": "Text 24",
+          "type": "shape",
+          "text": "90%",
+          "position": {
+            "x": 9.91,
+            "y": 3.81,
+            "w": 2.93,
+            "h": 0.33
+          },
+          "style": {
+            "fontSize": 18,
+            "fontColor": "#8B8680"
+          }
+        },
+        {
+          "id": "27",
+          "name": "Text 25",
+          "type": "shape",
+          "text": "Time Reduction",
+          "position": {
+            "x": 9.91,
+            "y": 4.14,
+            "w": 2.86,
+            "h": 0.17
+          },
+          "style": {
+            "fontSize": 9,
+            "fontColor": "#A8A29E"
+          }
+        },
+        {
+          "id": "28",
+          "name": "Shape 26",
+          "type": "shape",
+          "position": {
+            "x": 0.42,
+            "y": 4.72,
+            "w": 6.15,
+            "h": 2.36
+          },
+          "style": {
+            "fill": "#8B8680"
+          }
+        },
+        {
+          "id": "29",
+          "name": "Shape 27",
+          "type": "shape",
+          "position": {
+            "x": 0.63,
+            "y": 4.93,
+            "w": 0.5,
+            "h": 0.5
+          },
+          "style": {
+            "fill": "#8B8680"
+          }
+        },
+        {
+          "id": "30",
+          "name": "Shape 28",
+          "type": "shape",
+          "position": {
+            "x": 0.76,
+            "y": 5.09,
+            "w": 0.23,
+            "h": 0.19
+          },
+          "style": {
+            "fill": "#FFFFFF"
+          }
+        },
+        {
+          "id": "31",
+          "name": "Text 29",
+          "type": "shape",
+          "text": "Compliance & Legal",
+          "position": {
+            "x": 1.29,
+            "y": 4.93,
+            "w": 1.95,
+            "h": 0.29
+          },
+          "style": {
+            "fontSize": 15,
+            "bold": true,
+            "fontColor": "#1A1A1A"
+          }
+        },
+        {
+          "id": "32",
+          "name": "Text 30",
+          "type": "shape",
+          "text": "Multinational Financial Firm",
+          "position": {
+            "x": 1.29,
+            "y": 5.26,
+            "w": 1.91,
+            "h": 0.17
+          },
+          "style": {
+            "fontSize": 9,
+            "fontColor": "#A8A29E"
+          }
+        },
+        {
+          "id": "33",
+          "name": "Text 31",
+          "type": "shape",
+          "text": "RAG system combining internal and external regulatory sources with automated change monitoring. Complete audit trails via LangSmith for compliance documentation.",
+          "position": {
+            "x": 0.63,
+            "y": 5.56,
+            "w": 5.8,
+            "h": 0.56
+          },
+          "style": {
+            "fontSize": 10.5,
+            "fontColor": "#3D3D3D"
+          }
+        },
+        {
+          "id": "34",
+          "name": "Shape 32",
+          "type": "shape",
+          "position": {
+            "x": 0.63,
+            "y": 6.25,
+            "w": 5.73,
+            "h": 0.01
+          },
+          "style": {
+            "fill": "#C4B7A6"
+          }
+        },
+        {
+          "id": "35",
+          "name": "Text 33",
+          "type": "shape",
+          "text": "40%",
+          "position": {
+            "x": 0.63,
+            "y": 6.38,
+            "w": 2.93,
+            "h": 0.33
+          },
+          "style": {
+            "fontSize": 18,
+            "fontColor": "#8B8680"
+          }
+        },
+        {
+          "id": "36",
+          "name": "Text 34",
+          "type": "shape",
+          "text": "Less Research Time",
+          "position": {
+            "x": 0.63,
+            "y": 6.71,
+            "w": 2.86,
+            "h": 0.17
+          },
+          "style": {
+            "fontSize": 9,
+            "fontColor": "#A8A29E"
+          }
+        },
+        {
+          "id": "37",
+          "name": "Text 35",
+          "type": "shape",
+          "text": "65%",
+          "position": {
+            "x": 3.55,
+            "y": 6.38,
+            "w": 2.93,
+            "h": 0.33
+          },
+          "style": {
+            "fontSize": 18,
+            "fontColor": "#8B8680"
+          }
+        },
+        {
+          "id": "38",
+          "name": "Text 36",
+          "type": "shape",
+          "text": "Better Change Detection",
+          "position": {
+            "x": 3.55,
+            "y": 6.71,
+            "w": 2.86,
+            "h": 0.17
+          },
+          "style": {
+            "fontSize": 9,
+            "fontColor": "#A8A29E"
+          }
+        },
+        {
+          "id": "39",
+          "name": "Shape 37",
+          "type": "shape",
+          "position": {
+            "x": 6.77,
+            "y": 4.72,
+            "w": 6.15,
+            "h": 2.36
+          },
+          "style": {
+            "fill": "#C4B7A6"
+          }
+        },
+        {
+          "id": "40",
+          "name": "Shape 38",
+          "type": "shape",
+          "position": {
+            "x": 6.98,
+            "y": 4.93,
+            "w": 0.5,
+            "h": 0.5
+          },
+          "style": {
+            "fill": "#C4B7A6"
+          }
+        },
+        {
+          "id": "41",
+          "name": "Shape 39",
+          "type": "shape",
+          "position": {
+            "x": 7.11,
+            "y": 5.09,
+            "w": 0.23,
+            "h": 0.19
+          },
+          "style": {
+            "fill": "#3D3D3D"
+          }
+        },
+        {
+          "id": "42",
+          "name": "Text 40",
+          "type": "shape",
+          "text": "Multi-Agent Systems",
+          "position": {
+            "x": 7.65,
+            "y": 4.93,
+            "w": 2.05,
+            "h": 0.29
+          },
+          "style": {
+            "fontSize": 15,
+            "bold": true,
+            "fontColor": "#1A1A1A"
+          }
+        },
+        {
+          "id": "43",
+          "name": "Text 41",
+          "type": "shape",
+          "text": "Research & Development",
+          "position": {
+            "x": 7.65,
+            "y": 5.26,
+            "w": 2.01,
+            "h": 0.17
+          },
+          "style": {
+            "fontSize": 9,
+            "fontColor": "#A8A29E"
+          }
+        },
+        {
+          "id": "44",
+          "name": "Text 42",
+          "type": "shape",
+          "text": "LangGraph coordinates research, coding, and validation agents in customer-facing workflows. Agents debate citations, self-correct, and escalate to humans when confidence is low.",
+          "position": {
+            "x": 6.98,
+            "y": 5.56,
+            "w": 5.8,
+            "h": 0.85
+          },
+          "style": {
+            "fontSize": 10.5,
+            "fontColor": "#3D3D3D"
+          }
+        },
+        {
+          "id": "45",
+          "name": "Shape 43",
+          "type": "shape",
+          "position": {
+            "x": 6.98,
+            "y": 6.54,
+            "w": 5.73,
+            "h": 0.01
+          },
+          "style": {
+            "fill": "#C4B7A6"
+          }
+        },
+        {
+          "id": "46",
+          "name": "Text 44",
+          "type": "shape",
+          "text": "Key Features:State persistence, human checkpoints, retry logic, parallel execution",
+          "position": {
+            "x": 6.98,
+            "y": 6.67,
+            "w": 5.8,
+            "h": 0.21
+          },
+          "style": {
+            "fontSize": 10.5,
+            "bold": true,
+            "fontColor": "#1A1A1A"
+          }
+        }
+      ],
+      "images": [],
+      "tables": 0,
+      "charts": 0,
+      "background": "#FAF9F6"
+    },
+    {
+      "name": "slide11.xml",
+      "shapes": [
+        {
+          "id": "2",
+          "name": "Shape 0",
+          "type": "shape",
+          "position": {
+            "x": 0.42,
+            "y": 0.56,
+            "w": 0.5,
+            "h": 0.01
+          },
+          "style": {
+            "fill": "#8B8680"
+          }
+        },
+        {
+          "id": "3",
+          "name": "Text 1",
+          "type": "shape",
+          "text": "Extensibility",
+          "position": {
+            "x": 1.08,
+            "y": 0.42,
+            "w": 1.47,
+            "h": 0.21
+          },
+          "style": {
+            "fontSize": 10.5,
+            "fontColor": "#8B8680"
+          }
+        },
+        {
+          "id": "4",
+          "name": "Text 2",
+          "type": "shape",
+          "text": "Integration Ecosystem",
+          "position": {
+            "x": 0.42,
+            "y": 0.75,
+            "w": 12.75,
+            "h": 0.5
+          },
+          "style": {
+            "fontSize": 36,
+            "fontColor": "#1A1A1A"
+          }
+        },
+        {
+          "id": "5",
+          "name": "Text 3",
+          "type": "shape",
+          "text": "1000+ provider integrations with model-agnostic design",
+          "position": {
+            "x": 0.42,
+            "y": 1.38,
+            "w": 12.59,
+            "h": 0.29
+          },
+          "style": {
+            "fontSize": 13.5,
+            "fontColor": "#3D3D3D"
+          }
+        },
+        {
+          "id": "6",
+          "name": "Shape 4",
+          "type": "shape",
+          "position": {
+            "x": 0.42,
+            "y": 1.92,
+            "w": 6.08,
+            "h": 1.96
+          },
+          "style": {
+            "fill": "#8B8680"
+          }
+        },
+        {
+          "id": "7",
+          "name": "Shape 5",
+          "type": "shape",
+          "position": {
+            "x": 0.58,
+            "y": 2.08,
+            "w": 0.42,
+            "h": 0.42
+          },
+          "style": {
+            "fill": "#8B8680"
+          }
+        },
+        {
+          "id": "8",
+          "name": "Shape 6",
+          "type": "shape",
+          "position": {
+            "x": 0.72,
+            "y": 2.22,
+            "w": 0.15,
+            "h": 0.15
+          },
+          "style": {
+            "fill": "#FFFFFF"
+          }
+        },
+        {
+          "id": "9",
+          "name": "Text 7",
+          "type": "shape",
+          "text": "LLM Providers",
+          "position": {
+            "x": 1.13,
+            "y": 2.15,
+            "w": 1.29,
+            "h": 0.29
+          },
+          "style": {
+            "fontSize": 13.5,
+            "bold": true,
+            "fontColor": "#1A1A1A"
+          }
+        },
+        {
+          "id": "10",
+          "name": "Shape 8",
+          "type": "shape",
+          "position": {
+            "x": 0.58,
+            "y": 2.7,
+            "w": 0.06,
+            "h": 0.06
+          },
+          "style": {
+            "fill": "#8B8680"
+          }
+        },
+        {
+          "id": "11",
+          "name": "Text 9",
+          "type": "shape",
+          "text": "OpenAI (GPT-4, GPT-3.5)",
+          "position": {
+            "x": 0.73,
+            "y": 2.63,
+            "w": 1.72,
+            "h": 0.21
+          },
+          "style": {
+            "fontSize": 10.5,
+            "fontColor": "#3D3D3D"
+          }
+        },
+        {
+          "id": "12",
+          "name": "Shape 10",
+          "type": "shape",
+          "position": {
+            "x": 3.5,
+            "y": 2.7,
+            "w": 0.06,
+            "h": 0.06
+          },
+          "style": {
+            "fill": "#8B8680"
+          }
+        },
+        {
+          "id": "13",
+          "name": "Text 11",
+          "type": "shape",
+          "text": "Anthropic (Claude)",
+          "position": {
+            "x": 3.65,
+            "y": 2.63,
+            "w": 1.3,
+            "h": 0.21
+          },
+          "style": {
+            "fontSize": 10.5,
+            "fontColor": "#3D3D3D"
+          }
+        },
+        {
+          "id": "14",
+          "name": "Shape 12",
+          "type": "shape",
+          "position": {
+            "x": 0.58,
+            "y": 2.99,
+            "w": 0.06,
+            "h": 0.06
+          },
+          "style": {
+            "fill": "#8B8680"
+          }
+        },
+        {
+          "id": "15",
+          "name": "Text 13",
+          "type": "shape",
+          "text": "Google (Gemini, PaLM)",
+          "position": {
+            "x": 0.73,
+            "y": 2.92,
+            "w": 1.56,
+            "h": 0.21
+          },
+          "style": {
+            "fontSize": 10.5,
+            "fontColor": "#3D3D3D"
+          }
+        },
+        {
+          "id": "16",
+          "name": "Shape 14",
+          "type": "shape",
+          "position": {
+            "x": 3.5,
+            "y": 2.99,
+            "w": 0.06,
+            "h": 0.06
+          },
+          "style": {
+            "fill": "#8B8680"
+          }
+        },
+        {
+          "id": "17",
+          "name": "Text 15",
+          "type": "shape",
+          "text": "Hugging Face",
+          "position": {
+            "x": 3.65,
+            "y": 2.92,
+            "w": 0.97,
+            "h": 0.21
+          },
+          "style": {
+            "fontSize": 10.5,
+            "fontColor": "#3D3D3D"
+          }
+        },
+        {
+          "id": "18",
+          "name": "Shape 16",
+          "type": "shape",
+          "position": {
+            "x": 0.58,
+            "y": 3.28,
+            "w": 0.06,
+            "h": 0.06
+          },
+          "style": {
+            "fill": "#8B8680"
+          }
+        },
+        {
+          "id": "19",
+          "name": "Text 17",
+          "type": "shape",
+          "text": "Cohere",
+          "position": {
+            "x": 0.73,
+            "y": 3.21,
+            "w": 0.54,
+            "h": 0.21
+          },
+          "style": {
+            "fontSize": 10.5,
+            "fontColor": "#3D3D3D"
+          }
+        },
+        {
+          "id": "20",
+          "name": "Shape 18",
+          "type": "shape",
+          "position": {
+            "x": 3.5,
+            "y": 3.28,
+            "w": 0.06,
+            "h": 0.06
+          },
+          "style": {
+            "fill": "#8B8680"
+          }
+        },
+        {
+          "id": "21",
+          "name": "Text 19",
+          "type": "shape",
+          "text": "Azure OpenAI",
+          "position": {
+            "x": 3.65,
+            "y": 3.21,
+            "w": 0.96,
+            "h": 0.21
+          },
+          "style": {
+            "fontSize": 10.5,
+            "fontColor": "#3D3D3D"
+          }
+        },
+        {
+          "id": "22",
+          "name": "Shape 20",
+          "type": "shape",
+          "position": {
+            "x": 0.58,
+            "y": 3.57,
+            "w": 0.06,
+            "h": 0.06
+          },
+          "style": {
+            "fill": "#8B8680"
+          }
+        },
+        {
+          "id": "23",
+          "name": "Text 21",
+          "type": "shape",
+          "text": "AWS Bedrock",
+          "position": {
+            "x": 0.73,
+            "y": 3.5,
+            "w": 0.97,
+            "h": 0.21
+          },
+          "style": {
+            "fontSize": 10.5,
+            "fontColor": "#3D3D3D"
+          }
+        },
+        {
+          "id": "24",
+          "name": "Shape 22",
+          "type": "shape",
+          "position": {
+            "x": 3.5,
+            "y": 3.57,
+            "w": 0.06,
+            "h": 0.06
+          },
+          "style": {
+            "fill": "#8B8680"
+          }
+        },
+        {
+          "id": "25",
+          "name": "Text 23",
+          "type": "shape",
+          "text": "Local Models (Ollama)",
+          "position": {
+            "x": 3.65,
+            "y": 3.5,
+            "w": 1.52,
+            "h": 0.21
+          },
+          "style": {
+            "fontSize": 10.5,
+            "fontColor": "#3D3D3D"
+          }
+        },
+        {
+          "id": "26",
+          "name": "Shape 24",
+          "type": "shape",
+          "position": {
+            "x": 0.42,
+            "y": 4,
+            "w": 6.08,
+            "h": 1.67
+          },
+          "style": {
+            "fill": "#C4B7A6"
+          }
+        },
+        {
+          "id": "27",
+          "name": "Shape 25",
+          "type": "shape",
+          "position": {
+            "x": 0.58,
+            "y": 4.17,
+            "w": 0.42,
+            "h": 0.42
+          },
+          "style": {
+            "fill": "#C4B7A6"
+          }
+        },
+        {
+          "id": "28",
+          "name": "Shape 26",
+          "type": "shape",
+          "position": {
+            "x": 0.73,
+            "y": 4.3,
+            "w": 0.13,
+            "h": 0.15
+          },
+          "style": {
+            "fill": "#3D3D3D"
+          }
+        },
+        {
+          "id": "29",
+          "name": "Text 27",
+          "type": "shape",
+          "text": "Vector Databases",
+          "position": {
+            "x": 1.13,
+            "y": 4.23,
+            "w": 1.56,
+            "h": 0.29
+          },
+          "style": {
+            "fontSize": 13.5,
+            "bold": true,
+            "fontColor": "#1A1A1A"
+          }
+        },
+        {
+          "id": "30",
+          "name": "Shape 28",
+          "type": "shape",
+          "position": {
+            "x": 0.58,
+            "y": 4.78,
+            "w": 0.06,
+            "h": 0.06
+          },
+          "style": {
+            "fill": "#C4B7A6"
+          }
+        },
+        {
+          "id": "31",
+          "name": "Text 29",
+          "type": "shape",
+          "text": "Pinecone",
+          "position": {
+            "x": 0.73,
+            "y": 4.71,
+            "w": 0.67,
+            "h": 0.21
+          },
+          "style": {
+            "fontSize": 10.5,
+            "fontColor": "#3D3D3D"
+          }
+        },
+        {
+          "id": "32",
+          "name": "Shape 30",
+          "type": "shape",
+          "position": {
+            "x": 2.53,
+            "y": 4.78,
+            "w": 0.06,
+            "h": 0.06
+          },
+          "style": {
+            "fill": "#C4B7A6"
+          }
+        },
+        {
+          "id": "33",
+          "name": "Text 31",
+          "type": "shape",
+          "text": "Chroma",
+          "position": {
+            "x": 2.67,
+            "y": 4.71,
+            "w": 0.58,
+            "h": 0.21
+          },
+          "style": {
+            "fontSize": 10.5,
+            "fontColor": "#3D3D3D"
+          }
+        },
+        {
+          "id": "34",
+          "name": "Shape 32",
+          "type": "shape",
+          "position": {
+            "x": 4.47,
+            "y": 4.78,
+            "w": 0.06,
+            "h": 0.06
+          },
+          "style": {
+            "fill": "#C4B7A6"
+          }
+        },
+        {
+          "id": "35",
+          "name": "Text 33",
+          "type": "shape",
+          "text": "Weaviate",
+          "position": {
+            "x": 4.62,
+            "y": 4.71,
+            "w": 0.68,
+            "h": 0.21
+          },
+          "style": {
+            "fontSize": 10.5,
+            "fontColor": "#3D3D3D"
+          }
+        },
+        {
+          "id": "36",
+          "name": "Shape 34",
+          "type": "shape",
+          "position": {
+            "x": 0.58,
+            "y": 5.07,
+            "w": 0.06,
+            "h": 0.06
+          },
+          "style": {
+            "fill": "#C4B7A6"
+          }
+        },
+        {
+          "id": "37",
+          "name": "Text 35",
+          "type": "shape",
+          "text": "FAISS",
+          "position": {
+            "x": 0.73,
+            "y": 5,
+            "w": 0.47,
+            "h": 0.21
+          },
+          "style": {
+            "fontSize": 10.5,
+            "fontColor": "#3D3D3D"
+          }
+        },
+        {
+          "id": "38",
+          "name": "Shape 36",
+          "type": "shape",
+          "position": {
+            "x": 2.53,
+            "y": 5.07,
+            "w": 0.06,
+            "h": 0.06
+          },
+          "style": {
+            "fill": "#C4B7A6"
+          }
+        },
+        {
+          "id": "39",
+          "name": "Text 37",
+          "type": "shape",
+          "text": "Qdrant",
+          "position": {
+            "x": 2.67,
+            "y": 5,
+            "w": 0.52,
+            "h": 0.21
+          },
+          "style": {
+            "fontSize": 10.5,
+            "fontColor": "#3D3D3D"
+          }
+        },
+        {
+          "id": "40",
+          "name": "Shape 38",
+          "type": "shape",
+          "position": {
+            "x": 4.47,
+            "y": 5.07,
+            "w": 0.06,
+            "h": 0.06
+          },
+          "style": {
+            "fill": "#C4B7A6"
+          }
+        },
+        {
+          "id": "41",
+          "name": "Text 39",
+          "type": "shape",
+          "text": "Milvus",
+          "position": {
+            "x": 4.62,
+            "y": 5,
+            "w": 0.5,
+            "h": 0.21
+          },
+          "style": {
+            "fontSize": 10.5,
+            "fontColor": "#3D3D3D"
+          }
+        },
+        {
+          "id": "42",
+          "name": "Shape 40",
+          "type": "shape",
+          "position": {
+            "x": 0.58,
+            "y": 5.36,
+            "w": 0.06,
+            "h": 0.06
+          },
+          "style": {
+            "fill": "#C4B7A6"
+          }
+        },
+        {
+          "id": "43",
+          "name": "Text 41",
+          "type": "shape",
+          "text": "pgvector",
+          "position": {
+            "x": 0.73,
+            "y": 5.29,
+            "w": 0.66,
+            "h": 0.21
+          },
+          "style": {
+            "fontSize": 10.5,
+            "fontColor": "#3D3D3D"
+          }
+        },
+        {
+          "id": "44",
+          "name": "Shape 42",
+          "type": "shape",
+          "position": {
+            "x": 2.53,
+            "y": 5.36,
+            "w": 0.06,
+            "h": 0.06
+          },
+          "style": {
+            "fill": "#C4B7A6"
+          }
+        },
+        {
+          "id": "45",
+          "name": "Text 43",
+          "type": "shape",
+          "text": "Redis",
+          "position": {
+            "x": 2.67,
+            "y": 5.29,
+            "w": 0.43,
+            "h": 0.21
+          },
+          "style": {
+            "fontSize": 10.5,
+            "fontColor": "#3D3D3D"
+          }
+        },
+        {
+          "id": "46",
+          "name": "Shape 44",
+          "type": "shape",
+          "position": {
+            "x": 0.42,
+            "y": 5.79,
+            "w": 6.08,
+            "h": 1.57
+          },
+          "style": {
+            "fill": "#8B8680"
+          }
+        },
+        {
+          "id": "47",
+          "name": "Shape 45",
+          "type": "shape",
+          "position": {
+            "x": 0.58,
+            "y": 5.96,
+            "w": 0.42,
+            "h": 0.42
+          },
+          "style": {
+            "fill": "#8B8680"
+          }
+        },
+        {
+          "id": "48",
+          "name": "Shape 46",
+          "type": "shape",
+          "position": {
+            "x": 0.74,
+            "y": 6.09,
+            "w": 0.11,
+            "h": 0.15
+          },
+          "style": {
+            "fill": "#FFFFFF"
+          }
+        },
+        {
+          "id": "49",
+          "name": "Text 47",
+          "type": "shape",
+          "text": "Document Loaders",
+          "position": {
+            "x": 1.13,
+            "y": 6.02,
+            "w": 1.67,
+            "h": 0.29
+          },
+          "style": {
+            "fontSize": 13.5,
+            "bold": true,
+            "fontColor": "#1A1A1A"
+          }
+        },
+        {
+          "id": "50",
+          "name": "Shape 48",
+          "type": "shape",
+          "position": {
+            "x": 0.59,
+            "y": 6.5,
+            "w": 0.53,
+            "h": 0.3
+          },
+          "style": {
+            "fill": "#FAF9F6"
+          }
+        },
+        {
+          "id": "51",
+          "name": "Text 49",
+          "type": "shape",
+          "text": "PDF",
+          "position": {
+            "x": 0.58,
+            "y": 6.5,
+            "w": 0.59,
+            "h": 0.29
+          },
+          "style": {
+            "fontSize": 10.5,
+            "fontColor": "#3D3D3D"
+          }
+        },
+        {
+          "id": "52",
+          "name": "Shape 50",
+          "type": "shape",
+          "position": {
+            "x": 1.21,
+            "y": 6.5,
+            "w": 0.66,
+            "h": 0.3
+          },
+          "style": {
+            "fill": "#FAF9F6"
+          }
+        },
+        {
+          "id": "53",
+          "name": "Text 51",
+          "type": "shape",
+          "text": "HTML",
+          "position": {
+            "x": 1.21,
+            "y": 6.5,
+            "w": 0.73,
+            "h": 0.29
+          },
+          "style": {
+            "fontSize": 10.5,
+            "fontColor": "#3D3D3D"
+          }
+        },
+        {
+          "id": "54",
+          "name": "Shape 52",
+          "type": "shape",
+          "position": {
+            "x": 1.97,
+            "y": 6.5,
+            "w": 0.95,
+            "h": 0.3
+          },
+          "style": {
+            "fill": "#FAF9F6"
+          }
+        },
+        {
+          "id": "55",
+          "name": "Text 53",
+          "type": "shape",
+          "text": "Markdown",
+          "position": {
+            "x": 1.96,
+            "y": 6.5,
+            "w": 1.01,
+            "h": 0.29
+          },
+          "style": {
+            "fontSize": 10.5,
+            "fontColor": "#3D3D3D"
+          }
+        },
+        {
+          "id": "56",
+          "name": "Shape 54",
+          "type": "shape",
+          "position": {
+            "x": 3,
+            "y": 6.5,
+            "w": 0.55,
+            "h": 0.3
+          },
+          "style": {
+            "fill": "#FAF9F6"
+          }
+        },
+        {
+          "id": "57",
+          "name": "Text 55",
+          "type": "shape",
+          "text": "CSV",
+          "position": {
+            "x": 3,
+            "y": 6.5,
+            "w": 0.61,
+            "h": 0.29
+          },
+          "style": {
+            "fontSize": 10.5,
+            "fontColor": "#3D3D3D"
+          }
+        },
+        {
+          "id": "58",
+          "name": "Shape 56",
+          "type": "shape",
+          "position": {
+            "x": 3.64,
+            "y": 6.5,
+            "w": 0.63,
+            "h": 0.3
+          },
+          "style": {
+            "fill": "#FAF9F6"
+          }
+        },
+        {
+          "id": "59",
+          "name": "Text 57",
+          "type": "shape",
+          "text": "JSON",
+          "position": {
+            "x": 3.63,
+            "y": 6.5,
+            "w": 0.7,
+            "h": 0.29
+          },
+          "style": {
+            "fontSize": 10.5,
+            "fontColor": "#3D3D3D"
+          }
+        },
+        {
+          "id": "60",
+          "name": "Shape 58",
+          "type": "shape",
+          "position": {
+            "x": 4.37,
+            "y": 6.5,
+            "w": 0.61,
+            "h": 0.3
+          },
+          "style": {
+            "fill": "#FAF9F6"
+          }
+        },
+        {
+          "id": "61",
+          "name": "Text 59",
+          "type": "shape",
+          "text": "Word",
+          "position": {
+            "x": 4.36,
+            "y": 6.5,
+            "w": 0.68,
+            "h": 0.29
+          },
+          "style": {
+            "fontSize": 10.5,
+            "fontColor": "#3D3D3D"
+          }
+        },
+        {
+          "id": "62",
+          "name": "Shape 60",
+          "type": "shape",
+          "position": {
+            "x": 5.08,
+            "y": 6.5,
+            "w": 1,
+            "h": 0.3
+          },
+          "style": {
+            "fill": "#FAF9F6"
+          }
+        },
+        {
+          "id": "63",
+          "name": "Text 61",
+          "type": "shape",
+          "text": "PowerPoint",
+          "position": {
+            "x": 5.07,
+            "y": 6.5,
+            "w": 1.06,
+            "h": 0.29
+          },
+          "style": {
+            "fontSize": 10.5,
+            "fontColor": "#3D3D3D"
+          }
+        },
+        {
+          "id": "64",
+          "name": "Shape 62",
+          "type": "shape",
+          "position": {
+            "x": 0.59,
+            "y": 6.9,
+            "w": 1.16,
+            "h": 0.3
+          },
+          "style": {
+            "fill": "#FAF9F6"
+          }
+        },
+        {
+          "id": "65",
+          "name": "Text 63",
+          "type": "shape",
+          "text": "Web Scraping",
+          "position": {
+            "x": 0.58,
+            "y": 6.89,
+            "w": 1.23,
+            "h": 0.29
+          },
+          "style": {
+            "fontSize": 10.5,
+            "fontColor": "#3D3D3D"
+          }
+        },
+        {
+          "id": "66",
+          "name": "Shape 64",
+          "type": "shape",
+          "position": {
+            "x": 6.83,
+            "y": 1.92,
+            "w": 6.08,
+            "h": 1.67
+          },
+          "style": {
+            "fill": "#C4B7A6"
+          }
+        },
+        {
+          "id": "67",
+          "name": "Shape 65",
+          "type": "shape",
+          "position": {
+            "x": 7,
+            "y": 2.08,
+            "w": 0.42,
+            "h": 0.42
+          },
+          "style": {
+            "fill": "#C4B7A6"
+          }
+        },
+        {
+          "id": "68",
+          "name": "Shape 66",
+          "type": "shape",
+          "position": {
+            "x": 7.13,
+            "y": 2.22,
+            "w": 0.16,
+            "h": 0.15
+          },
+          "style": {
+            "fill": "#3D3D3D"
+          }
+        },
+        {
+          "id": "69",
+          "name": "Text 67",
+          "type": "shape",
+          "text": "Tools & APIs",
+          "position": {
+            "x": 7.54,
+            "y": 2.15,
+            "w": 1.15,
+            "h": 0.29
+          },
+          "style": {
+            "fontSize": 13.5,
+            "bold": true,
+            "fontColor": "#1A1A1A"
+          }
+        },
+        {
+          "id": "70",
+          "name": "Shape 68",
+          "type": "shape",
+          "position": {
+            "x": 7,
+            "y": 2.7,
+            "w": 0.06,
+            "h": 0.06
+          },
+          "style": {
+            "fill": "#C4B7A6"
+          }
+        },
+        {
+          "id": "71",
+          "name": "Text 69",
+          "type": "shape",
+          "text": "Google Search",
+          "position": {
+            "x": 7.15,
+            "y": 2.63,
+            "w": 1.01,
+            "h": 0.21
+          },
+          "style": {
+            "fontSize": 10.5,
+            "fontColor": "#3D3D3D"
+          }
+        },
+        {
+          "id": "72",
+          "name": "Shape 70",
+          "type": "shape",
+          "position": {
+            "x": 9.92,
+            "y": 2.7,
+            "w": 0.06,
+            "h": 0.06
+          },
+          "style": {
+            "fill": "#C4B7A6"
+          }
+        },
+        {
+          "id": "73",
+          "name": "Text 71",
+          "type": "shape",
+          "text": "Wikipedia",
+          "position": {
+            "x": 10.06,
+            "y": 2.63,
+            "w": 0.72,
+            "h": 0.21
+          },
+          "style": {
+            "fontSize": 10.5,
+            "fontColor": "#3D3D3D"
+          }
+        },
+        {
+          "id": "74",
+          "name": "Shape 72",
+          "type": "shape",
+          "position": {
+            "x": 7,
+            "y": 2.99,
+            "w": 0.06,
+            "h": 0.06
+          },
+          "style": {
+            "fill": "#C4B7A6"
+          }
+        },
+        {
+          "id": "75",
+          "name": "Text 73",
+          "type": "shape",
+          "text": "SQL Databases",
+          "position": {
+            "x": 7.15,
+            "y": 2.92,
+            "w": 1.06,
+            "h": 0.21
+          },
+          "style": {
+            "fontSize": 10.5,
+            "fontColor": "#3D3D3D"
+          }
+        },
+        {
+          "id": "76",
+          "name": "Shape 74",
+          "type": "shape",
+          "position": {
+            "x": 9.92,
+            "y": 2.99,
+            "w": 0.06,
+            "h": 0.06
+          },
+          "style": {
+            "fill": "#C4B7A6"
+          }
+        },
+        {
+          "id": "77",
+          "name": "Text 75",
+          "type": "shape",
+          "text": "REST APIs",
+          "position": {
+            "x": 10.06,
+            "y": 2.92,
+            "w": 0.75,
+            "h": 0.21
+          },
+          "style": {
+            "fontSize": 10.5,
+            "fontColor": "#3D3D3D"
+          }
+        },
+        {
+          "id": "78",
+          "name": "Shape 76",
+          "type": "shape",
+          "position": {
+            "x": 7,
+            "y": 3.28,
+            "w": 0.06,
+            "h": 0.06
+          },
+          "style": {
+            "fill": "#C4B7A6"
+          }
+        },
+        {
+          "id": "79",
+          "name": "Text 77",
+          "type": "shape",
+          "text": "Calculator",
+          "position": {
+            "x": 7.15,
+            "y": 3.21,
+            "w": 0.73,
+            "h": 0.21
+          },
+          "style": {
+            "fontSize": 10.5,
+            "fontColor": "#3D3D3D"
+          }
+        },
+        {
+          "id": "80",
+          "name": "Shape 78",
+          "type": "shape",
+          "position": {
+            "x": 9.92,
+            "y": 3.28,
+            "w": 0.06,
+            "h": 0.06
+          },
+          "style": {
+            "fill": "#C4B7A6"
+          }
+        },
+        {
+          "id": "81",
+          "name": "Text 79",
+          "type": "shape",
+          "text": "Python REPL",
+          "position": {
+            "x": 10.06,
+            "y": 3.21,
+            "w": 0.91,
+            "h": 0.21
+          },
+          "style": {
+            "fontSize": 10.5,
+            "fontColor": "#3D3D3D"
+          }
+        },
+        {
+          "id": "82",
+          "name": "Shape 80",
+          "type": "shape",
+          "position": {
+            "x": 6.83,
+            "y": 3.71,
+            "w": 6.08,
+            "h": 1.38
+          },
+          "style": {
+            "fill": "#8B8680"
+          }
+        },
+        {
+          "id": "83",
+          "name": "Shape 81",
+          "type": "shape",
+          "position": {
+            "x": 7,
+            "y": 3.88,
+            "w": 0.42,
+            "h": 0.42
+          },
+          "style": {
+            "fill": "#8B8680"
+          }
+        },
+        {
+          "id": "84",
+          "name": "Shape 82",
+          "type": "shape",
+          "position": {
+            "x": 7.13,
+            "y": 4.01,
+            "w": 0.16,
+            "h": 0.15
+          },
+          "style": {
+            "fill": "#FFFFFF"
+          }
+        },
+        {
+          "id": "85",
+          "name": "Text 83",
+          "type": "shape",
+          "text": "Cloud Platforms",
+          "position": {
+            "x": 7.54,
+            "y": 3.94,
+            "w": 1.43,
+            "h": 0.29
+          },
+          "style": {
+            "fontSize": 13.5,
+            "bold": true,
+            "fontColor": "#1A1A1A"
+          }
+        },
+        {
+          "id": "86",
+          "name": "Shape 84",
+          "type": "shape",
+          "position": {
+            "x": 7,
+            "y": 4.49,
+            "w": 0.06,
+            "h": 0.06
+          },
+          "style": {
+            "fill": "#8B8680"
+          }
+        },
+        {
+          "id": "87",
+          "name": "Text 85",
+          "type": "shape",
+          "text": "AWS",
+          "position": {
+            "x": 7.15,
+            "y": 4.42,
+            "w": 0.41,
+            "h": 0.21
+          },
+          "style": {
+            "fontSize": 10.5,
+            "fontColor": "#3D3D3D"
+          }
+        },
+        {
+          "id": "88",
+          "name": "Shape 86",
+          "type": "shape",
+          "position": {
+            "x": 8.94,
+            "y": 4.49,
+            "w": 0.06,
+            "h": 0.06
+          },
+          "style": {
+            "fill": "#8B8680"
+          }
+        },
+        {
+          "id": "89",
+          "name": "Text 87",
+          "type": "shape",
+          "text": "Google Cloud",
+          "position": {
+            "x": 9.09,
+            "y": 4.42,
+            "w": 0.95,
+            "h": 0.21
+          },
+          "style": {
+            "fontSize": 10.5,
+            "fontColor": "#3D3D3D"
+          }
+        },
+        {
+          "id": "90",
+          "name": "Shape 88",
+          "type": "shape",
+          "position": {
+            "x": 10.89,
+            "y": 4.49,
+            "w": 0.06,
+            "h": 0.06
+          },
+          "style": {
+            "fill": "#8B8680"
+          }
+        },
+        {
+          "id": "91",
+          "name": "Text 89",
+          "type": "shape",
+          "text": "Azure",
+          "position": {
+            "x": 11.03,
+            "y": 4.42,
+            "w": 0.45,
+            "h": 0.21
+          },
+          "style": {
+            "fontSize": 10.5,
+            "fontColor": "#3D3D3D"
+          }
+        },
+        {
+          "id": "92",
+          "name": "Shape 90",
+          "type": "shape",
+          "position": {
+            "x": 7,
+            "y": 4.78,
+            "w": 0.06,
+            "h": 0.06
+          },
+          "style": {
+            "fill": "#8B8680"
+          }
+        },
+        {
+          "id": "93",
+          "name": "Text 91",
+          "type": "shape",
+          "text": "Vercel",
+          "position": {
+            "x": 7.15,
+            "y": 4.71,
+            "w": 0.49,
+            "h": 0.21
+          },
+          "style": {
+            "fontSize": 10.5,
+            "fontColor": "#3D3D3D"
+          }
+        },
+        {
+          "id": "94",
+          "name": "Shape 92",
+          "type": "shape",
+          "position": {
+            "x": 8.94,
+            "y": 4.78,
+            "w": 0.06,
+            "h": 0.06
+          },
+          "style": {
+            "fill": "#8B8680"
+          }
+        },
+        {
+          "id": "95",
+          "name": "Text 93",
+          "type": "shape",
+          "text": "LangServe",
+          "position": {
+            "x": 9.09,
+            "y": 4.71,
+            "w": 0.76,
+            "h": 0.21
+          },
+          "style": {
+            "fontSize": 10.5,
+            "fontColor": "#3D3D3D"
+          }
+        },
+        {
+          "id": "96",
+          "name": "Shape 94",
+          "type": "shape",
+          "position": {
+            "x": 6.83,
+            "y": 5.21,
+            "w": 6.08,
+            "h": 1.6
+          },
+          "style": {
+            "fill": "#C4B7A6"
+          }
+        },
+        {
+          "id": "97",
+          "name": "Shape 95",
+          "type": "shape",
+          "position": {
+            "x": 7.02,
+            "y": 5.46,
+            "w": 0.21,
+            "h": 0.21
+          },
+          "style": {
+            "fill": "#8B8680"
+          }
+        },
+        {
+          "id": "98",
+          "name": "Text 96",
+          "type": "shape",
+          "text": "Model-Agnostic Design",
+          "position": {
+            "x": 7.33,
+            "y": 5.42,
+            "w": 5.47,
+            "h": 0.29
+          },
+          "style": {
+            "fontSize": 13.5,
+            "bold": true,
+            "fontColor": "#1A1A1A"
+          }
+        },
+        {
+          "id": "99",
+          "name": "Text 97",
+          "type": "shape",
+          "text": "Switch between providers without rewriting application code. The same chain works with OpenAI, Anthropic, or local models—experiment freely and optimize for cost, latency, or quality.",
+          "position": {
+            "x": 7.33,
+            "y": 5.79,
+            "w": 5.46,
+            "h": 0.81
+          },
+          "style": {
+            "fontSize": 12,
+            "fontColor": "#3D3D3D"
+          }
+        }
+      ],
+      "images": [],
+      "tables": 0,
+      "charts": 0,
+      "background": "#FAF9F6"
+    },
+    {
+      "name": "slide12.xml",
+      "shapes": [
+        {
+          "id": "3",
+          "name": "Shape 0",
+          "type": "shape",
+          "position": {
+            "x": 0,
+            "y": 0,
+            "w": 13.33,
+            "h": 7.5
+          },
+          "style": {}
+        },
+        {
+          "id": "4",
+          "name": "Shape 1",
+          "type": "shape",
+          "position": {
+            "x": 1.08,
+            "y": 0.08,
+            "w": 1,
+            "h": 0.04
+          },
+          "style": {
+            "fill": "#8B8680"
+          }
+        },
+        {
+          "id": "5",
+          "name": "Text 2",
+          "type": "shape",
+          "text": "The Path Forward",
+          "position": {
+            "x": 1.08,
+            "y": 0.37,
+            "w": 11.92,
+            "h": 0.25
+          },
+          "style": {
+            "fontSize": 12,
+            "fontColor": "#8B8680"
+          }
+        },
+        {
+          "id": "6",
+          "name": "Text 3",
+          "type": "shape",
+          "text": "Getting Started\nwith LangChain",
+          "position": {
+            "x": 1.08,
+            "y": 0.95,
+            "w": 8.31,
+            "h": 1.56
+          },
+          "style": {
+            "fontSize": 45,
+            "fontColor": "#1A1A1A"
+          }
+        },
+        {
+          "id": "7",
+          "name": "Shape 4",
+          "type": "shape",
+          "position": {
+            "x": 1.08,
+            "y": 2.85,
+            "w": 2,
+            "h": 0.01
+          },
+          "style": {
+            "fill": "#C4B7A6"
+          }
+        },
+        {
+          "id": "8",
+          "name": "Shape 5",
+          "type": "shape",
+          "position": {
+            "x": 1.08,
+            "y": 3.23,
+            "w": 0.42,
+            "h": 0.42
+          },
+          "style": {
+            "fill": "#8B8680"
+          }
+        },
+        {
+          "id": "9",
+          "name": "Text 6",
+          "type": "shape",
+          "text": "1",
+          "position": {
+            "x": 1.26,
+            "y": 3.32,
+            "w": 0.15,
+            "h": 0.25
+          },
+          "style": {
+            "fontSize": 12,
+            "bold": true,
+            "fontColor": "#FFFFFF"
+          }
+        },
+        {
+          "id": "10",
+          "name": "Text 7",
+          "type": "shape",
+          "text": "Start Simple",
+          "position": {
+            "x": 1.67,
+            "y": 3.19,
+            "w": 6.14,
+            "h": 0.29
+          },
+          "style": {
+            "fontSize": 15,
+            "bold": true,
+            "fontColor": "#1A1A1A"
+          }
+        },
+        {
+          "id": "11",
+          "name": "Text 8",
+          "type": "shape",
+          "text": "Begin withLangChainfor linear workflows—chatbots, Q&A systems, RAG pipelines",
+          "position": {
+            "x": 1.67,
+            "y": 3.52,
+            "w": 6.11,
+            "h": 0.25
+          },
+          "style": {
+            "fontSize": 12,
+            "fontColor": "#3D3D3D"
+          }
+        },
+        {
+          "id": "12",
+          "name": "Shape 9",
+          "type": "shape",
+          "position": {
+            "x": 1.08,
+            "y": 4.02,
+            "w": 0.42,
+            "h": 0.42
+          },
+          "style": {
+            "fill": "#C4B7A6"
+          }
+        },
+        {
+          "id": "13",
+          "name": "Text 10",
+          "type": "shape",
+          "text": "2",
+          "position": {
+            "x": 1.24,
+            "y": 4.11,
+            "w": 0.18,
+            "h": 0.25
+          },
+          "style": {
+            "fontSize": 12,
+            "bold": true,
+            "fontColor": "#3D3D3D"
+          }
+        },
+        {
+          "id": "14",
+          "name": "Text 11",
+          "type": "shape",
+          "text": "Scale with Graphs",
+          "position": {
+            "x": 1.67,
+            "y": 3.98,
+            "w": 6.99,
+            "h": 0.29
+          },
+          "style": {
+            "fontSize": 15,
+            "bold": true,
+            "fontColor": "#1A1A1A"
+          }
+        },
+        {
+          "id": "15",
+          "name": "Text 12",
+          "type": "shape",
+          "text": "Move toLangGraphwhen you need branching, retries, persistence, or multi-agent coordination",
+          "position": {
+            "x": 1.67,
+            "y": 4.32,
+            "w": 6.97,
+            "h": 0.25
+          },
+          "style": {
+            "fontSize": 12,
+            "fontColor": "#3D3D3D"
+          }
+        },
+        {
+          "id": "16",
+          "name": "Shape 13",
+          "type": "shape",
+          "position": {
+            "x": 1.08,
+            "y": 4.82,
+            "w": 0.42,
+            "h": 0.42
+          },
+          "style": {
+            "fill": "#8B8680"
+          }
+        },
+        {
+          "id": "17",
+          "name": "Text 14",
+          "type": "shape",
+          "text": "3",
+          "position": {
+            "x": 1.24,
+            "y": 4.9,
+            "w": 0.18,
+            "h": 0.25
+          },
+          "style": {
+            "fontSize": 12,
+            "bold": true,
+            "fontColor": "#FFFFFF"
+          }
+        },
+        {
+          "id": "18",
+          "name": "Text 15",
+          "type": "shape",
+          "text": "Monitor Everything",
+          "position": {
+            "x": 1.67,
+            "y": 4.77,
+            "w": 6.43,
+            "h": 0.29
+          },
+          "style": {
+            "fontSize": 15,
+            "bold": true,
+            "fontColor": "#1A1A1A"
+          }
+        },
+        {
+          "id": "19",
+          "name": "Text 16",
+          "type": "shape",
+          "text": "LayerLangSmithfrom day one for observability, debugging, and production monitoring",
+          "position": {
+            "x": 1.67,
+            "y": 5.11,
+            "w": 6.41,
+            "h": 0.25
+          },
+          "style": {
+            "fontSize": 12,
+            "fontColor": "#3D3D3D"
+          }
+        },
+        {
+          "id": "20",
+          "name": "Shape 17",
+          "type": "shape",
+          "position": {
+            "x": 1.08,
+            "y": 5.77,
+            "w": 8,
+            "h": 1.11
+          },
+          "style": {
+            "fill": "#8B8680"
+          }
+        },
+        {
+          "id": "21",
+          "name": "Text 18",
+          "type": "shape",
+          "text": "\"The future of AI development lies in intelligent automation—and LangChain provides the infrastructure to build it at scale.\"",
+          "position": {
+            "x": 1.33,
+            "y": 6.02,
+            "w": 7.59,
+            "h": 0.61
+          },
+          "style": {
+            "fontSize": 13.5,
+            "fontColor": "#3D3D3D"
+          }
+        },
+        {
+          "id": "22",
+          "name": "Shape 19",
+          "type": "shape",
+          "position": {
+            "x": 1.08,
+            "y": 7.28,
+            "w": 0.08,
+            "h": 0.08
+          },
+          "style": {
+            "fill": "#8B8680"
+          }
+        },
+        {
+          "id": "23",
+          "name": "Text 20",
+          "type": "shape",
+          "text": "langchain.com",
+          "position": {
+            "x": 1.29,
+            "y": 7.22,
+            "w": 1.01,
+            "h": 0.21
+          },
+          "style": {
+            "fontSize": 10.5,
+            "fontColor": "#A8A29E"
+          }
+        },
+        {
+          "id": "24",
+          "name": "Shape 21",
+          "type": "shape",
+          "position": {
+            "x": 2.56,
+            "y": 7.28,
+            "w": 0.08,
+            "h": 0.08
+          },
+          "style": {
+            "fill": "#C4B7A6"
+          }
+        },
+        {
+          "id": "25",
+          "name": "Text 22",
+          "type": "shape",
+          "text": "docs.langchain.com",
+          "position": {
+            "x": 2.77,
+            "y": 7.22,
+            "w": 1.35,
+            "h": 0.21
+          },
+          "style": {
+            "fontSize": 10.5,
+            "fontColor": "#A8A29E"
+          }
+        },
+        {
+          "id": "26",
+          "name": "Shape 23",
+          "type": "shape",
+          "position": {
+            "x": 4.39,
+            "y": 7.28,
+            "w": 0.08,
+            "h": 0.08
+          },
+          "style": {
+            "fill": "#8B8680"
+          }
+        },
+        {
+          "id": "27",
+          "name": "Text 24",
+          "type": "shape",
+          "text": "github.com/langchain-ai",
+          "position": {
+            "x": 4.59,
+            "y": 7.22,
+            "w": 1.65,
+            "h": 0.21
+          },
+          "style": {
+            "fontSize": 10.5,
+            "fontColor": "#A8A29E"
+          }
+        }
+      ],
+      "images": [],
+      "tables": 0,
+      "charts": 0,
+      "background": "#FAF9F6"
+    }
+  ],
+  "theme": {
+    "name": "Custom Theme",
+    "colors": {
+      "dk1": "#000000",
+      "lt1": "#ffffff",
+      "dk2": "#333333",
+      "lt2": "#eeeeee",
+      "accent1": "#8daac2",
+      "accent2": "#ed7d31",
+      "accent3": "#a5a5a5",
+      "accent4": "#ffc000",
+      "accent5": "#4472c4",
+      "accent6": "#70ad47",
+      "hlink": "#0563C1",
+      "folHlink": "#954F72"
+    },
+    "fonts": {
+      "heading": "Calibri Light",
+      "body": "Calibri"
+    }
+  },
+  "layouts": [
+    {
+      "name": "DEFAULT",
+      "type": "custom",
+      "placeholders": []
+    },
+    {
+      "name": "PPTIST_MASTER",
+      "type": "custom",
+      "placeholders": []
+    }
+  ],
+  "media": [
+    {
+      "filename": "media",
+      "type": "application/octet-stream",
+      "size": 0
+    },
+    {
+      "filename": "image-1-1.jpg",
+      "type": "image/jpeg",
+      "size": 76748
+    },
+    {
+      "filename": "image-12-1.jpg",
+      "type": "image/jpeg",
+      "size": 129886
+    }
+  ],
+  "relationships": {
+    "_rels/.rels": {
+      "rId1": "docProps/app.xml",
+      "rId2": "docProps/core.xml",
+      "rId3": "ppt/presentation.xml",
+      "rId4": "docProps/custom.xml"
+    },
+    "ppt/_rels/presentation.xml.rels": {
+      "rId1": "slideMasters/slideMaster1.xml",
+      "rId2": "slides/slide1.xml",
+      "rId3": "slides/slide2.xml",
+      "rId4": "slides/slide3.xml",
+      "rId5": "slides/slide4.xml",
+      "rId6": "slides/slide5.xml",
+      "rId7": "slides/slide6.xml",
+      "rId8": "slides/slide7.xml",
+      "rId9": "slides/slide8.xml",
+      "rId10": "slides/slide9.xml",
+      "rId11": "slides/slide10.xml",
+      "rId12": "slides/slide11.xml",
+      "rId13": "slides/slide12.xml",
+      "rId14": "notesMasters/notesMaster1.xml",
+      "rId15": "presProps.xml",
+      "rId16": "viewProps.xml",
+      "rId17": "theme/theme1.xml",
+      "rId18": "tableStyles.xml",
+      "rId19": "fonts/font1.fntdata",
+      "rId20": "fonts/font2.fntdata"
+    },
+    "ppt/slideLayouts/_rels/slideLayout1.xml.rels": {
+      "rId1": "../slideMasters/slideMaster1.xml"
+    },
+    "ppt/slideLayouts/_rels/slideLayout2.xml.rels": {
+      "rId1": "../slideMasters/slideMaster1.xml"
+    },
+    "ppt/slides/_rels/slide1.xml.rels": {
+      "rId1": "../media/image-1-1.jpg",
+      "rId2": "../slideLayouts/slideLayout1.xml",
+      "rId3": "../notesSlides/notesSlide1.xml"
+    },
+    "ppt/notesSlides/_rels/notesSlide1.xml.rels": {
+      "rId1": "../notesMasters/notesMaster1.xml",
+      "rId2": "../slides/slide1.xml"
+    },
+    "ppt/slides/_rels/slide2.xml.rels": {
+      "rId1": "../slideLayouts/slideLayout1.xml",
+      "rId2": "../notesSlides/notesSlide2.xml"
+    },
+    "ppt/notesSlides/_rels/notesSlide2.xml.rels": {
+      "rId1": "../notesMasters/notesMaster1.xml",
+      "rId2": "../slides/slide2.xml"
+    },
+    "ppt/slides/_rels/slide3.xml.rels": {
+      "rId1": "../slideLayouts/slideLayout1.xml",
+      "rId2": "../notesSlides/notesSlide3.xml"
+    },
+    "ppt/notesSlides/_rels/notesSlide3.xml.rels": {
+      "rId1": "../notesMasters/notesMaster1.xml",
+      "rId2": "../slides/slide3.xml"
+    },
+    "ppt/slides/_rels/slide4.xml.rels": {
+      "rId1": "../slideLayouts/slideLayout1.xml",
+      "rId2": "../notesSlides/notesSlide4.xml"
+    },
+    "ppt/notesSlides/_rels/notesSlide4.xml.rels": {
+      "rId1": "../notesMasters/notesMaster1.xml",
+      "rId2": "../slides/slide4.xml"
+    },
+    "ppt/slides/_rels/slide5.xml.rels": {
+      "rId1": "../slideLayouts/slideLayout1.xml",
+      "rId2": "../notesSlides/notesSlide5.xml"
+    },
+    "ppt/notesSlides/_rels/notesSlide5.xml.rels": {
+      "rId1": "../notesMasters/notesMaster1.xml",
+      "rId2": "../slides/slide5.xml"
+    },
+    "ppt/slides/_rels/slide6.xml.rels": {
+      "rId1": "../slideLayouts/slideLayout1.xml",
+      "rId2": "../notesSlides/notesSlide6.xml"
+    },
+    "ppt/notesSlides/_rels/notesSlide6.xml.rels": {
+      "rId1": "../notesMasters/notesMaster1.xml",
+      "rId2": "../slides/slide6.xml"
+    },
+    "ppt/slides/_rels/slide7.xml.rels": {
+      "rId1": "../slideLayouts/slideLayout1.xml",
+      "rId2": "../notesSlides/notesSlide7.xml"
+    },
+    "ppt/notesSlides/_rels/notesSlide7.xml.rels": {
+      "rId1": "../notesMasters/notesMaster1.xml",
+      "rId2": "../slides/slide7.xml"
+    },
+    "ppt/slides/_rels/slide8.xml.rels": {
+      "rId1": "../slideLayouts/slideLayout1.xml",
+      "rId2": "../notesSlides/notesSlide8.xml"
+    },
+    "ppt/notesSlides/_rels/notesSlide8.xml.rels": {
+      "rId1": "../notesMasters/notesMaster1.xml",
+      "rId2": "../slides/slide8.xml"
+    },
+    "ppt/slides/_rels/slide9.xml.rels": {
+      "rId1": "../slideLayouts/slideLayout1.xml",
+      "rId2": "../notesSlides/notesSlide9.xml"
+    },
+    "ppt/notesSlides/_rels/notesSlide9.xml.rels": {
+      "rId1": "../notesMasters/notesMaster1.xml",
+      "rId2": "../slides/slide9.xml"
+    },
+    "ppt/slides/_rels/slide10.xml.rels": {
+      "rId1": "../slideLayouts/slideLayout1.xml",
+      "rId2": "../notesSlides/notesSlide10.xml"
+    },
+    "ppt/notesSlides/_rels/notesSlide10.xml.rels": {
+      "rId1": "../notesMasters/notesMaster1.xml",
+      "rId2": "../slides/slide10.xml"
+    },
+    "ppt/slides/_rels/slide11.xml.rels": {
+      "rId1": "../slideLayouts/slideLayout1.xml",
+      "rId2": "../notesSlides/notesSlide11.xml"
+    },
+    "ppt/notesSlides/_rels/notesSlide11.xml.rels": {
+      "rId1": "../notesMasters/notesMaster1.xml",
+      "rId2": "../slides/slide11.xml"
+    },
+    "ppt/slides/_rels/slide12.xml.rels": {
+      "rId1": "../media/image-12-1.jpg",
+      "rId2": "../slideLayouts/slideLayout1.xml",
+      "rId3": "../notesSlides/notesSlide12.xml"
+    },
+    "ppt/notesSlides/_rels/notesSlide12.xml.rels": {
+      "rId1": "../notesMasters/notesMaster1.xml",
+      "rId2": "../slides/slide12.xml"
+    },
+    "ppt/slideMasters/_rels/slideMaster1.xml.rels": {
+      "rId1": "../slideLayouts/slideLayout1.xml",
+      "rId2": "../slideLayouts/slideLayout2.xml",
+      "rId3": "../theme/theme1.xml"
+    },
+    "ppt/notesMasters/_rels/notesMaster1.xml.rels": {
+      "rId1": "../theme/theme1.xml"
+    }
+  }
+}

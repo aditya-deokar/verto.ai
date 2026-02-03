@@ -40,7 +40,7 @@ export default function MobileShowcase() {
                         className="space-y-8"
                     >
                         {/* Header Box */}
-                        <div className="bg-white dark:bg-white/5 border border-black/5 dark:border-white/5 p-8 rounded-[40px] shadow-sm relative overflow-hidden">
+                        <header className="bg-white dark:bg-white/5 border border-black/5 dark:border-white/5 p-8 rounded-[40px] shadow-sm relative overflow-hidden">
                             <div className="absolute top-0 right-0 w-32 h-32 bg-linear-to-bl from-[#F55C7A]/10 to-transparent rounded-full blur-2xl -mr-10 -mt-10 pointer-events-none" />
                             <div className="flex items-center gap-2 mb-6 relative z-10">
                                 <span className="h-px w-8 bg-black/20 dark:bg-white/20"></span>
@@ -55,12 +55,12 @@ export default function MobileShowcase() {
                             <p className="text-lg text-black/60 dark:text-white/60 font-[family-name:var(--font-inter)] leading-relaxed relative z-10">
                                 Skip the wireframing. Transform text descriptions into professional, production-ready mobile UI screens with perfect layers.
                             </p>
-                        </div>
+                        </header>
 
                         {/* Feature Cards Stack */}
                         <div className="flex flex-col gap-4">
                             {mobileFeatures.map((feat, i) => (
-                                <motion.div
+                                <motion.article
                                     key={i}
                                     initial={{ opacity: 0, scale: 0.95 }}
                                     whileInView={{ opacity: 1, scale: 1 }}
@@ -75,14 +75,14 @@ export default function MobileShowcase() {
                                         <h3 className="text-lg font-bold text-black dark:text-white mb-1 font-[family-name:var(--font-inter-tight)]">{feat.title}</h3>
                                         <p className="text-sm text-black/50 dark:text-white/50 font-[family-name:var(--font-inter)]">{feat.desc}</p>
                                     </div>
-                                </motion.div>
+                                </motion.article>
                             ))}
                         </div>
                     </motion.div>
                 </div>
 
                 {/* Visual Content: Floating Phone Mockup */}
-                <div className="order-1 lg:order-2 flex justify-center lg:justify-end relative">
+                <figure className="order-1 lg:order-2 flex justify-center lg:justify-end relative">
                     <motion.div
                         initial={{ opacity: 0, y: 40, rotate: -6 }}
                         whileInView={{ opacity: 1, y: 0, rotate: -6 }}
@@ -148,8 +148,8 @@ export default function MobileShowcase() {
 
                     {/* Decorative Background Elements behind phone */}
                     <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[500px] h-[500px] bg-linear-to-tr from-indigo-500/20 to-purple-500/20 rounded-full blur-[100px] pointer-events-none" />
-                </div>
+                </figure>
             </div>
-        </section>
+        </section >
     );
 }

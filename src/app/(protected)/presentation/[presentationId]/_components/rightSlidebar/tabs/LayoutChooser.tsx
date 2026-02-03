@@ -33,12 +33,11 @@ export const DraggableLayoutItem = ({
       ref={drag as unknown as React.LegacyRef<HTMLDivElement>}
       style={{
         opacity: isDragging ? 0.5 : 1,
-        backgroundColor: currentTheme.slideBackgroundColor,
       }}
-      className="border rounded-lg relative hover:shadow-lg transition-all duration-200 hover:scale-105 cursor-grab active:cursor-grabbing"
+      className="border rounded-lg relative hover:shadow-lg transition-all duration-200 hover:scale-105 cursor-grab active:cursor-grabbing bg-card"
     >
       {isNew && (
-        <Badge 
+        <Badge
           className="absolute -top-2 -right-2 z-10 bg-linear-to-r from-orange-500 to-red-500 border-none"
           variant="default"
         >
@@ -112,9 +111,8 @@ const LayoutChooser = () => {
             <div className="space-y-3" key={idx}>
               {/* Group Header with Count */}
               <div className="flex items-center justify-between">
-                <h3 
-                  className="text-sm font-semibold px-1 flex items-center gap-2"
-                  style={{ color: currentTheme.accentColor }}
+                <h3
+                  className="text-sm font-semibold px-1 flex items-center gap-2 text-foreground"
                 >
                   {group.name}
                   <Badge variant="secondary" className="text-xs">
@@ -122,7 +120,7 @@ const LayoutChooser = () => {
                   </Badge>
                 </h3>
                 {group.name === "Advanced Layouts" && (
-                  <Badge 
+                  <Badge
                     className="bg-linear-to-r from-orange-500 to-red-500 text-white border-none"
                     variant="default"
                   >
@@ -154,7 +152,7 @@ const LayoutChooser = () => {
       </ScrollArea>
 
       {/* Footer Info */}
-      <div 
+      <div
         className="p-3 border-t text-xs text-center shrink-0 bg-muted/30 text-muted-foreground"
       >
         Drag any layout to add to your slide

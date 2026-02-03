@@ -71,9 +71,11 @@ export default function HeroV2() {
                                 transition={{ duration: 0.5, delay: 0.3 }}
                                 className="col-span-1 flex flex-col gap-4"
                             >
-                                <Button size="lg" className="w-full h-14 rounded-full bg-black text-white hover:bg-gray-800 dark:bg-white dark:text-black dark:hover:bg-gray-100 font-bold text-base transition-transform hover:scale-105">
-                                    Generate Deck <Wand2 className="w-4 h-4 ml-2" />
-                                </Button>
+                                <Link href="/create-page">
+                                    <Button size="lg" className="w-full h-14 rounded-full bg-black text-white hover:bg-gray-800 dark:bg-white dark:text-black dark:hover:bg-gray-100 font-bold text-base transition-transform hover:scale-105">
+                                        Generate Deck <Wand2 className="w-4 h-4 ml-2" />
+                                    </Button>
+                                </Link>
                                 <div className="flex items-center gap-4 text-xs text-white/30 font-mono uppercase tracking-wider pl-4">
                                     <span>Scroll to explore</span>
                                     <div className="h-px w-8 bg-black/20 dark:bg-white/20" />
@@ -88,7 +90,7 @@ export default function HeroV2() {
             </div>
 
             {/* Floating UI Mockup - Anchored to bottom/grid */}
-            <motion.div
+            <motion.figure
                 style={{ y, opacity }}
                 initial={{ opacity: 0, y: 50 }}
                 animate={{ opacity: 1, y: 0 }}
@@ -117,7 +119,7 @@ export default function HeroV2() {
                         </div>
                     </div>
                 </div>
-            </motion.div>
+            </motion.figure>
         </section>
     );
 }
