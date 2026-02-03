@@ -15,8 +15,12 @@ export default function SidebarV2({
     return (
         <aside className="fixed left-6 top-6 bottom-6 w-[60px] md:w-[72px] bg-white/80 dark:bg-black/40 backdrop-blur-2xl border border-black/5 dark:border-white/10 shadow-2xl z-101 flex flex-col items-center py-8 rounded-[36px] transition-colors duration-500">
             {/* Brand Icon / Home Link */}
-            <Link href="/landing-v2" className="mb-12 group">
-                <div className="w-8 h-8 rounded-lg bg-linear-to-br from-[#F55C7A] to-[#F6BC66] opacity-80 group-hover:opacity-100 transition-opacity blur-[1px] group-hover:blur-0 duration-300 shadow-[0_0_20px_rgba(245,92,122,0.3)]" />
+            <Link href="/" className="mb-12 group">
+                <img
+                    src="/logoipsum-246.png"
+                    alt="Verto AI Logo"
+                    className="w-8 h-8 object-contain opacity-80 group-hover:opacity-100 transition-opacity duration-300"
+                />
             </Link>
 
             {/* Menu Toggle */}

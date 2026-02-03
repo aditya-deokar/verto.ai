@@ -9,8 +9,11 @@ import { Button } from "@/components/ui/button";
 import { useTheme } from "next-themes";
 import { useEffect, useState } from "react";
 
+import { useUser, UserButton } from "@clerk/nextjs";
+
 export default function NavbarV2() {
     const { setTheme, theme } = useTheme();
+    const { isSignedIn, isLoaded } = useUser();
     const [mounted, setMounted] = useState(false);
 
     useEffect(() => {
@@ -38,17 +41,38 @@ export default function NavbarV2() {
                             <Moon className="absolute h-[1.2rem] w-[1.2rem] rotate-90 scale-0 transition-all dark:rotate-0 dark:scale-100 text-black dark:text-white" />
                         </div>
                     </button>
-                    <Link href="/sign-in" className="text-xs font-bold tracking-widest text-black/60 dark:text-white/60 hover:text-black dark:hover:text-white transition-colors uppercase">
-                        Sign In
-                    </Link>
+                    {isLoaded && !isSignedIn && (
+                        <Link href="/sign-in" className="text-xs font-bold tracking-widest text-black/60 dark:text-white/60 hover:text-black dark:hover:text-white transition-colors uppercase">
+                            Sign In
+                        </Link>
+                    )}
                 </div>
 
-                <Button
-                    variant="outline"
-                    className="rounded-full h-10 px-6 border-black/10 dark:border-white/10 bg-black text-white hover:bg-black/90 dark:bg-white  dark:hover:bg-white/90 transition-all font-semibold hover:text-white"
-                >
-                    Get Started
-                </Button>
+                <div className="flex items-center gap-2">
+                    {isLoaded && isSignedIn ? (
+                        <Link href="/dashboard">
+                            <Button
+                                variant="outline"
+                                className="rounded-full h-10 px-6 border-black/10 dark:border-white/10 bg-black dark:text-black text-white hover:bg-black/90 dark:bg-white  dark:hover:bg-white/90 transition-all font-semibold hover:text-white"
+                            >
+                                Open Dashboard
+                            </Button>
+                        </Link>
+                    ) : (
+                        <Link href="/sign-up">
+                            <Button
+                                variant="outline"
+                                className="rounded-full h-10 px-6 border-black/10 dark:border-white/10 bg-black dark:text-black text-white hover:bg-black/90 dark:bg-white  dark:hover:bg-white/90 transition-all font-semibold hover:text-white"
+                            >
+                                Get Started
+                            </Button>
+                        </Link>
+                    )}
+
+                    {isLoaded && isSignedIn && (
+                        <UserButton afterSignOutUrl="/" />
+                    )}
+                </div>
             </div>
         </motion.nav>
     );
