@@ -34,11 +34,11 @@ export function AppSidebar({
       <SidebarHeader className="pt-6 px-3 pb-0 gap-4">
         <SidebarMenuButton
           size="lg"
-          className="data-[state=open]:text-sidebar-accent-foreground"
+          className="data-[state=open]:text-sidebar-accent-foreground hover:bg-transparent group"
         >
-          <div className="flex aspect-square size-8 items-center justify-center rounded-lg text-sidebar-primary-foreground">
+          <div className="flex aspect-square size-8 items-center justify-center rounded-lg text-sidebar-primary-foreground transition-transform duration-700 group-hover:rotate-[360deg]">
             <Avatar className="h-10 w-10 rounded-full">
-              <AvatarImage src={"/vivid.png"} alt={`logo`} />
+              <AvatarImage src={"/logoipsum-246.png"} alt={`Verto AI logo`} />
               <AvatarFallback className="rounded-lg">Verto AI</AvatarFallback>
             </Avatar>
           </div>

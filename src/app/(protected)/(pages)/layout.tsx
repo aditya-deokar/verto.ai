@@ -9,6 +9,8 @@ import React from 'react'
 
 type Props = { children: React.ReactNode }
 
+export const runtime = 'nodejs'
+
 const Layout = async ({ children }: Props) => {
   const recentProjects = await getRecentProjects()
   const checkUser = await onAuthenticateUser()

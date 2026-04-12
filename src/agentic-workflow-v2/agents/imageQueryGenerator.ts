@@ -6,6 +6,17 @@ import { AdvancedPresentationState } from "../lib/state";
 import { imageQuerySchema } from "../lib/validators";
 import { getLayoutTemplate } from "../lib/layoutTemplates";
 
+function emitToken(state: AdvancedPresentationState, content: string) {
+  if (state.streamEventHandler) {
+    state.streamEventHandler({
+      type: 'token',
+      agentId: 'imageQueryGenerator',
+      content,
+      timestamp: Date.now(),
+    });
+  }
+}
+
 /**
  * Agent 5: Image Query Generator
  * 
@@ -74,6 +85,14 @@ Instructions:
    - Suitable for stock photo sites like Unsplash
 3. Also create descriptive alt text for accessibility (10-30 words)
 4. Consider the overall presentation topic for context
+5. Image Query Quality Standards:
+   - Prefer abstract, professional photography over literal illustrations
+   - For tech topics: use "technology abstract", "digital transformation", "futuristic workspace"
+   - For business: use "modern office", "professional team", "business strategy"
+   - AVOID: clip art, cartoons, low-quality stock photos
+   - Include mood keywords: "cinematic", "editorial", "high-contrast", "aerial view"
+   - Consider the presentation theme/style: "\${state.themePreference || 'modern'}"
+   - Match image mood to theme (dark themes → dramatic lighting; light themes → bright, airy)
 
 Examples:
 - For "Data Analytics" → Query: "business data analysis charts", Alt: "Professional analyzing business data on digital dashboard"
@@ -89,7 +108,7 @@ Generate image queries for all ${slidesNeedingImages.length} slides:`;
       schema: imageQuerySchema,
       prompt: prompt,
       temperature: modelConfigs.imageQuery.temperature,
-      maxTokens: modelConfigs.imageQuery.maxTokens,
+      maxOutputTokens: modelConfigs.imageQuery.maxOutputTokens,
     });
 
     const imageQueries = object.imageQueries;
@@ -97,6 +116,7 @@ Generate image queries for all ${slidesNeedingImages.length} slides:`;
     console.log(`✅ Generated ${imageQueries.length} image queries:`);
     imageQueries.forEach((query) => {
       console.log(`   Slide ${query.slideIndex + 1}: "${query.query}"`);
+      emitToken(state, `Slide ${query.slideIndex + 1}: ${query.query}`);
     });
 
     // Update slide data with image queries

@@ -1,8 +1,8 @@
-import { getProjectById } from "@/actions/projects";
+import { getSharedProjectById } from "@/actions/project-share";
 import PresentationViewer from "@/components/presentation/PresentationViewer";
 import { themes } from "@/lib/constants";
 import { Slide } from "@/lib/types";
-import { redirect } from "next/navigation";
+import { notFound } from "next/navigation";
 
 function parseSlides(slides: unknown): Slide[] {
   if (!Array.isArray(slides)) {
@@ -12,16 +12,16 @@ function parseSlides(slides: unknown): Slide[] {
   return JSON.parse(JSON.stringify(slides)) as Slide[];
 }
 
-export default async function PresentationPage({
+export default async function SharedPresentationPage({
   params,
 }: {
   params: Promise<{ presentationId: string }>;
 }) {
   const { presentationId } = await params;
-  const response = await getProjectById(presentationId);
+  const response = await getSharedProjectById(presentationId);
 
   if (response.status !== 200 || !response.data) {
-    redirect("/dashboard");
+    notFound();
   }
 
   const project = response.data;
@@ -32,8 +32,9 @@ export default async function PresentationPage({
       title={project.title}
       slides={parseSlides(project.slides)}
       theme={theme}
-      exitHref={`/presentation/${project.id}`}
-      exitLabel="Back to editor"
+      exitHref="/"
+      exitLabel="Close"
+      viewerMode="share"
     />
   );
 }

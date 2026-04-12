@@ -5,6 +5,17 @@ import { model, modelConfigs } from "../lib/llm";
 import { AdvancedPresentationState } from "../lib/state";
 import { outlineSchema, validateSlideCount } from "../lib/validators";
 
+function emitToken(state: AdvancedPresentationState, content: string) {
+  if (state.streamEventHandler) {
+    state.streamEventHandler({
+      type: 'token',
+      agentId: 'outlineGenerator',
+      content,
+      timestamp: Date.now(),
+    });
+  }
+}
+
 /**
  * Agent 2: Outline Generator (Enhanced)
  * 
@@ -24,6 +35,28 @@ export async function runOutlineGenerator(
   console.log("└─────────────────────────────────────────┘");
 
   try {
+    if (state.outlines && state.outlines.length > 0) {
+      console.log(`📝 Using ${state.outlines.length} user-provided outlines`);
+
+      const initialSlideData = state.outlines.map((outline) => ({
+        outline,
+        slideTitle: null,
+        slideContent: null,
+        layoutType: null,
+        imageQuery: null,
+        imageUrl: null,
+        finalJson: null,
+        validationStatus: "pending" as const,
+      }));
+
+      return {
+        outlines: state.outlines,
+        slideData: initialSlideData,
+        currentStep: "Outline Accepted",
+        progress: 20,
+      };
+    }
+
     const topic = state.userInput;
     const context = state.additionalContext || "";
     
@@ -82,6 +115,20 @@ Each outline point should be:
 - **Layout-Friendly:** Think about whether it needs images, columns, or special layouts
 
 ═══════════════════════════════════════════════════════════════
+🚀 ADVANCED OUTLINE RULES (CRITICAL)
+═══════════════════════════════════════════════════════════════
+- Include at least ONE data/statistics slide (perfect for bigNumberLayout/statsRow)
+- Include at least ONE comparison or pros/cons slide (comparisonLayout)
+- Include a section break if presentation has 10+ slides (sectionDivider)
+- End with a clear call-to-action slide (callToAction)
+- Start with an attention-grabbing opening (creativeHero or fullImageBackground)
+- Include 1-2 visual showcase slides for variety (bentoGrid, iconGrid)
+- Annotate each outline with the CONTENT TYPE in brackets:
+  Example: "AI Market Growth in 2024 [statistics]"
+  Example: "Traditional vs Modern Approaches [comparison]"
+  Example: "Your 3-Step Implementation Plan [process]"
+
+═══════════════════════════════════════════════════════════════
 📊 EXAMPLE OUTLINE (Marketing Strategy)
 ═══════════════════════════════════════════════════════════════
 1. The Modern Marketing Challenge [opening - problem statement]
@@ -111,6 +158,7 @@ Now generate your comprehensive outline:`;
     console.log(`✅ Generated ${outlines.length} slide topics:`);
     outlines.forEach((outline, i) => {
       console.log(`   ${i + 1}. ${outline}`);
+      emitToken(state, `Slide ${i + 1}: ${outline}`);
     });
 
     // Validate outline count

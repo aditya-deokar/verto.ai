@@ -1,19 +1,30 @@
-// agents/contentWriter.ts - Agent 3: Write Content for All Slides (Bulk)
+// agents/contentWriter.ts - Agent 3: Layout-Aware Content Writer (Bulk)
 
 import { generateObject } from "ai";
 import { model, modelConfigs } from "../lib/llm";
 import { AdvancedPresentationState } from "../lib/state";
-import { bulkContentSchema } from "../lib/validators";
+import { layoutAwareContentSchema } from "../lib/validators";
+
+function emitToken(state: AdvancedPresentationState, content: string) {
+  if (state.streamEventHandler) {
+    state.streamEventHandler({
+      type: 'token',
+      agentId: 'contentWriter',
+      content,
+      timestamp: Date.now(),
+    });
+  }
+}
 
 /**
  * Ensure we have exactly the right number of content items
  * Pads with default content if too few, truncates if too many
  */
 function normalizeContentCount(
-  slidesContent: Array<{ title: string; content: string }>,
+  slidesContent: Array<{ title: string; content: string;[key: string]: any }>,
   outlines: string[],
   expectedCount: number
-): Array<{ title: string; content: string }> {
+): Array<{ title: string; content: string;[key: string]: any }> {
   // If we have enough, just take what we need
   if (slidesContent.length >= expectedCount) {
     return slidesContent.slice(0, expectedCount);
@@ -26,7 +37,8 @@ function normalizeContentCount(
     const outline = outlines[i] || `Slide ${i + 1}`;
     normalized.push({
       title: outline.length > 80 ? outline.slice(0, 77) + "..." : outline,
-      content: `Key points about ${outline}:\n- Important concept to understand\n- Essential for your knowledge\n- Building block for advanced topics`,
+      subtitle: "Overview and Key Insights",
+      content: `- Detailed analysis of ${outline}\n- Strategic implications and required actions\n- Focus on operational efficiency and growth\n- Comprehensive review to guide next steps`,
     });
     console.log(`   ⚠️ Generated fallback content for slide ${i + 1}: "${outline}"`);
   }
@@ -35,21 +47,21 @@ function normalizeContentCount(
 }
 
 /**
- * Agent 3: Content Writer (Bulk)
+ * Agent 3: Layout-Aware Content Writer (Bulk)
  * 
  * Purpose: Writes title and body content for ALL slides in a single API call
- * - More efficient than per-slide generation
- * - Ensures consistent tone and style
- * - Avoids rate limiting
+ * - Now receives layout types and generates content SHAPED for each layout
+ * - Produces structured fields (stats, comparisons, steps, etc.) for premium layouts
+ * - Ensures consistent tone and style across the presentation
  * 
- * @param state - Current graph state
- * @returns Updated state with slide titles and content
+ * @param state - Current graph state (with layoutType already set per slide)
+ * @returns Updated state with slide titles, content, and structured fields
  */
 export async function runContentWriter(
   state: AdvancedPresentationState
 ): Promise<Partial<AdvancedPresentationState>> {
   console.log("\n┌─────────────────────────────────────────┐");
-  console.log("│  ✍️  AGENT 3: Content Writer (Bulk)     │");
+  console.log("│  ✍️  AGENT 3: Layout-Aware Content Writer │");
   console.log("└─────────────────────────────────────────┘");
 
   if (!state.outlines || state.outlines.length === 0) {
@@ -62,14 +74,14 @@ export async function runContentWriter(
     const topic = state.userInput;
     const context = state.additionalContext || "";
     
-    console.log(`📝 Generating content for ${outlines.length} slides...`);
+    console.log(`📝 Generating layout-aware content for ${outlines.length} slides...`);
 
-    // Format outlines for prompt
-    const formattedOutlines = outlines
-      .map((outline, index) => `${index + 1}. ${outline}`)
+    // Format outlines WITH their assigned layout types
+    const formattedOutlines = state.slideData
+      .map((slide, index) => `${index + 1}. [LAYOUT: ${slide.layoutType || "titleAndContent"}] ${slide.outline}`)
       .join("\n");
 
-    const prompt = `You are an ELITE presentation copywriter specializing in creating engaging, impactful slide content that captivates audiences and communicates ideas with clarity.
+    const prompt = `You are an ELITE presentation copywriter who creates engaging, impactful slide content perfectly shaped for specific visual layouts.
 
 ═══════════════════════════════════════════════════════════════
 📋 PRESENTATION DETAILS
@@ -78,88 +90,75 @@ Overall Topic: "${topic}"
 ${context ? `Additional Context: "${context}"` : ""}
 
 ═══════════════════════════════════════════════════════════════
-📝 SLIDE OUTLINES TO WRITE
+📝 SLIDE OUTLINES WITH ASSIGNED LAYOUTS
 ═══════════════════════════════════════════════════════════════
 ${formattedOutlines}
 
 ═══════════════════════════════════════════════════════════════
 ✍️ YOUR TASK
 ═══════════════════════════════════════════════════════════════
-For EACH outline above, generate TWO components:
+For EACH slide, generate content SHAPED for its assigned layout type.
 
-**1. TITLE (Max 80 characters)**
-- Compelling, clear, action-oriented
-- Use power words and active voice
-- Make it memorable and specific
-- Examples: "Transform Your Workflow" NOT "Workflow Transformation"
+**For ALL slides, always provide:**
+- title: Compelling, clear, action-oriented (max 80 chars)
+- content: Main body text (150-600 chars), use "\\n-" for bullet lists
 
-**2. CONTENT (150-600 characters)**
-- Structure varies based on content type:
-  
-  **For Concept/Explanation Slides:**
-  - Start with clear definition or statement
-  - Add 2-3 supporting points as bullet list
-  - Use "\n-" format for bullets
-  
-  **For Data/Statistics Slides:**
-  - Lead with the impressive number or stat
-  - Explain what it means
-  - Add context or comparison
-  
-  **For Process/Timeline Slides:**
-  - Use numbered list "\n1. Step" format
-  - Keep each step concise (5-10 words)
-  - Focus on actions
-  
-  **For Comparison Slides:**
-  - Use bullet points for each option
-  - Highlight key differences
-  - Keep parallel structure
-  
-  **For Examples/Case Studies:**
-  - Tell a mini story
-  - Include specific details
-  - Show impact/results
+**LAYOUT-SPECIFIC STRUCTURED FIELDS (provide ONLY the fields relevant to each slide's layout):**
+
+📊 bigNumberLayout / statsRow:
+- statValue: A prominent, impressive stat (e.g. "$4.2B", "150%", "3x", "10M+")
+- statLabel: Short label for the stat (e.g. "Revenue Growth", "Users Worldwide")
+
+📊 statsRow (needs exactly 3 stats):
+- stats: Array of exactly 3 objects with { value, label } (e.g. [{"value":"10M+","label":"Users"},{"value":"99.9%","label":"Uptime"},{"value":"150+","label":"Countries"}])
+
+⚖️ comparisonLayout:
+- comparisonLabelA: First option label (e.g. "Traditional Approach")
+- comparisonLabelB: Second option label (e.g. "AI-Powered Approach")
+- comparisonPointsA: 3-4 bullet points for option A
+- comparisonPointsB: 3-4 bullet points for option B
+
+💬 quoteLayout:
+- quoteText: The actual quote text (compelling and relevant)
+- quoteAttribution: Who said it (e.g. "— Steve Jobs, Apple CEO")
+
+🔄 processFlow / timelineLayout / timeline:
+- processSteps: Array of 3-4 objects with { stepTitle, stepDescription } (keep descriptions to 10-15 words max)
+
+🔲 iconGrid:
+- gridItems: Array of exactly 4 objects with { icon (single contextual emoji), itemTitle, itemDescription (one line) }
+
+📊 bentoGrid:
+- stats: Array of 2 objects with { value, label }
+- gridItems: Array of 3 objects with { icon, itemTitle, itemDescription } for insights list
+
+🎯 callToAction / creativeHero:
+- ctaButtonText: Action-oriented button text (e.g. "Start Free Trial →", "Get Started Today")
+
+📌 sectionDivider:
+- sectionNumber: Two-digit number as string (e.g. "01", "02", "03")
+
+📊 twoColumnsWithHeadings / threeColumnsWithHeadings:
+- columnHeadings: Array of heading strings for each column (2 or 3 items)
 
 ═══════════════════════════════════════════════════════════════
 🎯 CONTENT QUALITY STANDARDS
 ═══════════════════════════════════════════════════════════════
 ✅ DO:
 - Write for slides (concise, scannable)
-- Use bullet points liberally (format: "\n- Point")
-- Include numbers and specifics when relevant
-- Vary sentence structure and length
+- Include real-sounding numbers and specifics
+- Vary sentence structure
 - Build logical flow slide-to-slide
-- Make every word count
-- Think visually (content should complement layouts)
+- Use contextual emojis for iconGrid items that match the topic
+- Make comparison labels specific to the topic (NOT generic "Option A"/"Option B")
+- Make stats feel impressive and believable
 
 ❌ DON'T:
 - Write long paragraphs or essays
-- Use jargon without explanation
-- Include unnecessary details
+- Use generic placeholder text
+- Use "Option A"/"Option B" as comparison labels — use topic-specific labels
+- Use the same emoji for multiple iconGrid items
 - Repeat information across slides
-- Use passive voice excessively
-- Create walls of text
-
-═══════════════════════════════════════════════════════════════
-📊 EXAMPLE OUTPUT FORMATS
-═══════════════════════════════════════════════════════════════
-
-**Concept Slide:**
-Title: "The Power of AI in Modern Business"
-Content: "Artificial Intelligence is revolutionizing how companies operate and compete:\n- Automate repetitive tasks (save 40% time)\n- Make data-driven decisions faster\n- Personalize customer experiences at scale\n- Predict trends before competitors"
-
-**Statistics Slide:**
-Title: "Market Growth: The Numbers Speak"
-Content: "Global AI market reached $136B in 2023, growing 37% year-over-year.\n\nKey drivers:\n- Enterprise adoption up 3x since 2020\n- 80% of companies now invest in AI\n- Expected to hit $1.5T by 2030"
-
-**Process Slide:**
-Title: "Your 5-Step AI Implementation Roadmap"
-Content: "1. Assess current capabilities and gaps\n2. Define clear business objectives\n3. Select the right AI tools and partners\n4. Train team and pilot projects\n5. Scale successful implementations"
-
-**Comparison Slide:**
-Title: "Traditional vs. AI-Powered Approach"
-Content: "Traditional:\n- Manual data analysis (hours/days)\n- Limited personalization\n- Reactive decision-making\n\nAI-Powered:\n- Real-time insights (seconds)\n- Hyper-personalization at scale\n- Predictive and proactive"
 
 ═══════════════════════════════════════════════════════════════
 🚀 GENERATE NOW
@@ -167,13 +166,13 @@ Content: "Traditional:\n- Manual data analysis (hours/days)\n- Limited personali
 ⚠️ CRITICAL: You MUST generate EXACTLY ${outlines.length} slides - one for each outline above.
 Do NOT skip any slides. Do NOT combine slides. Do NOT add extra slides.
 
-Generate compelling, professional content for ALL ${outlines.length} slides in the EXACT same order as the outlines above. Make this presentation unforgettable!`;
+Generate compelling, layout-aware content for ALL ${outlines.length} slides NOW:`;
 
-    console.log("🤖 Calling AI to generate content...");
+    console.log("🤖 Calling AI to generate layout-aware content...");
 
     const { object } = await generateObject({
       model: model,
-      schema: bulkContentSchema,
+      schema: layoutAwareContentSchema,
       prompt: prompt,
       temperature: modelConfigs.content.temperature,
     });
@@ -186,23 +185,54 @@ Generate compelling, professional content for ALL ${outlines.length} slides in t
       slidesContent = normalizeContentCount(slidesContent, outlines, outlines.length);
     }
 
-    console.log(`✅ Generated content for ${slidesContent.length} slides:`);
+    console.log(`✅ Generated layout-aware content for ${slidesContent.length} slides:`);
     slidesContent.forEach((slide, i) => {
-      console.log(`   ${i + 1}. ${slide.title}`);
-      console.log(`      Content: ${slide.content.slice(0, 60)}...`);
+      const layout = state.slideData[i]?.layoutType || "unknown";
+      const extras = [];
+      if (slide.statValue) extras.push(`stat: ${slide.statValue}`);
+      if (slide.quoteText) extras.push(`quote: ${slide.quoteText.slice(0, 30)}...`);
+      if (slide.ctaButtonText) extras.push(`cta: ${slide.ctaButtonText}`);
+      if (slide.processSteps?.length) extras.push(`steps: ${slide.processSteps.length}`);
+      if (slide.gridItems?.length) extras.push(`grid: ${slide.gridItems.length} items`);
+      if (slide.stats?.length) extras.push(`stats: ${slide.stats.length}`);
+      if (slide.comparisonLabelA) extras.push(`comparison: ${slide.comparisonLabelA} vs ${slide.comparisonLabelB}`);
+      if (slide.columnHeadings?.length) extras.push(`cols: ${slide.columnHeadings.join(", ")}`);
+      
+      console.log(`   ${i + 1}. [${layout}] ${slide.title}`);
+      if (extras.length > 0) console.log(`      Structured: ${extras.join(" | ")}`);
+      emitToken(state, `Slide ${i + 1}: ${slide.title}\n${slide.content.slice(0, 100)}...`);
     });
 
-    // Update slide data with titles and content
-    const updatedSlideData = state.slideData.map((slide, index) => ({
-      ...slide,
-      slideTitle: slidesContent[index].title,
-      slideContent: slidesContent[index].content,
-    }));
+    // Update slide data with titles, content, AND structured fields
+    const updatedSlideData = state.slideData.map((slide, index) => {
+      const generated = slidesContent[index];
+      return {
+        ...slide,
+        slideTitle: generated.title,
+        subtitle: generated.subtitle || undefined,
+        slideContent: generated.content,
+        // Structured fields for premium layouts
+        statValue: generated.statValue || undefined,
+        statLabel: generated.statLabel || undefined,
+        stats: generated.stats || undefined,
+        comparisonLabelA: generated.comparisonLabelA || undefined,
+        comparisonLabelB: generated.comparisonLabelB || undefined,
+        comparisonPointsA: generated.comparisonPointsA || undefined,
+        comparisonPointsB: generated.comparisonPointsB || undefined,
+        quoteText: generated.quoteText || undefined,
+        quoteAttribution: generated.quoteAttribution || undefined,
+        processSteps: generated.processSteps || undefined,
+        gridItems: generated.gridItems || undefined,
+        ctaButtonText: generated.ctaButtonText || undefined,
+        sectionNumber: generated.sectionNumber || undefined,
+        columnHeadings: generated.columnHeadings || undefined,
+      };
+    });
 
     return {
       slideData: updatedSlideData,
       currentStep: "Content Written",
-      progress: 40, // 40% complete
+      progress: 45, // 45% complete
     };
   } catch (error) {
     console.error("🔴 Error generating content:", error);

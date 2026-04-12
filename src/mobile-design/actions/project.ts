@@ -1,7 +1,7 @@
 "use server";
 
 import { auth } from "@clerk/nextjs/server";
-import prisma from "@/generated/prisma";
+import prisma from "@/lib/prisma";
 import { inngest } from "@/mobile-design/inngest/client";
 
 export async function createMobileProject(name: string, prompt: string) {

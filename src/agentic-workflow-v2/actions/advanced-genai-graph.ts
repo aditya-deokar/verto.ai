@@ -3,6 +3,14 @@
 
 import { START, END, StateGraph, StateGraphArgs } from "@langchain/langgraph";
 import { AdvancedPresentationState } from "../lib/state";
+import {
+  completePresentationGenerationRun,
+  failPresentationGenerationRun,
+  markPresentationGenerationStepCompleted,
+  markPresentationGenerationStepRunning,
+  startPresentationGenerationRun,
+} from "@/actions/presentation-generation";
+import { streamingEmitter } from "@/lib/streaming/EventEmitter";
 
 // Import all agents
 import { runProjectInitializer } from "../agents/projectInitializer";
@@ -20,6 +28,7 @@ import { runDatabasePersister } from "../agents/databasePersister";
  */
 const channels: StateGraphArgs<AdvancedPresentationState>["channels"] = {
   // Input fields
+  generationRunId: { value: (_x, y) => y, default: () => undefined },
   projectId: { value: (_x, y) => y, default: () => null },
   userId: { value: (_x, y) => y, default: () => "" },
   userInput: { value: (_x, y) => y, default: () => "" },
@@ -49,23 +58,101 @@ const channels: StateGraphArgs<AdvancedPresentationState>["channels"] = {
  * [loop back if more images needed] → jsonCompiler → databasePersister → END
  */
 const buildGraph = () => {
+  const wrapNode = (
+    nodeName: string,
+    agentName: string,
+    handler: (
+      state: AdvancedPresentationState
+    ) => Promise<Partial<AdvancedPresentationState>>
+  ) => {
+    return async (state: AdvancedPresentationState) => {
+      const runId = state.generationRunId;
+
+      try {
+        if (runId) {
+          await markPresentationGenerationStepRunning(runId, nodeName);
+          streamingEmitter.emitAgentStart(runId, nodeName, agentName);
+          streamingEmitter.emitProgress(runId, nodeName, 
+            getStepProgress(nodeName)
+          );
+        }
+
+        const result = await handler(state);
+
+        if (runId) {
+          await markPresentationGenerationStepCompleted(
+            runId,
+            nodeName,
+            {
+              projectId:
+                typeof result.projectId === "string"
+                  ? result.projectId
+                  : state.projectId,
+            }
+          );
+          streamingEmitter.emitAgentComplete(runId, nodeName, result);
+        }
+
+        return result;
+      } catch (error) {
+        if (runId) {
+          await failPresentationGenerationRun(
+            runId,
+            error instanceof Error ? error.message : "Unknown generation error",
+            nodeName
+          );
+          streamingEmitter.emitError(
+            runId,
+            error instanceof Error ? error.message : "Unknown generation error"
+          );
+        }
+
+        throw error;
+      }
+    };
+  };
+
+  const agentNames: Record<string, string> = {
+    projectInitializer: "Project Setup",
+    outlineGenerator: "Structure",
+    contentWriter: "Content Writing",
+    layoutSelector: "Design Layout",
+    imageQueryGenerator: "Visual Search",
+    imageFetcher: "Image Integration",
+    jsonCompiler: "Assembly",
+    databasePersister: "Finalization",
+  };
+
+  const stepProgressMap: Record<string, number> = {
+    projectInitializer: 10,
+    outlineGenerator: 20,
+    layoutSelector: 30,
+    contentWriter: 45,
+    imageQueryGenerator: 60,
+    imageFetcher: 75,
+    jsonCompiler: 85,
+    databasePersister: 100,
+  };
+
+  const getStepProgress = (nodeName: string) => stepProgressMap[nodeName] || 0;
+
   return new StateGraph<AdvancedPresentationState>({ channels })
     // Add all agent nodes
-    .addNode("projectInitializer", runProjectInitializer)
-    .addNode("outlineGenerator", runOutlineGenerator)
-    .addNode("contentWriter", runContentWriter)
-    .addNode("layoutSelector", runLayoutSelector)
-    .addNode("imageQueryGenerator", runImageQueryGenerator)
-    .addNode("imageFetcher", runImageFetcher)
-    .addNode("jsonCompiler", runJsonCompiler)
-    .addNode("databasePersister", runDatabasePersister)
+    .addNode("projectInitializer", wrapNode("projectInitializer", agentNames.projectInitializer, runProjectInitializer))
+    .addNode("outlineGenerator", wrapNode("outlineGenerator", agentNames.outlineGenerator, runOutlineGenerator))
+    .addNode("contentWriter", wrapNode("contentWriter", agentNames.contentWriter, runContentWriter))
+    .addNode("layoutSelector", wrapNode("layoutSelector", agentNames.layoutSelector, runLayoutSelector))
+    .addNode("imageQueryGenerator", wrapNode("imageQueryGenerator", agentNames.imageQueryGenerator, runImageQueryGenerator))
+    .addNode("imageFetcher", wrapNode("imageFetcher", agentNames.imageFetcher, runImageFetcher))
+    .addNode("jsonCompiler", wrapNode("jsonCompiler", agentNames.jsonCompiler, runJsonCompiler))
+    .addNode("databasePersister", wrapNode("databasePersister", agentNames.databasePersister, runDatabasePersister))
 
-    // Define edges (linear sequence)
+    // Define edges (layout selection BEFORE content writing for layout-aware content)
     .addEdge(START, "projectInitializer")
     .addEdge("projectInitializer", "outlineGenerator")
-    .addEdge("outlineGenerator", "contentWriter")
-    .addEdge("contentWriter", "layoutSelector")
-    .addEdge("layoutSelector", "imageQueryGenerator")
+    .addEdge("outlineGenerator", "layoutSelector")
+    .addEdge("layoutSelector", "contentWriter")
+    .addEdge("contentWriter", "imageQueryGenerator")
     .addEdge("imageQueryGenerator", "imageFetcher")
 
     // Conditional edge: loop back for more images or proceed
@@ -96,7 +183,9 @@ export async function generateAdvancedPresentation(
   userId: string,
   topic: string,
   additionalContext?: string,
-  themePreference: string = "light"
+  themePreference: string = "Default",
+  providedOutlines?: string[],
+  generationRunId?: string
 ) {
   console.log("\n");
   console.log("═══════════════════════════════════════════════════════════");
@@ -111,23 +200,36 @@ export async function generateAdvancedPresentation(
   console.log("═══════════════════════════════════════════════════════════\n");
 
   try {
+    if (generationRunId) {
+      await startPresentationGenerationRun(generationRunId);
+      streamingEmitter.emitAgentStart(generationRunId, "projectInitializer", "Project Setup");
+    }
+
     // Build the graph
     const app = buildGraph();
 
+    // Create stream event handler
+    const streamEventHandler = generationRunId
+      ? (event: Parameters<typeof streamingEmitter.emit>[1]) => 
+          streamingEmitter.emit(generationRunId, event)
+      : undefined;
+
     // Initial state
     const initialState: AdvancedPresentationState = {
+      generationRunId,
       projectId: null,
       userId: userId,
       userInput: topic,
       additionalContext: additionalContext,
       themePreference: themePreference,
-      outlines: null,
+      outlines: providedOutlines && providedOutlines.length > 0 ? providedOutlines : null,
       slideData: [],
       finalPresentationJson: null,
       error: null,
       currentStep: "Initializing",
       progress: 0,
       retryCount: 0,
+      streamEventHandler,
     };
 
     // Execute the graph
@@ -149,6 +251,13 @@ export async function generateAdvancedPresentation(
     // Check for errors
     if (finalState.error) {
       console.error("🔴 Graph execution encountered an error:", finalState.error);
+      if (generationRunId) {
+        await failPresentationGenerationRun(
+          generationRunId,
+          finalState.error,
+          finalState.currentStep
+        );
+      }
       return {
         success: false,
         error: finalState.error,
@@ -159,6 +268,13 @@ export async function generateAdvancedPresentation(
     // Validate output
     if (!finalState.projectId || !finalState.finalPresentationJson) {
       console.error("🔴 Graph completed but missing required output");
+      if (generationRunId) {
+        await failPresentationGenerationRun(
+          generationRunId,
+          "Presentation generation incomplete - missing data",
+          finalState.currentStep
+        );
+      }
       return {
         success: false,
         error: "Presentation generation incomplete - missing data",
@@ -167,6 +283,13 @@ export async function generateAdvancedPresentation(
     }
 
     // Success!
+    if (generationRunId) {
+      await completePresentationGenerationRun(generationRunId, {
+        projectId: finalState.projectId,
+      });
+      streamingEmitter.emitComplete(generationRunId, finalState.projectId!);
+    }
+
     return {
       success: true,
       projectId: finalState.projectId,
@@ -182,6 +305,13 @@ export async function generateAdvancedPresentation(
     console.error("═══════════════════════════════════════════════════════════");
     console.error("Error:", error);
     console.error("═══════════════════════════════════════════════════════════\n");
+
+    if (generationRunId) {
+      await failPresentationGenerationRun(
+        generationRunId,
+        error instanceof Error ? error.message : "Unknown error occurred"
+      );
+    }
 
     return {
       success: false,

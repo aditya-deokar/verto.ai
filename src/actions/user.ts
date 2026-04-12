@@ -42,7 +42,8 @@ export const onAuthenticateUser = async () => {
     }
     return { status: 400 };
   } catch (error) {
-    console.log("🔴 ERROR", error);
+    const message = error instanceof Error ? error.message : String(error);
+    console.error("Auth error:", message);
     return { status: 500 };
   }
 };
