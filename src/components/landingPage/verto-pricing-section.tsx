@@ -23,7 +23,7 @@ export function VertoPricingSection() {
         "Community support",
       ],
       buttonText: "Get Started for Free",
-      buttonVariant: "outline-solid" as const,
+      buttonVariant: "outline" as const,
       highlight: false,
     },
     {

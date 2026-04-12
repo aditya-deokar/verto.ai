@@ -89,7 +89,7 @@ Generate image queries for all ${slidesNeedingImages.length} slides:`;
       schema: imageQuerySchema,
       prompt: prompt,
       temperature: modelConfigs.imageQuery.temperature,
-      maxTokens: modelConfigs.imageQuery.maxTokens,
+      maxOutputTokens: modelConfigs.imageQuery.maxTokens,
     });
 
     const imageQueries = object.imageQueries;
