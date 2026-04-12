@@ -88,7 +88,8 @@ const AgenticWorkflowPage = ({ onBack }: Props) => {
     currentAgentName,
     currentAgentDescription,
     error,
-    agentSteps
+    agentSteps,
+    runId
   } = useAgenticGenerationV2()
 
   const handleGenerate = async () => {
@@ -118,7 +119,7 @@ const AgenticWorkflowPage = ({ onBack }: Props) => {
       // V2 workflow handles everything (project creation + AI generation)
       const fullTopic = `${presentationTitle}: ${presentationTopic}`
 
-      await generate(fullTopic, additionalContext, selectedTheme.type)
+      await generate(fullTopic, additionalContext, selectedTheme.name)
 
       // Success toast is shown after navigation in the hook
 
@@ -509,6 +510,7 @@ const AgenticWorkflowPage = ({ onBack }: Props) => {
         currentProgress={progress}
         currentAgentName={currentAgentName}
         currentAgentDescription={currentAgentDescription}
+        runId={runId}
         onComplete={() => {
           // Navigation is handled in the hook after success
         }}

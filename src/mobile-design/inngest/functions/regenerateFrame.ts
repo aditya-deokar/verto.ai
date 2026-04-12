@@ -49,7 +49,6 @@ export const regenerateFrame = inngest.createFunction(
         tools: {
           searchUnsplash: unsplashTool,
         },
-        maxToolRoundtrips: 5,
         prompt: `
         USER REQUEST: ${prompt}
 

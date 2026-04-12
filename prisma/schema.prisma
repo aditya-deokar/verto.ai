@@ -19,6 +19,13 @@ enum ProjectType {
   MOBILE_DESIGN
 }
 
+enum PresentationGenerationStatus {
+  PENDING
+  RUNNING
+  COMPLETED
+  FAILED
+}
+
 model User {
   id                 String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
   clerkId            String   @unique
@@ -36,6 +43,7 @@ model User {
   Projects          Project[]       @relation("OwnedProjects")
   PurchasedProjects Project[]       @relation("PurchasedProjects")
   MobileProjects    MobileProject[] @relation("UserMobileProjects")
+  GenerationRuns    PresentationGenerationRun[]
   Subscription      Subscription?
 }
 
@@ -83,6 +91,8 @@ model Project {
   userId      String      @db.Uuid
   outlines    String[]
   isDeleted   Boolean     @default(false)
+  isPublished Boolean     @default(false)
+  publishedAt DateTime?
   isSellable  Boolean     @default(false)
   varientId   String?
   thumbnail   String?
@@ -124,4 +134,24 @@ model MobileFrame {
   project MobileProject @relation(fields: [projectId], references: [id], onDelete: Cascade)
 
   @@index([projectId])
+}
+
+model PresentationGenerationRun {
+  id              String                       @id @default(cuid())
+  userId          String                       @db.Uuid
+  topic           String
+  status          PresentationGenerationStatus @default(PENDING)
+  currentStepId   String?
+  currentStepName String?
+  progress        Int                          @default(0)
+  error           String?
+  steps           Json?
+  projectId       String?
+  completedAt     DateTime?
+  createdAt       DateTime                     @default(now())
+  updatedAt       DateTime                     @updatedAt
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId, createdAt])
 }

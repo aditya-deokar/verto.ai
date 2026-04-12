@@ -5,32 +5,27 @@ import { generateAdvancedPresentation } from '@/agentic-workflow-v2'
 
 /**
  * Server Action: Generate Presentation using Advanced V2 Workflow
- * 
+ *
  * This wraps the V2 agentic workflow with authentication and error handling.
  * It creates a project in the database and generates a complete presentation.
- * 
- * @param topic - The main topic for the presentation
- * @param additionalContext - Optional additional context or requirements
- * @param themePreference - Theme preference ('light' or 'dark')
- * @returns Result object with success status, projectId, slides, and metadata
  */
 export async function generatePresentationAction(
   topic: string,
   additionalContext?: string,
-  themePreference: string = 'light'
+  themePreference: string = 'Default',
+  providedOutlines?: string[],
+  generationRunId?: string
 ) {
   try {
-    // Authenticate user
     const { userId } = await auth()
-    
+
     if (!userId) {
-      return { 
-        success: false, 
-        error: 'Not authenticated. Please sign in to generate presentations.' 
+      return {
+        success: false,
+        error: 'Not authenticated. Please sign in to generate presentations.'
       }
     }
 
-    // Validate input
     if (!topic || topic.trim().length === 0) {
       return {
         success: false,
@@ -45,31 +40,46 @@ export async function generatePresentationAction(
       }
     }
 
-    // Generate presentation using V2 workflow
-    console.log('🚀 Starting V2 workflow for:', topic)
-    
+    const normalizedOutlines = providedOutlines
+      ?.map((outline) => outline.trim())
+      .filter(Boolean)
+
+    if (normalizedOutlines && normalizedOutlines.length > 30) {
+      return {
+        success: false,
+        error: 'Too many outlines provided (max 30)'
+      }
+    }
+
+    console.log('Starting V2 workflow for:', {
+      topic,
+      themePreference,
+      providedOutlineCount: normalizedOutlines?.length ?? 0,
+    })
+
     const result = await generateAdvancedPresentation(
       userId,
       topic,
       additionalContext,
-      themePreference
+      themePreference,
+      normalizedOutlines,
+      generationRunId
     )
 
     if (result.success) {
-      console.log('✅ V2 workflow completed:', {
+      console.log('V2 workflow completed:', {
         projectId: result.projectId,
         slideCount: result.slideCount,
         progress: result.progress
       })
     } else {
-      console.error('❌ V2 workflow failed:', result.error)
+      console.error('V2 workflow failed:', result.error)
     }
 
     return result
-    
   } catch (error) {
-    console.error('❌ Server action error:', error)
-    
+    console.error('Server action error:', error)
+
     return {
       success: false,
       error: error instanceof Error ? error.message : 'Unknown error occurred'
@@ -77,7 +87,4 @@ export async function generatePresentationAction(
   }
 }
 
-/**
- * Type definition for the result
- */
 export type GeneratePresentationResult = Awaited<ReturnType<typeof generatePresentationAction>>

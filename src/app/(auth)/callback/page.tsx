@@ -3,10 +3,10 @@ import { onAuthenticateUser } from '@/actions/user';
 import { redirect } from 'next/navigation'
 
 export const dynamic = 'force-dynamic';
+export const runtime = 'nodejs';
 
 const AuthCallbackPage = async () => {
   const auth = await onAuthenticateUser();
-  console.log(auth);
 
   if (auth.status === 200 || auth.status === 201) {
     redirect(`/dashboard`);

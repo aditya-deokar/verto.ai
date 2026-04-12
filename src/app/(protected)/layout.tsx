@@ -8,6 +8,7 @@ type Props = {
 
 
 export const dynamic = 'force-dynamic';
+export const runtime = 'nodejs';
 
 const layout = async (props: Props) => {
   const auth = await onAuthenticateUser();

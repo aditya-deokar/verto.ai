@@ -1,279 +1,196 @@
 'use client'
 
-import { useState, useCallback } from 'react'
+import { useCallback, useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { useSlideStore } from '@/store/useSlideStore'
 import { generatePresentationAction } from '@/actions/generatePresentation'
+import {
+  createPresentationGenerationRun,
+  getPresentationGenerationRun,
+} from '@/actions/presentation-generation'
+import {
+  GENERATION_STEP_DEFINITIONS,
+  buildGenerationStepSnapshots,
+} from '@/agentic-workflow-v2/lib/progress'
 import type { Slide } from '@/lib/types'
-import type { AgentStep, AgentStatus } from '@/components/global/agentic-workflow/AgenticProgressTracker'
-
-/**
- * Agent Step Configuration for V2 Workflow
- * 8 specialized agents with progress milestones
- */
-export const AGENT_STEPS_CONFIG_V2 = [
-  {
-    id: 'projectInitializer',
-    name: 'Project Setup',
-    description: 'Preparing your presentation workspace',
-    icon: '🎯',
-    progress: 10,
-    estimatedTime: '2s'
-  },
-  {
-    id: 'outlineGenerator',
-    name: 'Structure',
-    description: 'Organizing the presentation flow',
-    icon: '📋',
-    progress: 20,
-    estimatedTime: '5s'
-  },
-  {
-    id: 'contentWriter',
-    name: 'Content Writing',
-    description: 'Creating engaging text for all slides',
-    icon: '✍️',
-    progress: 40,
-    estimatedTime: '10s'
-  },
-  {
-    id: 'layoutSelector',
-    name: 'Design Layout',
-    description: 'Selecting the best look for your slides',
-    icon: '🎨',
-    progress: 55,
-    estimatedTime: '5s'
-  },
-  {
-    id: 'imageQueryGenerator',
-    name: 'Visual Search',
-    description: 'Finding the perfect images',
-    icon: '🔍',
-    progress: 65,
-    estimatedTime: '3s'
-  },
-  {
-    id: 'imageFetcher',
-    name: 'Image Integration',
-    description: 'Adding beautiful visuals',
-    icon: '🖼️',
-    progress: 75,
-    estimatedTime: '8s'
-  },
-  {
-    id: 'jsonCompiler',
-    name: 'Assembly',
-    description: 'Formatting and polishing your slides',
-    icon: '📦',
-    progress: 85,
-    estimatedTime: '5s'
-  },
-  {
-    id: 'databasePersister',
-    name: 'Finalization',
-    description: 'Saving your masterpiece',
-    icon: '💾',
-    progress: 100,
-    estimatedTime: '3s'
-  }
-] as const
+import type {
+  AgentStep,
+} from '@/components/global/agentic-workflow/AgenticProgressTracker'
 
 export interface UseAgenticGenerationV2Return {
-  // State
   isGenerating: boolean
   progress: number
   currentAgent: string
   currentAgentName: string
   currentAgentDescription: string
   error: string | null
-
-  // Actions
-  generate: (topic: string, additionalContext?: string, theme?: string) => Promise<void>
+  runId: string | null
+  generate: (
+    topic: string,
+    additionalContext?: string,
+    theme?: string,
+    providedOutlines?: string[]
+  ) => Promise<void>
   reset: () => void
-
-  // Metadata
   agentSteps: AgentStep[]
 }
 
-/**
- * Convert V2 agent steps to AgentStep format with status
- */
-function convertToAgentSteps(currentProgress: number): AgentStep[] {
-  return AGENT_STEPS_CONFIG_V2.map((step, index) => {
-    let status: AgentStatus = 'pending'
-
-    const nextStep = AGENT_STEPS_CONFIG_V2[index + 1]
-
-    // Determine status based on progress
-    if (currentProgress >= 100 && index === AGENT_STEPS_CONFIG_V2.length - 1) {
-      // Last step and completed
-      status = 'completed'
-    } else if (currentProgress >= step.progress && (!nextStep || currentProgress < nextStep.progress)) {
-      // Currently running this step
-      status = 'running'
-    } else if (currentProgress > step.progress) {
-      // Already completed this step
-      status = 'completed'
-    }
-
-    return {
-      id: step.id,
-      name: step.name,
-      description: step.description,
-      status
-    }
-  })
+function mapStepsToAgentSteps(
+  steps: ReturnType<typeof buildGenerationStepSnapshots>
+): AgentStep[] {
+  return steps.map((step) => ({
+    id: step.id,
+    name: step.name,
+    description: step.description,
+    status: step.status,
+    details: step.details,
+  }))
 }
 
-/**
- * Hook: useAgenticGenerationV2
- * 
- * Manages the V2 agentic workflow for presentation generation.
- * Uses real AI agents instead of simulation.
- * 
- * Features:
- * - Real-time progress tracking (0-100%)
- * - 8 specialized AI agents
- * - Database integration
- * - Error handling and recovery
- * - Automatic navigation on success
- * 
- * @example
- * ```tsx
- * const { generate, isGenerating, progress, currentAgentName } = useAgenticGenerationV2()
- * 
- * await generate('Introduction to AI', 'Focus on machine learning')
- * ```
- */
+function getCurrentAgentInfo(agentId: string) {
+  return (
+    GENERATION_STEP_DEFINITIONS.find((step) => step.id === agentId) ??
+    GENERATION_STEP_DEFINITIONS[0]
+  )
+}
+
 export function useAgenticGenerationV2(): UseAgenticGenerationV2Return {
   const router = useRouter()
-  const { setProject, setSlides } = useSlideStore()
+  const { setSlides } = useSlideStore()
 
-  // State management
   const [isGenerating, setIsGenerating] = useState(false)
   const [progress, setProgress] = useState(0)
   const [currentAgent, setCurrentAgent] = useState('')
   const [error, setError] = useState<string | null>(null)
+  const [runId, setRunId] = useState<string | null>(null)
+  const [agentSteps, setAgentSteps] = useState<AgentStep[]>(
+    mapStepsToAgentSteps(buildGenerationStepSnapshots())
+  )
 
-  /**
-   * Get current agent details based on progress
-   */
-  const getCurrentAgentInfo = useCallback((progressValue: number) => {
-    // Find the agent that matches or is closest to current progress
-    const agent = AGENT_STEPS_CONFIG_V2.find((step, index) => {
-      const nextStep = AGENT_STEPS_CONFIG_V2[index + 1]
-      return progressValue >= step.progress && (!nextStep || progressValue < nextStep.progress)
-    }) || AGENT_STEPS_CONFIG_V2[0]
-
-    return agent
-  }, [])
-
-  /**
-   * Reset all state
-   */
   const reset = useCallback(() => {
     setIsGenerating(false)
     setProgress(0)
     setCurrentAgent('')
     setError(null)
+    setRunId(null)
+    setAgentSteps(mapStepsToAgentSteps(buildGenerationStepSnapshots()))
   }, [])
 
-  /**
-   * Generate presentation using V2 workflow
-   */
   const generate = useCallback(async (
     topic: string,
     additionalContext?: string,
-    theme: string = 'light'
+    theme: string = 'Default',
+    providedOutlines?: string[]
   ) => {
+    let pollInterval: ReturnType<typeof setInterval> | null = null
+
     try {
-      // Reset state
       reset()
       setIsGenerating(true)
       setError(null)
 
-      console.log('🚀 Starting V2 generation:', { topic, additionalContext, theme })
+      const runResponse = await createPresentationGenerationRun(topic)
+      if (runResponse.status !== 200 || !runResponse.data) {
+        throw new Error(runResponse.error || 'Failed to create generation run')
+      }
 
-      // Simulate progress updates while waiting for server response
-      // This provides better UX since the actual workflow doesn't stream progress
-      const progressInterval = setInterval(() => {
-        setProgress(prev => {
-          // Slowly increment up to 95% while waiting
-          if (prev < 95) {
-            const increment = Math.random() * 5 + 2 // 2-7% increments
-            const newProgress = Math.min(prev + increment, 95)
+    const runId = runResponse.data.id
+    setRunId(runId)
+    setAgentSteps(mapStepsToAgentSteps(buildGenerationStepSnapshots()))
 
-            // Update current agent based on progress
-            const agentInfo = getCurrentAgentInfo(newProgress)
-            setCurrentAgent(agentInfo.id)
+    // Start SSE streaming immediately (before generation)
+    if (runId) {
+      setTimeout(() => {
+        // The dialog will handle SSE connection via runId
+      }, 100)
+    }
 
-            return newProgress
-          }
-          return prev
-        })
-      }, 1000) // Update every second
+    const pollProgress = async () => {
+        const response = await getPresentationGenerationRun(runId)
+        if (response.status !== 200 || !response.data) {
+          return
+        }
 
-      // Call the server action (this is the real AI workflow)
-      const result = await generatePresentationAction(topic, additionalContext, theme)
+        const data = response.data
+        setProgress(data.progress)
+        setCurrentAgent(data.currentStepId || '')
+        setAgentSteps(
+          data.steps.map((step) => ({
+            id: step.id,
+            name: step.name,
+            description: step.description,
+            status: step.status,
+            details: step.details,
+          }))
+        )
 
-      // Clear the progress interval
-      clearInterval(progressInterval)
+        if (data.status === 'FAILED' && data.error) {
+          setError(data.error)
+        }
+      }
+
+      await pollProgress()
+      pollInterval = setInterval(() => {
+        void pollProgress()
+      }, 1000)
+
+      const result = await generatePresentationAction(
+        topic,
+        additionalContext,
+        theme,
+        providedOutlines,
+        runId
+      )
+
+      if (pollInterval) {
+        clearInterval(pollInterval)
+      }
+
+      await pollProgress()
 
       if (!result.success) {
         throw new Error(result.error || 'Failed to generate presentation')
       }
 
-      // Set final progress
       setProgress(100)
       setCurrentAgent('databasePersister')
 
-      console.log('✅ Generation completed:', {
-        projectId: 'projectId' in result ? result.projectId : null,
-        slideCount: 'slideCount' in result ? result.slideCount : 0
-      })
-
-      // Update store with the generated data
       if ('slides' in result && result.slides) {
         setSlides(result.slides as Slide[])
       }
 
-      // Navigate to editor after short delay
       setTimeout(() => {
         if ('projectId' in result && result.projectId) {
           router.push(`/presentation/${result.projectId}`)
         }
       }, 500)
-
     } catch (err) {
-      console.error('❌ Generation error:', err)
+      if (pollInterval) {
+        clearInterval(pollInterval)
+      }
 
-      const errorMessage = err instanceof Error ? err.message : 'Unknown error occurred'
+      const errorMessage =
+        err instanceof Error ? err.message : 'Unknown error occurred'
       setError(errorMessage)
-      setProgress(0)
       setCurrentAgent('')
-
+      throw new Error(errorMessage)
     } finally {
       setIsGenerating(false)
     }
-  }, [router, setProject, setSlides, reset, getCurrentAgentInfo])
+  }, [router, setSlides, reset])
 
-  // Get current agent info
-  const currentAgentInfo = getCurrentAgentInfo(progress)
+  const currentAgentInfo = getCurrentAgentInfo(currentAgent)
 
   return {
-    // State
     isGenerating,
     progress,
     currentAgent,
     currentAgentName: currentAgentInfo.name,
     currentAgentDescription: currentAgentInfo.description,
     error,
-
-    // Actions
+    runId,
     generate,
     reset,
-
-    // Metadata - Convert to AgentStep format
-    agentSteps: convertToAgentSteps(progress)
+    agentSteps,
   }
 }

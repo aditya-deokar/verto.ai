@@ -1,4 +1,4 @@
-import { PrismaClient } from "@/generated/prisma"
+import { PrismaClient } from "@/generated/prisma/index"
 
 // eslint-disable-next-line no-var
 const globalForPrisma = global as unknown as { 

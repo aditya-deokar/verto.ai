@@ -15,30 +15,30 @@ export const modelConfigs = {
   // For outline generation - needs creativity
   outline: {
     temperature: 0.8,
-    maxTokens: 2000,
+    maxOutputTokens: 2000,
   },
   
   // For content writing - balanced
   content: {
     temperature: 0.7,
-    maxTokens: 4000,
+    maxOutputTokens: 8000,
   },
   
   // For layout selection - needs consistency
   layout: {
     temperature: 0.3,
-    maxTokens: 1000,
+    maxOutputTokens: 1000,
   },
   
-  // For image queries - needs creativity
+  // For image queries - needs more output for proper JSON
   imageQuery: {
     temperature: 0.7,
-    maxTokens: 500,
+    maxOutputTokens: 2000,
   },
   
   // For JSON compilation - needs precision
   jsonCompiler: {
     temperature: 0.2,
-    maxTokens: 8000,
+    maxOutputTokens: 8000,
   },
 };

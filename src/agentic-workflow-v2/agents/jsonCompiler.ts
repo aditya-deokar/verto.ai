@@ -51,6 +51,17 @@ function buildLayoutContent(
     });
   }
 
+  // Add subtitle if present
+  if (slide.subtitle) {
+    textComponents.push({
+      id: uuidv4(),
+      type: "paragraph",
+      name: "Subtitle",
+      content: slide.subtitle,
+      className: "text-2xl text-muted-foreground mt-2 mb-4",
+    });
+  }
+
   // Add content based on type
   if (slide.slideContent) {
     if (isListContent(slide.slideContent)) {
@@ -289,7 +300,7 @@ function buildLayoutContent(
                     id: uuidv4(),
                     type: "heading3",
                     name: "Heading3",
-                    content: "Column 1",
+                    content: slide.columnHeadings?.[0] || "Column 1",
                     placeholder: "Heading 3",
                   },
                   {
@@ -310,7 +321,7 @@ function buildLayoutContent(
                     id: uuidv4(),
                     type: "heading3",
                     name: "Heading3",
-                    content: "Column 2",
+                    content: slide.columnHeadings?.[1] || "Column 2",
                     placeholder: "Heading 3",
                   },
                   {
@@ -410,7 +421,7 @@ function buildLayoutContent(
                     id: uuidv4(),
                     type: "heading3",
                     name: "Heading3",
-                    content: "Column 1",
+                    content: slide.columnHeadings?.[0] || "Column 1",
                     placeholder: "Heading 3",
                   },
                   {
@@ -431,7 +442,7 @@ function buildLayoutContent(
                     id: uuidv4(),
                     type: "heading3",
                     name: "Heading3",
-                    content: "Column 2",
+                    content: slide.columnHeadings?.[1] || "Column 2",
                     placeholder: "Heading 3",
                   },
                   {
@@ -452,7 +463,7 @@ function buildLayoutContent(
                     id: uuidv4(),
                     type: "heading3",
                     name: "Heading3",
-                    content: "Column 3",
+                    content: slide.columnHeadings?.[2] || "Column 3",
                     placeholder: "Heading 3",
                   },
                   {
@@ -843,9 +854,8 @@ function buildLayoutContent(
       };
 
     case "bigNumberLayout":
-      // Extract first number/stat from content
-      const statMatch = slide.slideContent?.match(/\d+[%$]?|\$\d+/);
-      const bigStat = statMatch ? statMatch[0] : "47%";
+      // Use structured statValue from content writer, fallback to regex extraction
+      const bigStat = slide.statValue || (slide.slideContent?.match(/\d+[%$]?|\$\d+/)?.[0]) || "47%";
       
       return {
         id: uuidv4(),
@@ -882,7 +892,7 @@ function buildLayoutContent(
                     id: uuidv4(),
                     type: "heading2",
                     name: "Heading2",
-                    content: slide.slideTitle || "",
+                    content: slide.statLabel || slide.slideTitle || "",
                     placeholder: "Metric Title",
                   },
                   {
@@ -900,10 +910,17 @@ function buildLayoutContent(
       };
 
     case "comparisonLayout":
-      const comparisonItems = isListContent(slide.slideContent || "")
-        ? parseListContent(slide.slideContent || "")
-        : [slide.slideContent || ""];
-      const halfComparison = Math.ceil(comparisonItems.length / 2);
+      // Use structured comparison fields from content writer
+      const compItemsA = slide.comparisonPointsA || (
+        isListContent(slide.slideContent || "")
+          ? parseListContent(slide.slideContent || "").slice(0, Math.ceil(parseListContent(slide.slideContent || "").length / 2))
+          : [slide.slideContent || ""]
+      );
+      const compItemsB = slide.comparisonPointsB || (
+        isListContent(slide.slideContent || "")
+          ? parseListContent(slide.slideContent || "").slice(Math.ceil(parseListContent(slide.slideContent || "").length / 2))
+          : []
+      );
 
       return {
         id: uuidv4(),
@@ -933,14 +950,14 @@ function buildLayoutContent(
                     id: uuidv4(),
                     type: "heading3",
                     name: "Heading3",
-                    content: "Option A",
+                    content: slide.comparisonLabelA || "Option A",
                     className: "text-center text-green-600 dark:text-green-400",
                   },
                   {
                     id: uuidv4(),
                     type: "bulletList",
                     name: "Bullet List",
-                    content: comparisonItems.slice(0, halfComparison),
+                    content: compItemsA,
                   },
                 ],
               },
@@ -954,14 +971,14 @@ function buildLayoutContent(
                     id: uuidv4(),
                     type: "heading3",
                     name: "Heading3",
-                    content: "Option B",
+                    content: slide.comparisonLabelB || "Option B",
                     className: "text-center text-blue-600 dark:text-blue-400",
                   },
                   {
                     id: uuidv4(),
                     type: "bulletList",
                     name: "Bullet List",
-                    content: comparisonItems.slice(halfComparison),
+                    content: compItemsB,
                   },
                 ],
               },
@@ -981,24 +998,28 @@ function buildLayoutContent(
             id: uuidv4(),
             type: "blockquote",
             name: "Blockquote",
-            content: slide.slideContent || "",
+            content: slide.quoteText || slide.slideContent || "",
             className: "text-3xl font-medium italic text-center",
           },
           {
             id: uuidv4(),
             type: "paragraph",
             name: "Author",
-            content: `— ${slide.slideTitle || ""}`,
+            content: slide.quoteAttribution || `— ${slide.slideTitle || ""}`,
             className: "text-right text-muted-foreground mt-4",
           },
         ],
       };
 
     case "timelineLayout":
-      const timelineItems = isListContent(slide.slideContent || "")
+      // Use structured processSteps from content writer, fallback to parsed content
+      const hasTimelineLayoutSteps = slide.processSteps && slide.processSteps.length > 0;
+      const fallbackTimelineItems = isListContent(slide.slideContent || "")
         ? parseListContent(slide.slideContent || "")
         : [slide.slideContent || ""];
-      const timelineSteps = Math.min(timelineItems.length, 4);
+      const timelineSteps = hasTimelineLayoutSteps 
+        ? Math.min(slide.processSteps!.length, 4) 
+        : Math.min(fallbackTimelineItems.length, 4);
 
       return {
         id: uuidv4(),
@@ -1028,14 +1049,14 @@ function buildLayoutContent(
                   id: uuidv4(),
                   type: "heading3",
                   name: "Heading3",
-                  content: timelineItems[i] || `Phase ${i + 1}`,
+                  content: hasTimelineLayoutSteps ? slide.processSteps![i].stepTitle : (fallbackTimelineItems[i] || `Phase ${i + 1}`),
                   className: "text-primary",
                 },
                 {
                   id: uuidv4(),
                   type: "paragraph",
                   name: "Paragraph",
-                  content: timelineItems[i + timelineSteps] || "",
+                  content: hasTimelineLayoutSteps ? (slide.processSteps![i].stepDescription || "") : (fallbackTimelineItems[i + timelineSteps] || ""),
                   placeholder: "Description...",
                 },
               ],
@@ -1086,10 +1107,13 @@ function buildLayoutContent(
       };
 
     case "iconGrid":
-      const gridItems = isListContent(slide.slideContent || "")
+      // Use structured gridItems from content writer, fallback to parsed content
+      const fallbackGridItems = isListContent(slide.slideContent || "")
         ? parseListContent(slide.slideContent || "")
         : [slide.slideContent || ""];
-      const icons = ["✓", "★", "⚡", "🎯"];
+      const defaultIcons = ["✓", "★", "⚡", "🎯"];
+      const hasStructuredGrid = slide.gridItems && slide.gridItems.length > 0;
+      const gridCount = hasStructuredGrid ? Math.min(4, slide.gridItems!.length) : Math.min(4, fallbackGridItems.length);
 
       return {
         id: uuidv4(),
@@ -1109,7 +1133,7 @@ function buildLayoutContent(
             type: "resizable-column",
             name: "Grid",
             className: "grid grid-cols-2 gap-6",
-            content: Array.from({ length: Math.min(4, gridItems.length) }, (_, i) => ({
+            content: Array.from({ length: gridCount }, (_, i) => ({
               id: uuidv4(),
               type: "column",
               name: `Item ${i + 1}`,
@@ -1119,20 +1143,20 @@ function buildLayoutContent(
                   id: uuidv4(),
                   type: "heading3",
                   name: "Icon/Number",
-                  content: icons[i],
+                  content: hasStructuredGrid ? slide.gridItems![i].icon : defaultIcons[i],
                   className: "text-4xl mb-2",
                 },
                 {
                   id: uuidv4(),
                   type: "heading4",
                   name: "Title",
-                  content: gridItems[i] || `Feature ${i + 1}`,
+                  content: hasStructuredGrid ? slide.gridItems![i].itemTitle : (fallbackGridItems[i] || `Feature ${i + 1}`),
                 },
                 {
                   id: uuidv4(),
                   type: "paragraph",
                   name: "Description",
-                  content: gridItems[i + 4] || "",
+                  content: hasStructuredGrid ? slide.gridItems![i].itemDescription : (fallbackGridItems[i + 4] || ""),
                   placeholder: "Brief description",
                   className: "text-sm",
                 },
@@ -1143,9 +1167,8 @@ function buildLayoutContent(
       };
 
     case "sectionDivider":
-      // Extract section number from title if present
-      const sectionMatch = slide.slideTitle?.match(/\d+/);
-      const sectionNum = sectionMatch ? sectionMatch[0] : "02";
+      // Use structured sectionNumber, fallback to regex extraction
+      const sectionNum = slide.sectionNumber || (slide.slideTitle?.match(/\d+/)?.[0]) || "02";
 
       return {
         id: uuidv4(),
@@ -1172,10 +1195,12 @@ function buildLayoutContent(
       };
 
     case "processFlow":
-      const processSteps = isListContent(slide.slideContent || "")
+      // Use structured processSteps from content writer, fallback to parsed content
+      const hasStructuredSteps = slide.processSteps && slide.processSteps.length > 0;
+      const fallbackSteps = isListContent(slide.slideContent || "")
         ? parseListContent(slide.slideContent || "")
         : [slide.slideContent || ""];
-      const numSteps = Math.min(processSteps.length, 3);
+      const numSteps = hasStructuredSteps ? Math.min(slide.processSteps!.length, 3) : Math.min(fallbackSteps.length, 3);
 
       return {
         id: uuidv4(),
@@ -1213,7 +1238,7 @@ function buildLayoutContent(
                     id: uuidv4(),
                     type: "heading4",
                     name: "Step Title",
-                    content: processSteps[i] || `Step ${i + 1}`,
+                    content: hasStructuredSteps ? slide.processSteps![i].stepTitle : (fallbackSteps[i] || `Step ${i + 1}`),
                   },
                 ],
               },
@@ -1257,10 +1282,278 @@ function buildLayoutContent(
             id: uuidv4(),
             type: "customButton",
             name: "CTA Button",
-            content: "Get Started →",
+            content: slide.ctaButtonText || "Get Started →",
             link: "#",
             bgColor: "#3b82f6",
             className: "inline-block px-8 py-4 rounded-lg font-semibold",
+          },
+        ],
+      };
+
+    case "creativeHero":
+      return {
+        id: uuidv4(),
+        type: "column",
+        name: "Column",
+        content: [
+          {
+            id: uuidv4(),
+            type: "resizable-column",
+            name: "Creative Hero",
+            content: [
+              {
+                id: uuidv4(),
+                type: "column",
+                name: "Left Column",
+                className: "flex flex-col justify-center",
+                content: [
+                  {
+                    id: uuidv4(),
+                    type: "heading1",
+                    name: "Heading1",
+                    content: slide.slideTitle || "",
+                    className: "text-6xl font-black tracking-tight",
+                  },
+                  ...(slide.subtitle ? [{
+                    id: uuidv4(),
+                    type: "paragraph",
+                    name: "Subtitle",
+                    content: slide.subtitle,
+                    className: "text-2xl text-muted-foreground font-medium mt-6",
+                  }] : []),
+                  {
+                    id: uuidv4(),
+                    type: "paragraph",
+                    name: "Paragraph",
+                    content: slide.slideContent || "",
+                    className: "text-xl text-muted-foreground mt-4",
+                  },
+                  {
+                    id: uuidv4(),
+                    type: "customButton",
+                    name: "Button",
+                    content: slide.ctaButtonText || "Explore More",
+                    link: "#",
+                    bgColor: "#000000",
+                    className: "mt-8 w-fit",
+                  },
+                ],
+              },
+              {
+                id: uuidv4(),
+                type: "column",
+                name: "Right Column",
+                content: [
+                  {
+                    id: uuidv4(),
+                    type: "image",
+                    name: "Image",
+                    content: slide.imageUrl || "",
+                    alt: slide.slideTitle || "Hero Image",
+                    className:
+                      "rounded-3xl object-cover h-full shadow-2xl skew-y-3 hover:skew-y-0 transition-all duration-500",
+                  },
+                ],
+              },
+            ],
+          },
+        ],
+      };
+
+    case "bentoGrid":
+      // Use structured stats/gridItems from content writer, fallback to parsed content
+      const hasBentoStats = slide.stats && slide.stats.length >= 2;
+      const hasBentoInsights = slide.gridItems && slide.gridItems.length > 0;
+      const fallbackBentoItems = isListContent(slide.slideContent || "")
+        ? parseListContent(slide.slideContent || "")
+        : [slide.slideContent || ""];
+      const bentoStat1 = hasBentoStats ? `${slide.stats![0].value}\n${slide.stats![0].label}` : (fallbackBentoItems[0] || "12.5k");
+      const bentoStat2 = hasBentoStats ? `${slide.stats![1].value}\n${slide.stats![1].label}` : (fallbackBentoItems[1] || "98%");
+      const bentoInsights = hasBentoInsights
+        ? slide.gridItems!.map(item => `${item.icon} ${item.itemTitle}: ${item.itemDescription}`)
+        : (fallbackBentoItems.length > 2 ? fallbackBentoItems.slice(2) : ["Key insight point 1", "Key insight point 2", "Key insight point 3"]);
+
+      return {
+        id: uuidv4(),
+        type: "column",
+        name: "Main Column",
+        content: [
+          {
+            id: uuidv4(),
+            type: "title",
+            name: "Title",
+            content: slide.slideTitle || "",
+            className: "mb-6",
+          },
+          {
+            id: uuidv4(),
+            type: "resizable-column",
+            name: "Bento Grid Layout",
+            content: [
+              // Column 1: Image Card
+              {
+                id: uuidv4(),
+                type: "column",
+                name: "Col 1",
+                content: [
+                  {
+                    id: uuidv4(),
+                    type: "image",
+                    name: "Image",
+                    content: slide.imageUrl || "",
+                    alt: slide.slideTitle || "Dashboard Image",
+                    className: "h-full object-cover rounded-2xl",
+                  },
+                ],
+                className:
+                  "h-full bg-muted/20 rounded-3xl border border-border/50 p-2",
+              },
+              // Column 2: Stat Boxes
+              {
+                id: uuidv4(),
+                type: "column",
+                name: "Col 2",
+                className: "flex flex-col gap-4",
+                content: [
+                  {
+                    id: uuidv4(),
+                    type: "statBox",
+                    name: "Stat Box",
+                    content: bentoStat1,
+                    className: "flex-1",
+                  },
+                  {
+                    id: uuidv4(),
+                    type: "statBox",
+                    name: "Stat Box",
+                    content: bentoStat2,
+                    className: "flex-1",
+                  },
+                ],
+              },
+              // Column 3: Insights
+              {
+                id: uuidv4(),
+                type: "column",
+                name: "Col 3",
+                className:
+                  "bg-primary/5 rounded-3xl p-6 flex flex-col justify-center",
+                content: [
+                  {
+                    id: uuidv4(),
+                    type: "heading2",
+                    name: "Heading",
+                    content: "Key Insights",
+                  },
+                  {
+                    id: uuidv4(),
+                    type: "bulletList",
+                    name: "List",
+                    content: bentoInsights,
+                  },
+                ],
+              },
+            ],
+          },
+        ],
+      };
+
+    case "statsRow":
+      // Use structured stats array from content writer
+      const hasStructuredStats = slide.stats && slide.stats.length >= 3;
+      const fallbackStatsItems = isListContent(slide.slideContent || "")
+        ? parseListContent(slide.slideContent || "")
+        : [slide.slideContent || ""];
+      const stat1 = hasStructuredStats ? `${slide.stats![0].value}\n${slide.stats![0].label}` : (fallbackStatsItems[0] || "10M+");
+      const stat2 = hasStructuredStats ? `${slide.stats![1].value}\n${slide.stats![1].label}` : (fallbackStatsItems[1] || "4.9/5");
+      const stat3 = hasStructuredStats ? `${slide.stats![2].value}\n${slide.stats![2].label}` : (fallbackStatsItems[2] || "150+");
+
+      return {
+        id: uuidv4(),
+        type: "column",
+        name: "Column",
+        content: [
+          {
+            id: uuidv4(),
+            type: "heading2",
+            name: "Section Title",
+            content: slide.slideTitle || "",
+            className: "text-center mb-12",
+          },
+          {
+            id: uuidv4(),
+            type: "resizable-column",
+            name: "Stats Grid",
+            content: [
+              {
+                id: uuidv4(),
+                type: "statBox",
+                name: "Stat 1",
+                content: stat1,
+              },
+              {
+                id: uuidv4(),
+                type: "statBox",
+                name: "Stat 2",
+                content: stat2,
+              },
+              {
+                id: uuidv4(),
+                type: "statBox",
+                name: "Stat 3",
+                content: stat3,
+              },
+            ],
+          },
+        ],
+      };
+
+    case "timeline":
+      // Use structured processSteps from content writer for timeline phases
+      const hasTimelineSteps = slide.processSteps && slide.processSteps.length >= 3;
+      const fallbackTimeline = isListContent(slide.slideContent || "")
+        ? parseListContent(slide.slideContent || "")
+        : [slide.slideContent || ""];
+      const phase1 = hasTimelineSteps ? slide.processSteps![0].stepTitle : (fallbackTimeline[0] || "Phase 1");
+      const phase2 = hasTimelineSteps ? slide.processSteps![1].stepTitle : (fallbackTimeline[1] || "Phase 2");
+      const phase3 = hasTimelineSteps ? slide.processSteps![2].stepTitle : (fallbackTimeline[2] || "Phase 3");
+
+      return {
+        id: uuidv4(),
+        type: "column",
+        name: "Main",
+        content: [
+          {
+            id: uuidv4(),
+            type: "heading2",
+            name: "Title",
+            content: slide.slideTitle || "",
+            className: "mb-8 text-center",
+          },
+          {
+            id: uuidv4(),
+            type: "resizable-column",
+            name: "Timeline Grid",
+            content: [
+              {
+                id: uuidv4(),
+                type: "timelineCard",
+                name: "Q1",
+                content: phase1,
+              },
+              {
+                id: uuidv4(),
+                type: "timelineCard",
+                name: "Q2",
+                content: phase2,
+              },
+              {
+                id: uuidv4(),
+                type: "timelineCard",
+                name: "Q3",
+                content: phase3,
+              },
+            ],
           },
         ],
       };

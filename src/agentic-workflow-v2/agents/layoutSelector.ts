@@ -6,6 +6,17 @@ import { AdvancedPresentationState } from "../lib/state";
 import { layoutSelectionSchema, validateSlideCount } from "../lib/validators";
 import { LAYOUT_DESCRIPTIONS, getLayoutTemplate } from "../lib/layoutTemplates";
 
+function emitToken(state: AdvancedPresentationState, content: string) {
+  if (state.streamEventHandler) {
+    state.streamEventHandler({
+      type: 'token',
+      agentId: 'layoutSelector',
+      content,
+      timestamp: Date.now(),
+    });
+  }
+}
+
 /**
  * Agent 4: Layout Selector (NEW)
  * 
@@ -33,63 +44,37 @@ export async function runLayoutSelector(
     const slides = state.slideData;
     console.log(`🎯 Selecting layouts for ${slides.length} slides...`);
 
-    // Format slide content for analysis
+    // Format slide outlines for analysis (content not yet generated at this stage)
     const slidesSummary = slides
       .map((slide, index) => {
-        return `Slide ${index + 1}:
-  Outline: ${slide.outline}
-  Title: ${slide.slideTitle}
-  Content: ${slide.slideContent?.slice(0, 150)}...`;
+        return `Slide ${index + 1}: ${slide.outline}`;
       })
-      .join("\n\n");
+      .join("\n");
 
     const prompt = `You are an ELITE presentation designer with expertise in visual communication and layout optimization. Your mission: Select the PERFECT layout for each slide to maximize impact and engagement.
+
+Presentation Topic: "${state.userInput}"
+${state.additionalContext ? `Additional Context: "${state.additionalContext}"` : ""}
 
 ${LAYOUT_DESCRIPTIONS}
 
 ═══════════════════════════════════════════════════════════════
-📊 SLIDES TO ANALYZE
+📊 SLIDE OUTLINES TO ANALYZE
 ═══════════════════════════════════════════════════════════════
 ${slidesSummary}
-
-═══════════════════════════════════════════════════════════════
-🎯 YOUR SELECTION CRITERIA
-═══════════════════════════════════════════════════════════════
-
-**Content Analysis:**
-1. **Text-Heavy Content** → Use column layouts (twoColumns, threeColumns, fourColumns)
-2. **Visual Concepts** → Use image layouts (accentLeft, splitContentImage, imageAndText)
-3. **Statistics/Numbers** → Use bigNumberLayout for impressive metrics
-4. **Comparisons** → Use comparisonLayout or twoColumnsWithHeadings
-5. **Quotes** → Use quoteLayout for testimonials or inspirational messages
-6. **Processes** → Use processFlow or timelineLayout for step-by-step content
-7. **Features List** → Use iconGrid or threeColumnsWithHeadings
-8. **Case Studies** → Use twoImageColumns or threeImageColumns with visuals
-9. **Dramatic Moments** → Use fullImageBackground for emotional impact
-10. **Transitions** → Use sectionDivider between major sections
-11. **Conclusion** → Use callToAction for final slide with clear next steps
-
-**Visual Variety Rules:**
-- ✅ Aim for 5-8 different layout types in the presentation
-- ❌ Never use same layout 3+ times consecutively
-- ✅ Alternate between image-heavy and text-heavy layouts
-- ❌ Don't overuse basic layouts (blank-card should be <30% of slides)
-- ✅ Use specialized layouts (bigNumber, quote, timeline) when content fits
-
-**Strategic Positioning:**
-- Slide 1: titleAndContent or blank-card (strong opening)
-- Early slides: Mix image + text layouts to engage visually
-- Middle slides: Vary based on content (columns, grids, specialized)
-- Final slide: callToAction (clear next steps) OR quoteLayout (inspirational close)
 
 ═══════════════════════════════════════════════════════════════
 ✨ OUTPUT REQUIREMENTS
 ═══════════════════════════════════════════════════════════════
 For each slide, provide:
-1. **layoutType:** One of the 25 available layouts
+1. **layoutType:** One of the 28 available layouts (follow the MANDATORY SELECTION RULES above strictly!)
 2. **reasoning:** 30-50 word explanation of WHY this layout is perfect for this content
 
-Be bold! Use advanced layouts when they fit. Make this presentation visually stunning!
+CRITICAL REMINDERS:
+- You MUST follow every MANDATORY SELECTION RULE listed above (banned layouts, required first/last slides, diversity minimums)
+- Prefer CREATIVE and ADVANCED layouts over basic column layouts — they make presentations look premium
+- Match content type to layout purpose (stats→bigNumberLayout/statsRow, comparisons→comparisonLayout, processes→processFlow, etc.)
+- Think like a professional designer building a keynote presentation, NOT a generic slideshow
 
 Generate layout selections for all ${slides.length} slides NOW:`;
 
@@ -112,12 +97,12 @@ Generate layout selections for all ${slides.length} slides NOW:`;
       console.log(
         `   ${i + 1}. ${layout.layoutType} - ${layout.reasoning.slice(0, 50)}...`
       );
+      emitToken(state, `Slide ${i + 1}: ${layout.layoutType}`);
     });
 
     // Update slide data with layout types
     const updatedSlideData = state.slideData.map((slide, index) => {
       const selectedLayout = layouts[index];
-      const template = getLayoutTemplate(selectedLayout.layoutType);
       
       return {
         ...slide,
@@ -128,7 +113,7 @@ Generate layout selections for all ${slides.length} slides NOW:`;
     return {
       slideData: updatedSlideData,
       currentStep: "Layouts Selected",
-      progress: 55, // 55% complete
+      progress: 30, // 30% complete (runs before content writer now)
     };
   } catch (error) {
     console.error("🔴 Error selecting layouts:", error);

@@ -384,6 +384,10 @@ export const useSlideStore = create(
     }),
     {
       name: "slides-storage",
+      partialize: (state) => {
+        const { past, future, ...rest } = state;
+        return rest as unknown as SlideState;
+      },
     }
   )
 );

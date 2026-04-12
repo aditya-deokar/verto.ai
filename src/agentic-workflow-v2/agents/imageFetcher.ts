@@ -1,16 +1,27 @@
-// agents/imageFetcher.ts - Agent 6: Fetch Images from Placeholder API
+// agents/imageFetcher.ts - Agent 6: Fetch images from the configured provider
 
 import { AdvancedPresentationState } from "../lib/state";
 import { fetchImagesForQueries, validateImageUrl, getDefaultImage } from "../utils/imageUtils";
+
+function emitToken(state: AdvancedPresentationState, content: string) {
+  if (state.streamEventHandler) {
+    state.streamEventHandler({
+      type: 'token',
+      agentId: 'imageFetcher',
+      content,
+      timestamp: Date.now(),
+    });
+  }
+}
 
 /**
  * Agent 6: Image Fetcher
  * 
  * Purpose: Fetches actual images based on queries
- * - Currently uses placeholder images (mocked)
- * - In production, would call Unsplash API
+ * - Uses the configured image provider (Unsplash by default)
+ * - Falls back to safe placeholder images when provider calls fail
  * - Validates image URLs
- * - Provides fallback for failed fetches
+ * - Keeps the overall generation run from failing on image issues
  * 
  * @param state - Current graph state
  * @returns Updated state with image URLs
@@ -53,6 +64,10 @@ export async function runImageFetcher(
     const fetchedImages = await fetchImagesForQueries(queries);
 
     console.log(`✅ Fetched ${fetchedImages.length} images successfully`);
+
+    fetchedImages.forEach((img, i) => {
+      emitToken(state, `Image ${i + 1}: ${img.url.slice(0, 50)}...`);
+    });
 
     // Update slide data with fetched image URLs
     let imageIndex = 0;

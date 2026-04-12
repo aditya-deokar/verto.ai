@@ -1,5 +1,7 @@
 // lib/state.ts - State Management for Advanced Workflow
 
+import type { StreamEvent } from '@/lib/streaming/EventEmitter'
+
 /**
  * Content item within a slide (nested structure)
  */
@@ -33,12 +35,38 @@ export interface Slide {
 export interface SlideGenerationData {
   outline: string;
   slideTitle: string | null;
+  subtitle?: string;
   slideContent: string | null;
   layoutType: string | null;
   imageQuery: string | null;
   imageUrl: string | null;
   finalJson: FinalSlideContent | null;
   validationStatus: 'pending' | 'valid' | 'invalid';
+
+  // === Structured content fields for premium layouts ===
+  // For bigNumberLayout / statsRow
+  statValue?: string;
+  statLabel?: string;
+  // For statsRow / bentoGrid (multiple stats)
+  stats?: { value: string; label: string }[];
+  // For comparisonLayout
+  comparisonLabelA?: string;
+  comparisonLabelB?: string;
+  comparisonPointsA?: string[];
+  comparisonPointsB?: string[];
+  // For quoteLayout
+  quoteText?: string;
+  quoteAttribution?: string;
+  // For processFlow / timelineLayout / timeline
+  processSteps?: { stepTitle: string; stepDescription?: string }[];
+  // For iconGrid / bentoGrid
+  gridItems?: { icon: string; itemTitle: string; itemDescription: string }[];
+  // For callToAction / creativeHero
+  ctaButtonText?: string;
+  // For sectionDivider
+  sectionNumber?: string;
+  // For columnsWithHeadings
+  columnHeadings?: string[];
 }
 
 /**
@@ -46,19 +74,23 @@ export interface SlideGenerationData {
  */
 export interface AdvancedPresentationState {
   // Input Data
+  generationRunId?: string;
   projectId: string | null;
   userId: string;
   userInput: string;
   additionalContext?: string;
-  themePreference: string; // Default theme name
-  
+  themePreference: string; // Theme name from src/lib/constants.ts
+
+  // Streaming
+  streamEventHandler?: (event: StreamEvent) => void;
+
   // Generation Progress
   outlines: string[] | null;
   slideData: SlideGenerationData[];
-  
+
   // Output
   finalPresentationJson: Slide[] | null;
-  
+
   // Metadata & Error Handling
   error: string | null;
   currentStep: string;

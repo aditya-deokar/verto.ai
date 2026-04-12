@@ -2,12 +2,12 @@
 
 import { generateObject, generateText} from 'ai'
 import { google } from '@ai-sdk/google'
-import { currentUser } from '@clerk/nextjs/server';
-import prisma from '@/lib/prisma';
 import { v4 as uuidv4 } from "uuid";
 import { ContentItem, ContentType, Slide } from '@/lib/types';
 import { GeneratedOutputSchema, outlineSchema } from '@/lib/zodSchema';
 import { ReferedLayoutsSchema } from '@/lib/zod';
+import prisma from '@/lib/prisma';
+import { getOwnedProject } from './project-access';
 
 
 
@@ -913,33 +913,13 @@ export const generateLayouts = async (projectId: string, theme: string) => {
         if (!projectId) {
           return { status: 400, error: "Project ID is required" };
         }
-        const user = await currentUser();
-        if (!user) {
-          return { status: 403, error: "User not authenticated" };
+
+        const access = await getOwnedProject(projectId);
+        if (access.status !== 200) {
+          return access;
         }
-    
-        const userExist = await prisma.user.findUnique({
-          where: { clerkId: user.id },
-        });
-    
-        if (!userExist) {
-          return { status: 404, error: "User not found in the database" };
-        }
-        
-        // if (!userExist.subscription) {
-        //   return {
-        //     status: 403,
-        //     error: "User does not have an active subscription",
-        //   };
-        // }
-    
-        const project = await prisma.project.findUnique({
-          where: { id: projectId, isDeleted: false },
-        });
-    
-        if (!project) {
-          return { status: 404, error: "Project not found" };
-        }
+
+        const project = access.project;
     
         if (!project.outlines || project.outlines.length === 0) {
           return { status: 400, error: "Project does not have any outlines to generate content from" };
@@ -952,7 +932,7 @@ export const generateLayouts = async (projectId: string, theme: string) => {
         }
     
         await prisma.project.update({
-          where: { id: projectId },
+          where: { id: project.id },
           data: { slides: layouts.data as any, themeName: theme },
         });
     

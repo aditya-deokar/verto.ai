@@ -1,12 +1,14 @@
 'use client'
 
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from '@/components/ui/dialog'
 import { Button } from '@/components/ui/button'
 import { Progress } from '@/components/ui/progress'
 import AgenticProgressTracker, { AgentStep, AgentStatus } from './AgenticProgressTracker'
+import { AgenticStreamViewer } from './AgenticStreamViewer'
+import { useStreamingGeneration } from '@/hooks/useStreamingGeneration'
 import { motion, AnimatePresence } from 'framer-motion'
-import { Sparkles, X } from 'lucide-react'
+import { Sparkles, X, MonitorPlay, MonitorOff } from 'lucide-react'
 
 interface AgenticWorkflowDialogProps {
   open: boolean
@@ -17,6 +19,8 @@ interface AgenticWorkflowDialogProps {
   currentProgress?: number
   currentAgentName?: string
   currentAgentDescription?: string
+  runId?: string | null
+  showStream?: boolean
 }
 
 const AGENT_STEPS_CONFIG: Omit<AgentStep, 'status' | 'details'>[] = [
@@ -55,18 +59,57 @@ const AgenticWorkflowDialog = ({
   steps: externalSteps,
   currentProgress: externalProgress,
   currentAgentName,
-  currentAgentDescription
+  currentAgentDescription,
+  runId,
+  showStream = true
 }: AgenticWorkflowDialogProps) => {
   const [steps, setSteps] = useState<AgentStep[]>(
     externalSteps ? [...externalSteps] : AGENT_STEPS_CONFIG.map(step => ({ ...step, status: 'pending' as AgentStatus }))
   )
   const [currentStep, setCurrentStep] = useState(0)
   const [progress, setProgress] = useState(externalProgress || 0)
+  const [streamEnabled, setStreamEnabled] = useState(showStream)
+
+  const {
+    isConnected,
+    isConnecting,
+    events,
+    currentTokens,
+    currentAgentId,
+    error: streamError,
+    connect,
+    disconnect,
+  } = useStreamingGeneration()
+
+  // Connect to stream immediately when runId is available
+  useEffect(() => {
+    if (open && runId && streamEnabled) {
+      console.log('[Dialog] Connecting to stream with runId:', runId)
+      connect(runId)
+    }
+    return () => {
+      if (!open) {
+        disconnect()
+      }
+    }
+  }, [open, runId, streamEnabled, connect, disconnect])
 
   // Update steps when external steps change
   React.useEffect(() => {
     if (externalSteps) {
       setSteps([...externalSteps])
+      const runningIndex = externalSteps.findIndex((step) => step.status === 'running')
+      const errorIndex = externalSteps.findIndex((step) => step.status === 'error')
+      const activeIndex = runningIndex >= 0
+        ? runningIndex
+        : errorIndex >= 0
+          ? errorIndex
+          : Math.max(
+              externalSteps.findLastIndex((step) => step.status === 'completed'),
+              0
+            )
+
+      setCurrentStep(activeIndex)
     }
   }, [externalSteps])
 
@@ -135,13 +178,40 @@ const AgenticWorkflowDialog = ({
         <div className="space-y-2">
           <div className="flex items-center justify-between text-sm">
             <span className="text-muted-foreground">Overall Progress</span>
-            <span className="font-medium">{Math.round(overallProgress)}%</span>
+            <div className="flex items-center gap-2">
+              {streamEnabled && (
+                <button
+                  onClick={() => setStreamEnabled(false)}
+                  className="p-1 hover:bg-muted rounded"
+                  title="Hide stream"
+                >
+                  <MonitorOff className="h-3 w-3 text-muted-foreground" />
+                </button>
+              )}
+              <span className="font-medium">{Math.round(overallProgress)}%</span>
+            </div>
           </div>
           <Progress value={progress} className="h-2" />
           <div className="text-xs text-muted-foreground">
             {completedSteps} of {totalSteps} steps completed
           </div>
         </div>
+
+        {/* Streaming Viewer */}
+        {streamEnabled && runId && (
+          <div className="border-t pt-2">
+            <AgenticStreamViewer
+              events={events}
+              currentTokens={currentTokens}
+              isConnected={isConnected}
+              isConnecting={isConnecting}
+              currentAgentId={currentAgentId}
+              error={streamError}
+              onRetry={() => connect(runId)}
+              className="mb-2"
+            />
+          </div>
+        )}
 
         {/* Agent Steps */}
         <div className="flex-1 overflow-y-auto pr-2 -mr-2">
@@ -151,6 +221,22 @@ const AgenticWorkflowDialog = ({
             className="py-4"
           />
         </div>
+
+        {/* Footer with status */}
+        {!streamEnabled && runId && (
+          <div className="border-t pt-2 flex items-center justify-between">
+            <button
+              onClick={() => {
+                setStreamEnabled(true)
+                connect(runId)
+              }}
+              className="flex items-center gap-2 text-sm text-muted-foreground hover:text-foreground"
+            >
+              <MonitorPlay className="h-4 w-4" />
+              Show live stream
+            </button>
+          </div>
+        )}
 
         {/* Footer with status */}
         <AnimatePresence mode="wait">
@@ -190,10 +276,10 @@ const AgenticWorkflowDialog = ({
             >
               <div className="flex-1">
                 <p className="text-sm font-medium text-blue-700 dark:text-blue-400">
-                  AI is creating your presentation
+                  {currentAgentName ? `${currentAgentName} in progress` : 'AI is creating your presentation'}
                 </p>
                 <p className="text-xs text-blue-600 dark:text-blue-500 mt-0.5">
-                  This may take a few moments...
+                  {currentAgentDescription || 'This may take a few moments...'}
                 </p>
               </div>
               <Button
