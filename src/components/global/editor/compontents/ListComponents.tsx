@@ -30,7 +30,7 @@ const ListItem: React.FC<ListItemProps> = ({
         value={item}
         onChange={(e) => onChange(index, e.target.value)}
         onKeyDown={(e) => onKeyDown(e, index)}
-        className="bg-transparent outline-hidden w-full py-2 text-lg md:text-xl placeholder:text-gray-300/50 focus:placeholder:text-transparent transition-all"
+        className="bg-transparent outline-hidden w-full py-2 text-xl placeholder:text-gray-300/50 focus:placeholder:text-transparent transition-all"
         style={{ color: fontColor }}
         readOnly={!isEditable}
         placeholder="List item..."

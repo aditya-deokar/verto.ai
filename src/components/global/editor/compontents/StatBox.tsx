@@ -30,24 +30,24 @@ const StatBox = ({
                     <Input
                         value={icon}
                         onChange={(e) => onChange?.("icon", e.target.value)}
-                        className="text-2xl md:text-4xl w-16 text-center border-none bg-transparent shadow-none p-0 h-auto focus-visible:ring-0"
+                        className="text-4xl w-16 text-center border-none bg-transparent shadow-none p-0 h-auto focus-visible:ring-0"
                     />
                     <Input
                         value={value}
                         onChange={(e) => onChange?.("value", e.target.value)}
-                        className="text-2xl md:text-3xl font-bold text-center border-none bg-transparent shadow-none p-0 h-auto focus-visible:ring-0 text-primary"
+                        className="text-3xl font-bold text-center border-none bg-transparent shadow-none p-0 h-auto focus-visible:ring-0 text-primary"
                     />
                     <Input
                         value={label}
                         onChange={(e) => onChange?.("label", e.target.value)}
-                        className="text-xs md:text-sm text-muted-foreground text-center border-none bg-transparent shadow-none p-0 h-auto focus-visible:ring-0 font-medium uppercase tracking-wider"
+                        className="text-sm text-muted-foreground text-center border-none bg-transparent shadow-none p-0 h-auto focus-visible:ring-0 font-medium uppercase tracking-wider"
                     />
                 </>
             ) : (
                 <>
-                    <div className="text-2xl md:text-4xl mb-2">{icon}</div>
-                    <div className="text-2xl md:text-3xl font-bold text-primary">{value}</div>
-                    <div className="text-xs md:text-sm text-muted-foreground font-medium uppercase tracking-wider">{label}</div>
+                    <div className="text-4xl mb-2">{icon}</div>
+                    <div className="text-3xl font-bold text-primary">{value}</div>
+                    <div className="text-sm text-muted-foreground font-medium uppercase tracking-wider">{label}</div>
                 </>
             )}
         </div>

@@ -131,4 +131,8 @@ class StreamingEventEmitter {
   }
 }
 
-export const streamingEmitter = new StreamingEventEmitter()
+const g = global as any
+if (!g._streamingEmitter) {
+  g._streamingEmitter = new StreamingEventEmitter()
+}
+export const streamingEmitter: StreamingEventEmitter = g._streamingEmitter

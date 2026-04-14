@@ -1038,7 +1038,6 @@ function buildLayoutContent(
             id: uuidv4(),
             type: "resizable-column",
             name: "Resizable column",
-            className: "gap-4",
             content: Array.from({ length: timelineSteps }, (_, i) => ({
               id: uuidv4(),
               type: "column",
@@ -1132,7 +1131,6 @@ function buildLayoutContent(
             id: uuidv4(),
             type: "resizable-column",
             name: "Grid",
-            className: "grid grid-cols-2 gap-6",
             content: Array.from({ length: gridCount }, (_, i) => ({
               id: uuidv4(),
               type: "column",
@@ -1219,7 +1217,6 @@ function buildLayoutContent(
             id: uuidv4(),
             type: "resizable-column",
             name: "Flow Steps",
-            className: "flex items-center gap-2",
             content: Array.from({ length: numSteps }, (_, i) => [
               {
                 id: uuidv4(),
@@ -1241,15 +1238,7 @@ function buildLayoutContent(
                     content: hasStructuredSteps ? slide.processSteps![i].stepTitle : (fallbackSteps[i] || `Step ${i + 1}`),
                   },
                 ],
-              },
-              // Add arrow between steps (except after last step)
-              ...(i < numSteps - 1 ? [{
-                id: uuidv4(),
-                type: "paragraph",
-                name: "Arrow",
-                content: "→",
-                className: "text-3xl text-primary",
-              }] : []),
+              }
             ]).flat(),
           },
         ],

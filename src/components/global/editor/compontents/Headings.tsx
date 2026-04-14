@@ -68,10 +68,10 @@ const createHeading = (displayName: string, defaultClassName: string, useAccentC
   return Heading;
 };
 
-const Heading1 = createHeading('Heading1', 'text-4xl md:text-5xl lg:text-6xl font-extrabold mb-4', true)
-const Heading2 = createHeading('Heading2', 'text-3xl md:text-4xl lg:text-5xl font-bold mb-3')
-const Heading3 = createHeading('Heading3', 'text-2xl md:text-3xl lg:text-4xl font-semibold mb-2')
-const Heading4 = createHeading('Heading4', 'text-xl md:text-2xl lg:text-3xl font-medium mb-2')
-const Title = createHeading('Title', 'text-5xl md:text-6xl lg:text-7xl font-black mb-6 tracking-tighter', true)
+const Heading1 = createHeading('Heading1', 'text-6xl font-extrabold mb-4', true)
+const Heading2 = createHeading('Heading2', 'text-5xl font-bold mb-3')
+const Heading3 = createHeading('Heading3', 'text-4xl font-semibold mb-2')
+const Heading4 = createHeading('Heading4', 'text-3xl font-medium mb-2')
+const Title = createHeading('Title', 'text-7xl font-black mb-6 tracking-tighter', true)
 
 export { Heading1, Heading2, Heading3, Heading4, Title }
