@@ -13,7 +13,7 @@ const BlockQuote = ({ children, className, ...props }: BlockQuoteProps) => {
     return (
         <blockquote className={cn(
             'relative pl-8 pr-4 py-4 my-6 border-l-4 rounded-r-lg bg-opacity-5',
-            'text-xl md:text-2xl italic font-serif leading-relaxed',
+            'text-2xl italic font-serif leading-relaxed',
             'text-gray-700 dark:text-gray-300',
             className
         )}

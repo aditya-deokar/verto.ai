@@ -47,7 +47,7 @@ const ResizableComponent = ({ content, slideId, children, isEditable, isPreview 
                     top: content.y,
                     zIndex: content.x !== undefined ? 10 : 1,
                 }}
-                className={cn("relative", content.className)}
+                className="relative"
             >
                 {children}
             </div>
@@ -204,7 +204,6 @@ const ResizableComponent = ({ content, slideId, children, isEditable, isPreview 
             }}
             className={cn(
                 "group/resize",
-                content.className,
                 isSelected ? "ring-2 ring-primary" : "hover:ring-1 hover:ring-primary/50"
             )}
         >

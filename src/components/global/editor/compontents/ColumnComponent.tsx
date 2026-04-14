@@ -63,8 +63,7 @@ const ColumnComponent = ({
         className={cn(
           'h-full w-full flex',
           isMobile ? 'flex-col' : 'flex-row',
-          !isEditable && 'border-0!',
-          className
+          !isEditable && 'border-0!'
         )}
       >
         {columns.map((item, index) => (

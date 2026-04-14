@@ -1,7 +1,7 @@
 "use client";
 
 import { useSlideStore } from "@/store/useSlideStore";
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { ContentItem, LayoutSlides } from "@/lib/types";
 import { v4 as uuidv4 } from "uuid";
 import { cn } from "@/lib/utils";
@@ -153,6 +153,7 @@ const Editor = ({ isEditable }: Props) => {
 
   const [loading, setLoading] = useState(true);
   const [scale, setScale] = useState(1);
+  const containerRef = useRef<HTMLDivElement>(null);
 
   const handleDelete = (id: string) => {
     if (isEditable) {
@@ -162,7 +163,23 @@ const Editor = ({ isEditable }: Props) => {
 
   useEffect(() => {
     if (typeof window !== "undefined") setLoading(false);
-  }, []);
+    
+    if (!containerRef.current) return;
+    const observer = new ResizeObserver((entries) => {
+      for (let entry of entries) {
+        const { width, height } = entry.contentRect;
+        const availableW = width - 64; // accounting for p-8 (32px * 2)
+        const availableH = height - 64;
+        const scaleW = availableW / 1280;
+        const scaleH = availableH / 720;
+        // Allows shrink to fit, caps maximum scale to prevent distortion
+        setScale(Math.max(0.1, Math.min(scaleW, scaleH, 1.5)));
+      }
+    });
+    observer.observe(containerRef.current);
+    
+    return () => observer.disconnect();
+  }, [loading]);
 
   const currentSlideData = orderedSlides[currentSlide];
 
@@ -173,18 +190,15 @@ const Editor = ({ isEditable }: Props) => {
           <Skeleton className="h-[60%] w-[80%] rounded-xl" />
         </div>
       ) : (
-        <div className="flex-1 overflow-hidden flex items-center justify-center p-8 relative">
-          {/* Zoom Controls (Optional) */}
-          {/* <div className="absolute bottom-4 right-4 flex gap-2 z-50">
-                <Button size="icon" variant="outline" onClick={() => setScale(s => Math.max(0.5, s - 0.1))}><ZoomOut className="w-4 h-4" /></Button>
-                <Button size="icon" variant="outline" onClick={() => setScale(s => Math.min(2, s + 0.1))}><ZoomIn className="w-4 h-4" /></Button>
-            </div> */}
-
+        <div ref={containerRef} className="flex-1 overflow-hidden flex items-center justify-center p-8 relative">
           <div
-            className="aspect-video w-full max-w-5xl shadow-2xl rounded-sm overflow-hidden ring-1 ring-black/5"
+            className="shadow-2xl rounded-sm overflow-hidden ring-1 ring-black/5 flex-shrink-0"
             style={{
+              width: '1280px',
+              height: '720px',
               transform: `scale(${scale})`,
-              transition: 'transform 0.2s ease-in-out'
+              transformOrigin: 'center center',
+              transition: 'transform 0.1s ease-in-out'
             }}
           >
             {currentSlideData ? (

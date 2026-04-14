@@ -29,7 +29,7 @@ const CodeBlock = ({ code, language = 'javascript', onChange, className }: Props
                 <textarea
                     value={code}
                     onChange={(e) => onChange(e.target.value)}
-                    className="w-full min-h-[100px] bg-transparent outline-hidden font-mono text-sm md:text-base resize-none"
+                    className="w-full min-h-[100px] bg-transparent outline-hidden font-mono text-base resize-none"
                     style={{
                         color: '#d4d4d4',
                         fontFamily: "'Fira Code', 'Consolas', monospace"

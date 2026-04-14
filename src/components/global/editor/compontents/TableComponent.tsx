@@ -123,7 +123,7 @@ const TableComponent = ({ content, onChange, initialColSize, initialRowSize, isE
                                             <div className='relative w-full h-full'>
                                                 <input type="text" value={cell}
                                                     onChange={(e) => updateCell(rowIndex, cellIndex, e.target.value)}
-                                                    className='w-full h-full p-3 bg-transparent focus:outline-hidden focus:bg-primary/5 transition-colors text-sm md:text-base'
+                                                    className='w-full h-full p-3 bg-transparent focus:outline-hidden focus:bg-primary/5 transition-colors text-base'
                                                     style={{
                                                         color: currentTheme.fontColor
                                                     }}

@@ -42,6 +42,9 @@ const channels: StateGraphArgs<AdvancedPresentationState>["channels"] = {
   // Output
   finalPresentationJson: { value: (_x, y) => y, default: () => null },
 
+  // Streaming
+  streamEventHandler: { value: (_x, y) => y, default: () => undefined },
+
   // Metadata
   error: { value: (_x, y) => y, default: () => null },
   currentStep: { value: (_x, y) => y, default: () => "Initializing" },

@@ -43,21 +43,21 @@ const TimelineCard = ({
                     <Input
                         value={title}
                         onChange={(e) => onChange?.("title", e.target.value)}
-                        className="text-base md:text-lg font-semibold border-none bg-transparent shadow-none p-0 h-auto focus-visible:ring-0"
+                        className="text-lg font-semibold border-none bg-transparent shadow-none p-0 h-auto focus-visible:ring-0"
                     />
                     <Textarea
                         value={description}
                         onChange={(e) => onChange?.("description", e.target.value)}
-                        className="text-xs md:text-sm text-muted-foreground border-none bg-transparent shadow-none p-0 min-h-[60px] resize-none focus-visible:ring-0 leading-relaxed"
+                        className="text-sm text-muted-foreground border-none bg-transparent shadow-none p-0 min-h-[60px] resize-none focus-visible:ring-0 leading-relaxed"
                     />
                 </>
             ) : (
                 <>
-                    <span className="bg-primary/10 text-primary font-bold text-xs md:text-sm rounded-full px-3 py-1 w-fit">
+                    <span className="bg-primary/10 text-primary font-bold text-sm rounded-full px-3 py-1 w-fit">
                         {year}
                     </span>
-                    <h3 className="text-base md:text-lg font-semibold">{title}</h3>
-                    <p className="text-xs md:text-sm text-muted-foreground leading-relaxed">{description}</p>
+                    <h3 className="text-lg font-semibold">{title}</h3>
+                    <p className="text-sm text-muted-foreground leading-relaxed">{description}</p>
                 </>
             )}
         </div>

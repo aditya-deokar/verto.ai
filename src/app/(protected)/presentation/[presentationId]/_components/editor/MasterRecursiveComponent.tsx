@@ -140,7 +140,7 @@ const ContentRenderer: React.FC<MasterRecursiveComponentProps> = React.memo(
       level: number
     ) => (
       <motion.div
-        className="w-full h-full"
+        className="w-full h-fit"
         {...animationProps}
         {...getAccessibilityProps(`heading${level}`)}
       >
@@ -164,7 +164,7 @@ const ContentRenderer: React.FC<MasterRecursiveComponentProps> = React.memo(
       case "title":
         return (
           <motion.div
-            className="w-full h-full"
+            className="w-full h-fit"
             {...animationProps}
             {...getAccessibilityProps('title')}
           >
@@ -175,7 +175,7 @@ const ContentRenderer: React.FC<MasterRecursiveComponentProps> = React.memo(
       case "paragraph":
         return (
           <motion.div
-            className="w-full h-full"
+            className="w-full h-fit"
             {...animationProps}
             {...getAccessibilityProps('paragraph')}
           >
@@ -208,7 +208,6 @@ const ContentRenderer: React.FC<MasterRecursiveComponentProps> = React.memo(
             <motion.div {...animationProps} className="w-full h-full">
               <ColumnComponent
                 content={content.content as ContentItem[]}
-                className={content.className}
                 onContentChange={onContentChange}
                 slideId={slideId}
                 isPreview={isPreview}
@@ -242,7 +241,7 @@ const ContentRenderer: React.FC<MasterRecursiveComponentProps> = React.memo(
         return (
           <motion.div
             {...animationProps}
-            className={cn("w-full h-full flex flex-col", content.className)}
+            className={cn("w-full h-fit flex flex-col", content.className)}
             {...getAccessibilityProps('blockquote')}
           >
             <BlockQuote>
@@ -255,7 +254,7 @@ const ContentRenderer: React.FC<MasterRecursiveComponentProps> = React.memo(
         return (
           <motion.div
             {...animationProps}
-            className="w-full h-full"
+            className="w-full h-fit"
             {...getAccessibilityProps('numberedList')}
           >
             <ListComponents
@@ -270,7 +269,7 @@ const ContentRenderer: React.FC<MasterRecursiveComponentProps> = React.memo(
         return (
           <motion.div
             {...animationProps}
-            className="w-full h-full"
+            className="w-full h-fit"
             {...getAccessibilityProps('bulletList')}
           >
             <BulletList
@@ -285,7 +284,7 @@ const ContentRenderer: React.FC<MasterRecursiveComponentProps> = React.memo(
         return (
           <motion.div
             {...animationProps}
-            className="w-full h-full"
+            className="w-full h-fit"
             {...getAccessibilityProps('todoList')}
           >
             <TodoList
@@ -300,7 +299,7 @@ const ContentRenderer: React.FC<MasterRecursiveComponentProps> = React.memo(
         return (
           <motion.div
             {...animationProps}
-            className="w-full h-full"
+            className="w-full h-fit"
             {...getAccessibilityProps('calloutBox')}
           >
             <CalloutBox
@@ -316,7 +315,7 @@ const ContentRenderer: React.FC<MasterRecursiveComponentProps> = React.memo(
         return (
           <motion.div
             {...animationProps}
-            className="w-full h-full"
+            className="w-full h-fit"
             {...getAccessibilityProps('codeBlock')}
           >
             <CodeBlock
@@ -332,7 +331,7 @@ const ContentRenderer: React.FC<MasterRecursiveComponentProps> = React.memo(
         return (
           <motion.div
             {...animationProps}
-            className="w-full h-full"
+            className="w-full h-fit"
             {...getAccessibilityProps('tableOfContents')}
           >
             <TableOfContents
@@ -349,7 +348,7 @@ const ContentRenderer: React.FC<MasterRecursiveComponentProps> = React.memo(
         return (
           <motion.div
             {...animationProps}
-            className="w-full h-full"
+            className="w-full h-fit"
             {...getAccessibilityProps('divider')}
           >
             <Divider className={content.className as string} />
@@ -360,7 +359,7 @@ const ContentRenderer: React.FC<MasterRecursiveComponentProps> = React.memo(
         return (
           <motion.div
             {...animationProps}
-            className="w-full h-full"
+            className="w-full h-fit"
             {...getAccessibilityProps('statBox')}
           >
             <StatBox
@@ -392,7 +391,7 @@ const ContentRenderer: React.FC<MasterRecursiveComponentProps> = React.memo(
         return (
           <motion.div
             {...animationProps}
-            className="w-full h-full"
+            className="w-full h-fit"
             {...getAccessibilityProps('timelineCard')}
           >
             <TimelineCard
