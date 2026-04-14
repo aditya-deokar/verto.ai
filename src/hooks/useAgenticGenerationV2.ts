@@ -163,7 +163,7 @@ export function useAgenticGenerationV2(): UseAgenticGenerationV2Return {
         if ('projectId' in result && result.projectId) {
           router.push(`/presentation/${result.projectId}`)
         }
-      }, 500)
+      }, 3000)
     } catch (err) {
       if (pollInterval) {
         clearInterval(pollInterval)

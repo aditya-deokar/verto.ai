@@ -3,9 +3,8 @@
 import React, { useEffect, useRef, useState } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { 
-  Bot, FileText, Layout, Image, Search, Database, 
-  CheckCircle, XCircle, Loader2, ChevronDown, Copy, 
-  Check, Sparkles, Brain, Cpu, Wifi, WifiOff
+  CheckCircle, Loader2, Copy, Check, Terminal, Network, Zap,
+  Cpu, FileText, Brain, Layout, Search, Image as ImageIcon, Sparkles, Database
 } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import type { StreamEvent } from '@/hooks/useStreamingGeneration'
@@ -21,23 +20,15 @@ interface AgenticStreamViewerProps {
   className?: string
 }
 
-interface AgentInfo {
-  id: string
-  name: string
-  description: string
-  icon: React.ReactNode
-  color: string
-}
-
-const AGENTS: AgentInfo[] = [
-  { id: 'projectInitializer', name: 'Project Setup', description: 'Initializing workspace & theme', icon: <Cpu className="h-4 w-4" />, color: 'text-purple-500' },
-  { id: 'outlineGenerator', name: 'Structure', description: 'Creating presentation outline', icon: <FileText className="h-4 w-4" />, color: 'text-blue-500' },
-  { id: 'contentWriter', name: 'Content Writing', description: 'Generating slide content', icon: <Brain className="h-4 w-4" />, color: 'text-green-500' },
-  { id: 'layoutSelector', name: 'Design Layout', description: 'Selecting optimal layouts', icon: <Layout className="h-4 w-4" />, color: 'text-orange-500' },
-  { id: 'imageQueryGenerator', name: 'Visual Search', description: 'Finding perfect images', icon: <Search className="h-4 w-4" />, color: 'text-pink-500' },
-  { id: 'imageFetcher', name: 'Image Integration', description: 'Downloading & optimizing', icon: <Image className="h-4 w-4" />, color: 'text-rose-500' },
-  { id: 'jsonCompiler', name: 'Assembly', description: 'Compiling final presentation', icon: <Sparkles className="h-4 w-4" />, color: 'text-yellow-500' },
-  { id: 'databasePersister', name: 'Finalization', description: 'Saving to database', icon: <Database className="h-4 w-4" />, color: 'text-emerald-500' },
+const AGENTS_META = [
+  { id: 'projectInitializer', name: 'Project Setup', icon: Cpu, color: 'text-purple-400', bg: 'bg-purple-500/10', border: 'border-purple-500/20' },
+  { id: 'outlineGenerator', name: 'Structure Engine', icon: FileText, color: 'text-blue-400', bg: 'bg-blue-500/10', border: 'border-blue-500/20' },
+  { id: 'contentWriter', name: 'Content Synthesis', icon: Brain, color: 'text-pink-400', bg: 'bg-pink-500/10', border: 'border-pink-500/20' },
+  { id: 'layoutSelector', name: 'Layout Intelligence', icon: Layout, color: 'text-orange-400', bg: 'bg-orange-500/10', border: 'border-orange-500/20' },
+  { id: 'imageQueryGenerator', name: 'Visual Search', icon: Search, color: 'text-cyan-400', bg: 'bg-cyan-500/10', border: 'border-cyan-500/20' },
+  { id: 'imageFetcher', name: 'Asset Integration', icon: ImageIcon, color: 'text-rose-400', bg: 'bg-rose-500/10', border: 'border-rose-500/20' },
+  { id: 'jsonCompiler', name: 'JSON Compiler', icon: Sparkles, color: 'text-yellow-400', bg: 'bg-yellow-500/10', border: 'border-yellow-500/20' },
+  { id: 'databasePersister', name: 'Database Committer', icon: Database, color: 'text-emerald-400', bg: 'bg-emerald-500/10', border: 'border-emerald-500/20' }
 ]
 
 export function AgenticStreamViewer({
@@ -51,289 +42,160 @@ export function AgenticStreamViewer({
   className,
 }: AgenticStreamViewerProps) {
   const scrollRef = useRef<HTMLDivElement>(null)
-  const [copiedId, setCopiedId] = useState<string | null>(null)
-
+  
+  // Auto-scroll to bottom smoothly
   useEffect(() => {
     if (scrollRef.current) {
-      scrollRef.current.scrollTop = scrollRef.current.scrollHeight
+      scrollRef.current.scrollTo({
+        top: scrollRef.current.scrollHeight,
+        behavior: 'smooth'
+      })
     }
   }, [currentTokens, events])
 
-  const getAgentStatus = (agentId: string) => {
-    if (currentAgentId === agentId) return 'running'
-    const hasCompleted = events.some(e => e.type === 'agent_complete' && e.agentId === agentId)
-    const hasError = events.some(e => e.type === 'error' && e.agentId === agentId)
-    if (hasError) return 'error'
-    if (hasCompleted) return 'completed'
-    return 'pending'
-  }
-
-  const copyToClipboard = async (text: string, id: string) => {
-    await navigator.clipboard.writeText(text)
-    setCopiedId(id)
-    setTimeout(() => setCopiedId(null), 2000)
-  }
-
-  const activeAgent = currentAgentId ? AGENTS.find(a => a.id === currentAgentId) : null
-
   return (
-    <div className={cn("border rounded-xl bg-gradient-to-b from-background to-muted/20 overflow-hidden", className)}>
-      {/* Header */}
-      <div className="flex items-center justify-between px-4 py-3 border-b bg-muted/30 backdrop-blur">
+    <div className={cn("flex flex-col h-full rounded-2xl border border-white/5 bg-black/40 backdrop-blur-md overflow-hidden shadow-inner", className)}>
+      {/* Terminal Header */}
+      <div className="flex items-center justify-between px-4 py-3 border-b border-white/5 bg-white/5">
         <div className="flex items-center gap-3">
-          {isConnected ? (
-            <div className="flex items-center gap-2">
-              <div className="relative">
-                <div className="w-3 h-3 rounded-full bg-green-500 animate-pulse" />
-                <div className="absolute inset-0 w-3 h-3 rounded-full bg-green-400 animate-ping opacity-75" />
-              </div>
-              <span className="text-sm font-medium text-green-600 dark:text-green-400">Live</span>
-            </div>
-          ) : isConnecting ? (
-            <div className="flex items-center gap-2">
-              <Loader2 className="h-4 w-4 animate-spin text-blue-500" />
-              <span className="text-sm text-blue-500">Connecting...</span>
-            </div>
-          ) : (
-            <div className="flex items-center gap-2">
-              <WifiOff className="h-4 w-4 text-muted-foreground" />
-              <span className="text-sm text-muted-foreground">Disconnected</span>
-            </div>
-          )}
-          {activeAgent && (
-            <div className="flex items-center gap-2 px-3 py-1 bg-blue-500/10 rounded-full border border-blue-500/20">
-              <Loader2 className="h-3 w-3 animate-spin text-blue-500" />
-              <span className="text-xs font-medium text-blue-600 dark:text-blue-400">
-                {activeAgent.name}
-              </span>
-            </div>
-          )}
+          <Terminal className="h-4 w-4 text-white/50" />
+          <span className="text-xs font-mono font-bold text-white/50 uppercase tracking-widest">
+            AI Execution Telemetry
+          </span>
         </div>
-        
-        <div className="flex items-center gap-2">
-          {error && onRetry && (
-            <button
-              onClick={onRetry}
-              className="p-1.5 hover:bg-muted rounded-lg transition-colors"
-              title="Retry connection"
-            >
-              <Wifi className="h-4 w-4 text-orange-500" />
-            </button>
-          )}
-          {Object.keys(currentTokens).length > 0 && (
-            <button
-              onClick={() => copyToClipboard(
-                Object.values(currentTokens).join('\n\n'),
-                'all'
-              )}
-              className="p-1.5 hover:bg-muted rounded-lg transition-colors"
-              title="Copy all output"
-            >
-              {copiedId === 'all' ? (
-                <Check className="h-4 w-4 text-green-500" />
-              ) : (
-                <Copy className="h-4 w-4 text-muted-foreground" />
-              )}
-            </button>
-          )}
+        <div className="flex items-center gap-4">
+          <div className="flex gap-1.5">
+            <div className="h-2.5 w-2.5 rounded-full bg-red-400/20" />
+            <div className="h-2.5 w-2.5 rounded-full bg-yellow-400/20" />
+            <div className="h-2.5 w-2.5 rounded-full bg-emerald-400/20" />
+          </div>
         </div>
       </div>
 
-      {error && (
-        <div className="px-4 py-2 bg-orange-50 dark:bg-orange-950/30 border-b text-xs text-orange-700 dark:text-orange-400 flex items-center gap-2">
-          <WifiOff className="h-3 w-3" />
-          {error} - Falling back to polling
-        </div>
-      )}
-
-      {/* Terminal-like output */}
-      <div ref={scrollRef} className="max-h-96 overflow-y-auto font-mono text-sm">
-        <div className="p-4 space-y-3">
-          {/* Connection message */}
+      <div ref={scrollRef} className="flex-1 overflow-y-auto p-5 scrollbar-thin scrollbar-thumb-white/10 scroll-smooth">
+        
+        <AnimatePresence initial={false}>
           {events.length === 0 && isConnecting && (
-            <div className="flex items-center gap-2 text-muted-foreground">
-              <span className="animate-pulse">●</span>
-              Connecting to generation stream...
-            </div>
+            <motion.div 
+              initial={{ opacity: 0 }} 
+              animate={{ opacity: 1 }} 
+              className="flex items-center gap-3 text-blue-400 font-mono text-sm mb-6"
+            >
+              <Loader2 className="h-4 w-4 animate-spin" />
+              <span>Establishing secure neural link...</span>
+            </motion.div>
           )}
 
-          {/* Agent status cards */}
-          {AGENTS.map((agent, index) => {
-            const status = getAgentStatus(agent.id)
-            const tokens = currentTokens[agent.id] || ''
+          {/* Render agents strictly in order of their execution sequence to prevent messy UI jumping */}
+          {AGENTS_META.map((agent) => {
+            const tokens = currentTokens[agent.id]
+            const hasStarted = events.some(e => e.agentId === agent.id || e.stepId === agent.id) || tokens !== undefined
             const isActive = currentAgentId === agent.id
 
-            if (status === 'pending' && !tokens) {
-              return null
-            }
+            if (!hasStarted && !isActive) return null
+
+            const AgentIcon = agent.icon
 
             return (
-              <AgentOutputCard
+              <motion.div
                 key={agent.id}
-                agent={agent}
-                status={status}
-                tokens={tokens}
-                isActive={isActive}
-                onCopy={() => copyToClipboard(tokens, agent.id)}
-                copied={copiedId === agent.id}
-              />
+                initial={{ opacity: 0, y: 10, scale: 0.98 }}
+                animate={{ opacity: 1, y: 0, scale: 1 }}
+                className="mb-8 relative"
+              >
+                {/* Connecting Line (if multiple agents) */}
+                <div className="absolute left-4 top-10 bottom-[-32px] w-[1px] bg-gradient-to-b from-white/10 to-transparent" />
+
+                <div className="flex gap-4">
+                  {/* Agent Icon Avatar */}
+                  <div className="relative shrink-0">
+                    <div className={cn(
+                      "w-8 h-8 rounded-lg flex items-center justify-center border",
+                      agent.bg, agent.border,
+                      isActive && "shadow-[0_0_15px_-3px] shadow-current transition-shadow duration-500"
+                    )}>
+                      <AgentIcon className={cn("h-4 w-4", agent.color)} />
+                    </div>
+                    {isActive && (
+                      <span className="absolute -top-1 -right-1 flex h-3 w-3">
+                        <span className="animate-ping absolute inline-flex h-full w-full rounded-full opacity-75 bg-blue-400" />
+                        <span className="relative inline-flex rounded-full h-3 w-3 bg-blue-500" />
+                      </span>
+                    )}
+                  </div>
+
+                  {/* Agent Content Block */}
+                  <div className="flex-1 min-w-0 pt-1">
+                    <div className="flex items-center gap-2 mb-2">
+                      <span className={cn(
+                        "font-mono text-xs font-bold uppercase tracking-widest",
+                        isActive ? "text-white" : "text-white/40"
+                      )}>
+                        {agent.name}
+                      </span>
+                      {isActive && (
+                        <span className="text-[10px] font-mono text-blue-400 animate-pulse bg-blue-400/10 px-2 py-0.5 rounded-full border border-blue-400/20">
+                          PROCESSING
+                        </span>
+                      )}
+                    </div>
+
+                    {/* Format tokens as premium markdown-like text instead of ugly numbered lines */}
+                    <div className="relative mt-2">
+                      <div className={cn(
+                        "text-[13px] leading-relaxed font-mono whitespace-pre-wrap break-words rounded-xl",
+                        isActive ? "text-white/90" : "text-white/60"
+                      )}>
+                        {tokens || (isActive ? "Initializing module..." : "Process completed.")}
+                        
+                        {isActive && (
+                          <motion.span 
+                            animate={{ opacity: [1, 0] }} 
+                            transition={{ repeat: Infinity, duration: 0.8 }} 
+                            className={cn("inline-block w-2 h-3.5 ml-1 align-middle", agent.bg.replace('/10', ''))}
+                          />
+                        )}
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </motion.div>
             )
           })}
 
-          {/* Final completion */}
           {events.some(e => e.type === 'complete') && (
             <motion.div
-              initial={{ opacity: 0, y: 10 }}
-              animate={{ opacity: 1, y: 0 }}
-              className="flex items-center gap-3 p-4 bg-green-500/10 rounded-lg border border-green-500/20"
+              initial={{ opacity: 0, scale: 0.95 }}
+              animate={{ opacity: 1, scale: 1 }}
+              className="mt-8 ml-12 p-4 rounded-xl bg-emerald-500/10 border border-emerald-500/20 flex flex-col gap-1 max-w-sm"
             >
-              <div className="p-2 bg-green-500/20 rounded-full">
-                <CheckCircle className="h-5 w-5 text-green-500" />
+              <div className="flex items-center gap-2 text-emerald-400">
+                <CheckCircle className="h-5 w-5" />
+                <span className="font-mono text-sm font-bold uppercase tracking-wider">Sequence Terminated</span>
               </div>
-              <div>
-                <p className="font-medium text-green-700 dark:text-green-400">Generation Complete!</p>
-                <p className="text-xs text-green-600 dark:text-green-500">Your presentation is ready</p>
-              </div>
+              <span className="text-emerald-400/60 block text-xs font-mono ml-7">All processes disconnected safely. Output verified.</span>
             </motion.div>
           )}
-        </div>
-      </div>
 
-      {/* Running indicator at bottom */}
-      {currentAgentId && (
-        <div className="px-4 py-2 border-t bg-muted/30 flex items-center gap-2">
-          <Loader2 className="h-3 w-3 animate-spin text-blue-500" />
-          <span className="text-xs text-muted-foreground">Processing...</span>
-          <div className="flex gap-1 ml-auto">
-            {AGENTS.slice(0, 4).map(agent => (
-              <div
-                key={agent.id}
-                className={cn(
-                  "w-2 h-2 rounded-full transition-all",
-                  currentAgentId === agent.id 
-                    ? "bg-blue-500 scale-125" 
-                    : events.some(e => e.type === 'agent_complete' && e.agentId === agent.id)
-                      ? "bg-green-500"
-                      : "bg-gray-300 dark:bg-gray-600"
-                )}
-              />
-            ))}
-            <span className="text-xs text-muted-foreground ml-2">4/8</span>
-          </div>
-        </div>
-      )}
+          {error && (
+            <motion.div
+               initial={{ opacity: 0 }} 
+               animate={{ opacity: 1 }} 
+               className="mt-8 ml-12 p-4 rounded-xl bg-red-500/10 border border-red-500/20 text-red-400 font-mono text-sm max-w-sm shadow-xl shadow-red-500/10"
+            >
+              <span className="font-bold flex items-center gap-2 mb-1">
+                <Zap className="h-4 w-4" /> FATAL_ERROR 
+              </span>
+              <p className="text-xs text-red-300/80 mb-3">{error}</p>
+              {onRetry && (
+                <button onClick={onRetry} className="text-xs bg-red-500/20 hover:bg-red-500/30 text-white px-3 py-1.5 rounded-lg border border-red-500/30 transition-colors">
+                  RETRY_CONNECTION
+                </button>
+              )}
+            </motion.div>
+          )}
+        </AnimatePresence>
+      </div>
     </div>
   )
 }
-
-interface AgentOutputCardProps {
-  agent: AgentInfo
-  status: 'pending' | 'running' | 'completed' | 'error'
-  tokens: string
-  isActive: boolean
-  onCopy: () => void
-  copied: boolean
-}
-
-function AgentOutputCard({
-  agent,
-  status,
-  tokens,
-  isActive,
-  onCopy,
-  copied,
-}: AgentOutputCardProps) {
-  const [isExpanded, setIsExpanded] = useState(true)
-
-  const statusConfig = {
-    pending: { icon: null, border: 'border-gray-200 dark:border-gray-700', bg: 'bg-gray-50 dark:bg-gray-900' },
-    running: { icon: <Loader2 className="h-4 w-4 animate-spin text-blue-500" />, border: 'border-blue-500', bg: 'bg-blue-50 dark:bg-blue-950/20' },
-    completed: { icon: <CheckCircle className="h-4 w-4 text-green-500" />, border: 'border-green-500', bg: 'bg-green-50 dark:bg-green-950/20' },
-    error: { icon: <XCircle className="h-4 w-4 text-red-500" />, border: 'border-red-500', bg: 'bg-red-50 dark:bg-red-950/20' },
-  }
-
-  const config = statusConfig[status]
-  const lines = tokens.split('\n').filter(Boolean)
-
-  return (
-    <motion.div
-      initial={{ opacity: 0, y: 10 }}
-      animate={{ opacity: 1, y: 0 }}
-      className={cn(
-        "border-2 rounded-lg overflow-hidden transition-all",
-        config.border,
-        isActive && "ring-2 ring-blue-500/20"
-      )}
-    >
-      {/* Agent header */}
-      <button
-        onClick={() => setIsExpanded(!isExpanded)}
-        className={cn(
-          "w-full flex items-center justify-between px-4 py-3 transition-colors",
-          config.bg
-        )}
-      >
-        <div className="flex items-center gap-3">
-          <div className={cn("p-2 rounded-lg bg-background/50", agent.color)}>
-            {config.icon || agent.icon}
-          </div>
-          <div className="text-left">
-            <p className="font-semibold text-sm">{agent.name}</p>
-            <p className="text-xs text-muted-foreground">{agent.description}</p>
-          </div>
-        </div>
-        <div className="flex items-center gap-2">
-          {status === 'running' && (
-            <span className="text-xs bg-blue-500/20 text-blue-600 dark:text-blue-400 px-2 py-1 rounded-full animate-pulse">
-              Working
-            </span>
-          )}
-          {tokens && (
-            <button
-              onClick={(e) => {
-                e.stopPropagation()
-                onCopy()
-              }}
-              className="p-1.5 hover:bg-muted rounded transition-colors"
-            >
-              {copied ? (
-                <Check className="h-3.5 w-3.5 text-green-500" />
-              ) : (
-                <Copy className="h-3.5 w-3.5 text-muted-foreground" />
-              )}
-            </button>
-          )}
-          <ChevronDown className={cn(
-            "h-4 w-4 text-muted-foreground transition-transform",
-            !isExpanded && "-rotate-90"
-          )} />
-        </div>
-      </button>
-
-      {/* Token output */}
-      <AnimatePresence>
-        {isExpanded && tokens && (
-          <motion.div
-            initial={{ height: 0 }}
-            animate={{ height: 'auto' }}
-            exit={{ height: 0 }}
-            className="border-t bg-background"
-          >
-            <div className="p-3 max-h-48 overflow-y-auto">
-              {lines.map((line, i) => (
-                <div key={i} className="flex gap-2 text-xs py-0.5">
-                  <span className="text-muted-foreground select-none w-6 shrink-0">
-                    {i + 1}.
-                  </span>
-                  <span className="text-foreground/80">{line}</span>
-                </div>
-              ))}
-            </div>
-          </motion.div>
-        )}
-      </AnimatePresence>
-    </motion.div>
-  )
-}
-
-export default AgenticStreamViewer
