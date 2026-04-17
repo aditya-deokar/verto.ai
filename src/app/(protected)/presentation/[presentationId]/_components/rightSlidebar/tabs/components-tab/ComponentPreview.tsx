@@ -57,14 +57,14 @@ const ComponentCard = ({ item }: { item: ComponentItemProps }) => {
           <div
             ref={drag as unknown as React.LegacyRef<HTMLDivElement>}
             className={cn(
-              "border relative group",
-              isDragging ? "opacity-50 scale-95" : "opacity-100"
+              "relative group rounded-xl border border-border/50 bg-background/50 hover:bg-muted/30 transition-all duration-300",
+              isDragging ? "opacity-40 scale-95 ring-2 ring-primary/50 grayscale-[0.5]" : "hover:shadow-lg hover:-translate-y-1 hover:ring-1 hover:ring-primary/50 cursor-grab active:cursor-grabbing"
             )}
           >
             {/* Accessibility Badge */}
             {hasAccessibility && (
               <Badge 
-                className="absolute -top-2 -left-2 z-10 text-[8px] px-1.5 py-0.5 bg-blue-500"
+                className="absolute -top-2 -left-2 z-10 text-[8px] font-bold px-1.5 py-0.5 bg-blue-500/90 text-white shadow-sm border-none"
                 variant="default"
               >
                 A11Y
@@ -74,7 +74,7 @@ const ComponentCard = ({ item }: { item: ComponentItemProps }) => {
             {/* Variants Badge */}
             {hasVariants && (
               <Badge 
-                className="absolute -top-2 -right-2 z-10 text-[8px] px-1.5 py-0.5 bg-purple-500"
+                className="absolute -top-2 -right-2 z-10 text-[8px] font-bold px-1.5 py-0.5 bg-purple-500/90 text-white shadow-sm border-none"
                 variant="default"
               >
                 {styling.supportedVariants.length}x
@@ -83,27 +83,22 @@ const ComponentCard = ({ item }: { item: ComponentItemProps }) => {
 
             <button
               className={cn(
-                "flex flex-col items-center cursor-grab active:cursor-grabbing gap-2 p-2 rounded-lg",
-                "hover:bg-primary/10 transition-all duration-200",
-                "text-center w-full",
-                "group-hover:scale-105 transform"
+                "flex flex-col items-center gap-2 p-2 w-full h-full outline-none"
               )}
             >
-              <div className="w-full aspect-video rounded-md border bg-linear-to-br from-gray-50 to-gray-100 dark:from-gray-700 dark:to-gray-800 p-2 shadow-xs hover:shadow-md transition-shadow duration-200">
-                <div className="flex items-center flex-col gap-2 h-full justify-center">
-                  <span className="text-3xl text-primary group-hover:scale-110 transition-transform">
+              <div className="w-full aspect-video rounded-lg border border-border/30 bg-linear-to-br from-background to-muted/20 dark:from-muted/10 dark:to-muted/30 p-2 shadow-xs group-hover:shadow-sm transition-all duration-300 flex items-center justify-center flex-col gap-2">
+                  <span className="text-3xl text-primary/80 group-hover:text-primary group-hover:scale-110 transition-transform duration-300">
                     {item.icon}
                   </span>
-                  <span className="text-[10px] opacity-60 font-medium">
-                    {item.name}
-                  </span>
-                </div>
               </div>
+              <span className="text-[10px] font-medium opacity-70 group-hover:opacity-100 transition-opacity">
+                {item.name}
+              </span>
             </button>
 
             {/* Info Icon */}
-            <div className="absolute bottom-1 right-1 opacity-0 group-hover:opacity-100 transition-opacity">
-              <Info className="w-3 h-3 text-muted-foreground" />
+            <div className="absolute bottom-1.5 right-1.5 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+              <Info className="w-3.5 h-3.5 text-muted-foreground/70 hover:text-primary" />
             </div>
           </div>
         </TooltipTrigger>

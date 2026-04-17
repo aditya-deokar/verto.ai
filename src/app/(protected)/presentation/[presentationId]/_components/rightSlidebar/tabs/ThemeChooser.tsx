@@ -9,8 +9,9 @@ import { useTheme } from "next-themes";
 import React, { useState, useMemo } from "react";
 import { toast } from "sonner";
 import { Badge } from "@/components/ui/badge";
-import { Check, Palette, Sparkles } from "lucide-react";
+import { Check, Palette, Sparkles, Search, CheckCircle2 } from "lucide-react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { motion, AnimatePresence } from "framer-motion";
 
 const ThemeChooser = () => {
   const { currentTheme, setCurrentTheme, project } = useSlideStore();
@@ -81,61 +82,62 @@ const ThemeChooser = () => {
   }, []);
 
   return (
-    <div className="flex flex-col h-full max-h-full overflow-hidden bg-background">
+    <div className="flex flex-col h-full max-h-full overflow-hidden bg-transparent">
       {/* Header */}
-      <div className="p-4 border-b space-y-3 shrink-0 bg-muted/50">
-
+      <div className="p-4 shrink-0 bg-transparent space-y-4">
 
         {/* Search Bar */}
-        <input
-          type="text"
-          placeholder="Search themes..."
-          value={searchQuery}
-          onChange={(e) => setSearchQuery(e.target.value)}
-          className="w-full px-3 py-2 rounded-md border bg-background focus:outline-hidden focus:ring-2 focus:ring-primary text-sm"
-        />
+        <div className="relative group">
+            <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground group-focus-within:text-primary transition-colors" />
+            <input
+            type="text"
+            placeholder="Search premium themes..."
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+            className="w-full pl-9 pr-4 py-2.5 rounded-xl border border-border/50 bg-background/50 hover:bg-background/80 backdrop-blur-sm text-sm focus:outline-none focus:ring-2 focus:ring-primary/50 transition-all shadow-sm"
+            />
+        </div>
 
-        {/* Category Tabs */}
-        <Tabs value={selectedCategory} onValueChange={(v) => setSelectedCategory(v as any)}>
-          <TabsList className="grid w-full grid-cols-3">
-            <TabsTrigger value="all" className="text-xs">
-              All ({themeStats.total})
-            </TabsTrigger>
-            <TabsTrigger value="light" className="text-xs">
-              Light ({themeStats.light})
-            </TabsTrigger>
-            <TabsTrigger value="dark" className="text-xs">
-              Dark ({themeStats.dark})
-            </TabsTrigger>
-          </TabsList>
-        </Tabs>
-
-        {/* New Themes Badge */}
-        <div className="flex items-center justify-center gap-2 text-xs">
-          <Badge className="bg-linear-to-r from-orange-500 to-red-500 text-white border-none">
-            <Sparkles className="w-3 h-3 mr-1" />
-            {themeStats.new} NEW THEMES
-          </Badge>
+        <div className="flex items-center justify-between gap-2">
+            {/* Category Tabs */}
+            <Tabs value={selectedCategory} onValueChange={(v) => setSelectedCategory(v as any)} className="w-full">
+            <TabsList className="grid w-full grid-cols-3 bg-muted/40 p-1 rounded-xl">
+                <TabsTrigger value="all" className="text-xs rounded-lg active:scale-95 transition-all">
+                All
+                </TabsTrigger>
+                <TabsTrigger value="light" className="text-xs rounded-lg active:scale-95 transition-all">
+                Light
+                </TabsTrigger>
+                <TabsTrigger value="dark" className="text-xs rounded-lg active:scale-95 transition-all">
+                Dark
+                </TabsTrigger>
+            </TabsList>
+            </Tabs>
         </div>
       </div>
 
       {/* Themes Scroll Area */}
-      <ScrollArea className="flex-1 min-h-0 bg-background">
-        <div className="p-4 flex flex-col space-y-3 pb-20">
+      <ScrollArea className="flex-1 min-h-0 bg-transparent">
+        <div className="px-4 flex flex-col space-y-4 pb-24">
+            <AnimatePresence>
           {filteredThemes.map((theme) => {
             const isNew = newThemeNames.includes(theme.name);
             const isActive = currentTheme.name === theme.name;
 
             return (
-              <Button
+              <motion.button
+                layout
+                initial={{ opacity: 0, y: 10 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, scale: 0.95 }}
+                transition={{ duration: 0.2 }}
                 onClick={() => handleThemeChange(theme)}
                 key={theme.name}
-                variant={isActive ? "default" : "outline"}
-                className={`
-                  relative flex flex-col items-center justify-start px-4 w-full h-auto 
-                  transition-all duration-200 hover:scale-[1.02] hover:shadow-lg
-                  ${isActive ? 'ring-2 ring-primary ring-offset-2' : ''}
-                `}
+                className={cn(
+                  "relative flex flex-col items-center justify-start p-4 w-full h-auto rounded-2xl outline-none overflow-hidden",
+                  "transition-all duration-300 hover:scale-[1.02] hover:-translate-y-1 shadow-md hover:shadow-xl",
+                  isActive ? "ring-2 ring-primary ring-offset-2 ring-offset-background" : "ring-1 ring-border/10 hover:ring-primary/40"
+                )}
                 style={{
                   fontFamily: theme.fontFamily,
                   color: theme.fontColor,
@@ -144,86 +146,79 @@ const ThemeChooser = () => {
               >
                 {/* New Badge */}
                 {isNew && (
-                  <Badge
-                    className="absolute -top-2 -right-2 bg-linear-to-r from-orange-500 to-red-500 text-white border-none text-[10px] px-1.5 py-0.5"
-                    variant="default"
-                  >
+                  <div className="absolute top-3 left-3 bg-linear-to-r from-orange-500 to-rose-500 text-white text-[9px] font-bold px-2 py-0.5 rounded-full shadow-md shadow-orange-500/20 flex items-center gap-1 border border-white/20">
+                    <Sparkles className="w-2.5 h-2.5" />
                     NEW
-                  </Badge>
+                  </div>
                 )}
 
                 {/* Active Check Mark */}
                 {isActive && (
-                  <div className="absolute top-2 right-2 bg-white rounded-full p-1">
-                    <Check className="w-4 h-4 text-green-600" />
+                  <div className="absolute top-3 right-3 bg-background/80 backdrop-blur-md rounded-full px-2 py-1 shadow-sm flex items-center gap-1 border border-primary/20">
+                    <CheckCircle2 className="w-3.5 h-3.5 text-primary" />
+                    <span className="text-[10px] font-bold text-foreground">APPLIED</span>
                   </div>
                 )}
 
-                {/* Theme Name and Accent */}
-                <div className="w-full flex items-center justify-between mb-2">
-                  <span className="text-xl font-bold">{theme.name}</span>
-                  <div
-                    className="w-4 h-4 rounded-full ring-2 ring-white/50"
-                    style={{ backgroundColor: theme.accentColor }}
-                  />
-                </div>
-
-                {/* Theme Preview */}
-                <div className="space-y-1 w-full text-left">
-                  <div
-                    className="text-2xl font-bold"
-                    style={{ color: theme.accentColor }}
-                  >
-                    Title Preview
-                  </div>
-                  <div className="text-base opacity-80">
-                    Body text with{" "}
-                    <span
-                      style={{
-                        color: theme.accentColor,
-                        textDecoration: 'underline'
-                      }}
-                    >
-                      accent link
-                    </span>
+                {/* Theme Preview Content */}
+                <div className="w-full flex flex-col items-start gap-3 mt-6">
+                  {/* Theme Name and Accent */}
+                  <div className="w-full flex items-center justify-between">
+                    <span className="text-xl font-bold tracking-tight">{theme.name}</span>
+                    <div
+                      className="w-5 h-5 rounded-full ring-2 ring-background/50 shadow-sm"
+                      style={{ backgroundColor: theme.accentColor }}
+                    />
                   </div>
 
-                  {/* Theme Type Badge */}
-                  <div className="flex items-center gap-2 mt-2">
+                  <div className="w-full text-left space-y-1.5 opacity-90">
+                    <div className="text-3xl font-black tracking-tighter" style={{ color: theme.accentColor }}>
+                      Title Extra Bold
+                    </div>
+                    <div className="text-base font-medium opacity-80 leading-snug">
+                      Body text displaying typography with an{" "}
+                      <span style={{ color: theme.accentColor, borderBottom: `2px solid ${theme.accentColor}80` }}>
+                        accent highlight
+                      </span>.
+                    </div>
+                  </div>
+
+                  {/* Badges Row */}
+                  <div className="flex items-center gap-2 mt-2 w-full">
                     <Badge
                       variant="secondary"
-                      className="text-[10px] px-2 py-0.5"
+                      className="text-[9px] uppercase font-bold tracking-wider px-2 py-0 border-none shadow-sm"
                       style={{
-                        backgroundColor: theme.type === 'dark' ? '#1f2937' : '#f3f4f6',
+                        backgroundColor: theme.type === 'dark' ? 'rgba(0,0,0,0.4)' : 'rgba(255,255,255,0.6)',
                         color: theme.type === 'dark' ? '#fff' : '#000',
                       }}
                     >
-                      {theme.type.toUpperCase()}
+                      {theme.type}
                     </Badge>
-                    <span className="text-[10px] opacity-60">
-                      {theme.fontFamily}
+                    <span className="text-[10px] opacity-60 font-medium">
+                      {theme.fontFamily.split(',')[0]}
                     </span>
                   </div>
                 </div>
-              </Button>
+              </motion.button>
             );
           })}
+          </AnimatePresence>
 
           {filteredThemes.length === 0 && (
-            <div className="text-center py-8 text-muted-foreground">
-              <Palette className="w-12 h-12 mx-auto mb-2 opacity-50" />
-              <p>No themes found matching "{searchQuery}"</p>
+            <div className="text-center py-12 flex flex-col items-center gap-3 opacity-50">
+              <Palette className="w-8 h-8 text-muted-foreground" />
+              <p className="text-sm text-muted-foreground font-medium">No themes found matching "{searchQuery}"</p>
             </div>
           )}
         </div>
       </ScrollArea>
 
       {/* Footer Info */}
-      <div
-        className="p-3 border-t text-xs text-center space-y-1 shrink-0 bg-muted/30 text-muted-foreground"
-      >
-        <p>Showing {filteredThemes.length} of {themeStats.total} themes</p>
-        <p className="text-[10px]">Click any theme to apply</p>
+      <div className="absolute bottom-0 left-0 right-0 p-4 bg-gradient-to-t from-background via-background/90 to-transparent pointer-events-none flex justify-center">
+        <div className="bg-background/80 backdrop-blur-md border border-border/50 text-muted-foreground shadow-lg px-4 py-2 rounded-full text-xs font-medium flex items-center gap-2 pointer-events-auto">
+            Showing {filteredThemes.length} of {themeStats.total}
+        </div>
       </div>
     </div>
   );

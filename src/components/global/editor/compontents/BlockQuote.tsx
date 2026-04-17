@@ -12,14 +12,15 @@ const BlockQuote = ({ children, className, ...props }: BlockQuoteProps) => {
 
     return (
         <blockquote className={cn(
-            'relative pl-8 pr-4 py-4 my-6 border-l-4 rounded-r-lg bg-opacity-5',
+            'relative pl-8 pr-6 py-6 my-6 border-l-4 rounded-r-xl backdrop-blur-sm',
             'text-2xl italic font-serif leading-relaxed',
-            'text-gray-700 dark:text-gray-300',
+            'text-gray-700 dark:text-gray-300 shadow-sm transition-all duration-300 hover:shadow-md',
             className
         )}
             style={{
                 borderLeftColor: currentTheme.accentColor,
-                backgroundColor: `${currentTheme.accentColor}10`, // 10% opacity
+                backgroundColor: 'rgba(0,0,0,0.03)',
+                boxShadow: `inset 4px 0 0 -2px ${currentTheme.accentColor}20`
             }}
             {...props}
         >

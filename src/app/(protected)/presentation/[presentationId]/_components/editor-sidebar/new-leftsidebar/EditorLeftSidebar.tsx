@@ -12,6 +12,8 @@ import SlideThumbnail from './SlideThumbnail'
 import { cn } from '@/lib/utils'
 import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group"
 import { Separator } from '@/components/ui/separator'
+import { AnimatePresence } from 'framer-motion'
+import { CustomDragLayer } from './CustomDragLayer'
 
 type Props = {}
 
@@ -101,55 +103,58 @@ const EditorLeftSidebar = (props: Props) => {
     }, [])
 
     return (
-        <div className='w-full h-full flex flex-col'>
+        <div className='w-full h-full flex flex-col bg-background/50 backdrop-blur-xl border-r border-border/50 relative'>
+            <CustomDragLayer />
             {/* Header */}
-            <div className="px-4 py-3 flex items-center justify-between shrink-0">
-                <span className='text-sm font-semibold'>Slides</span>
+            <div className="px-5 py-4 flex items-center justify-between shrink-0 border-b border-border/50 bg-background/50 backdrop-blur-md z-10 sticky top-0">
+                <span className='text-sm font-semibold tracking-tight'>Slides</span>
                 <div className="flex items-center gap-1">
-                    <span className='text-xs text-muted-foreground mr-2'>{orderedSlides.length} slides</span>
+                    <span className='text-xs font-medium px-2 py-1 bg-muted rounded-full text-muted-foreground'>{orderedSlides.length} slides</span>
                 </div>
             </div>
 
             {/* Content */}
             <ScrollArea className='flex-1 w-full'>
                 {loading ? (
-                    <div className='w-full px-4 flex flex-col space-y-4 py-4'>
+                    <div className='w-full px-4 flex flex-col space-y-4 py-6'>
                         {[1, 2, 3].map((i) => (
-                            <Skeleton key={i} className='h-24 w-full rounded-lg' />
+                            <Skeleton key={i} className='h-28 w-full rounded-xl' />
                         ))}
                     </div>
                 ) : (
-                    <div className='p-4 space-y-2 pb-24'>
-                        {orderedSlides?.map((slide, index) => (
-                            <SlideThumbnail
-                                key={slide.id || index}
-                                slide={slide}
-                                index={index}
-                                moveSlide={moveSlide}
-                                onInsert={handleInsertSlide}
-                            />
-                        ))}
+                    <div className='p-4 space-y-3 pb-24'>
+                        <AnimatePresence initial={false}>
+                            {orderedSlides?.map((slide, index) => (
+                                <SlideThumbnail
+                                    key={slide.id || index}
+                                    slide={slide}
+                                    index={index}
+                                    moveSlide={moveSlide}
+                                    onInsert={handleInsertSlide}
+                                />
+                            ))}
+                        </AnimatePresence>
 
                         {/* Add Slide Button / Drop Zone */}
                         <div
                             ref={drop as unknown as React.LegacyRef<HTMLDivElement>}
                             className={cn(
-                                "pt-4 flex justify-center transition-all duration-200",
+                                "pt-4 pb-8 flex justify-center transition-all duration-300 relative",
                                 isOver && canDrop ? "scale-105" : ""
                             )}
                         >
                             <Button
                                 onClick={() => handleAddSlide()}
                                 className={cn(
-                                    "w-full h-12 border-dashed border-2 transition-colors",
+                                    "w-full py-6 rounded-xl border-dashed border-2 shadow-sm transition-all duration-300 font-medium",
                                     isOver && canDrop
-                                        ? "border-primary bg-primary/10 text-primary"
-                                        : "border-muted-foreground/30 hover:border-primary hover:bg-primary/5 text-muted-foreground hover:text-primary"
+                                        ? "border-primary bg-primary/10 text-primary scale-105 shadow-primary/20"
+                                        : "border-border/60 hover:border-primary/50 hover:bg-primary/5 text-muted-foreground hover:text-foreground bg-muted/20"
                                 )}
                                 variant="outline"
                             >
-                                <Plus className="w-5 h-5 mr-2" />
-                                {isOver && canDrop ? "Drop to Add Slide" : "Add New Slide"}
+                                <Plus className={cn("w-5 h-5 mr-2 transition-transform duration-300", isOver && canDrop && "rotate-90")} />
+                                {isOver && canDrop ? "Drop Layout Here" : "Add New Slide"}
                             </Button>
                         </div>
                     </div>
