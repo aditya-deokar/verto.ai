@@ -38,8 +38,8 @@ const createHeading = (displayName: string, defaultClassName: string, useAccentC
       return (
         <textarea
           className={cn(
-            `w-full bg-transparent ${defaultClassName} font-bold text-gray-900 placeholder:text-gray-300/50 focus:outline-hidden resize-none leading-[1.1] tracking-tight`,
-            isPreview ? 'cursor-default' : '',
+            `w-full bg-transparent ${defaultClassName} placeholder:text-muted-foreground/30 focus:placeholder:text-muted-foreground/10 focus:outline-hidden transition-colors duration-200 resize-none leading-[1.1] tracking-tight hover:bg-black/5 dark:hover:bg-white/5 focus:bg-transparent rounded-md`,
+            isPreview ? 'cursor-default pointer-events-none hover:bg-transparent dark:hover:bg-transparent' : '',
             className
           )}
           style={{

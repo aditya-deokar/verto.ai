@@ -1,8 +1,11 @@
+"use client";
 
 import Link from "next/link";
 import { Twitter, Linkedin, Github, DiscIcon as Discord } from "lucide-react";
+import { useUser } from "@clerk/nextjs";
 
 export default function FooterV2() {
+    const { isSignedIn } = useUser();
     return (
         <footer className="relative z-10 py-6 px-4 md:pl-[120px] md:pr-10 bg-white dark:bg-[#050505] transition-colors duration-500">
             <div className="w-full bg-gray-100/50 dark:bg-[#111] border border-black/5 dark:border-white/5 rounded-[40px] p-10 md:p-20 overflow-hidden relative">
@@ -33,7 +36,7 @@ export default function FooterV2() {
                     <div className="md:pl-10">
                         <h4 className="text-black dark:text-white font-medium mb-6 font-[family-name:var(--font-inter-tight)]">Product</h4>
                         <ul className="space-y-4 text-sm text-black/50 dark:text-white/50 font-[family-name:var(--font-inter)]">
-                            <li><Link href="#" className="hover:text-black dark:hover:text-white transition-colors">Features</Link></li>
+                            <li><Link href={isSignedIn ? "/presentation" : "/features/presentation"} className="hover:text-black dark:hover:text-white transition-colors">Presentations</Link></li>
                             <li><Link href="#" className="hover:text-black dark:hover:text-white transition-colors">Templates</Link></li>
                             <li><Link href="#" className="hover:text-black dark:hover:text-white transition-colors">Integrations</Link></li>
                             <li><Link href="#" className="hover:text-black dark:hover:text-white transition-colors">Enterprise</Link></li>
@@ -69,6 +72,13 @@ export default function FooterV2() {
                             </button>
                         </form>
                     </div>
+                </div>
+
+                {/* Premium Big Text Highlight */}
+                <div className="relative z-10 mb-20 pointer-events-none select-none">
+                    <h2 className="text-[15vw] leading-none font-black tracking-[-0.05em] text-center uppercase text-transparent bg-clip-text bg-linear-to-b from-black/5 to-black/20 dark:from-white/5 dark:to-white/20 transition-all duration-700">
+                        Verto AI
+                    </h2>
                 </div>
 
                 {/* Bottom Bar */}

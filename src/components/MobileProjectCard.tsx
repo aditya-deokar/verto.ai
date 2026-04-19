@@ -5,6 +5,8 @@ import { Smartphone, Trash2 } from "lucide-react";
 import Link from "next/link";
 import { Card, CardContent } from "@/components/ui/card";
 import { cn } from "@/lib/utils";
+import { motion } from "framer-motion";
+import { useLayoutStore } from "@/store/useLayoutStore";
 
 interface MobileProjectCardProps {
     project: {
@@ -18,18 +20,32 @@ interface MobileProjectCardProps {
 }
 
 export function MobileProjectCard({ project, className }: MobileProjectCardProps) {
+    const { layout } = useLayoutStore();
+    const isList = layout === 'list';
+
     return (
-        <Link href={`/mobile-design/${project.id}`}>
-            <div className={cn(
-                "group relative overflow-hidden rounded-[24px] border border-black/5 dark:border-white/10 bg-white dark:bg-[#0A0A0A] hover:border-black/10 dark:hover:border-white/20 transition-all duration-300 hover:shadow-lg h-full flex flex-col",
+        <Link href={`/mobile-design/${project.id}`} className="block w-full h-full">
+            <motion.div 
+               layout 
+               transition={{ layout: { duration: 0.4, ease: "easeOut" } }}
+               style={{ borderRadius: 32 }}
+               className={cn(
+                "group relative overflow-hidden border border-black/[0.03] dark:border-white/[0.05] bg-white/80 dark:bg-black/40 backdrop-blur-xl hover:border-black/10 dark:hover:border-white/10 hover:shadow-[0_8px_40px_rgb(0,0,0,0.08)] dark:hover:shadow-[0_8px_40px_rgba(255,255,255,0.03)] shadow-[0_8px_30px_rgb(0,0,0,0.04)] dark:shadow-[0_8px_30px_rgba(255,255,255,0.01)] hover:-translate-y-1 p-3 transition-transform duration-500 ease-out",
+                isList ? "flex flex-row items-center gap-4 h-auto" : "flex flex-col h-full",
                 className
             )}>
-                {/* Hover Glow */}
-                <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500 bg-linear-to-br from-black/5 to-transparent dark:from-white/5 pointer-events-none rounded-[24px]" />
+                {/* Apple-style Inner Highlight */}
+                <div className="absolute inset-0 rounded-[32px] ring-1 ring-inset ring-black/5 dark:ring-white/5 pointer-events-none z-10" />
 
-                <div className="p-0 flex-1 flex flex-col z-10">
+                {/* Hover Glow */}
+                <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-700 bg-gradient-to-br from-violet-500/5 via-transparent to-transparent pointer-events-none rounded-[32px]" />
+
+                <div className={cn("p-0 z-10", isList ? "flex items-center gap-4 flex-1" : "flex-1 flex flex-col")}>
                     {/* Thumbnail */}
-                    <div className="relative aspect-16/10 bg-gradient-to-br from-blue-50 to-indigo-50 dark:from-blue-950 dark:to-indigo-950 overflow-hidden flex items-center justify-center m-2 rounded-xl">
+                    <motion.div layout="position" transition={{ layout: { duration: 0.4, ease: "easeOut" } }} className={cn("relative bg-gradient-to-br from-blue-50/50 to-indigo-50/50 dark:from-blue-950/30 dark:to-indigo-950/30 overflow-hidden flex items-center justify-center rounded-2xl border border-black/5 dark:border-white/5",
+                        isList ? "w-32 sm:w-48 aspect-16/10 shrink-0" : "aspect-16/10 w-full"
+                    )}>
+                        <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500 z-20 pointer-events-none" />
                         {project.thumbnail ? (
                             <img
                                 src={project.thumbnail}
@@ -59,19 +75,19 @@ export function MobileProjectCard({ project, className }: MobileProjectCardProps
                         <div className="absolute top-2 left-2 bg-violet-600/90 text-white px-2 py-0.5 rounded text-[10px] font-medium backdrop-blur-md">
                             Mobile App
                         </div>
-                    </div>
+                    </motion.div>
 
                     {/* Info */}
-                    <div className="px-4 pb-4 pt-1">
-                        <h3 className="font-semibold truncate text-base mb-1 text-primary">{project.name}</h3>
+                    <motion.div layout="position" transition={{ layout: { duration: 0.4, ease: "easeOut" } }} className={cn("px-2 pb-1 pt-3 flex-1 flex flex-col", isList ? "justify-center pt-0" : "")}>
+                        <h3 className={cn("font-semibold truncate mb-1 text-primary", isList ? "text-lg" : "text-base")}>{project.name}</h3>
                         <p className="text-sm text-muted-foreground">
                             {formatDistanceToNow(new Date(project.createdAt), {
                                 addSuffix: true,
                             })}
                         </p>
-                    </div>
+                    </motion.div>
                 </div>
-            </div>
+            </motion.div>
         </Link>
     );
 }

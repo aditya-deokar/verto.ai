@@ -3,6 +3,7 @@ import { getUnifiedProjects } from "@/actions/unified-projects";
 import { NotFound } from "@/components/global/not-found";
 import { MobileProjectCard } from "@/components/MobileProjectCard";
 import { MobileDesignsHeader } from "./_components/MobileDesignsHeader";
+import { ProjectGalleryWrapper } from "@/components/global/projects/ProjectGalleryWrapper";
 
 export default async function MobileDesignsPage() {
     const allProjects = await getUnifiedProjects('mobile');
@@ -14,7 +15,7 @@ export default async function MobileDesignsPage() {
             <MobileDesignsHeader count={mobileDesigns.length} />
 
             {mobileDesigns.length > 0 ? (
-                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 pb-10">
+                <ProjectGalleryWrapper>
                     {mobileDesigns.map((project) => (
                         <MobileProjectCard
                             key={project.id}
@@ -25,7 +26,7 @@ export default async function MobileDesignsPage() {
                             }}
                         />
                     ))}
-                </div>
+                </ProjectGalleryWrapper>
             ) : (
                 <NotFound />
             )}

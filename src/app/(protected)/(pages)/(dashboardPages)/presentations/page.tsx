@@ -4,6 +4,7 @@ import { NotFound } from "@/components/global/not-found";
 import ProjectCard from "@/components/global/projects/ProjectCard";
 import { motion } from "framer-motion";
 import { PresentationsHeader } from "./_components/PresentationsHeader";
+import { ProjectGalleryWrapper } from "@/components/global/projects/ProjectGalleryWrapper";
 
 export default async function PresentationsPage() {
     const allProjects = await getUnifiedProjects('presentation');
@@ -15,7 +16,7 @@ export default async function PresentationsPage() {
             <PresentationsHeader count={presentations.length} />
 
             {presentations.length > 0 ? (
-                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 pb-10">
+                <ProjectGalleryWrapper>
                     {presentations.map((project, index) => (
                         <ProjectCard
                             key={project.id}
@@ -27,7 +28,7 @@ export default async function PresentationsPage() {
                             themeName={project.theme || "light"}
                         />
                     ))}
-                </div>
+                </ProjectGalleryWrapper>
             ) : (
                 <NotFound />
             )}

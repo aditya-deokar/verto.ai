@@ -13,6 +13,7 @@ import {
     TooltipProvider,
     TooltipTrigger,
 } from "@/components/ui/tooltip";
+import { motion } from "framer-motion";
 
 type TabType = 'layout' | 'typography' | 'theme' | null;
 
@@ -20,36 +21,39 @@ const EditorSidebar = () => {
     const [activeTab, setActiveTab] = useState<TabType>('layout');
 
     return (
-        <div className="w-full h-full flex flex-col bg-transparent">
+        <div className="w-full h-full flex flex-col bg-background/50 backdrop-blur-xl border-l border-border/50 relative">
             {/* Header / Tabs */}
-            <div className="flex items-center justify-around p-2 border-b bg-muted/20 shrink-0 gap-1">
-                <Button
-                    variant={activeTab === 'layout' ? 'secondary' : 'ghost'}
-                    size="sm"
-                    onClick={() => setActiveTab('layout')}
-                    className="flex-1 gap-2 rounded-lg"
-                >
-                    <LayoutTemplate className="w-4 h-4" />
-                    <span className="hidden lg:inline text-xs">Layouts</span>
-                </Button>
-                <Button
-                    variant={activeTab === 'typography' ? 'secondary' : 'ghost'}
-                    size="sm"
-                    onClick={() => setActiveTab('typography')}
-                    className="flex-1 gap-2 rounded-lg"
-                >
-                    <Type className="w-4 h-4" />
-                    <span className="hidden lg:inline text-xs">Text</span>
-                </Button>
-                <Button
-                    variant={activeTab === 'theme' ? 'secondary' : 'ghost'}
-                    size="sm"
-                    onClick={() => setActiveTab('theme')}
-                    className="flex-1 gap-2 rounded-lg"
-                >
-                    <Palette className="w-4 h-4" />
-                    <span className="hidden lg:inline text-xs">Themes</span>
-                </Button>
+            <div className="flex items-center justify-between p-3 border-b border-border/50 bg-background/50 backdrop-blur-md z-10 sticky top-0 shrink-0">
+                <div className="flex w-full items-center gap-1 bg-muted/40 p-1 rounded-xl">
+                    {(['layout', 'typography', 'theme'] as TabType[]).map((tab) => {
+                        const Icon = tab === 'layout' ? LayoutTemplate : tab === 'typography' ? Type : Palette;
+                        const label = tab === 'layout' ? 'Layouts' : tab === 'typography' ? 'Text' : 'Themes';
+                        const isActive = activeTab === tab;
+
+                        return (
+                            <button
+                                key={tab}
+                                onClick={() => setActiveTab(tab)}
+                                className={cn(
+                                    "relative flex-1 flex items-center justify-center gap-2 px-3 py-2 text-sm font-medium transition-colors duration-300 rounded-lg outline-none",
+                                    isActive ? "text-foreground" : "text-muted-foreground hover:text-foreground"
+                                )}
+                            >
+                                {isActive && (
+                                    <motion.div
+                                        layoutId="active-right-tab"
+                                        className="absolute inset-0 bg-background shadow-sm border border-border/50 rounded-lg"
+                                        transition={{ type: "spring", stiffness: 400, damping: 30 }}
+                                    />
+                                )}
+                                <span className="relative z-10 flex items-center gap-2">
+                                    <Icon className={cn("w-4 h-4", isActive ? "text-primary" : "opacity-70")} />
+                                    <span className="hidden lg:inline">{label}</span>
+                                </span>
+                            </button>
+                        );
+                    })}
+                </div>
             </div>
 
             {/* Content Area */}

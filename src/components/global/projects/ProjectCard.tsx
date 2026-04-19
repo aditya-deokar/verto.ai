@@ -12,6 +12,9 @@ import { Button } from '@/components/ui/button'
 import { useToast } from '@/hooks/use-toast'
 import { deleteProject, recoverProject } from '@/actions/projects'
 import ThumnailPreview from './ThumnailPreview'
+import Link from 'next/link'
+import { useLayoutStore } from '@/store/useLayoutStore'
+import { cn } from '@/lib/utils'
 
 
 
@@ -36,8 +39,12 @@ const ProjectCard = ({
   const [loading, setLoading] = useState(false);
   const { toast } = useToast();
   const { setSlides } = useSlideStore();
+  const { layout } = useLayoutStore();
   const router = useRouter();
   const [open, setOpen] = useState(false);
+
+  const isList = layout === 'list';
+  const isShowcase = layout === 'showcase';
 
   const theme = themes.find((theme) => theme.name === themeName) || themes[0];
 
@@ -116,31 +123,49 @@ const ProjectCard = ({
     router.push(`/presentation/${projectId}`);
   };
 
-  return (
-    <motion.div
-      className={`group w-full flex flex-col gap-y-3 rounded-[24px] p-4 transition-all duration-300 relative overflow-hidden border border-black/5 dark:border-white/10 bg-white dark:bg-[#0A0A0A] hover:border-black/10 dark:hover:border-white/20 hover:shadow-lg`}
-      variants={itemVariants}
-    >
-      {/* Hover Glow */}
-      <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500 bg-linear-to-br from-black/5 to-transparent dark:from-white/5 pointer-events-none rounded-[24px]" />
+  const onCardClick = () => {
+    setSlides(JSON.parse(JSON.stringify(slideData)));
+  };
 
-      <div className='relative aspect-16/10 overflow-hidden rounded-xl cursor-pointer z-10'
-        onClick={HandleNavigation}>
+  return (
+    <Link href={`/presentation/${projectId}`} onClick={onCardClick} className="block w-full h-full group z-0">
+      <motion.div
+        layout
+        transition={{ layout: { duration: 0.4, ease: "easeOut" } }}
+        style={{ borderRadius: 32 }}
+        className={cn(
+          "w-full p-3 relative overflow-hidden border border-black/[0.03] dark:border-white/[0.05] bg-white/80 dark:bg-black/40 backdrop-blur-xl hover:border-black/10 dark:hover:border-white/10 shadow-[0_8px_30px_rgb(0,0,0,0.04)] hover:shadow-[0_8px_40px_rgb(0,0,0,0.08)] dark:shadow-[0_8px_30px_rgba(255,255,255,0.01)] dark:hover:shadow-[0_8px_40px_rgba(255,255,255,0.03)] hover:-translate-y-1 z-0 transition-transform duration-500 ease-out",
+          isList ? "flex flex-row items-center gap-4" : "flex flex-col gap-y-3",
+          isShowcase && "p-4 gap-y-4"
+        )}
+        variants={itemVariants}
+      >
+      {/* Apple-style Inner Highlight */}
+      <div className="absolute inset-0 rounded-[32px] ring-1 ring-inset ring-black/5 dark:ring-white/5 pointer-events-none" />
+
+      {/* Hover Glow */}
+      <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-700 bg-gradient-to-br from-primary/5 via-transparent to-transparent pointer-events-none rounded-[32px]" />
+
+      <motion.div layout="position" transition={{ layout: { duration: 0.4, ease: "easeOut" } }} className={cn('relative overflow-hidden rounded-2xl z-10 bg-muted/20 border border-black/5 dark:border-white/5',
+        isList ? "w-32 sm:w-64 aspect-video shrink-0" : "w-full aspect-video"
+      )}>
+        <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500 z-20 pointer-events-none" />
         <ThumnailPreview
           theme={theme}
           slide={JSON.parse(JSON.stringify(slideData))?.[0]}
         />
-      </div>
+      </motion.div>
 
-      <div className='w-full z-10'>
-        <div className='space-y-1 '>
-          <h3 className='font-semibold text-base text-primary line-clamp-1'>{title}</h3>
+      <motion.div layout="position" transition={{ layout: { duration: 0.4, ease: "easeOut" } }} className={cn('z-10 px-2 pb-2 flex-1', isList ? "py-2" : "w-full")}>
+        <div className='space-y-1'>
+          <h3 className={cn('font-semibold text-primary line-clamp-1', isList ? "text-lg" : "text-base")}>{title}</h3>
           <div className='flex w-full justify-between items-center gap-2'>
             <p className='text-sm text-muted-foreground' suppressHydrationWarning>
               {timeAgo(createdAt)}
             </p>
 
-            {isDelete ? (
+            <div onClick={(e) => { e.preventDefault(); e.stopPropagation(); }} className="z-20">
+              {isDelete ? (
               <AlertDialogBox
                 description="This will recover your project and restore your data."
                 className="bg-green-500 text-white dark:bg-green-600 hover:bg-green-600 dark:hover:bg-green-700"
@@ -177,10 +202,12 @@ const ProjectCard = ({
                 </Button>
               </AlertDialogBox>
             )}
+            </div>
           </div>
         </div>
-      </div>
+      </motion.div>
     </motion.div>
+    </Link>
   )
 }
 

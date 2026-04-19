@@ -26,6 +26,26 @@ enum PresentationGenerationStatus {
   FAILED
 }
 
+enum TemplateCategory {
+  BUSINESS
+  STARTUP_PITCH
+  EDUCATION
+  MARKETING
+  CREATIVE
+  TECHNOLOGY
+  PROJECT_MANAGEMENT
+  PERSONAL_EVENTS
+  DATA_RESEARCH
+  TRAINING
+  MINIMAL
+}
+
+enum TemplateDifficulty {
+  BEGINNER
+  INTERMEDIATE
+  ADVANCED
+}
+
 model User {
   id                 String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
   clerkId            String   @unique
@@ -40,11 +60,12 @@ model User {
   webhookSecret      String?
 
   // Relations
-  Projects          Project[]       @relation("OwnedProjects")
-  PurchasedProjects Project[]       @relation("PurchasedProjects")
-  MobileProjects    MobileProject[] @relation("UserMobileProjects")
-  GenerationRuns    PresentationGenerationRun[]
-  Subscription      Subscription?
+  Projects           Project[]                   @relation("OwnedProjects")
+  PurchasedProjects  Project[]                   @relation("PurchasedProjects")
+  MobileProjects     MobileProject[]             @relation("UserMobileProjects")
+  GenerationRuns     PresentationGenerationRun[]
+  Subscription       Subscription?
+  TemplateFavorites  TemplateFavorite[]
 }
 
 enum SubscriptionStatus {
@@ -154,4 +175,71 @@ model PresentationGenerationRun {
   user User @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@index([userId, createdAt])
+}
+
+// ─────────────────────────────────────────────────
+// TEMPLATES SYSTEM
+// ─────────────────────────────────────────────────
+
+model PresentationTemplate {
+  id             String             @id @default(cuid())
+  name           String
+  description    String             @db.Text
+  category       TemplateCategory
+  tags           String[]
+  difficulty     TemplateDifficulty @default(BEGINNER)
+  slideCount     Int
+
+  // Content — uses exact same Slide[] JSON as Project.slides
+  slides         Json
+  themeName      String
+  layoutSequence String[]
+  outlines       String[]
+
+  // Visual
+  thumbnail      String?
+  previewImages  String[]
+
+  // Flags
+  isPremium      Boolean  @default(false)
+  isNew          Boolean  @default(true)
+  isFeatured     Boolean  @default(false)
+  isPublished    Boolean  @default(true)
+  aiEnhanceable  Boolean  @default(true)
+
+  // Analytics
+  usageCount     Int      @default(0)
+  ratingSum      Float    @default(0)
+  ratingCount    Int      @default(0)
+
+  // Authorship
+  authorId       String?  @db.Uuid
+  authorName     String   @default("Verto AI")
+
+  // Timestamps
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+
+  // Relations
+  favorites      TemplateFavorite[]
+
+  @@index([category])
+  @@index([isPremium])
+  @@index([isFeatured])
+  @@index([usageCount])
+  @@index([createdAt])
+}
+
+model TemplateFavorite {
+  id         String   @id @default(cuid())
+  userId     String   @db.Uuid
+  templateId String
+  createdAt  DateTime @default(now())
+
+  // Relations
+  user     User                 @relation(fields: [userId], references: [id], onDelete: Cascade)
+  template PresentationTemplate @relation(fields: [templateId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, templateId])
+  @@index([userId])
 }

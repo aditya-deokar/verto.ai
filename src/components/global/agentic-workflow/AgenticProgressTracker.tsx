@@ -50,13 +50,13 @@ const AgenticProgressTracker = ({
   const getStatusColor = (status: AgentStatus) => {
     switch (status) {
       case 'completed':
-        return 'border-green-500 bg-green-50 dark:bg-green-950/20'
+        return 'border-emerald-500/50 bg-emerald-500/10'
       case 'running':
-        return 'border-blue-500 bg-blue-50 dark:bg-blue-950/20'
+        return 'border-blue-500/50 bg-blue-500/10'
       case 'error':
-        return 'border-red-500 bg-red-50 dark:bg-red-950/20'
+        return 'border-red-500/50 bg-red-500/10'
       default:
-        return 'border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-950'
+        return 'border-white/10 bg-white/5'
     }
   }
 
