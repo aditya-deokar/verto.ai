@@ -9,13 +9,14 @@ import Link from "next/link";
 import { cn } from "@/lib/utils";
 import { useTheme } from "next-themes";
 import { useState, useEffect } from "react";
+import { useUser } from "@clerk/nextjs";
 
 const menuItems = [
     {
         label: "CREATE PPT",
-        href: "/presentation",
+        href: "/presentation", // Dynamically handled below
         description: "Generate Presentations",
-        image: "https://images.unsplash.com/photo-1620712943543-bcc4688e7485?q=80&w=2565&auto=format&fit=crop"
+        image: "https://images.unsplash.com/photo-1557804506-669a67965ba0?q=80&w=2670"
     },
     {
         label: "MOBILE DESIGN",
@@ -39,6 +40,7 @@ const menuItems = [
 
 export default function MenuOverlayV2({ isOpen, onClose }: { isOpen: boolean; onClose: () => void }) {
     const { setTheme, theme } = useTheme();
+    const { isSignedIn } = useUser();
     const [mounted, setMounted] = useState(false);
 
     useEffect(() => {
@@ -85,7 +87,7 @@ export default function MenuOverlayV2({ isOpen, onClose }: { isOpen: boolean; on
                 {menuItems.map((item, index) => (
                     <Link
                         key={index}
-                        href={item.href}
+                        href={index === 0 ? (isSignedIn ? "/presentation" : "/features/presentation") : item.href}
                         onClick={onClose}
                         className={cn(
                             "menu-column relative flex-1 bg-background/80 backdrop-blur-2xl border border-black/5 dark:border-white/10 shadow-2xl z-101 flex flex-col items-center justify-center group overflow-hidden cursor-pointer rounded-[32px] hover:border-black/20 dark:hover:border-white/20 transition-all duration-500 hover:shadow-[0_0_40px_rgba(0,0,0,0.1)] dark:hover:shadow-[0_0_40px_rgba(0,0,0,0.5)]",

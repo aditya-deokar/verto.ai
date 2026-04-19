@@ -12,6 +12,7 @@ import { Badge } from "@/components/ui/badge";
 import { Check, Palette, Sparkles, Search, CheckCircle2 } from "lucide-react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { motion, AnimatePresence } from "framer-motion";
+import { cn } from "@/lib/utils";
 
 const ThemeChooser = () => {
   const { currentTheme, setCurrentTheme, project } = useSlideStore();

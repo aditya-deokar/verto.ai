@@ -3,6 +3,7 @@
 import { Button } from "@/components/ui/button";
 import { Plus, Smartphone } from "lucide-react";
 import { useRouter } from "next/navigation";
+import { LayoutSwitcher } from "@/components/global/layouts/LayoutSwitcher";
 
 interface MobileDesignsHeaderProps {
     count: number;
@@ -27,14 +28,17 @@ export function MobileDesignsHeader({ count }: MobileDesignsHeaderProps) {
                 </p>
             </div>
 
-            {/* <Button
-                size="lg"
-                className="rounded-lg font-semibold bg-violet-600 hover:bg-violet-700"
-                onClick={() => router.push("/mobile-designs/create")}
-            >
-                <Plus className="h-4 w-4 mr-2" />
-                New Mobile Design
-            </Button> */}
+            <div className="flex items-center gap-4">
+                <LayoutSwitcher />
+                {/* <Button
+                    size="lg"
+                    className="rounded-lg font-semibold bg-violet-600 hover:bg-violet-700"
+                    onClick={() => router.push("/mobile-designs/create")}
+                >
+                    <Plus className="h-4 w-4 mr-2" />
+                    New Mobile Design
+                </Button> */}
+            </div>
         </div>
     );
 }

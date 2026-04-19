@@ -141,11 +141,18 @@ export const CreatePageCard = [
   },
   {
     title: "Start from",
+    highlightedText: "Template",
+    description: "Pick a curated blueprint and let AI fill it with your content",
+    type: "template",
+  },
+  {
+    title: "Start from",
     highlightedText: "Scratch",
     description: "Build your presentation from the ground up with full control",
     type: "create-scratch",
   },
 ];
+
 
 export const containerVariants = {
   hidden: { opacity: 0 },

@@ -3,6 +3,7 @@
 import { Button } from "@/components/ui/button";
 import { Plus, Presentation } from "lucide-react";
 import { useRouter } from "next/navigation";
+import { LayoutSwitcher } from "@/components/global/layouts/LayoutSwitcher";
 
 interface PresentationsHeaderProps {
     count: number;
@@ -27,14 +28,17 @@ export function PresentationsHeader({ count }: PresentationsHeaderProps) {
                 </p>
             </div>
 
-            {/* <Button
-                size="lg"
-                className="rounded-lg font-semibold"
-                onClick={() => router.push("/create-page")}
-            >
-                <Plus className="h-4 w-4 mr-2" />
-                New Presentation
-            </Button> */}
+            <div className="flex items-center gap-4">
+                <LayoutSwitcher />
+                {/* <Button
+                    size="lg"
+                    className="rounded-lg font-semibold"
+                    onClick={() => router.push("/create-page")}
+                >
+                    <Plus className="h-4 w-4 mr-2" />
+                    New Presentation
+                </Button> */}
+            </div>
         </div>
     );
 }

@@ -49,13 +49,16 @@ export function DashboardHome({
 
                 {/* Create Presentation Card */}
                 <motion.div
-                    whileHover={{ scale: 1.01, transition: { duration: 0.2 } }}
-                    whileTap={{ scale: 0.99 }}
-                    className="group relative cursor-pointer overflow-hidden rounded-[32px] border border-black/5 dark:border-white/10 bg-white dark:bg-[#0A0A0A] hover:border-black/10 dark:hover:border-white/20 transition-all duration-300 hover:shadow-xl h-[280px] flex flex-col"
+                    whileHover={{ y: -4, transition: { duration: 0.4, ease: "easeOut" } }}
+                    whileTap={{ scale: 0.98 }}
+                    className="group relative cursor-pointer overflow-hidden rounded-[32px] border border-black/[0.03] dark:border-white/[0.05] bg-white/80 dark:bg-black/40 backdrop-blur-xl hover:border-black/10 dark:hover:border-white/10 transition-all duration-500 ease-out shadow-[0_8px_30px_rgb(0,0,0,0.04)] hover:shadow-[0_8px_40px_rgb(0,0,0,0.08)] dark:shadow-[0_8px_30px_rgba(255,255,255,0.01)] dark:hover:shadow-[0_8px_40px_rgba(255,255,255,0.03)] h-[280px] flex flex-col"
                     onClick={() => router.push("/create-page")}
                 >
+                    {/* Apple-style Inner Highlight */}
+                    <div className="absolute inset-0 rounded-[32px] ring-1 ring-inset ring-black/5 dark:ring-white/5 pointer-events-none z-10" />
+
                     {/* Hover Glow */}
-                    <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500 bg-linear-to-br from-black/5 to-transparent dark:from-white/5 pointer-events-none" />
+                    <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-700 bg-gradient-to-br from-primary/5 via-transparent to-transparent pointer-events-none" />
 
                     <div className="relative z-10 flex flex-col h-full p-8">
                         <div className="flex items-start justify-between mb-6">
@@ -79,13 +82,16 @@ export function DashboardHome({
 
                 {/* Create Mobile Design Card */}
                 <motion.div
-                    whileHover={{ scale: 1.01, transition: { duration: 0.2 } }}
-                    whileTap={{ scale: 0.99 }}
-                    className="group relative cursor-pointer overflow-hidden rounded-[32px] border border-black/5 dark:border-white/10 bg-white dark:bg-[#0A0A0A] hover:border-black/10 dark:hover:border-white/20 transition-all duration-300 hover:shadow-xl h-[280px] flex flex-col"
+                    whileHover={{ y: -4, transition: { duration: 0.4, ease: "easeOut" } }}
+                    whileTap={{ scale: 0.98 }}
+                    className="group relative cursor-pointer overflow-hidden rounded-[32px] border border-black/[0.03] dark:border-white/[0.05] bg-white/80 dark:bg-black/40 backdrop-blur-xl hover:border-black/10 dark:hover:border-white/10 transition-all duration-500 ease-out shadow-[0_8px_30px_rgb(0,0,0,0.04)] hover:shadow-[0_8px_40px_rgb(0,0,0,0.08)] dark:shadow-[0_8px_30px_rgba(255,255,255,0.01)] dark:hover:shadow-[0_8px_40px_rgba(255,255,255,0.03)] h-[280px] flex flex-col"
                     onClick={() => router.push("/mobile-designs/create")}
                 >
+                    {/* Apple-style Inner Highlight */}
+                    <div className="absolute inset-0 rounded-[32px] ring-1 ring-inset ring-black/5 dark:ring-white/5 pointer-events-none z-10" />
+
                     {/* Hover Glow */}
-                    <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500 bg-linear-to-br from-violet-500/5 to-transparent dark:from-violet-400/10 pointer-events-none" />
+                    <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-700 bg-gradient-to-br from-violet-500/5 via-transparent to-transparent pointer-events-none" />
 
                     <div className="relative z-10 flex flex-col h-full p-8">
                         <div className="flex items-start justify-between mb-6">

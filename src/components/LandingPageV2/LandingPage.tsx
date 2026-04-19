@@ -11,6 +11,7 @@ import SmartFeatures from "@/components/LandingPageV2/SmartFeatures";
 import MobileShowcase from "@/components/LandingPageV2/MobileShowcase";
 import TestimonialFlow from "@/components/LandingPageV2/TestimonialFlow";
 import FooterV2 from "@/components/LandingPageV2/FooterV2";
+import PresentationWorkflow from "./PresentationLanding/PresentationWorkflow";
 
 const inter = Inter({ subsets: ["latin"], variable: "--font-inter" });
 const interTight = Inter_Tight({ subsets: ["latin"], variable: "--font-inter-tight" });
@@ -38,7 +39,8 @@ export default function LandingPage() {
 
                 {/* Page Content */}
                 <HeroV2 />
-                <FeatureStory />
+                {/* <FeatureStory /> */}
+                <PresentationWorkflow/>
                 <SmartFeatures />
                 <MobileShowcase />
                 <TestimonialFlow />
