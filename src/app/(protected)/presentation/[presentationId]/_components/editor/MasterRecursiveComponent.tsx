@@ -46,37 +46,35 @@ type MasterRecursiveComponentProps = {
  * Enhanced animation configurations for different component types
  */
 const getAnimationConfig = (contentType: string) => {
-  const baseConfig = {
-    initial: { opacity: 0, y: 20 } as any,
-    animate: { opacity: 1, y: 0 } as any,
-    transition: { duration: 0.5, ease: "easeOut" } as any,
+  const baseVariants = {
+    hidden: { opacity: 0, y: 20 },
+    visible: { opacity: 1, y: 0, transition: { duration: 0.5, ease: "easeOut" } },
   };
 
-  // Custom animations for specific components
   const animations: Record<string, any> = {
     heading1: {
-      initial: { opacity: 0, scale: 0.9, y: 10 },
-      animate: { opacity: 1, scale: 1, y: 0 },
-      transition: { duration: 0.6, type: "spring", stiffness: 100, damping: 20 },
+      hidden: { opacity: 0, scale: 0.9, y: 10 },
+      visible: { opacity: 1, scale: 1, y: 0, transition: { duration: 0.6, type: "spring", stiffness: 100, damping: 20 } },
     },
     title: {
-      initial: { opacity: 0, y: -30 },
-      animate: { opacity: 1, y: 0 },
-      transition: { duration: 0.7, type: "spring", damping: 15 },
+      hidden: { opacity: 0, y: -30 },
+      visible: { opacity: 1, y: 0, transition: { duration: 0.7, type: "spring", damping: 15 } },
     },
     image: {
-      initial: { opacity: 0, scale: 0.95 },
-      animate: { opacity: 1, scale: 1 },
-      transition: { duration: 0.6, ease: "easeOut" },
+      hidden: { opacity: 0, scale: 0.95 },
+      visible: { opacity: 1, scale: 1, transition: { duration: 0.6, ease: "easeOut" } },
     },
     calloutBox: {
-      initial: { opacity: 0, x: -20 },
-      animate: { opacity: 1, x: 0 },
-      transition: { duration: 0.5, ease: "easeOut" },
+      hidden: { opacity: 0, x: -20 },
+      visible: { opacity: 1, x: 0, transition: { duration: 0.5, ease: "easeOut" } },
     },
   };
 
-  return animations[contentType] || baseConfig;
+  return {
+    variants: animations[contentType] || baseVariants,
+    initial: "hidden",
+    animate: "visible",
+  };
 };
 
 const ContentRenderer: React.FC<MasterRecursiveComponentProps> = React.memo(
@@ -472,7 +470,8 @@ export const MasterRecursiveComponent: React.FC<MasterRecursiveComponentProps> =
       isPreview = false,
       isEditable = true,
     }) => {
-      const { removeComponentFromSlide } = useSlideStore();
+      const { removeComponentFromSlide, selectedComponentId, setSelectedComponent } = useSlideStore();
+      const isSelected = selectedComponentId === content.id;
 
       if (isPreview) {
         return (
@@ -517,13 +516,23 @@ export const MasterRecursiveComponent: React.FC<MasterRecursiveComponentProps> =
         >
           <motion.div
             layout
-            initial={{ opacity: 0, scale: 0.95 }}
-            animate={{ opacity: 1, scale: 1 }}
-            exit={{ opacity: 0, scale: 0.95 }}
-            transition={{ duration: 0.2 }}
+            variants={{
+              hidden: { opacity: 0, scale: 0.95 },
+              visible: { opacity: 1, scale: 1, transition: { duration: 0.2 } },
+            }}
+            initial="hidden"
+            animate="visible"
+            exit="hidden"
+            onClick={(e) => {
+                if (isEditable) {
+                    e.stopPropagation();
+                    setSelectedComponent(content.id);
+                }
+            }}
             className={cn(
-              "group/item relative w-full h-full",
-              isDragging && "opacity-50"
+              "group/item relative w-full h-full transition-all duration-300 rounded-lg",
+              isDragging && "opacity-50",
+              isSelected ? "ring-2 ring-primary shadow-[0_0_15px_rgba(var(--primary),0.3)]" : "hover:ring-1 hover:ring-primary/30"
             )}
           >
             <ContentRenderer

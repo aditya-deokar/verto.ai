@@ -1,10 +1,14 @@
+'use client';
+
 import { cn } from '@/lib/utils'
+import { useSlideStore } from '@/store/useSlideStore'
+import { resolveThemeTokens } from '@/lib/themeUtils'
 import { AlertCircle, AlertTriangle, CheckCircle, HelpCircle, Info } from 'lucide-react'
 import React from 'react'
 
 type Props = {
     type: 'success' | 'warning' | 'info' | 'question' | 'caution'
-    children : React.ReactNode
+    children: React.ReactNode
     className?: string
 }
 
@@ -16,52 +20,99 @@ const icons = {
     caution: AlertCircle,
 }
 
-const  CalloutBox = ({ type, children, className }: Props) => {
-  
-    const Icon = icons[type]
+const colorTokens = {
+    success: {
+        hue: '142',
+        lightBg: 'rgba(34, 197, 94, 0.08)',
+        darkBg: 'rgba(34, 197, 94, 0.12)',
+        lightText: '#15803d',
+        darkText: '#4ade80',
+        accent: '#22c55e',
+    },
+    warning: {
+        hue: '45',
+        lightBg: 'rgba(234, 179, 8, 0.08)',
+        darkBg: 'rgba(234, 179, 8, 0.12)',
+        lightText: '#a16207',
+        darkText: '#facc15',
+        accent: '#eab308',
+    },
+    info: {
+        hue: '217',
+        lightBg: 'rgba(59, 130, 246, 0.08)',
+        darkBg: 'rgba(59, 130, 246, 0.12)',
+        lightText: '#1d4ed8',
+        darkText: '#60a5fa',
+        accent: '#3b82f6',
+    },
+    question: {
+        hue: '270',
+        lightBg: 'rgba(168, 85, 247, 0.08)',
+        darkBg: 'rgba(168, 85, 247, 0.12)',
+        lightText: '#7e22ce',
+        darkText: '#c084fc',
+        accent: '#a855f7',
+    },
+    caution: {
+        hue: '0',
+        lightBg: 'rgba(239, 68, 68, 0.08)',
+        darkBg: 'rgba(239, 68, 68, 0.12)',
+        lightText: '#b91c1c',
+        darkText: '#f87171',
+        accent: '#ef4444',
+    },
+}
 
-    const colors = {
-        success: {
-            bg: 'bg-green-500/10 dark:bg-green-500/20',
-            border: 'border-green-500/50',
-            text: 'text-green-700 dark:text-green-400',
-        },
-        warning: {
-            bg: 'bg-yellow-500/10 dark:bg-yellow-500/20',
-            border: 'border-yellow-500/50',
-            text: 'text-yellow-700 dark:text-yellow-400',
-        },
-        info: {
-            bg: 'bg-blue-500/10 dark:bg-blue-500/20',
-            border: 'border-blue-500/50',
-            text: 'text-blue-700 dark:text-blue-400',
-        },
-        question: {
-            bg: 'bg-purple-500/10 dark:bg-purple-500/20',
-            border: 'border-purple-500/50',
-            text: 'text-purple-700 dark:text-purple-400',
-        },
-        caution: {
-            bg: 'bg-red-500/10 dark:bg-red-500/20',
-            border: 'border-red-500/50',
-            text: 'text-red-700 dark:text-red-400',
-        },
-    }
+const CalloutBox = ({ type, children, className }: Props) => {
+    const { currentTheme } = useSlideStore();
+    const Icon = icons[type];
+    const tokens = colorTokens[type];
+    const isDark = currentTheme.type === 'dark';
+    const themeTokens = resolveThemeTokens(currentTheme);
 
-    return <div
-             className={cn(
-                'p-5 rounded-xl border flex items-start backdrop-blur-md shadow-sm transition-all duration-300',
-                colors[type].bg,
-                colors[type].border,
-                colors[type].text,
+    return (
+        <div
+            className={cn(
+                'relative p-5 rounded-xl flex items-start overflow-hidden transition-all duration-300',
                 className
-             )}
-           >
-                <div className={cn("p-2 rounded-full bg-background/50 mr-4 shadow-sm", colors[type].border, "border")}>
-                    <Icon className="h-5 w-5" />
-                </div>
-                <div className="flex-1 w-full mt-1.5">{children}</div>
-           </div>;
+            )}
+            style={{
+                backgroundColor: isDark ? tokens.darkBg : tokens.lightBg,
+                border: `1px solid ${tokens.accent}20`,
+                borderRadius: themeTokens.borderRadius,
+            }}
+        >
+            {/* Gradient accent left bar */}
+            <div
+                className="absolute left-0 top-0 w-1 h-full rounded-l-xl"
+                style={{
+                    background: `linear-gradient(to bottom, ${tokens.accent}, ${tokens.accent}60, ${tokens.accent}20)`,
+                }}
+            />
+
+            {/* Icon with gradient background */}
+            <div
+                className="flex-shrink-0 w-9 h-9 rounded-lg flex items-center justify-center mr-4 shadow-sm"
+                style={{
+                    background: `linear-gradient(135deg, ${tokens.accent}20, ${tokens.accent}10)`,
+                    border: `1px solid ${tokens.accent}25`,
+                }}
+            >
+                <Icon
+                    className="h-4.5 w-4.5"
+                    style={{ color: isDark ? tokens.darkText : tokens.lightText }}
+                />
+            </div>
+
+            {/* Content */}
+            <div
+                className="flex-1 w-full mt-1"
+                style={{ color: isDark ? tokens.darkText : tokens.lightText }}
+            >
+                {children}
+            </div>
+        </div>
+    );
 };
 
 export default CalloutBox

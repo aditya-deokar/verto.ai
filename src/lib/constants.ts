@@ -29,6 +29,14 @@ import {
   BentoGridIcon,
   StatsRowIcon,
   TimelineLayoutIcon,
+  GradientHeroIcon,
+  TeamGridIcon,
+  MetricDashboardIcon,
+  TestimonialIcon,
+  FeatureShowcaseIcon,
+  AgendaIcon,
+  ThankYouIcon,
+  PricingTableIcon,
 } from "./iconsComponent";
 
 import {
@@ -59,7 +67,15 @@ import {
   CreativeHero,
   BentoGrid,
   StatsRow,
-  VisualTimelineLayout
+  VisualTimelineLayout,
+  GradientHero,
+  TeamGrid,
+  MetricDashboard,
+  TestimonialSlide,
+  FeatureShowcase,
+  AgendaSlide,
+  ThankYouSlide,
+  PricingTable,
 } from "./slideLayouts";
 
 import {
@@ -264,6 +280,22 @@ export const createSlideFromLayout = (layoutType: string): LayoutSlides => {
       return StatsRow;
     case "timeline":
       return VisualTimelineLayout;
+    case "gradientHero":
+      return GradientHero;
+    case "teamGrid":
+      return TeamGrid;
+    case "metricDashboard":
+      return MetricDashboard;
+    case "testimonialSlide":
+      return TestimonialSlide;
+    case "featureShowcase":
+      return FeatureShowcase;
+    case "agendaSlide":
+      return AgendaSlide;
+    case "thankYouSlide":
+      return ThankYouSlide;
+    case "pricingTable":
+      return PricingTable;
     default:
       return BlankCard;
   }
@@ -495,6 +527,67 @@ export const layouts: LayoutGroup[] = [
       },
     ],
   },
+  {
+    name: "Premium",
+    layouts: [
+      {
+        name: "Gradient Hero",
+        icon: GradientHeroIcon,
+        type: "layout",
+        layoutType: "gradientHero",
+        component: GradientHero,
+      },
+      {
+        name: "Team Grid",
+        icon: TeamGridIcon,
+        type: "layout",
+        layoutType: "teamGrid",
+        component: TeamGrid,
+      },
+      {
+        name: "Metric Dashboard",
+        icon: MetricDashboardIcon,
+        type: "layout",
+        layoutType: "metricDashboard",
+        component: MetricDashboard,
+      },
+      {
+        name: "Testimonial",
+        icon: TestimonialIcon,
+        type: "layout",
+        layoutType: "testimonialSlide",
+        component: TestimonialSlide,
+      },
+      {
+        name: "Feature Showcase",
+        icon: FeatureShowcaseIcon,
+        type: "layout",
+        layoutType: "featureShowcase",
+        component: FeatureShowcase,
+      },
+      {
+        name: "Agenda",
+        icon: AgendaIcon,
+        type: "layout",
+        layoutType: "agendaSlide",
+        component: AgendaSlide,
+      },
+      {
+        name: "Thank You",
+        icon: ThankYouIcon,
+        type: "layout",
+        layoutType: "thankYouSlide",
+        component: ThankYouSlide,
+      },
+      {
+        name: "Pricing Table",
+        icon: PricingTableIcon,
+        type: "layout",
+        layoutType: "pricingTable",
+        component: PricingTable,
+      },
+    ],
+  },
 ];
 
 export const component: ComponentGroup[] = [
@@ -673,6 +766,12 @@ export const themes: Theme[] = [
     navbarColor: "#ffffff",
     sidebarColor: "#f0f0f0",
     type: "light",
+    headingFontFamily: "'Inter', sans-serif",
+    accentGradient: "linear-gradient(135deg, #3b82f6, #6366f1)",
+    surfaceColor: "rgba(0,0,0,0.02)",
+    mutedColor: "rgba(0,0,0,0.5)",
+    borderRadius: "12px",
+    shadowPreset: "soft",
   },
   {
     name: "Dark Elegance",
@@ -685,6 +784,12 @@ export const themes: Theme[] = [
     navbarColor: "#2c2c2c",
     sidebarColor: "#1a1a1a",
     type: "dark",
+    headingFontFamily: "'Playfair Display', serif",
+    accentGradient: "linear-gradient(135deg, #ffd700, #f0c040)",
+    surfaceColor: "rgba(255,255,255,0.06)",
+    mutedColor: "rgba(255,255,255,0.5)",
+    borderRadius: "8px",
+    shadowPreset: "dramatic",
   },
   {
     name: "Nature Fresh",
@@ -756,6 +861,11 @@ export const themes: Theme[] = [
     navbarColor: "#f5f5f5",
     sidebarColor: "#ffffff",
     type: "light",
+    headingFontFamily: "'IBM Plex Mono', monospace",
+    surfaceColor: "rgba(0,0,0,0.02)",
+    mutedColor: "rgba(0,0,0,0.45)",
+    borderRadius: "2px",
+    shadowPreset: "none",
   },
   {
     name: "Neon Nights",
@@ -768,6 +878,12 @@ export const themes: Theme[] = [
     navbarColor: "#1a1a1a",
     sidebarColor: "#000000",
     type: "dark",
+    headingFontFamily: "'Orbitron', sans-serif",
+    accentGradient: "linear-gradient(135deg, #00ff00, #00cc88)",
+    surfaceColor: "rgba(0,255,0,0.04)",
+    mutedColor: "rgba(255,255,255,0.4)",
+    borderRadius: "4px",
+    shadowPreset: "dramatic",
   },
   {
     name: "Earthy Tones",
@@ -840,6 +956,12 @@ export const themes: Theme[] = [
     navbarColor: "#4527a0",
     sidebarColor: "#311b92",
     type: "dark",
+    headingFontFamily: "'Space Grotesk', sans-serif",
+    accentGradient: "linear-gradient(135deg, #7c4dff, #e040fb)",
+    surfaceColor: "rgba(124,77,255,0.08)",
+    mutedColor: "rgba(255,255,255,0.55)",
+    borderRadius: "16px",
+    shadowPreset: "medium",
   },
   {
     name: "Midnight Bloom",
@@ -852,6 +974,12 @@ export const themes: Theme[] = [
     navbarColor: "#292a5d",
     sidebarColor: "#1a1b41",
     type: "dark",
+    headingFontFamily: "'Poppins', sans-serif",
+    accentGradient: "linear-gradient(135deg, #f72585, #7209b7)",
+    surfaceColor: "rgba(247,37,133,0.06)",
+    mutedColor: "rgba(255,255,255,0.5)",
+    borderRadius: "14px",
+    shadowPreset: "medium",
   },
   {
     name: "Coral Sunset",
@@ -876,6 +1004,12 @@ export const themes: Theme[] = [
     navbarColor: "#065f46",
     sidebarColor: "#064e3b",
     type: "dark",
+    headingFontFamily: "'Montserrat', sans-serif",
+    accentGradient: "linear-gradient(135deg, #34d399, #059669)",
+    surfaceColor: "rgba(52,211,153,0.06)",
+    mutedColor: "rgba(255,255,255,0.5)",
+    borderRadius: "12px",
+    shadowPreset: "soft",
   },
   {
     name: "Lavender Mist",
@@ -1415,6 +1549,12 @@ export const themes: Theme[] = [
     navbarColor: "#121212",
     sidebarColor: "#050505",
     type: "dark",
+    headingFontFamily: "'Inter', sans-serif",
+    accentGradient: "linear-gradient(135deg, #6366f1, #8b5cf6)",
+    surfaceColor: "rgba(255,255,255,0.04)",
+    mutedColor: "rgba(255,255,255,0.45)",
+    borderRadius: "10px",
+    shadowPreset: "medium",
   },
   {
     name: "Vibrant Glass",
@@ -1427,6 +1567,12 @@ export const themes: Theme[] = [
     navbarColor: "#a78bfa",
     sidebarColor: "#c4b5fd",
     type: "light",
+    headingFontFamily: "'Outfit', sans-serif",
+    accentGradient: "linear-gradient(135deg, #8b5cf6, #a78bfa, #c4b5fd)",
+    surfaceColor: "rgba(139,92,246,0.05)",
+    mutedColor: "rgba(0,0,0,0.45)",
+    borderRadius: "16px",
+    shadowPreset: "soft",
   },
   {
     name: "Premium Gradient",
@@ -1439,5 +1585,11 @@ export const themes: Theme[] = [
     navbarColor: "#312e81",
     sidebarColor: "#1e1b4b",
     type: "dark",
+    headingFontFamily: "'Plus Jakarta Sans', sans-serif",
+    accentGradient: "linear-gradient(135deg, #f472b6, #9333ea, #4f46e5)",
+    surfaceColor: "rgba(255,255,255,0.06)",
+    mutedColor: "rgba(255,255,255,0.5)",
+    borderRadius: "14px",
+    shadowPreset: "dramatic",
   },
 ];
