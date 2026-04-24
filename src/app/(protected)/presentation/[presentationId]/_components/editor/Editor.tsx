@@ -1,7 +1,7 @@
 "use client";
 
 import { useSlideStore } from "@/store/useSlideStore";
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect, useRef, useCallback } from "react";
 import { resolveThemeTokens } from "@/lib/themeUtils";
 import { ContentItem, LayoutSlides } from "@/lib/types";
 import { v4 as uuidv4 } from "uuid";
@@ -18,6 +18,10 @@ import { MasterRecursiveComponent } from "./MasterRecursiveComponent";
 import EditorToolbar from "./EditorToolbar";
 import { useDrop } from "react-dnd";
 import { motion, AnimatePresence } from "framer-motion";
+
+// ─── Constants ───
+const SLIDE_WIDTH = 1280;
+const SLIDE_HEIGHT = 720;
 
 interface SlideCanvasProps {
   slide: any;
@@ -100,9 +104,9 @@ export const SlideCanvas: React.FC<SlideCanvasProps> = ({
       }}
       transition={{ duration: 0.5, ease: "easeInOut" }}
       className={cn(
-        "w-full h-full relative shadow-2xl overflow-hidden",
+        "w-full h-full relative overflow-hidden",
         "group flex flex-col",
-        "p-12", // Premium padding
+        "p-6 sm:p-8 md:p-12", // Responsive padding
         isOver && canDrop && "ring-4 ring-primary/50"
       )}
       style={{
@@ -126,9 +130,9 @@ export const SlideCanvas: React.FC<SlideCanvasProps> = ({
 
       {isEditable && (
         <Popover>
-          <PopoverTrigger asChild className="absolute top-4 left-4 opacity-0 group-hover:opacity-100 transition-opacity z-50">
-            <Button size="sm" variant="secondary" className="h-8 w-8 p-0 rounded-full shadow-md backdrop-blur-md bg-white/20 hover:bg-white/40 border-none">
-              <EllipsisVertical className="w-4 h-4 text-white" />
+          <PopoverTrigger asChild className="absolute top-2 left-2 sm:top-4 sm:left-4 opacity-0 group-hover:opacity-100 transition-opacity z-50">
+            <Button size="sm" variant="secondary" className="h-7 w-7 sm:h-8 sm:w-8 p-0 rounded-full shadow-md backdrop-blur-md bg-white/20 hover:bg-white/40 border-none">
+              <EllipsisVertical className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-white" />
               <span className="sr-only">Slide options</span>
             </Button>
           </PopoverTrigger>
@@ -170,95 +174,139 @@ const Editor = ({ isEditable }: Props) => {
     }
   };
 
+  // ─── Responsive auto-scaling ───
+  const computeScale = useCallback(() => {
+    if (!containerRef.current || !autoScale) return;
+
+    const { width, height } = containerRef.current.getBoundingClientRect();
+
+    // Responsive padding: less padding on smaller screens
+    const padX = width < 640 ? 24 : width < 1024 ? 48 : 80;
+    const padY = height < 500 ? 24 : height < 768 ? 48 : 80;
+
+    const availableW = width - padX * 2;
+    const availableH = height - padY * 2;
+
+    const scaleW = availableW / SLIDE_WIDTH;
+    const scaleH = availableH / SLIDE_HEIGHT;
+
+    setScale(Math.max(0.15, Math.min(scaleW, scaleH, 1.2)));
+  }, [autoScale]);
+
   useEffect(() => {
     if (typeof window !== "undefined") setLoading(false);
-    
-    if (!containerRef.current || !autoScale) return;
-    const observer = new ResizeObserver((entries) => {
-      for (let entry of entries) {
-        const { width, height } = entry.contentRect;
-        const availableW = width - 128; // accounting for more padding
-        const availableH = height - 128;
-        const scaleW = availableW / 1280;
-        const scaleH = availableH / 720;
-        setScale(Math.max(0.1, Math.min(scaleW, scaleH, 1.2)));
-      }
+
+    if (!containerRef.current) return;
+
+    // Initial compute
+    computeScale();
+
+    const observer = new ResizeObserver(() => {
+      if (autoScale) computeScale();
     });
     observer.observe(containerRef.current);
-    
+
     return () => observer.disconnect();
-  }, [loading, autoScale]);
+  }, [loading, autoScale, computeScale]);
 
   const currentSlideData = orderedSlides[currentSlide];
 
   return (
-    <div className="flex-1 flex flex-col h-full w-full mx-auto px-4 relative">
+    <div className="flex-1 flex flex-col h-full w-full relative overflow-hidden">
       {loading ? (
-        <div className="w-full h-full flex items-center justify-center">
-          <Skeleton className="h-[60%] w-[80%] rounded-xl" />
+        <div className="w-full h-full flex items-center justify-center p-4">
+          <Skeleton className="h-[60%] w-[90%] sm:w-[80%] rounded-xl" />
         </div>
       ) : (
-        <div ref={containerRef} className="flex-1 overflow-hidden flex items-center justify-center p-8 relative">
+        <div
+          ref={containerRef}
+          className="flex-1 overflow-hidden flex items-center justify-center relative"
+        >
+          {/* Scaled slide wrapper */}
           <div
-            className="shadow-2xl rounded-sm overflow-hidden ring-1 ring-black/5 flex-shrink-0"
+            className="flex-shrink-0"
             style={{
-              width: '1280px',
-              height: '720px',
+              width: SLIDE_WIDTH,
+              height: SLIDE_HEIGHT,
               transform: `scale(${scale})`,
               transformOrigin: 'center center',
-              transition: 'transform 0.1s ease-in-out'
+              transition: autoScale ? 'transform 0.2s ease-out' : 'transform 0.1s ease-in-out',
             }}
           >
-            {currentSlideData ? (
-              <SlideCanvas
-                key={currentSlideData.id}
-                slide={currentSlideData}
-                index={currentSlide}
-                handleDelete={handleDelete}
-                isEditable={isEditable}
-              />
-            ) : (
-              <div className="w-full h-full flex flex-col items-center justify-center bg-black/5 dark:bg-white/5 border-2 border-dashed border-black/10 dark:border-white/10 rounded-2xl p-12 text-center gap-6">
-                <div className="w-24 h-24 rounded-3xl bg-primary/10 flex items-center justify-center">
-                  <LayoutGrid className="w-12 h-12 text-primary/40" />
-                </div>
-                <div className="space-y-2">
-                  <h3 className="text-xl font-semibold">No slide selected</h3>
-                  <p className="text-muted-foreground max-w-xs">Select a slide from the sidebar to begin editing your masterpiece.</p>
-                </div>
-              </div>
-            )}
+            {/* Slide shadow/ring container */}
+            <div
+              className="w-full h-full rounded-sm overflow-hidden"
+              style={{
+                boxShadow: '0 8px 40px -12px rgba(0,0,0,0.25), 0 0 0 1px rgba(0,0,0,0.05)',
+              }}
+            >
+              <AnimatePresence mode="wait">
+                {currentSlideData ? (
+                  <SlideCanvas
+                    key={currentSlideData.id}
+                    slide={currentSlideData}
+                    index={currentSlide}
+                    handleDelete={handleDelete}
+                    isEditable={isEditable}
+                  />
+                ) : (
+                  <motion.div
+                    key="empty-state"
+                    initial={{ opacity: 0, scale: 0.95 }}
+                    animate={{ opacity: 1, scale: 1 }}
+                    exit={{ opacity: 0 }}
+                    className="w-full h-full flex flex-col items-center justify-center bg-black/5 dark:bg-white/5 border-2 border-dashed border-black/10 dark:border-white/10 rounded-2xl p-8 sm:p-12 text-center gap-4 sm:gap-6"
+                  >
+                    <div className="w-16 h-16 sm:w-24 sm:h-24 rounded-2xl sm:rounded-3xl bg-primary/10 flex items-center justify-center">
+                      <LayoutGrid className="w-8 h-8 sm:w-12 sm:h-12 text-primary/40" />
+                    </div>
+                    <div className="space-y-1 sm:space-y-2">
+                      <h3 className="text-lg sm:text-xl font-semibold">No slide selected</h3>
+                      <p className="text-muted-foreground text-sm sm:text-base max-w-xs">Select a slide from the sidebar to begin editing your masterpiece.</p>
+                    </div>
+                  </motion.div>
+                )}
+              </AnimatePresence>
+            </div>
           </div>
 
-          {/* Zoom Controls */}
-          <div className="absolute bottom-12 right-12 z-50 flex items-center gap-2 bg-black/80 backdrop-blur-xl border border-white/10 p-1.5 rounded-full shadow-2xl">
-            <Button 
-              variant="ghost" 
-              size="icon" 
-              className="h-8 w-8 rounded-full text-white/70 hover:text-white hover:bg-white/10"
+          {/* Zoom Controls — responsive positioning & sizing */}
+          <div className="absolute bottom-3 right-3 sm:bottom-6 sm:right-6 lg:bottom-8 lg:right-8 z-50 flex items-center gap-1 sm:gap-2 bg-black/80 backdrop-blur-xl border border-white/10 p-1 sm:p-1.5 rounded-full shadow-2xl">
+            <Button
+              variant="ghost"
+              size="icon"
+              className="h-7 w-7 sm:h-8 sm:w-8 rounded-full text-white/70 hover:text-white hover:bg-white/10"
               onClick={() => { setAutoScale(false); setScale(s => Math.max(0.1, s - 0.1)); }}
             >
-              <ZoomOut className="w-4 h-4" />
+              <ZoomOut className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
             </Button>
-            <div className="px-2 min-w-[50px] text-center text-xs font-medium text-white/90 cursor-default select-none" onClick={() => setAutoScale(true)}>
+            <div
+              className="px-1.5 sm:px-2 min-w-[40px] sm:min-w-[50px] text-center text-[10px] sm:text-xs font-medium text-white/90 cursor-pointer select-none"
+              onClick={() => setAutoScale(true)}
+              title="Click to auto-fit"
+            >
               {Math.round(scale * 100)}%
             </div>
-            <Button 
-              variant="ghost" 
-              size="icon" 
-              className="h-8 w-8 rounded-full text-white/70 hover:text-white hover:bg-white/10"
+            <Button
+              variant="ghost"
+              size="icon"
+              className="h-7 w-7 sm:h-8 sm:w-8 rounded-full text-white/70 hover:text-white hover:bg-white/10"
               onClick={() => { setAutoScale(false); setScale(s => Math.min(2, s + 0.1)); }}
             >
-              <ZoomIn className="w-4 h-4" />
+              <ZoomIn className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
             </Button>
-            <div className="w-px h-4 bg-white/10 mx-1" />
-            <Button 
-              variant="ghost" 
-              size="icon" 
-              className={cn("h-8 w-8 rounded-full text-white/70 hover:text-white hover:bg-white/10", autoScale && "text-primary")}
+            <div className="w-px h-3 sm:h-4 bg-white/10 mx-0.5 sm:mx-1" />
+            <Button
+              variant="ghost"
+              size="icon"
+              className={cn(
+                "h-7 w-7 sm:h-8 sm:w-8 rounded-full text-white/70 hover:text-white hover:bg-white/10",
+                autoScale && "text-primary"
+              )}
               onClick={() => setAutoScale(true)}
+              title="Auto-fit"
             >
-              <RotateCcw className="w-4 h-4" />
+              <RotateCcw className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
             </Button>
           </div>
         </div>

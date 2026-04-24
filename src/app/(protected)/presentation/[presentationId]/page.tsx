@@ -73,25 +73,25 @@ const page = (props: Props) => {
 
   return (
     <DndProvider backend={HTML5Backend}>
-      <div className='h-screen bg-secondary/10 p-2 overflow-hidden flex flex-col gap-2'>
+      <div className='h-screen bg-secondary/10 p-1.5 sm:p-2 overflow-hidden flex flex-col gap-1.5 sm:gap-2'>
         {/* Floating Navbar */}
-        <div className='h-14 rounded-xl bg-background/80 backdrop-blur-md shadow-sm border mx-auto w-full max-w-[calc(100%-1rem)] z-50 overflow-hidden'>
+        <div className='h-12 sm:h-14 rounded-xl bg-background/80 backdrop-blur-md shadow-sm border mx-auto w-full z-50 overflow-hidden flex-shrink-0'>
           <Navbar presentationId={params.presentationId as string} />
         </div>
 
-        <div className='flex-1 flex gap-2 min-h-0 w-full max-w-[calc(100%-1rem)] mx-auto font-sans z-0'>
-          {/* Floating Left Sidebar */}
-          <div className='w-80 h-full rounded-xl bg-background/80 backdrop-blur-md shadow-sm border overflow-hidden'>
+        <div className='flex-1 flex gap-1.5 sm:gap-2 min-h-0 w-full mx-auto font-sans z-0'>
+          {/* Floating Left Sidebar — hidden on small, narrow on md, full on lg */}
+          <div className='hidden md:block md:w-64 lg:w-72 xl:w-80 h-full rounded-xl bg-background/80 backdrop-blur-md shadow-sm border overflow-hidden flex-shrink-0 transition-all duration-200'>
             <EditorLeftSidebar />
           </div>
 
-          {/* Main Canvas Area */}
-          <div className='flex-1 h-full rounded-xl bg-muted/30 border overflow-hidden relative shadow-inner'>
+          {/* Main Canvas Area — takes all remaining space */}
+          <div className='flex-1 h-full rounded-xl bg-muted/30 border overflow-hidden relative shadow-inner min-w-0'>
             <Editor isEditable={true} />
           </div>
 
-          {/* Floating Right Sidebar */}
-          <div className='w-80 h-full rounded-xl bg-background/80 backdrop-blur-md shadow-sm border overflow-hidden'>
+          {/* Floating Right Sidebar — hidden on small/md, narrow on lg, full on xl */}
+          <div className='hidden lg:block lg:w-64 xl:w-80 h-full rounded-xl bg-background/80 backdrop-blur-md shadow-sm border overflow-hidden flex-shrink-0 transition-all duration-200'>
             <EditorSlidebar />
           </div>
 

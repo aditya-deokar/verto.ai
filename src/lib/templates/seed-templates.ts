@@ -1653,6 +1653,338 @@ function buildComplianceSlides(): Slide[] {
 }
 
 // ═══════════════════════════════════════════════════════════
+// 15. AGENTIC AI — LAYOUT SHOWCASE (Technology — Featured)
+// ═══════════════════════════════════════════════════════════
+const agenticAI: SeedTemplate = {
+  name: "Agentic AI",
+  description:
+    "A comprehensive, layout-rich presentation exploring the world of Agentic AI — autonomous systems that perceive, reason, and act. Showcases every layout type available with stunning content on AI agents, multi-agent orchestration, and the future of intelligent automation.",
+  category: "TECHNOLOGY",
+  tags: ["agentic-ai", "ai-agents", "autonomous", "llm", "multi-agent", "artificial-intelligence", "technology", "future"],
+  difficulty: "INTERMEDIATE",
+  slideCount: 20,
+  themeName: "Cosmic Delight",
+  layoutSequence: [
+    "gradientHero",
+    "agendaSlide",
+    "creativeHero",
+    "titleAndContent",
+    "accentLeft",
+    "bigNumberLayout",
+    "iconGrid",
+    "comparisonLayout",
+    "processFlow",
+    "bentoGrid",
+    "statsRow",
+    "featureShowcase",
+    "timeline",
+    "splitContentImage",
+    "metricDashboard",
+    "testimonialSlide",
+    "teamGrid",
+    "sectionDivider",
+    "pricingTable",
+    "thankYouSlide",
+  ],
+  outlines: [
+    "Agentic AI — The Future Is Autonomous",
+    "Presentation Agenda",
+    "What Is Agentic AI?",
+    "Core Principles of Agentic AI",
+    "How AI Agents Perceive the World",
+    "The Scale of Agentic AI",
+    "Key Capabilities",
+    "Traditional AI vs Agentic AI",
+    "The Agent Loop",
+    "Agentic AI Ecosystem",
+    "Industry Adoption Metrics",
+    "Why Agentic AI Matters",
+    "Evolution Roadmap",
+    "Multi-Agent Architecture",
+    "Performance Dashboard",
+    "What Leaders Are Saying",
+    "Pioneers of Agentic AI",
+    "Part II — Building Agents",
+    "Agent Platform Tiers",
+    "Thank You — Build the Future",
+  ],
+  isFeatured: true,
+  isPremium: false,
+  slides: buildAgenticAISlides(),
+};
+
+function buildAgenticAISlides(): Slide[] {
+  return [
+    // ── Slide 0: Gradient Hero ──
+    {
+      id: uid("agi"), slideName: "Agentic AI — The Future Is Autonomous", type: "gradientHero", slideOrder: 0,
+      className: "h-full w-full flex items-center justify-center p-12 text-center",
+      content: col("root", [
+        h1("title", "Agentic AI"),
+        para("subtitle", "Autonomous Systems That Perceive, Reason, Plan & Act — Reshaping Every Industry"),
+        btn("cta", "Explore the Revolution →"),
+      ]),
+    },
+    // ── Slide 1: Agenda ──
+    {
+      id: uid("agi"), slideName: "Presentation Agenda", type: "agendaSlide", slideOrder: 1,
+      className: "h-full w-full p-8 md:p-12",
+      content: col("root", [
+        h1("title", "Today's Agenda"),
+        bulletList("agenda", [
+          "01  ·  What Is Agentic AI?",
+          "02  ·  Core Principles & Capabilities",
+          "03  ·  Traditional vs Agentic AI",
+          "04  ·  The Agent Loop & Ecosystem",
+          "05  ·  Industry Adoption & Metrics",
+          "06  ·  Multi-Agent Architectures",
+          "07  ·  Building Your Own Agents",
+        ]),
+      ]),
+    },
+    // ── Slide 2: Creative Hero ──
+    {
+      id: uid("agi"), slideName: "What Is Agentic AI?", type: "creativeHero", slideOrder: 2,
+      className: "h-full w-full p-8",
+      content: col("root", [
+        h1("title", "What Is Agentic AI?"),
+        para("desc", "Agentic AI refers to autonomous AI systems capable of independent decision-making, goal pursuit, and real-world action — without constant human oversight. Unlike traditional chatbots, agents can chain tools, maintain memory, and adapt strategies in real-time."),
+        img("hero", "https://images.unsplash.com/photo-1677442136019-21780ecad995?w=800&auto=format&fit=crop"),
+      ]),
+    },
+    // ── Slide 3: Title and Content ──
+    {
+      id: uid("agi"), slideName: "Core Principles", type: "titleAndContent", slideOrder: 3,
+      className: "p-4 md:p-8 mx-auto flex flex-col min-h-[400px]",
+      content: col("root", [
+        h1("title", "Core Principles of Agentic AI"),
+        bulletList("principles", [
+          "Autonomy — Agents operate independently, making decisions without step-by-step human guidance",
+          "Goal-Directed Behavior — Every action is oriented toward achieving a defined objective",
+          "Tool Use & Integration — Agents leverage APIs, databases, browsers, and code execution",
+          "Memory & Context — Persistent memory enables learning from past interactions",
+          "Self-Reflection — Agents evaluate their own outputs and self-correct",
+          "Multi-Step Reasoning — Complex tasks are decomposed into sequential sub-tasks",
+        ]),
+      ]),
+    },
+    // ── Slide 4: Accent Left ──
+    {
+      id: uid("agi"), slideName: "How Agents Perceive", type: "accentLeft", slideOrder: 4,
+      className: "min-h-[300px]",
+      content: col("root", [
+        h1("title", "How AI Agents Perceive the World"),
+        para("desc", "Modern AI agents combine multiple perception modalities — vision, language, audio, and structured data — to build rich contextual models of their environment. Through retrieval-augmented generation (RAG), they access vast knowledge bases in real-time, enabling informed decision-making that rivals human experts."),
+        img("perception", "https://images.unsplash.com/photo-1620712943543-bcc4688e7485?w=800&auto=format&fit=crop"),
+      ]),
+    },
+    // ── Slide 5: Big Number ──
+    {
+      id: uid("agi"), slideName: "The Scale of Agentic AI", type: "bigNumberLayout", slideOrder: 5,
+      className: "p-4 md:p-8 mx-auto flex min-h-[400px]",
+      content: col("root", [
+        statBox("market", "$65B", "Projected Agentic AI Market by 2030"),
+        para("context", "The agentic AI market is growing at 44% CAGR, driven by enterprise demand for autonomous workflow automation, customer service agents, and AI-powered software engineering tools."),
+      ]),
+    },
+    // ── Slide 6: Icon Grid ──
+    {
+      id: uid("agi"), slideName: "Key Capabilities", type: "iconGrid", slideOrder: 6,
+      className: "p-4 md:p-8 mx-auto min-h-[400px]",
+      content: col("root", [
+        h1("title", "Key Capabilities of AI Agents"),
+        bulletList("caps", [
+          "🧠 Reasoning — Chain-of-thought and tree-of-thought problem solving",
+          "🔧 Tool Calling — Execute code, query APIs, search the web",
+          "💾 Persistent Memory — Short-term working memory + long-term knowledge stores",
+          "🔄 Self-Correction — Detect errors and autonomously retry with improved strategies",
+          "🤝 Collaboration — Multi-agent handoffs and delegation protocols",
+          "📊 Planning — Decompose complex goals into actionable sub-tasks",
+        ]),
+      ]),
+    },
+    // ── Slide 7: Comparison ──
+    {
+      id: uid("agi"), slideName: "Traditional vs Agentic", type: "comparisonLayout", slideOrder: 7,
+      className: "p-4 md:p-8 mx-auto min-h-[400px]",
+      content: col("root", [
+        h1("title", "Traditional AI vs Agentic AI"),
+        bulletList("traditional", [
+          "Single turn request/response",
+          "No memory between sessions",
+          "Static capabilities, no tool use",
+          "Human must orchestrate every step",
+          "Limited to training data knowledge",
+        ]),
+        bulletList("agentic", [
+          "Multi-step autonomous workflows",
+          "Persistent memory and learning",
+          "Dynamic tool calling and integration",
+          "Self-directed goal pursuit",
+          "Real-time knowledge via RAG & web",
+        ]),
+      ]),
+    },
+    // ── Slide 8: Process Flow ──
+    {
+      id: uid("agi"), slideName: "The Agent Loop", type: "processFlow", slideOrder: 8,
+      className: "p-4 md:p-8 mx-auto min-h-[400px]",
+      content: col("root", [
+        h1("title", "The Agentic AI Loop"),
+        para("desc", "Every AI agent follows a perception → reasoning → action → observation cycle. The agent perceives its environment, reasons about the best action, executes it using available tools, observes the result, and iterates until the goal is achieved."),
+      ]),
+    },
+    // ── Slide 9: Bento Grid ──
+    {
+      id: uid("agi"), slideName: "Agentic AI Ecosystem", type: "bentoGrid", slideOrder: 9,
+      className: "h-full w-full p-6",
+      content: col("root", [
+        h1("title", "The Agentic AI Ecosystem"),
+        para("overview", "From foundational LLMs to orchestration frameworks, the ecosystem is vast and rapidly evolving."),
+        bulletList("components", [
+          "Foundation Models — GPT-4, Claude, Gemini, Llama",
+          "Agent Frameworks — LangGraph, CrewAI, AutoGen, LiveKit Agents",
+          "Tool Libraries — Browsers, Code Interpreters, API Connectors",
+          "Memory Systems — Vector DBs, Knowledge Graphs, Session Stores",
+          "Orchestration — Multi-agent routers, hierarchical planners",
+        ]),
+        img("ecosystem", "https://images.unsplash.com/photo-1451187580459-43490279c0fa?w=800&auto=format&fit=crop"),
+      ]),
+    },
+    // ── Slide 10: Stats Row ──
+    {
+      id: uid("agi"), slideName: "Industry Adoption", type: "statsRow", slideOrder: 10,
+      className: "h-full w-full p-8 flex flex-col justify-center",
+      content: col("root", [
+        h1("title", "Industry Adoption Metrics"),
+        statBox("s1", "72%", "of Fortune 500 companies are piloting AI agents in production"),
+        statBox("s2", "10x", "productivity gain reported in software engineering workflows"),
+        statBox("s3", "340%", "increase in AI agent-related job postings since 2024"),
+      ]),
+    },
+    // ── Slide 11: Feature Showcase ──
+    {
+      id: uid("agi"), slideName: "Why Agentic AI Matters", type: "featureShowcase", slideOrder: 11,
+      className: "h-full w-full p-8",
+      content: col("root", [
+        h1("title", "Why Agentic AI Matters"),
+        para("subtitle", "Four transformative capabilities that set agentic systems apart"),
+        bulletList("features", [
+          "⚡ Speed — Complete in minutes what takes humans hours",
+          "🔒 Reliability — Self-healing workflows with built-in error recovery",
+          "🎯 Precision — Data-driven decisions free from cognitive bias",
+          "🌐 Scale — Deploy thousands of agents simultaneously across domains",
+        ]),
+      ]),
+    },
+    // ── Slide 12: Visual Timeline ──
+    {
+      id: uid("agi"), slideName: "Evolution Roadmap", type: "timeline", slideOrder: 12,
+      className: "h-full w-full p-8",
+      content: col("root", [
+        h1("title", "The Evolution of AI Agents"),
+        bulletList("phases", [
+          "2022: ChatGPT launches — conversational AI goes mainstream",
+          "2023: AutoGPT & BabyAGI spark the autonomous agent movement",
+          "2024: Enterprise-grade agent frameworks emerge (LangGraph, CrewAI)",
+          "2025: Multi-agent orchestration becomes production-ready",
+          "2026: Agentic AI becomes the default enterprise software paradigm",
+        ]),
+      ]),
+    },
+    // ── Slide 13: Split Content Image ──
+    {
+      id: uid("agi"), slideName: "Multi-Agent Architecture", type: "splitContentImage", slideOrder: 13,
+      className: "min-h-[400px]",
+      content: col("root", [
+        h1("title", "Multi-Agent Collaboration"),
+        bulletList("arch", [
+          "Orchestrator agent delegates specialized tasks",
+          "Research agents gather and synthesize information",
+          "Code agents write, test, and deploy software",
+          "Review agents validate quality and compliance",
+          "All agents share a common memory backbone",
+        ]),
+        img("arch-img", "https://images.unsplash.com/photo-1558494949-ef010cbdcc31?w=800&auto=format&fit=crop"),
+      ]),
+    },
+    // ── Slide 14: Metric Dashboard ──
+    {
+      id: uid("agi"), slideName: "Performance Dashboard", type: "metricDashboard", slideOrder: 14,
+      className: "h-full w-full p-8 flex flex-col justify-center",
+      content: col("root", [
+        h1("title", "Agent Performance Dashboard"),
+        para("desc", "Real-time metrics from our deployed agent fleet across enterprise clients"),
+        statBox("m1", "2.4M", "Tasks completed autonomously this month"),
+        statBox("m2", "99.7%", "Success rate on first-attempt execution"),
+        statBox("m3", "$18M", "Cost savings from automated workflows"),
+        statBox("m4", "< 200ms", "Average agent response latency"),
+      ]),
+    },
+    // ── Slide 15: Testimonial ──
+    {
+      id: uid("agi"), slideName: "What Leaders Say", type: "testimonialSlide", slideOrder: 15,
+      className: "h-full w-full p-12 flex items-center justify-center",
+      content: col("root", [
+        blockquote("quote", "Agentic AI isn't just the next step in artificial intelligence — it's a fundamental shift in how software operates. We're moving from tools that assist to systems that accomplish. The companies that embrace this shift will define the next decade of technology."),
+        para("author", "— Satya Nadella, CEO of Microsoft"),
+      ]),
+    },
+    // ── Slide 16: Team Grid ──
+    {
+      id: uid("agi"), slideName: "Pioneers", type: "teamGrid", slideOrder: 16,
+      className: "h-full w-full p-8",
+      content: col("root", [
+        h1("title", "Pioneers of Agentic AI"),
+        para("desc", "The researchers and companies pushing the boundaries of autonomous AI systems"),
+        bulletList("pioneers", [
+          "OpenAI — GPT models, function calling, and Assistants API",
+          "Anthropic — Claude, constitutional AI, and tool use",
+          "Google DeepMind — Gemini, AlphaCode, and agent foundations",
+          "LangChain — LangGraph orchestration framework",
+          "Microsoft — AutoGen multi-agent framework",
+          "LiveKit — Real-time voice and video AI agents",
+        ]),
+      ]),
+    },
+    // ── Slide 17: Section Divider ──
+    {
+      id: uid("agi"), slideName: "Part II", type: "sectionDivider", slideOrder: 17,
+      className: "p-12 mx-auto flex items-center justify-center min-h-[400px] bg-linear-to-br from-primary/10 to-primary/5",
+      content: col("root", [
+        h1("section-num", "II"),
+        h1("section-title", "Building Your Own AI Agents"),
+      ]),
+    },
+    // ── Slide 18: Pricing Table ──
+    {
+      id: uid("agi"), slideName: "Agent Platforms", type: "pricingTable", slideOrder: 18,
+      className: "h-full w-full p-8",
+      content: col("root", [
+        h1("title", "Agent Platform Tiers"),
+        para("desc", "Choose the right level of agent sophistication for your use case"),
+        bulletList("tiers", [
+          "🟢 Starter — Single-agent, basic tool calling, session memory, $0/mo",
+          "🔵 Professional — Multi-agent orchestration, RAG, persistent memory, $99/mo",
+          "🟣 Enterprise — Custom models, private deployment, SLA guarantees, Custom pricing",
+        ]),
+      ]),
+    },
+    // ── Slide 19: Thank You ──
+    {
+      id: uid("agi"), slideName: "Thank You", type: "thankYouSlide", slideOrder: 19,
+      className: "h-full w-full p-12 flex items-center justify-center text-center",
+      content: col("root", [
+        h1("title", "The Future Is Agentic"),
+        para("closing", "The question is no longer whether AI agents will transform your industry — it's whether you'll be leading that transformation or reacting to it."),
+        para("contact", "Let's build the future together."),
+        btn("cta", "Start Building Agents →"),
+      ]),
+    },
+  ];
+}
+
+// ═══════════════════════════════════════════════════════════
 // EXPORT ALL SEED TEMPLATES
 // ═══════════════════════════════════════════════════════════
 
@@ -1671,5 +2003,6 @@ export const SEED_TEMPLATES: SeedTemplate[] = [
   saasInvestorUpdate,
   salesPlaybook,
   complianceTraining,
+  agenticAI,
 ];
 
