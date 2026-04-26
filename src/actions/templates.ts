@@ -400,9 +400,8 @@ export async function saveProjectAsTemplate(
       if (existingPrivate >= maxPrivate) {
         return {
           status: 403 as const,
-          error: `You've reached the maximum of ${maxPrivate} private templates. ${
-            isSubscribed ? "Delete some to create more." : "Upgrade to Pro for up to 25."
-          }`,
+          error: `You've reached the maximum of ${maxPrivate} private templates. ${isSubscribed ? "Delete some to create more." : "Upgrade to Pro for up to 25."
+            }`,
         };
       }
     }
