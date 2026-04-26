@@ -153,6 +153,12 @@ export const CreatePageCard = [
     highlightedText: "Advanced AI",
     description: "Let our smart AI system build a comprehensive presentation with deep research",
     type: "agentic-workflow",
+  },
+  {
+    title: "Watch it",
+    highlightedText: "Build Live",
+    description: "See your slides stream in real-time as AI crafts each one before your eyes",
+    type: "streamable-slides",
     highlight: true,
   },
   {

@@ -7,6 +7,7 @@ import CreatePage from './CreatePage'
 import CreativeAI from './CreativeAI'
 import ScratchPage from './ScratchPage/ScratchPage'
 import AgenticWorkflowPage from './AgenticWorkflowPage'
+import StreamableSlidesPage from './StreamableSlidesPage'
 
 const RenderPage = () => {
 
@@ -24,6 +25,8 @@ const RenderPage = () => {
             setPage('create-scratch')
         }else if(option === 'agentic-workflow'){
             setPage('agentic-workflow')
+        }else if(option === 'streamable-slides'){
+            setPage('streamable-slides')
         }else{
             setPage('creative-ai')
         }
@@ -38,6 +41,8 @@ const RenderPage = () => {
                 return <CreativeAI onBack={handleBack} />
             case "create-scratch":
                 return <ScratchPage onBack={handleBack}/>
+            case "streamable-slides":
+                return <StreamableSlidesPage onBack={handleBack}/>
             default:
                 break
         }

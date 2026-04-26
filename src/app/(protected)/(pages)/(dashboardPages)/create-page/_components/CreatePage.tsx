@@ -46,7 +46,7 @@ const CreatePage = ({ onSelectOption }: Props) => {
                 </p>
             </motion.div>
 
-            <motion.div variants={containerVariants} className="grid gap-6 md:grid-cols-2 lg:grid-cols-4 p-4">
+            <motion.div variants={containerVariants} className="grid gap-6 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 p-4">
                 {CreatePageCard.map((option) => (
                     <motion.div
                         key={option.type}
