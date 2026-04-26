@@ -4,7 +4,7 @@ import { ContentType } from "./types";
 export const BlankCard = {
   slideName: "Blank card",
   type: "blank-card",
-  className: "p-4 md:p-8 mx-auto flex justify-center items-center h-full w-full",
+  className: "p-8 md:p-12 mx-auto flex justify-center items-center h-full w-full",
   content: {
     id: uuidv4(),
     type: "column" as ContentType,
@@ -16,6 +16,7 @@ export const BlankCard = {
         name: "Title",
         content: "",
         placeholder: "Untitled Card",
+        className: "text-center",
       },
     ],
   },
@@ -55,17 +56,17 @@ export const AccentLeft = {
                 type: "heading1" as ContentType,
                 name: "Heading1",
                 content: "",
-                placeholder: "Heading1",
+                placeholder: "Your headline goes here",
               },
               {
                 id: uuidv4(),
                 type: "paragraph" as ContentType,
                 name: "Paragraph",
                 content: "",
-                placeholder: "start typing here",
+                placeholder: "Add your supporting text here to elaborate on the main point",
               },
             ],
-            className: "w-full h-full p-8 flex justify-center items-center",
+            className: "w-full h-full p-8 md:p-12 flex justify-center items-center",
             placeholder: "Heading1",
           },
         ],
@@ -99,17 +100,17 @@ export const AccentRight = {
                 type: "heading1" as ContentType,
                 name: "Heading1",
                 content: "",
-                placeholder: "Heading1",
+                placeholder: "Your headline goes here",
               },
               {
                 id: uuidv4(),
                 type: "paragraph" as ContentType,
                 name: "Paragraph",
                 content: "",
-                placeholder: "start typing here",
+                placeholder: "Add your supporting text here to elaborate on the main point",
               },
             ],
-            className: "w-full h-full p-8 flex justify-center items-center",
+            className: "w-full h-full p-8 md:p-12 flex justify-center items-center",
             placeholder: "Heading1",
           },
           {
@@ -130,7 +131,7 @@ export const AccentRight = {
 export const ImageAndText = {
   slideName: "Image and text",
   type: "imageAndText",
-  className: "h-full w-full p-4 md:p-8 mx-auto flex justify-center items-center",
+  className: "h-full w-full p-6 md:p-10 mx-auto flex justify-center items-center",
   content: {
     id: uuidv4(),
     type: "column" as ContentType,
@@ -140,7 +141,7 @@ export const ImageAndText = {
         id: uuidv4(),
         type: "resizable-column" as ContentType,
         name: "Image and text",
-        className: "border",
+        className: "gap-4",
         content: [
           {
             id: uuidv4(),
@@ -151,7 +152,7 @@ export const ImageAndText = {
                 id: uuidv4(),
                 type: "image" as ContentType,
                 name: "Image",
-                className: "p-3",
+                className: "p-2 rounded-xl overflow-hidden",
                 content:
                   "https://plus.unsplash.com/premium_photo-1729004379397-ece899804701?q=80&w=2767&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
                 alt: "Title",
@@ -178,7 +179,7 @@ export const ImageAndText = {
                 placeholder: "start typing here",
               },
             ],
-            className: "w-full h-full p-4 md:p-8 flex justify-center items-center",
+            className: "w-full h-full p-6 md:p-10 flex justify-center items-center",
             placeholder: "Heading1",
           },
         ],
@@ -190,7 +191,7 @@ export const ImageAndText = {
 export const TextAndImage = {
   slideName: "Text and image",
   type: "textAndImage",
-  className: "h-full w-full p-4 md:p-8 mx-auto flex justify-center items-center",
+  className: "h-full w-full p-6 md:p-10 mx-auto flex justify-center items-center",
   content: {
     id: uuidv4(),
     type: "column" as ContentType,
@@ -200,7 +201,7 @@ export const TextAndImage = {
         id: uuidv4(),
         type: "resizable-column" as ContentType,
         name: "Text and image",
-        className: "border",
+        className: "gap-4",
         content: [
           {
             id: uuidv4(),
@@ -222,7 +223,7 @@ export const TextAndImage = {
                 placeholder: "start typing here",
               },
             ],
-            className: "w-full h-full p-4 md:p-8 flex justify-center items-center",
+            className: "w-full h-full p-6 md:p-10 flex justify-center items-center",
             placeholder: "Heading1",
           },
           {
@@ -234,7 +235,7 @@ export const TextAndImage = {
                 id: uuidv4(),
                 type: "image" as ContentType,
                 name: "Image",
-                className: "p-3",
+                className: "p-2 rounded-xl overflow-hidden",
                 content:
                   "https://plus.unsplash.com/premium_photo-1729004379397-ece899804701?q=80&w=2767&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
                 alt: "Title",
@@ -250,7 +251,7 @@ export const TextAndImage = {
 export const TwoColumns = {
   slideName: "Two columns",
   type: "twoColumns",
-  className: "p-4 mx-auto flex justify-center items-center h-full w-full",
+  className: "p-8 mx-auto flex justify-center items-center h-full w-full",
   content: {
     id: uuidv4(),
     type: "column" as ContentType,
@@ -292,7 +293,7 @@ export const TwoColumns = {
 export const TwoColumnsWithHeadings = {
   slideName: "Two columns with headings",
   type: "twoColumnsWithHeadings",
-  className: "p-4 mx-auto flex justify-center items-center h-full w-full",
+  className: "p-8 mx-auto flex justify-center items-center h-full w-full",
   content: {
     id: uuidv4(),
     type: "column" as ContentType,
@@ -1899,6 +1900,730 @@ export const VisualTimelineLayout = {
             type: "timelineCard" as ContentType,
             name: "Q3",
             content: "Phase 3",
+          },
+        ],
+      },
+    ],
+  },
+};
+
+// ============================================================================
+// PREMIUM LAYOUTS
+// ============================================================================
+
+export const GradientHero = {
+  slideName: "Gradient Hero",
+  type: "gradientHero",
+  className: "h-full w-full flex items-center justify-center p-12 text-center",
+  content: {
+    id: uuidv4(),
+    type: "column" as ContentType,
+    name: "Column",
+    className: "max-w-4xl flex flex-col items-center justify-center",
+    content: [
+      {
+        id: uuidv4(),
+        type: "title" as ContentType,
+        name: "Title",
+        content: "",
+        placeholder: "Make Something Amazing",
+        className: "text-center mb-4",
+      },
+      {
+        id: uuidv4(),
+        type: "paragraph" as ContentType,
+        name: "Subtitle",
+        content: "",
+        placeholder: "A compelling subtitle that describes your vision and inspires your audience to take action",
+        className: "text-center opacity-80 mb-8",
+      },
+      {
+        id: uuidv4(),
+        type: "customButton" as ContentType,
+        name: "CTA Button",
+        content: "Get Started →",
+        link: "#",
+        bgColor: "#000000",
+        className: "mt-2",
+      },
+    ],
+  },
+};
+
+export const TeamGrid = {
+  slideName: "Team Grid",
+  type: "teamGrid",
+  className: "h-full w-full p-8",
+  content: {
+    id: uuidv4(),
+    type: "column" as ContentType,
+    name: "Column",
+    content: [
+      {
+        id: uuidv4(),
+        type: "title" as ContentType,
+        name: "Title",
+        content: "",
+        placeholder: "Meet Our Team",
+        className: "text-center mb-8",
+      },
+      {
+        id: uuidv4(),
+        type: "resizable-column" as ContentType,
+        name: "Team Members",
+        content: [
+          {
+            id: uuidv4(),
+            type: "column" as ContentType,
+            name: "Member 1",
+            className: "flex flex-col items-center text-center p-4 gap-3",
+            content: [
+              {
+                id: uuidv4(),
+                type: "image" as ContentType,
+                name: "Avatar",
+                content: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?q=80&w=200&auto=format&fit=crop",
+                alt: "Team Member",
+                className: "w-24 h-24 rounded-full object-cover mx-auto",
+              },
+              {
+                id: uuidv4(),
+                type: "heading3" as ContentType,
+                name: "Name",
+                content: "",
+                placeholder: "John Doe",
+                className: "text-center",
+              },
+              {
+                id: uuidv4(),
+                type: "paragraph" as ContentType,
+                name: "Role",
+                content: "",
+                placeholder: "CEO & Founder",
+                className: "text-center opacity-70",
+              },
+            ],
+          },
+          {
+            id: uuidv4(),
+            type: "column" as ContentType,
+            name: "Member 2",
+            className: "flex flex-col items-center text-center p-4 gap-3",
+            content: [
+              {
+                id: uuidv4(),
+                type: "image" as ContentType,
+                name: "Avatar",
+                content: "https://images.unsplash.com/photo-1494790108377-be9c29b29330?q=80&w=200&auto=format&fit=crop",
+                alt: "Team Member",
+                className: "w-24 h-24 rounded-full object-cover mx-auto",
+              },
+              {
+                id: uuidv4(),
+                type: "heading3" as ContentType,
+                name: "Name",
+                content: "",
+                placeholder: "Jane Smith",
+                className: "text-center",
+              },
+              {
+                id: uuidv4(),
+                type: "paragraph" as ContentType,
+                name: "Role",
+                content: "",
+                placeholder: "Head of Design",
+                className: "text-center opacity-70",
+              },
+            ],
+          },
+          {
+            id: uuidv4(),
+            type: "column" as ContentType,
+            name: "Member 3",
+            className: "flex flex-col items-center text-center p-4 gap-3",
+            content: [
+              {
+                id: uuidv4(),
+                type: "image" as ContentType,
+                name: "Avatar",
+                content: "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?q=80&w=200&auto=format&fit=crop",
+                alt: "Team Member",
+                className: "w-24 h-24 rounded-full object-cover mx-auto",
+              },
+              {
+                id: uuidv4(),
+                type: "heading3" as ContentType,
+                name: "Name",
+                content: "",
+                placeholder: "Alex Chen",
+                className: "text-center",
+              },
+              {
+                id: uuidv4(),
+                type: "paragraph" as ContentType,
+                name: "Role",
+                content: "",
+                placeholder: "Lead Engineer",
+                className: "text-center opacity-70",
+              },
+            ],
+          },
+        ],
+      },
+    ],
+  },
+};
+
+export const MetricDashboard = {
+  slideName: "Metric Dashboard",
+  type: "metricDashboard",
+  className: "h-full w-full p-8 flex flex-col justify-center",
+  content: {
+    id: uuidv4(),
+    type: "column" as ContentType,
+    name: "Column",
+    content: [
+      {
+        id: uuidv4(),
+        type: "heading2" as ContentType,
+        name: "Section Title",
+        content: "",
+        placeholder: "Key Performance Indicators",
+        className: "text-center mb-4",
+      },
+      {
+        id: uuidv4(),
+        type: "paragraph" as ContentType,
+        name: "Description",
+        content: "",
+        placeholder: "A summary of our most important metrics this quarter",
+        className: "text-center opacity-70 mb-12",
+      },
+      {
+        id: uuidv4(),
+        type: "resizable-column" as ContentType,
+        name: "Metrics Grid",
+        content: [
+          {
+            id: uuidv4(),
+            type: "statBox" as ContentType,
+            name: "Stat 1",
+            content: "2.4M",
+          },
+          {
+            id: uuidv4(),
+            type: "statBox" as ContentType,
+            name: "Stat 2",
+            content: "99.9%",
+          },
+          {
+            id: uuidv4(),
+            type: "statBox" as ContentType,
+            name: "Stat 3",
+            content: "$12M",
+          },
+          {
+            id: uuidv4(),
+            type: "statBox" as ContentType,
+            name: "Stat 4",
+            content: "4.8★",
+          },
+        ],
+      },
+    ],
+  },
+};
+
+export const TestimonialSlide = {
+  slideName: "Testimonial",
+  type: "testimonialSlide",
+  className: "h-full w-full p-12 flex items-center justify-center",
+  content: {
+    id: uuidv4(),
+    type: "column" as ContentType,
+    name: "Column",
+    className: "max-w-4xl flex flex-col items-center",
+    content: [
+      {
+        id: uuidv4(),
+        type: "blockquote" as ContentType,
+        name: "Blockquote",
+        content: "",
+        placeholder: "This product completely transformed the way we work. The results speak for themselves — 3x productivity increase in just two months.",
+        className: "text-2xl text-center mb-8",
+      },
+      {
+        id: uuidv4(),
+        type: "resizable-column" as ContentType,
+        name: "Author Info",
+        restrictToDrop: true,
+        content: [
+          {
+            id: uuidv4(),
+            type: "image" as ContentType,
+            name: "Avatar",
+            content: "https://images.unsplash.com/photo-1494790108377-be9c29b29330?q=80&w=200&auto=format&fit=crop",
+            alt: "Author",
+            className: "w-16 h-16 rounded-full object-cover",
+          },
+          {
+            id: uuidv4(),
+            type: "column" as ContentType,
+            name: "Details",
+            className: "flex flex-col justify-center pl-4",
+            content: [
+              {
+                id: uuidv4(),
+                type: "heading4" as ContentType,
+                name: "Author Name",
+                content: "",
+                placeholder: "Sarah Johnson",
+              },
+              {
+                id: uuidv4(),
+                type: "paragraph" as ContentType,
+                name: "Author Title",
+                content: "",
+                placeholder: "VP of Operations, TechCorp",
+                className: "opacity-70",
+              },
+            ],
+          },
+        ],
+      },
+    ],
+  },
+};
+
+export const FeatureShowcase = {
+  slideName: "Feature Showcase",
+  type: "featureShowcase",
+  className: "h-full w-full p-8",
+  content: {
+    id: uuidv4(),
+    type: "column" as ContentType,
+    name: "Column",
+    content: [
+      {
+        id: uuidv4(),
+        type: "title" as ContentType,
+        name: "Title",
+        content: "",
+        placeholder: "Why Choose Us",
+        className: "text-center mb-2",
+      },
+      {
+        id: uuidv4(),
+        type: "paragraph" as ContentType,
+        name: "Subtitle",
+        content: "",
+        placeholder: "Everything you need to succeed, all in one place",
+        className: "text-center opacity-70 mb-10",
+      },
+      {
+        id: uuidv4(),
+        type: "resizable-column" as ContentType,
+        name: "Features Row 1",
+        content: [
+          {
+            id: uuidv4(),
+            type: "column" as ContentType,
+            name: "Feature 1",
+            className: "p-6 rounded-xl border border-border/30 flex flex-col gap-2",
+            content: [
+              {
+                id: uuidv4(),
+                type: "heading3" as ContentType,
+                name: "Icon",
+                content: "⚡",
+                className: "text-4xl mb-2",
+              },
+              {
+                id: uuidv4(),
+                type: "heading4" as ContentType,
+                name: "Title",
+                content: "",
+                placeholder: "Lightning Fast",
+              },
+              {
+                id: uuidv4(),
+                type: "paragraph" as ContentType,
+                name: "Description",
+                content: "",
+                placeholder: "Built for speed with optimized performance at every level",
+                className: "opacity-70 text-sm",
+              },
+            ],
+          },
+          {
+            id: uuidv4(),
+            type: "column" as ContentType,
+            name: "Feature 2",
+            className: "p-6 rounded-xl border border-border/30 flex flex-col gap-2",
+            content: [
+              {
+                id: uuidv4(),
+                type: "heading3" as ContentType,
+                name: "Icon",
+                content: "🔒",
+                className: "text-4xl mb-2",
+              },
+              {
+                id: uuidv4(),
+                type: "heading4" as ContentType,
+                name: "Title",
+                content: "",
+                placeholder: "Enterprise Security",
+              },
+              {
+                id: uuidv4(),
+                type: "paragraph" as ContentType,
+                name: "Description",
+                content: "",
+                placeholder: "Bank-grade encryption and SOC 2 compliance built in",
+                className: "opacity-70 text-sm",
+              },
+            ],
+          },
+          {
+            id: uuidv4(),
+            type: "column" as ContentType,
+            name: "Feature 3",
+            className: "p-6 rounded-xl border border-border/30 flex flex-col gap-2",
+            content: [
+              {
+                id: uuidv4(),
+                type: "heading3" as ContentType,
+                name: "Icon",
+                content: "🎯",
+                className: "text-4xl mb-2",
+              },
+              {
+                id: uuidv4(),
+                type: "heading4" as ContentType,
+                name: "Title",
+                content: "",
+                placeholder: "Precision Analytics",
+              },
+              {
+                id: uuidv4(),
+                type: "paragraph" as ContentType,
+                name: "Description",
+                content: "",
+                placeholder: "Deep insights and real-time dashboards for data-driven decisions",
+                className: "opacity-70 text-sm",
+              },
+            ],
+          },
+          {
+            id: uuidv4(),
+            type: "column" as ContentType,
+            name: "Feature 4",
+            className: "p-6 rounded-xl border border-border/30 flex flex-col gap-2",
+            content: [
+              {
+                id: uuidv4(),
+                type: "heading3" as ContentType,
+                name: "Icon",
+                content: "🤝",
+                className: "text-4xl mb-2",
+              },
+              {
+                id: uuidv4(),
+                type: "heading4" as ContentType,
+                name: "Title",
+                content: "",
+                placeholder: "Team Collaboration",
+              },
+              {
+                id: uuidv4(),
+                type: "paragraph" as ContentType,
+                name: "Description",
+                content: "",
+                placeholder: "Real-time collaboration tools that bring your team together",
+                className: "opacity-70 text-sm",
+              },
+            ],
+          },
+        ],
+      },
+    ],
+  },
+};
+
+export const AgendaSlide = {
+  slideName: "Agenda",
+  type: "agendaSlide",
+  className: "h-full w-full p-8 md:p-12",
+  content: {
+    id: uuidv4(),
+    type: "column" as ContentType,
+    name: "Column",
+    content: [
+      {
+        id: uuidv4(),
+        type: "title" as ContentType,
+        name: "Title",
+        content: "",
+        placeholder: "Today's Agenda",
+        className: "mb-10",
+      },
+      {
+        id: uuidv4(),
+        type: "resizable-column" as ContentType,
+        name: "Agenda Items",
+        content: [
+          {
+            id: uuidv4(),
+            type: "column" as ContentType,
+            name: "Items Left",
+            className: "flex flex-col gap-6 pr-4",
+            content: [
+              {
+                id: uuidv4(),
+                type: "heading3" as ContentType,
+                name: "Item 1",
+                content: "",
+                placeholder: "01  ·  Introduction & Overview",
+              },
+              {
+                id: uuidv4(),
+                type: "heading3" as ContentType,
+                name: "Item 2",
+                content: "",
+                placeholder: "02  ·  Market Analysis",
+              },
+              {
+                id: uuidv4(),
+                type: "heading3" as ContentType,
+                name: "Item 3",
+                content: "",
+                placeholder: "03  ·  Product Strategy",
+              },
+            ],
+          },
+          {
+            id: uuidv4(),
+            type: "column" as ContentType,
+            name: "Items Right",
+            className: "flex flex-col gap-6 pl-4",
+            content: [
+              {
+                id: uuidv4(),
+                type: "heading3" as ContentType,
+                name: "Item 4",
+                content: "",
+                placeholder: "04  ·  Financial Projections",
+              },
+              {
+                id: uuidv4(),
+                type: "heading3" as ContentType,
+                name: "Item 5",
+                content: "",
+                placeholder: "05  ·  Roadmap & Milestones",
+              },
+              {
+                id: uuidv4(),
+                type: "heading3" as ContentType,
+                name: "Item 6",
+                content: "",
+                placeholder: "06  ·  Q&A Session",
+              },
+            ],
+          },
+        ],
+      },
+    ],
+  },
+};
+
+export const ThankYouSlide = {
+  slideName: "Thank You",
+  type: "thankYouSlide",
+  className: "h-full w-full flex items-center justify-center p-12 text-center",
+  content: {
+    id: uuidv4(),
+    type: "column" as ContentType,
+    name: "Column",
+    className: "max-w-3xl flex flex-col items-center justify-center gap-4",
+    content: [
+      {
+        id: uuidv4(),
+        type: "title" as ContentType,
+        name: "Title",
+        content: "",
+        placeholder: "Thank You",
+        className: "text-center mb-2",
+      },
+      {
+        id: uuidv4(),
+        type: "paragraph" as ContentType,
+        name: "Message",
+        content: "",
+        placeholder: "We appreciate your time and attention. Let's build something amazing together.",
+        className: "text-center opacity-80 mb-6",
+      },
+      {
+        id: uuidv4(),
+        type: "divider" as ContentType,
+        name: "Divider",
+        content: "",
+        className: "mb-4",
+      },
+      {
+        id: uuidv4(),
+        type: "heading3" as ContentType,
+        name: "Contact",
+        content: "",
+        placeholder: "hello@company.com  ·  company.com",
+        className: "text-center opacity-60",
+      },
+    ],
+  },
+};
+
+export const PricingTable = {
+  slideName: "Pricing Table",
+  type: "pricingTable",
+  className: "h-full w-full p-8",
+  content: {
+    id: uuidv4(),
+    type: "column" as ContentType,
+    name: "Column",
+    content: [
+      {
+        id: uuidv4(),
+        type: "title" as ContentType,
+        name: "Title",
+        content: "",
+        placeholder: "Simple, Transparent Pricing",
+        className: "text-center mb-2",
+      },
+      {
+        id: uuidv4(),
+        type: "paragraph" as ContentType,
+        name: "Subtitle",
+        content: "",
+        placeholder: "Choose the plan that works best for your team",
+        className: "text-center opacity-70 mb-10",
+      },
+      {
+        id: uuidv4(),
+        type: "resizable-column" as ContentType,
+        name: "Plans",
+        content: [
+          {
+            id: uuidv4(),
+            type: "column" as ContentType,
+            name: "Starter",
+            className: "p-6 rounded-2xl border border-border/30 flex flex-col gap-4",
+            content: [
+              {
+                id: uuidv4(),
+                type: "heading3" as ContentType,
+                name: "Plan Name",
+                content: "",
+                placeholder: "Starter",
+              },
+              {
+                id: uuidv4(),
+                type: "heading1" as ContentType,
+                name: "Price",
+                content: "",
+                placeholder: "$9/mo",
+              },
+              {
+                id: uuidv4(),
+                type: "bulletList" as ContentType,
+                name: "Features",
+                content: ["5 projects", "Basic analytics", "Email support"],
+              },
+              {
+                id: uuidv4(),
+                type: "customButton" as ContentType,
+                name: "CTA",
+                content: "Start Free",
+                link: "#",
+                bgColor: "transparent",
+                isTransparent: true,
+                className: "mt-auto",
+              },
+            ],
+          },
+          {
+            id: uuidv4(),
+            type: "column" as ContentType,
+            name: "Professional",
+            className: "p-6 rounded-2xl border-2 border-primary/40 flex flex-col gap-4 bg-primary/5 scale-105",
+            content: [
+              {
+                id: uuidv4(),
+                type: "heading3" as ContentType,
+                name: "Plan Name",
+                content: "",
+                placeholder: "Professional ⭐",
+              },
+              {
+                id: uuidv4(),
+                type: "heading1" as ContentType,
+                name: "Price",
+                content: "",
+                placeholder: "$29/mo",
+              },
+              {
+                id: uuidv4(),
+                type: "bulletList" as ContentType,
+                name: "Features",
+                content: ["Unlimited projects", "Advanced analytics", "Priority support", "API access"],
+              },
+              {
+                id: uuidv4(),
+                type: "customButton" as ContentType,
+                name: "CTA",
+                content: "Get Started",
+                link: "#",
+                bgColor: "#3b82f6",
+                className: "mt-auto",
+              },
+            ],
+          },
+          {
+            id: uuidv4(),
+            type: "column" as ContentType,
+            name: "Enterprise",
+            className: "p-6 rounded-2xl border border-border/30 flex flex-col gap-4",
+            content: [
+              {
+                id: uuidv4(),
+                type: "heading3" as ContentType,
+                name: "Plan Name",
+                content: "",
+                placeholder: "Enterprise",
+              },
+              {
+                id: uuidv4(),
+                type: "heading1" as ContentType,
+                name: "Price",
+                content: "",
+                placeholder: "Custom",
+              },
+              {
+                id: uuidv4(),
+                type: "bulletList" as ContentType,
+                name: "Features",
+                content: ["Everything in Pro", "Custom integrations", "Dedicated manager", "SLA guarantee"],
+              },
+              {
+                id: uuidv4(),
+                type: "customButton" as ContentType,
+                name: "CTA",
+                content: "Contact Sales",
+                link: "#",
+                bgColor: "transparent",
+                isTransparent: true,
+                className: "mt-auto",
+              },
+            ],
           },
         ],
       },

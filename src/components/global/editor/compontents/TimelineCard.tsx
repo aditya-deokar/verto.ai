@@ -4,6 +4,8 @@ import React from "react";
 import { cn } from "@/lib/utils";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
+import { useSlideStore } from "@/store/useSlideStore";
+import { resolveThemeTokens } from "@/lib/themeUtils";
 
 interface TimelineCardProps {
     className?: string;
@@ -24,11 +26,46 @@ const TimelineCard = ({
     isPreview,
     isEditable
 }: TimelineCardProps) => {
+    const { currentTheme } = useSlideStore();
+    const tokens = resolveThemeTokens(currentTheme);
+
     return (
-        <div className={cn("relative p-6 rounded-2xl border border-border bg-background/50 backdrop-blur-sm flex flex-col gap-3 hover:shadow-lg hover:-translate-y-1 transition-all duration-300", className)}>
-            {/* Connector Line (Decorative) */}
-            <div className="absolute -top-3 left-8 w-px h-6 bg-primary/20" />
-            <div className="absolute -top-4 left-[29px] w-2 h-2 rounded-full bg-primary" />
+        <div
+            className={cn(
+                "relative p-6 rounded-2xl flex flex-col gap-3 transition-all duration-300 overflow-hidden",
+                !isPreview && "hover:shadow-lg hover:-translate-y-1",
+                className
+            )}
+            style={{
+                backgroundColor: tokens.surfaceColor,
+                border: `1px solid ${currentTheme.accentColor}15`,
+                borderRadius: tokens.borderRadius,
+                boxShadow: tokens.shadow,
+            }}
+        >
+            {/* Left accent border */}
+            <div
+                className="absolute left-0 top-0 w-[3px] h-full rounded-l-2xl"
+                style={{
+                    background: `linear-gradient(to bottom, ${currentTheme.accentColor}, ${currentTheme.accentColor}40, transparent)`,
+                }}
+            />
+
+            {/* Connector dot at top */}
+            <div
+                className="absolute -top-[5px] left-6 w-2.5 h-2.5 rounded-full shadow-sm"
+                style={{
+                    backgroundColor: currentTheme.accentColor,
+                    boxShadow: `0 0 0 3px ${currentTheme.accentColor}20`,
+                }}
+            />
+            {/* Connector line */}
+            <div
+                className="absolute -top-3 left-[29px] w-px h-3"
+                style={{
+                    backgroundColor: `${currentTheme.accentColor}30`,
+                }}
+            />
 
             {isEditable && !isPreview ? (
                 <>
@@ -36,7 +73,11 @@ const TimelineCard = ({
                         <Input
                             value={year}
                             onChange={(e) => onChange?.("year", e.target.value)}
-                            className="bg-primary/10 text-primary font-bold text-sm rounded-full px-3 py-1 w-20 text-center border-none shadow-none h-8"
+                            className="font-bold text-sm rounded-full px-3 py-1 w-20 text-center border-none shadow-none h-8"
+                            style={{
+                                background: `linear-gradient(135deg, ${currentTheme.accentColor}20, ${currentTheme.accentColor}10)`,
+                                color: currentTheme.accentColor,
+                            }}
                         />
                     </div>
 
@@ -53,11 +94,22 @@ const TimelineCard = ({
                 </>
             ) : (
                 <>
-                    <span className="bg-primary/10 text-primary font-bold text-sm rounded-full px-3 py-1 w-fit">
+                    <span
+                        className="font-bold text-sm rounded-full px-3 py-1 w-fit"
+                        style={{
+                            background: `linear-gradient(135deg, ${currentTheme.accentColor}20, ${currentTheme.accentColor}10)`,
+                            color: currentTheme.accentColor,
+                        }}
+                    >
                         {year}
                     </span>
                     <h3 className="text-lg font-semibold">{title}</h3>
-                    <p className="text-sm text-muted-foreground leading-relaxed">{description}</p>
+                    <p
+                        className="text-sm leading-relaxed"
+                        style={{ color: tokens.mutedColor }}
+                    >
+                        {description}
+                    </p>
                 </>
             )}
         </div>

@@ -416,3 +416,122 @@ export function TimelineLayoutIcon() {
         </div>
     );
 }
+
+// ============================================================================
+// PREMIUM LAYOUT ICONS
+// ============================================================================
+
+export function GradientHeroIcon() {
+    return (
+        <div className="w-full h-full flex flex-col items-center justify-center gap-1 p-1">
+            <div className="w-8 h-1.5 bg-white rounded-full" />
+            <div className="w-6 h-0.5 bg-white/40 rounded-full" />
+            <div className="w-4 h-1 bg-white/60 rounded-full mt-1 border border-white/30" />
+        </div>
+    );
+}
+
+export function TeamGridIcon() {
+    return (
+        <div className="w-full h-full flex flex-col items-center justify-center gap-1 p-1">
+            <div className="w-6 h-0.5 bg-white rounded-full" />
+            <div className="flex gap-1.5 mt-1">
+                {[...Array(3)].map((_, i) => (
+                    <div key={i} className="flex flex-col items-center gap-0.5">
+                        <div className="w-2.5 h-2.5 bg-white/50 rounded-full" />
+                        <div className="w-3 h-0.5 bg-white/30 rounded-full" />
+                    </div>
+                ))}
+            </div>
+        </div>
+    );
+}
+
+export function MetricDashboardIcon() {
+    return (
+        <div className="w-full h-full flex flex-col items-center justify-center gap-1 p-1">
+            <div className="w-6 h-0.5 bg-white/60 rounded-full" />
+            <div className="flex gap-1 mt-1">
+                {[...Array(4)].map((_, i) => (
+                    <div key={i} className="w-3 h-4 bg-white/15 rounded border border-white/20 flex flex-col items-center justify-center">
+                        <div className="w-1.5 h-0.5 bg-white/50 rounded-full" />
+                    </div>
+                ))}
+            </div>
+        </div>
+    );
+}
+
+export function TestimonialIcon() {
+    return (
+        <div className="w-full h-full flex flex-col items-center justify-center gap-1 p-1">
+            <div className="text-[8px] text-white/30 font-serif leading-none">&ldquo;</div>
+            <div className="w-8 h-0.5 bg-white/40 rounded-full" />
+            <div className="w-6 h-0.5 bg-white/25 rounded-full" />
+            <div className="flex items-center gap-1 mt-1">
+                <div className="w-2 h-2 bg-white/40 rounded-full" />
+                <div className="w-4 h-0.5 bg-white/30 rounded-full" />
+            </div>
+        </div>
+    );
+}
+
+export function FeatureShowcaseIcon() {
+    return (
+        <div className="w-full h-full flex flex-col items-center justify-center gap-1 p-1">
+            <div className="w-6 h-0.5 bg-white rounded-full" />
+            <div className="grid grid-cols-2 gap-0.5 mt-1">
+                {[...Array(4)].map((_, i) => (
+                    <div key={i} className="w-4 h-3 bg-white/10 rounded border border-white/20 flex flex-col items-center justify-center gap-0.5 p-0.5">
+                        <div className="w-1 h-1 bg-white/40 rounded-full" />
+                        <div className="w-2.5 h-px bg-white/20 rounded-full" />
+                    </div>
+                ))}
+            </div>
+        </div>
+    );
+}
+
+export function AgendaIcon() {
+    return (
+        <div className="w-full h-full flex flex-col justify-center gap-1 p-1.5">
+            <div className="w-5 h-0.5 bg-white rounded-full mb-0.5" />
+            {[...Array(3)].map((_, i) => (
+                <div key={i} className="flex items-center gap-1">
+                    <div className="w-1.5 h-1.5 bg-white/50 rounded-full flex-shrink-0" />
+                    <div className="flex-1 h-0.5 bg-white/20 rounded-full" />
+                </div>
+            ))}
+        </div>
+    );
+}
+
+export function ThankYouIcon() {
+    return (
+        <div className="w-full h-full flex flex-col items-center justify-center gap-1 p-1">
+            <div className="w-6 h-1 bg-white rounded-full" />
+            <div className="w-5 h-0.5 bg-white/30 rounded-full" />
+            <div className="w-4 h-px bg-white/20 rounded-full mt-0.5" />
+            <div className="w-3 h-0.5 bg-white/20 rounded-full" />
+        </div>
+    );
+}
+
+export function PricingTableIcon() {
+    return (
+        <div className="w-full h-full flex flex-col items-center justify-center gap-1 p-1">
+            <div className="w-6 h-0.5 bg-white/60 rounded-full" />
+            <div className="flex gap-0.5 mt-1">
+                {[0, 1, 2].map((i) => (
+                    <div
+                        key={i}
+                        className={`w-3 h-5 rounded border flex flex-col items-center justify-center gap-0.5 ${i === 1 ? 'bg-white/20 border-white/40 scale-110' : 'bg-white/5 border-white/15'}`}
+                    >
+                        <div className="w-1.5 h-0.5 bg-white/40 rounded-full" />
+                        <div className="w-1 h-0.5 bg-white/20 rounded-full" />
+                    </div>
+                ))}
+            </div>
+        </div>
+    );
+}

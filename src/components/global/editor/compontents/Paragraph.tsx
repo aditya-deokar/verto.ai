@@ -34,7 +34,7 @@ const Paragraph = React.forwardRef<HTMLTextAreaElement, ParagraphProps>(
         return (
             <textarea
                 className={cn(
-                    `w-full bg-transparent font-normal placeholder:text-muted-foreground/30 focus:placeholder:text-muted-foreground/10 focus:outline-hidden transition-colors duration-200 resize-none leading-relaxed tracking-wide hover:bg-black/5 dark:hover:bg-white/5 focus:bg-transparent rounded-md`,
+                    `w-full bg-transparent font-normal placeholder:text-muted-foreground/25 placeholder:italic focus:placeholder:text-muted-foreground/10 focus:outline-hidden transition-colors duration-200 resize-none leading-relaxed tracking-wide hover:bg-black/5 dark:hover:bg-white/5 focus:bg-transparent rounded-md`,
                     isPreview ? 'text-sm leading-normal cursor-default pointer-events-none hover:bg-transparent dark:hover:bg-transparent' : 'text-xl',
                     className
                 )}
@@ -43,8 +43,10 @@ const Paragraph = React.forwardRef<HTMLTextAreaElement, ParagraphProps>(
                     margin: 0,
                     color: styles?.color || currentTheme.fontColor,
                     boxSizing: 'content-box',
-                    lineHeight: '1.6',
-                    minHeight: '1.6em',
+                    lineHeight: '1.75',
+                    minHeight: '1.75em',
+                    maxWidth: '72ch',
+                    opacity: 0.9,
                     ...styles
                 }}
 
@@ -61,5 +63,7 @@ const Paragraph = React.forwardRef<HTMLTextAreaElement, ParagraphProps>(
         )
 
     })
+
+Paragraph.displayName = 'Paragraph'
 
 export default Paragraph

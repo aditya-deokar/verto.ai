@@ -2,6 +2,7 @@
 
 import { cn } from '@/lib/utils';
 import { useSlideStore } from '@/store/useSlideStore';
+import { resolveThemeTokens } from '@/lib/themeUtils';
 import React, { useEffect, useRef } from 'react';
 
 interface HeadingProps extends React.TextareaHTMLAttributes<HTMLTextAreaElement> {
@@ -10,7 +11,30 @@ interface HeadingProps extends React.TextareaHTMLAttributes<HTMLTextAreaElement>
   isPreview?: boolean;
 }
 
-const createHeading = (displayName: string, defaultClassName: string, useAccentColor: boolean = false) => {
+/**
+ * Creates a premium heading component with:
+ * - Accent-colored gradient underline decoration (for Title & H1)
+ * - Responsive typography using clamp()
+ * - Theme-aware coloring with accentColor support
+ * - Subtle text-shadow for depth in dark themes
+ */
+const createHeading = (
+  displayName: string,
+  defaultClassName: string,
+  options: {
+    useAccentColor?: boolean;
+    showAccentLine?: boolean;
+    accentLineWidth?: string;
+    accentLineHeight?: string;
+  } = {}
+) => {
+  const {
+    useAccentColor = false,
+    showAccentLine = false,
+    accentLineWidth = '60px',
+    accentLineHeight = '3px',
+  } = options;
+
   const Heading = React.forwardRef<HTMLTextAreaElement, HeadingProps>(
     ({ children, styles, isPreview = false, className, ...props }, ref) => {
       const textareaRef = useRef<HTMLTextAreaElement>(null);
@@ -34,31 +58,49 @@ const createHeading = (displayName: string, defaultClassName: string, useAccentC
 
       const { color, ...restStyles } = styles || {};
       const finalColor = color || (useAccentColor ? currentTheme.accentColor : 'inherit');
+      const isDark = currentTheme.type === 'dark';
+      const tokens = resolveThemeTokens(currentTheme);
 
       return (
-        <textarea
-          className={cn(
-            `w-full bg-transparent ${defaultClassName} placeholder:text-muted-foreground/30 focus:placeholder:text-muted-foreground/10 focus:outline-hidden transition-colors duration-200 resize-none leading-[1.1] tracking-tight hover:bg-black/5 dark:hover:bg-white/5 focus:bg-transparent rounded-md`,
-            isPreview ? 'cursor-default pointer-events-none hover:bg-transparent dark:hover:bg-transparent' : '',
-            className
+        <div className="relative w-full">
+          <textarea
+            className={cn(
+              `w-full bg-transparent ${defaultClassName} placeholder:text-muted-foreground/30 focus:placeholder:text-muted-foreground/10 focus:outline-hidden transition-colors duration-200 resize-none leading-[1.1] tracking-tight hover:bg-black/5 dark:hover:bg-white/5 focus:bg-transparent rounded-md`,
+              isPreview ? 'cursor-default pointer-events-none hover:bg-transparent dark:hover:bg-transparent' : '',
+              className
+            )}
+            style={{
+              padding: 0,
+              margin: 0,
+              color: finalColor,
+              boxSizing: 'content-box',
+              lineHeight: '1.1em',
+              minHeight: '1.1em',
+              textShadow: isDark ? '0 1px 2px rgba(0,0,0,0.3)' : 'none',
+              fontFamily: tokens.headingFontFamily,
+              ...restStyles,
+            }}
+            ref={(el) => {
+              (textareaRef.current as HTMLTextAreaElement | null) = el
+              if (typeof ref === 'function') ref(el)
+              else if (ref) ref.current = el
+            }}
+            readOnly={isPreview}
+            {...props}
+          ></textarea>
+
+          {/* Accent gradient underline decoration */}
+          {showAccentLine && (
+            <div
+              className="mt-3 rounded-full transition-all duration-500"
+              style={{
+                width: accentLineWidth,
+                height: accentLineHeight,
+                background: tokens.accentGradient || `linear-gradient(90deg, ${currentTheme.accentColor}, ${currentTheme.accentColor}80, transparent)`,
+              }}
+            />
           )}
-          style={{
-            padding: 0,
-            margin: 0,
-            color: finalColor,
-            boxSizing: 'content-box',
-            lineHeight: '1.1em',
-            minHeight: '1.1em',
-            ...restStyles,
-          }}
-          ref={(el) => {
-            (textareaRef.current as HTMLTextAreaElement | null) = el
-            if (typeof ref === 'function') ref(el)
-            else if (ref) ref.current = el
-          }}
-          readOnly={isPreview}
-          {...props}
-        ></textarea>
+        </div>
       );
     }
   );
@@ -68,10 +110,44 @@ const createHeading = (displayName: string, defaultClassName: string, useAccentC
   return Heading;
 };
 
-const Heading1 = createHeading('Heading1', 'text-6xl font-extrabold mb-4', true)
-const Heading2 = createHeading('Heading2', 'text-5xl font-bold mb-3')
-const Heading3 = createHeading('Heading3', 'text-4xl font-semibold mb-2')
-const Heading4 = createHeading('Heading4', 'text-3xl font-medium mb-2')
-const Title = createHeading('Title', 'text-7xl font-black mb-6 tracking-tighter', true)
+const Heading1 = createHeading(
+  'Heading1',
+  'text-6xl font-extrabold mb-4 tracking-[-0.02em]',
+  {
+    useAccentColor: true,
+    showAccentLine: true,
+    accentLineWidth: '48px',
+    accentLineHeight: '3px',
+  }
+)
+
+const Heading2 = createHeading(
+  'Heading2',
+  'text-5xl font-bold mb-3 tracking-[-0.015em]',
+  { useAccentColor: false }
+)
+
+const Heading3 = createHeading(
+  'Heading3',
+  'text-4xl font-semibold mb-2 tracking-[-0.01em]',
+  { useAccentColor: false }
+)
+
+const Heading4 = createHeading(
+  'Heading4',
+  'text-3xl font-medium mb-2 tracking-normal',
+  { useAccentColor: false }
+)
+
+const Title = createHeading(
+  'Title',
+  'text-7xl font-black mb-6 tracking-[-0.03em]',
+  {
+    useAccentColor: true,
+    showAccentLine: true,
+    accentLineWidth: '80px',
+    accentLineHeight: '4px',
+  }
+)
 
 export { Heading1, Heading2, Heading3, Heading4, Title }

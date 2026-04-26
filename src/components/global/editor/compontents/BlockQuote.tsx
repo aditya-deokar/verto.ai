@@ -1,38 +1,52 @@
-import { cn } from '@/lib/utils'
-import { useSlideStore } from '@/store/useSlideStore'
-import { Quote } from 'lucide-react'
+'use client';
 
-interface BlockQuoteProps extends React.HTMLAttributes<HTMLQuoteElement> {
-    children: React.ReactNode
-    className?: string
-}
-const BlockQuote = ({ children, className, ...props }: BlockQuoteProps) => {
+import { cn } from '@/lib/utils';
+import { useSlideStore } from '@/store/useSlideStore';
+import { resolveThemeTokens } from '@/lib/themeUtils';
+import React from 'react';
 
+type Props = {
+    children: React.ReactNode;
+    className?: string;
+};
+
+const BlockQuote = ({ children, className }: Props) => {
     const { currentTheme } = useSlideStore();
+    const tokens = resolveThemeTokens(currentTheme);
 
     return (
-        <blockquote className={cn(
-            'relative pl-8 pr-6 py-6 my-6 border-l-4 rounded-r-xl backdrop-blur-sm',
-            'text-2xl italic font-serif leading-relaxed',
-            'text-gray-700 dark:text-gray-300 shadow-sm transition-all duration-300 hover:shadow-md',
-            className
-        )}
-            style={{
-                borderLeftColor: currentTheme.accentColor,
-                backgroundColor: 'rgba(0,0,0,0.03)',
-                boxShadow: `inset 4px 0 0 -2px ${currentTheme.accentColor}20`
-            }}
-            {...props}
+        <div
+            className={cn(
+                'relative pl-8 py-4 my-4 overflow-hidden',
+                className
+            )}
         >
-            <Quote
-                className="absolute top-2 left-2 w-4 h-4 opacity-40"
-                style={{ color: currentTheme.accentColor }}
+            {/* Gradient accent left border */}
+            <div
+                className="absolute left-0 top-0 w-1 h-full rounded-full"
+                style={{
+                    background: tokens.accentGradient,
+                }}
             />
-            <div className="relative z-10">
+
+            {/* Large decorative quotation mark */}
+            <div
+                className="absolute -top-2 left-3 text-7xl font-serif leading-none pointer-events-none select-none"
+                style={{
+                    color: currentTheme.accentColor,
+                    opacity: 0.12,
+                    fontFamily: 'Georgia, "Times New Roman", serif',
+                }}
+            >
+                &#x201C;
+            </div>
+
+            {/* Quote content */}
+            <div className="relative z-10 italic" style={{ fontStyle: 'italic' }}>
                 {children}
             </div>
-        </blockquote>
-    )
-}
+        </div>
+    );
+};
 
-export default BlockQuote
+export default BlockQuote;

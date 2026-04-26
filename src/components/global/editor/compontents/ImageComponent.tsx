@@ -1,54 +1,63 @@
-import Image from "next/image";
-import React from "react";
-import UploadImage from "./UploadImage";
+'use client'
+
+import { cn } from '@/lib/utils'
+import Image from 'next/image'
+import React, { useState } from 'react'
 
 type Props = {
-  src: string;
-  alt: string;
-  className?: string;
-  isPreview?: boolean;
-  contentId: string; 
-  onContentChange: (
-    contentId: string,
-    newContent: string | string[] | string[][]
-  ) => void;
-  isEditable?: boolean;
-};
-
-
+    src: string
+    alt: string
+    className?: string
+    isPreview?: boolean
+    contentId: string
+    onContentChange: (
+        contentId: string,
+        newContent: string | string[] | string[][]
+    ) => void
+    isEditable?: boolean
+}
 
 const CustomImage = ({
-  src,
-  alt,
-  className,
-  isPreview = false,
-  contentId,
-  onContentChange,
-  isEditable = true,
+    src,
+    alt,
+    className,
+    isPreview = false,
+    contentId,
+    onContentChange,
+    isEditable = true,
 }: Props) => {
-  // Handle empty or invalid src
-  const imageSrc = typeof src === "string" && src.trim() ? src.trim() : "/placeholder.svg";
-  
-  return (
-    <div className="relative group w-full h-full rounded-lg">
-      <Image
-        src={imageSrc}
-        // src={'/file.svg'}
-        width={isPreview ? 48 : 800}
-        height={isPreview ? 48 : 800}
-        alt={alt}
-        className={`object-cover w-full h-full rounded-lg ${className}`}
-      />
-      {!isPreview && isEditable && (
-        <div className="absolute top-0 left-0 hidden group-hover:block">
-          <UploadImage
-            // contentId={contentId}
-            // onContentChange={onContentChange}
-          />
-        </div>
-      )}
-    </div>
-  );
-};
+    const [isHovered, setIsHovered] = useState(false);
 
-export default CustomImage;
+    return (
+        <div
+            className={cn(
+                "relative w-full h-full rounded-xl overflow-hidden group transition-all duration-500",
+                !isPreview && "hover:shadow-xl",
+                className
+            )}
+            onMouseEnter={() => setIsHovered(true)}
+            onMouseLeave={() => setIsHovered(false)}
+        >
+            <Image
+                src={src}
+                alt={alt}
+                width={800}
+                height={600}
+                className={cn(
+                    "w-full h-full object-cover transition-transform duration-700 ease-out",
+                    !isPreview && isHovered && "scale-[1.03]"
+                )}
+            />
+
+            {/* Subtle bottom gradient overlay for text readability */}
+            <div
+                className="absolute inset-x-0 bottom-0 h-1/4 pointer-events-none opacity-0 group-hover:opacity-100 transition-opacity duration-500"
+                style={{
+                    background: 'linear-gradient(to top, rgba(0,0,0,0.15), transparent)',
+                }}
+            />
+        </div>
+    )
+}
+
+export default CustomImage

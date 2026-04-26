@@ -27,13 +27,18 @@ import {
   Minimize2,
   Settings2,
   X,
+  Play,
+  ScrollText,
+  ChevronDown,
 } from "lucide-react";
 import { useTheme } from "next-themes";
+import { resolveThemeTokens } from "@/lib/themeUtils";
 import { useRouter } from "next/navigation";
 import React, { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { MasterRecursiveComponent } from "@/app/(protected)/presentation/[presentationId]/_components/editor/MasterRecursiveComponent";
 
 type TransitionType = "slide" | "fade" | "scale" | "stack";
+type PresentationMode = "slide" | "scroll";
 
 type PresentationViewerProps = {
   title: string;
@@ -46,28 +51,44 @@ type PresentationViewerProps = {
 
 const transitions: Record<TransitionType, any> = {
   slide: {
-    initial: { x: 50, opacity: 0 },
-    animate: { x: 0, opacity: 1 },
-    exit: { x: -50, opacity: 0 },
-    transition: { duration: 0.5, ease: "easeOut" },
+    variants: {
+      hidden: { x: 50, opacity: 0 },
+      visible: { x: 0, opacity: 1, transition: { duration: 0.5, ease: "easeOut" } },
+      exit: { x: -50, opacity: 0, transition: { duration: 0.5, ease: "easeIn" } },
+    },
+    initial: "hidden",
+    animate: "visible",
+    exit: "exit",
   },
   fade: {
-    initial: { opacity: 0 },
-    animate: { opacity: 1 },
-    exit: { opacity: 0 },
-    transition: { duration: 0.6 },
+    variants: {
+      hidden: { opacity: 0 },
+      visible: { opacity: 1, transition: { duration: 0.6 } },
+      exit: { opacity: 0, transition: { duration: 0.6 } },
+    },
+    initial: "hidden",
+    animate: "visible",
+    exit: "exit",
   },
   scale: {
-    initial: { scale: 0.8, opacity: 0 },
-    animate: { scale: 1, opacity: 1 },
-    exit: { scale: 1.1, opacity: 0 },
-    transition: { duration: 0.5 },
+    variants: {
+      hidden: { scale: 0.8, opacity: 0 },
+      visible: { scale: 1, opacity: 1, transition: { duration: 0.5 } },
+      exit: { scale: 1.1, opacity: 0, transition: { duration: 0.5 } },
+    },
+    initial: "hidden",
+    animate: "visible",
+    exit: "exit",
   },
   stack: {
-    initial: { y: 100, opacity: 0, scale: 0.9 },
-    animate: { y: 0, opacity: 1, scale: 1 },
-    exit: { y: -50, opacity: 0, scale: 0.95 },
-    transition: { duration: 0.5, type: "spring", bounce: 0.2 },
+    variants: {
+      hidden: { y: 100, opacity: 0, scale: 0.9 },
+      visible: { y: 0, opacity: 1, scale: 1, transition: { duration: 0.5, type: "spring", bounce: 0.2 } },
+      exit: { y: -50, opacity: 0, scale: 0.95, transition: { duration: 0.4 } },
+    },
+    initial: "hidden",
+    animate: "visible",
+    exit: "exit",
   },
 };
 
@@ -85,6 +106,8 @@ function SlideCanvas({
   const baseWidth = 960;
   const baseHeight = 540;
 
+    const tokens = resolveThemeTokens(currentTheme);
+
   return (
     <div
       style={{
@@ -96,7 +119,8 @@ function SlideCanvas({
           currentTheme.slideBackgroundColor || currentTheme.backgroundColor,
         backgroundImage: currentTheme.gradientBackground,
         color: currentTheme.fontColor,
-        fontFamily: currentTheme.fontFamily,
+        fontFamily: tokens.headingFontFamily,
+        borderRadius: tokens.borderRadius,
       }}
       className={cn(
         "relative origin-center overflow-hidden shadow-2xl transition-all duration-300",
@@ -121,6 +145,54 @@ function SlideCanvas({
   );
 }
 
+function ScrollSlide({
+  slide,
+  index,
+  currentTheme,
+  scale,
+  isMobile,
+  onInView,
+}: {
+  slide: Slide;
+  index: number;
+  currentTheme: Theme;
+  scale: number;
+  isMobile: boolean;
+  onInView: (index: number) => void;
+}) {
+  const containerVariants = {
+    hidden: { opacity: 0, y: 50 },
+    visible: {
+      opacity: 1,
+      y: 0,
+      transition: {
+        duration: 0.6,
+        ease: "easeOut",
+        staggerChildren: 0.1,
+        delayChildren: 0.2,
+      },
+    },
+  };
+
+  return (
+    <motion.div
+      variants={containerVariants}
+      initial="hidden"
+      whileInView="visible"
+      viewport={{ once: true, amount: 0.3 }}
+      onViewportEnter={() => onInView(index)}
+      className="snap-center py-12 flex items-center justify-center min-h-[70vh]"
+    >
+      <SlideCanvas
+        slide={slide}
+        currentTheme={currentTheme}
+        scale={isMobile ? 1 : scale * 0.9}
+        isMobile={isMobile}
+      />
+    </motion.div>
+  );
+}
+
 export default function PresentationViewer({
   title,
   slides,
@@ -132,6 +204,7 @@ export default function PresentationViewer({
   const router = useRouter();
   const { setTheme } = useTheme();
   const containerRef = useRef<HTMLDivElement>(null);
+  const scrollContainerRef = useRef<HTMLDivElement>(null);
   const idleTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   const safeSlides = useMemo(() => slides ?? [], [slides]);
@@ -142,6 +215,8 @@ export default function PresentationViewer({
   const [isMobile, setIsMobile] = useState(false);
   const [transitionType, setTransitionType] =
     useState<TransitionType>("slide");
+  const [presentationMode, setPresentationMode] =
+    useState<PresentationMode>("slide");
   const [mouseIdle, setMouseIdle] = useState(false);
 
   const currentSlideData = safeSlides[currentSlide];
@@ -183,14 +258,32 @@ export default function PresentationViewer({
   }, []);
 
   const handleNext = useCallback(() => {
+    if (presentationMode === "scroll" && scrollContainerRef.current) {
+      const nextSlide = Math.min(currentSlide + 1, safeSlides.length - 1);
+      const slideHeight = scrollContainerRef.current.offsetHeight;
+      scrollContainerRef.current.scrollTo({
+        top: nextSlide * slideHeight,
+        behavior: "smooth"
+      });
+      return;
+    }
     setCurrentSlide((previous) =>
       Math.min(previous + 1, Math.max(safeSlides.length - 1, 0))
     );
-  }, [safeSlides.length]);
+  }, [safeSlides.length, presentationMode, currentSlide]);
 
   const handlePrev = useCallback(() => {
+    if (presentationMode === "scroll" && scrollContainerRef.current) {
+      const prevSlide = Math.max(currentSlide - 1, 0);
+      const slideHeight = scrollContainerRef.current.offsetHeight;
+      scrollContainerRef.current.scrollTo({
+        top: prevSlide * slideHeight,
+        behavior: "smooth"
+      });
+      return;
+    }
     setCurrentSlide((previous) => Math.max(previous - 1, 0));
-  }, []);
+  }, [presentationMode, currentSlide]);
 
   const handleExit = useCallback(() => {
     router.push(exitHref);
@@ -331,7 +424,7 @@ export default function PresentationViewer({
 
         <div className="relative flex h-full w-full items-center justify-center">
           <AnimatePresence mode="wait">
-            {!isGridView && currentSlideData ? (
+            {!isGridView && presentationMode === "slide" && currentSlideData ? (
               <motion.div
                 key={currentSlide}
                 {...transitions[transitionType]}
@@ -343,6 +436,36 @@ export default function PresentationViewer({
                   scale={scale}
                   isMobile={isMobile}
                 />
+              </motion.div>
+            ) : !isGridView && presentationMode === "scroll" ? (
+              <motion.div
+                key="scroll-mode"
+                ref={scrollContainerRef}
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                exit={{ opacity: 0 }}
+                className="h-full w-full overflow-y-auto scroll-smooth snap-y snap-mandatory px-4 pb-32 pt-20"
+              >
+                <div className="mx-auto flex max-w-5xl flex-col">
+                  {safeSlides.map((slide, index) => (
+                    <ScrollSlide
+                      key={slide.id}
+                      slide={slide}
+                      index={index}
+                      currentTheme={theme}
+                      scale={scale}
+                      isMobile={isMobile}
+                      onInView={setCurrentSlide}
+                    />
+                  ))}
+                  <div className="flex h-64 flex-col items-center justify-center gap-4 text-white/30">
+                    <div className="h-px w-24 bg-white/10" />
+                    <p className="text-sm font-medium uppercase tracking-widest">End of Presentation</p>
+                    <Button variant="outline" className="border-white/10 text-white/50 hover:bg-white/5 hover:text-white" onClick={handleExit}>
+                      {exitLabel}
+                    </Button>
+                  </div>
+                </div>
               </motion.div>
             ) : null}
           </AnimatePresence>
@@ -473,6 +596,23 @@ export default function PresentationViewer({
                 </Button>
               </TooltipTrigger>
               <TooltipContent>Grid View (G)</TooltipContent>
+            </Tooltip>
+
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  onClick={() => setPresentationMode(presentationMode === "slide" ? "scroll" : "slide")}
+                  className={cn(
+                    "h-10 w-10 rounded-full text-white hover:bg-white/10",
+                    presentationMode === "scroll" && "bg-white/20 text-primary"
+                  )}
+                >
+                  {presentationMode === "slide" ? <ScrollText className="h-4 w-4" /> : <Play className="h-4 w-4" />}
+                </Button>
+              </TooltipTrigger>
+              <TooltipContent>{presentationMode === "slide" ? "Scroll Mode" : "Slide Mode"}</TooltipContent>
             </Tooltip>
 
             <Tooltip>

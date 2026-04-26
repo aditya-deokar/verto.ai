@@ -84,6 +84,14 @@ export interface Theme {
   gradientBackground?: string;
   navbarColor?: string;
   type: 'light' | 'dark';
+
+  // Enhanced visual tokens (Phase 3)
+  headingFontFamily?: string;
+  accentGradient?: string;
+  surfaceColor?: string;
+  mutedColor?: string;
+  borderRadius?: string;
+  shadowPreset?: 'none' | 'soft' | 'medium' | 'dramatic';
 }
 
 export interface OutlineCard {
