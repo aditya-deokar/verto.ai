@@ -1,7 +1,7 @@
 'use client'
 
 import React from 'react'
-import { motion } from 'framer-motion'
+import { motion, AnimatePresence } from 'framer-motion'
 import { ScrollArea } from '@/components/ui/scroll-area'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
@@ -9,6 +9,7 @@ import {
   CheckCircle2, Edit3, Palette, Layers,
   Clock, Sparkles,
 } from 'lucide-react'
+import { cn } from '@/lib/utils'
 import { Slide, Theme } from '@/lib/types'
 
 interface StreamableDetailsPanelProps {
@@ -31,158 +32,160 @@ export default function StreamableDetailsPanel({
   onOpenEditor,
 }: StreamableDetailsPanelProps) {
   return (
-    <aside className="w-64 xl:w-72 border-l border-border/40 bg-muted/10 backdrop-blur-sm flex-shrink-0 hidden lg:flex flex-col">
+    <aside className="w-64 xl:w-72 h-full border-l border-white/5 bg-black/40 backdrop-blur-3xl flex-shrink-0 flex flex-col relative z-20">
       {/* Panel header */}
-      <div className="px-4 py-3 border-b border-border/40">
-        <p className="text-[11px] font-semibold text-muted-foreground uppercase tracking-[0.1em]">
-          Details
+      <div className="px-5 py-4 border-b border-white/5 bg-white/[0.02]">
+        <p className="text-[10px] font-bold text-white/40 uppercase tracking-[0.2em]">
+          Inspect
         </p>
       </div>
 
-      <ScrollArea className="flex-1 p-4">
-        <div className="space-y-6">
+      <ScrollArea className="flex-1">
+        <div className="p-6 space-y-8">
           {/* Active slide info */}
-          {activeSlide && (
-            <motion.div
-              key={activeSlide.id}
-              initial={{ opacity: 0, y: 8 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.3 }}
-              className="space-y-4"
-            >
-              <div className="space-y-1.5">
-                <div className="flex items-center gap-2 text-xs text-muted-foreground">
-                  <Layers className="h-3 w-3" />
-                  <span>Slide Name</span>
+          <AnimatePresence mode='wait'>
+            {activeSlide && (
+              <motion.div
+                key={activeSlide.id}
+                initial={{ opacity: 0, x: 10 }}
+                animate={{ opacity: 1, x: 0 }}
+                exit={{ opacity: 0, x: 10 }}
+                transition={{ duration: 0.4 }}
+                className="space-y-6"
+              >
+                <div className="space-y-2">
+                  <span className="text-[9px] font-bold text-white/30 uppercase tracking-[0.15em]">Slide Name</span>
+                  <p className="text-sm font-semibold text-white/90 leading-tight">
+                    {activeSlide.slideName || 'Untitled Slide'}
+                  </p>
                 </div>
-                <p className="font-semibold text-sm leading-snug">
-                  {activeSlide.slideName || '—'}
-                </p>
-              </div>
 
-              <div className="space-y-1.5">
-                <div className="flex items-center gap-2 text-xs text-muted-foreground">
-                  <Sparkles className="h-3 w-3" />
-                  <span>Layout Type</span>
-                </div>
-                <Badge
-                  variant="secondary"
-                  className="text-xs font-mono rounded-md"
-                >
-                  {activeSlide.type || '—'}
-                </Badge>
-              </div>
-            </motion.div>
-          )}
-
-          {/* Generation status */}
-          <div className="space-y-3 pt-4 border-t border-border/40">
-            <div className="flex items-center gap-2 text-xs text-muted-foreground font-semibold">
-              <Clock className="h-3 w-3" />
-              <span>Generation</span>
-            </div>
-
-            <div className="flex items-center gap-2.5">
-              {isStreaming ? (
-                <>
-                  <div className="relative">
-                    <span className="absolute inset-0 w-2.5 h-2.5 rounded-full bg-green-500/30 animate-ping" />
-                    <span className="relative w-2.5 h-2.5 rounded-full bg-green-500 block" />
+                <div className="space-y-3">
+                  <span className="text-[9px] font-bold text-white/30 uppercase tracking-[0.15em]">Properties</span>
+                  <div className="flex flex-col gap-2">
+                    <div className="flex items-center justify-between p-2 rounded-xl bg-white/[0.03] border border-white/5">
+                      <div className="flex items-center gap-2 text-[11px] text-white/50">
+                        <Sparkles className="h-3 w-3" />
+                        <span>Layout</span>
+                      </div>
+                      <span className="text-[10px] font-mono text-violet-400 bg-violet-400/10 px-2 py-0.5 rounded-lg border border-violet-400/20">
+                        {activeSlide.type || 'standard'}
+                      </span>
+                    </div>
                   </div>
-                  <span className="text-xs font-medium text-green-600 dark:text-green-400">
-                    Streaming live
-                  </span>
-                </>
-              ) : streamComplete ? (
-                <>
-                  <CheckCircle2 className="h-4 w-4 text-emerald-500" />
-                  <span className="text-xs font-medium text-emerald-600 dark:text-emerald-400">
-                    Complete
-                  </span>
-                </>
-              ) : (
-                <span className="text-xs text-muted-foreground">Idle</span>
-              )}
-            </div>
-
-            <div className="text-xs text-muted-foreground">
-              {slides.length} slide{slides.length !== 1 ? 's' : ''} generated
-            </div>
-
-            {/* Slide type breakdown */}
-            {slides.length > 0 && (
-              <div className="space-y-1.5 pt-2">
-                <p className="text-[10px] text-muted-foreground/70 uppercase tracking-wider font-semibold">
-                  Layout breakdown
-                </p>
-                <div className="flex flex-wrap gap-1">
-                  {Array.from(new Set(slides.map((s) => s.type)))
-                    .filter(Boolean)
-                    .map((type) => (
-                      <Badge
-                        key={type}
-                        variant="outline"
-                        className="text-[10px] px-1.5 py-0.5 font-mono rounded"
-                      >
-                        {type}
-                      </Badge>
-                    ))}
                 </div>
-              </div>
+              </motion.div>
             )}
+          </AnimatePresence>
+
+          {/* Status Engine */}
+          <div className="space-y-4 pt-2">
+             <span className="text-[9px] font-bold text-white/30 uppercase tracking-[0.15em]">Engine Status</span>
+            
+             <div className="p-4 rounded-2xl bg-white/[0.02] border border-white/5 space-y-4">
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center gap-2.5">
+                    {isStreaming ? (
+                      <div className="relative flex h-2 w-2">
+                        <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-violet-400 opacity-75"></span>
+                        <span className="relative inline-flex rounded-full h-2 w-2 bg-violet-500"></span>
+                      </div>
+                    ) : (
+                      <CheckCircle2 className="h-4 w-4 text-emerald-400" />
+                    )}
+                    <span className={cn(
+                      "text-[11px] font-bold tracking-wide uppercase",
+                      isStreaming ? "text-violet-400" : "text-emerald-400"
+                    )}>
+                      {isStreaming ? "Synthesizing" : "Operational"}
+                    </span>
+                  </div>
+                  <Badge variant="outline" className="text-[9px] font-mono border-white/10 text-white/40">
+                    v2.1
+                  </Badge>
+                </div>
+
+                <div className="flex items-center justify-between text-[10px]">
+                   <span className="text-white/40">Throughput</span>
+                   <span className="text-white/80 font-mono">{slides.length} nodes</span>
+                </div>
+             </div>
           </div>
 
-          {/* Theme info */}
+          {/* Style Configuration */}
           {currentTheme && (
-            <div className="space-y-3 pt-4 border-t border-border/40">
-              <div className="flex items-center gap-2 text-xs text-muted-foreground font-semibold">
-                <Palette className="h-3 w-3" />
-                <span>Theme</span>
-              </div>
-
-              <div className="flex items-center gap-3">
-                <div className="flex -space-x-1">
-                  <div
-                    className="w-5 h-5 rounded-full border-2 border-background shadow-sm"
-                    style={{ backgroundColor: currentTheme.accentColor }}
-                  />
-                  <div
-                    className="w-5 h-5 rounded-full border-2 border-background shadow-sm"
-                    style={{ backgroundColor: currentTheme.slideBackgroundColor }}
-                  />
-                  <div
-                    className="w-5 h-5 rounded-full border-2 border-background shadow-sm"
-                    style={{ backgroundColor: currentTheme.fontColor }}
-                  />
+            <div className="space-y-4 pt-2">
+              <span className="text-[9px] font-bold text-white/30 uppercase tracking-[0.15em]">Visual Identity</span>
+              
+              <div className="p-4 rounded-2xl bg-white/[0.02] border border-white/5 space-y-4">
+                <div className="flex items-center gap-3">
+                  <div className="flex -space-x-1.5">
+                    {[currentTheme.accentColor, currentTheme.slideBackgroundColor, currentTheme.fontColor].map((c, i) => (
+                      <div
+                        key={i}
+                        className="w-6 h-6 rounded-full border-2 border-[#0a0a0a] shadow-xl"
+                        style={{ backgroundColor: c }}
+                      />
+                    ))}
+                  </div>
+                  <div className="flex flex-col">
+                    <span className="text-[11px] font-bold text-white/90">{currentTheme.name}</span>
+                    <span className="text-[9px] font-mono text-white/30 uppercase tracking-tighter">System Preset</span>
+                  </div>
                 </div>
-                <span className="text-xs font-medium">{currentTheme.name}</span>
-              </div>
 
-              <div className="text-[10px] text-muted-foreground font-mono">
-                {currentTheme.fontFamily?.split(',')[0]?.replace(/'/g, '')}
+                <div className="flex items-center justify-between p-2 rounded-xl bg-black/20 border border-white/5">
+                  <div className="flex items-center gap-2 text-[10px] text-white/40">
+                    <Palette className="h-3 w-3" />
+                    <span>Typography</span>
+                  </div>
+                  <span className="text-[10px] font-medium text-white/70">
+                    {currentTheme.fontFamily?.split(',')[0]?.replace(/'/g, '')}
+                  </span>
+                </div>
+              </div>
+            </div>
+          )}
+
+          {/* Slide Breakdown (Minimalist) */}
+          {slides.length > 0 && (
+            <div className="space-y-3 pt-2">
+              <span className="text-[9px] font-bold text-white/30 uppercase tracking-[0.15em]">Layout Matrix</span>
+              <div className="flex flex-wrap gap-1.5">
+                {Array.from(new Set(slides.map((s) => s.type)))
+                  .filter(Boolean)
+                  .map((type) => (
+                    <div
+                      key={type}
+                      className="text-[9px] px-2 py-1 font-bold text-white/50 bg-white/[0.04] border border-white/5 rounded-lg uppercase tracking-tight"
+                    >
+                      {type}
+                    </div>
+                  ))}
               </div>
             </div>
           )}
         </div>
       </ScrollArea>
 
-      {/* Bottom CTA */}
-      {streamComplete && (
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.3, duration: 0.4, type: 'spring' }}
-          className="p-4 border-t border-border/40"
-        >
-          <Button
-            onClick={onOpenEditor}
-            className="w-full bg-gradient-to-r from-emerald-500 to-green-600 hover:from-emerald-600 hover:to-green-700 text-white font-semibold rounded-xl shadow-lg shadow-emerald-500/15 h-11"
+      {/* Bottom Action (Apple Style) */}
+      <AnimatePresence>
+        {streamComplete && (
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            className="p-5 border-t border-white/5 bg-white/[0.01]"
           >
-            <Edit3 className="h-4 w-4 mr-2" />
-            Open in Editor
-          </Button>
-        </motion.div>
-      )}
+            <Button
+              onClick={onOpenEditor}
+              className="w-full bg-white text-black hover:bg-white/90 font-bold rounded-2xl h-12 shadow-[0_10px_30px_rgba(255,255,255,0.1)] transition-all active:scale-95"
+            >
+              <Edit3 className="h-4 w-4 mr-2" />
+              Launch Editor
+            </Button>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </aside>
   )
 }

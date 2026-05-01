@@ -7,7 +7,6 @@ import {
   SidebarMenuItem,
 } from "@/components/ui/sidebar";
 import { Button } from "@/components/ui/button";
-import { useUser } from "@clerk/nextjs";
 import { SignedIn, UserButton } from "@clerk/nextjs";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
@@ -15,15 +14,12 @@ import { User } from "@/generated/prisma";
 import { useToast } from "@/hooks/use-toast";
 import { buySubscription } from "@/actions/payment";
 import { ManageSubscription } from "@/components/global/subscription";
+import { UsageProgress } from "@/components/global/UsageProgress";
 
 export function NavFooter({ prismaUser }: { prismaUser: User }) {
-  const { isLoaded, isSignedIn, user } = useUser();
   const [loading, setLoading] = useState(false);
   const { toast } = useToast();
   const router = useRouter();
-  if (!isLoaded || !isSignedIn) {
-    return null;
-  }
 
   const handleUpgrading = async () => {
     setLoading(true);
@@ -50,7 +46,10 @@ export function NavFooter({ prismaUser }: { prismaUser: User }) {
   return (
     <SidebarMenu>
       <SidebarMenuItem>
-        <div className="flex flex-col gap-y-6 items-start group-data-[collapsible=icon]:hidden">
+        <div className="flex flex-col gap-y-6 items-start group-data-[collapsible=icon]:hidden px-2">
+          {/* Usage Statistics */}
+          <UsageProgress />
+
           {/* Subscription Management */}
           {prismaUser.subscription ? (
             <div className="flex flex-col items-start p-2 pb-3 gap-4 bg-background-80 w-full">
@@ -100,9 +99,9 @@ export function NavFooter({ prismaUser }: { prismaUser: User }) {
               <UserButton />
 
               <div className="grid flex-1 text-left text-sm leading-tight group-data-[collapsible=icon]:hidden">
-                <span className="truncate font-semibold">{user?.fullName}</span>
+                <span className="truncate font-semibold">{prismaUser.name}</span>
                 <span className="truncate text-xs">
-                  {user?.emailAddresses[0]?.emailAddress}
+                  {prismaUser.email}
                 </span>
               </div>
               <ChevronDown className="ml-auto size-4" />

@@ -18,10 +18,17 @@ import { MasterRecursiveComponent } from "./MasterRecursiveComponent";
 import EditorToolbar from "./EditorToolbar";
 import { useDrop } from "react-dnd";
 import { motion, AnimatePresence } from "framer-motion";
+import { TransformWrapper, TransformComponent, useControls, useTransformContext } from "react-zoom-pan-pinch";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 
-// ─── Constants ───
-const SLIDE_WIDTH = 1280;
-const SLIDE_HEIGHT = 720;
+// Dimensions will be dynamic from the store now
+// const SLIDE_WIDTH = 1280;
+// const SLIDE_HEIGHT = 720;
 
 interface SlideCanvasProps {
   slide: any;
@@ -104,9 +111,9 @@ export const SlideCanvas: React.FC<SlideCanvasProps> = ({
       }}
       transition={{ duration: 0.5, ease: "easeInOut" }}
       className={cn(
-        "w-full h-full relative overflow-hidden",
+        "w-full h-full relative overflow-hidden @container",
         "group flex flex-col",
-        "p-6 sm:p-8 md:p-12", // Responsive padding
+        "p-6 @sm:p-8 @md:p-12", // Responsive padding based on container size
         isOver && canDrop && "ring-4 ring-primary/50"
       )}
       style={{
@@ -154,18 +161,91 @@ type Props = {
   isEditable: boolean;
 };
 
+const ZoomControls = ({ autoFitScale }: { autoFitScale: number }) => {
+  const { zoomIn, zoomOut, centerView } = useControls();
+  const { transformState } = useTransformContext();
+  const currentScale = Math.round(transformState.scale * 100);
+
+  return (
+    <div className="absolute top-3 right-3 sm:top-auto sm:bottom-6 sm:right-6 lg:bottom-8 lg:right-8 z-50 flex items-center gap-1 sm:gap-2 bg-black/80 backdrop-blur-xl border border-white/10 p-1 sm:p-1.5 rounded-full shadow-2xl">
+      <Button
+        variant="ghost"
+        size="icon"
+        className="h-7 w-7 sm:h-8 sm:w-8 rounded-full text-white/70 hover:text-white hover:bg-white/10"
+        onClick={() => zoomOut(0.2)}
+      >
+        <ZoomOut className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
+      </Button>
+      
+      <DropdownMenu>
+        <DropdownMenuTrigger asChild>
+          <div
+            className="px-1.5 sm:px-2 min-w-[40px] sm:min-w-[50px] text-center text-[10px] sm:text-xs font-medium text-white/90 cursor-pointer select-none hover:text-white"
+            title="Change zoom level"
+          >
+            {currentScale}%
+          </div>
+        </DropdownMenuTrigger>
+        <DropdownMenuContent align="center" side="top" className="w-32 bg-black/90 border-white/10 text-white backdrop-blur-xl">
+          {[25, 50, 75, 100, 150, 200].map(preset => (
+            <DropdownMenuItem 
+              key={preset} 
+              onClick={() => {
+                  const newScale = preset / 100;
+                  centerView(newScale);
+              }} 
+              className="cursor-pointer hover:bg-white/10 focus:bg-white/10"
+            >
+              {preset}%
+            </DropdownMenuItem>
+          ))}
+          <div className="h-px w-full bg-white/10 my-1" />
+          <DropdownMenuItem 
+            onClick={() => centerView(autoFitScale)} 
+            className="cursor-pointer hover:bg-white/10 focus:bg-white/10 text-primary"
+          >
+            Fit to screen
+          </DropdownMenuItem>
+        </DropdownMenuContent>
+      </DropdownMenu>
+
+      <Button
+        variant="ghost"
+        size="icon"
+        className="h-7 w-7 sm:h-8 sm:w-8 rounded-full text-white/70 hover:text-white hover:bg-white/10"
+        onClick={() => zoomIn(0.2)}
+      >
+        <ZoomIn className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
+      </Button>
+      <div className="w-px h-3 sm:h-4 bg-white/10 mx-0.5 sm:mx-1" />
+      <Button
+        variant="ghost"
+        size="icon"
+        className="h-7 w-7 sm:h-8 sm:w-8 rounded-full text-white/70 hover:text-white hover:bg-white/10"
+        onClick={() => centerView(autoFitScale)}
+        title="Auto-fit"
+      >
+        <RotateCcw className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
+      </Button>
+    </div>
+  )
+}
+
 const Editor = ({ isEditable }: Props) => {
   const {
     currentSlide,
     removeSlide,
+    slideDimensions,
   } = useSlideStore();
+
+  const SLIDE_WIDTH = slideDimensions?.width || 1280;
+  const SLIDE_HEIGHT = slideDimensions?.height || 720;
 
   const slides = useSlideStore(state => state.slides);
   const orderedSlides = [...slides].sort((a, b) => (a.slideOrder ?? 0) - (b.slideOrder ?? 0));
 
   const [loading, setLoading] = useState(true);
-  const [scale, setScale] = useState(1);
-  const [autoScale, setAutoScale] = useState(true);
+  const [autoFitScale, setAutoFitScale] = useState(0);
   const containerRef = useRef<HTMLDivElement>(null);
 
   const handleDelete = (id: string) => {
@@ -176,7 +256,7 @@ const Editor = ({ isEditable }: Props) => {
 
   // ─── Responsive auto-scaling ───
   const computeScale = useCallback(() => {
-    if (!containerRef.current || !autoScale) return;
+    if (!containerRef.current) return;
 
     const { width, height } = containerRef.current.getBoundingClientRect();
 
@@ -190,8 +270,8 @@ const Editor = ({ isEditable }: Props) => {
     const scaleW = availableW / SLIDE_WIDTH;
     const scaleH = availableH / SLIDE_HEIGHT;
 
-    setScale(Math.max(0.15, Math.min(scaleW, scaleH, 1.2)));
-  }, [autoScale]);
+    setAutoFitScale(Math.max(0.15, Math.min(scaleW, scaleH, 1.2)));
+  }, [SLIDE_WIDTH, SLIDE_HEIGHT]);
 
   useEffect(() => {
     if (typeof window !== "undefined") setLoading(false);
@@ -202,12 +282,12 @@ const Editor = ({ isEditable }: Props) => {
     computeScale();
 
     const observer = new ResizeObserver(() => {
-      if (autoScale) computeScale();
+      computeScale();
     });
     observer.observe(containerRef.current);
 
     return () => observer.disconnect();
-  }, [loading, autoScale, computeScale]);
+  }, [loading, computeScale]);
 
   const currentSlideData = orderedSlides[currentSlide];
 
@@ -220,95 +300,68 @@ const Editor = ({ isEditable }: Props) => {
       ) : (
         <div
           ref={containerRef}
-          className="flex-1 overflow-hidden flex items-center justify-center relative"
+          className="flex-1 overflow-hidden relative"
         >
-          {/* Scaled slide wrapper */}
-          <div
-            className="flex-shrink-0"
-            style={{
-              width: SLIDE_WIDTH,
-              height: SLIDE_HEIGHT,
-              transform: `scale(${scale})`,
-              transformOrigin: 'center center',
-              transition: autoScale ? 'transform 0.2s ease-out' : 'transform 0.1s ease-in-out',
-            }}
-          >
-            {/* Slide shadow/ring container */}
-            <div
-              className="w-full h-full rounded-sm overflow-hidden"
-              style={{
-                boxShadow: '0 8px 40px -12px rgba(0,0,0,0.25), 0 0 0 1px rgba(0,0,0,0.05)',
-              }}
+          {autoFitScale > 0 && (
+            <TransformWrapper
+              minScale={0.1}
+              maxScale={3}
+              initialScale={autoFitScale}
+              centerOnInit={true}
+              limitToBounds={false}
+              panning={{ velocityDisabled: true }}
             >
-              <AnimatePresence mode="wait">
-                {currentSlideData ? (
-                  <SlideCanvas
-                    key={currentSlideData.id}
-                    slide={currentSlideData}
-                    index={currentSlide}
-                    handleDelete={handleDelete}
-                    isEditable={isEditable}
-                  />
-                ) : (
-                  <motion.div
-                    key="empty-state"
-                    initial={{ opacity: 0, scale: 0.95 }}
-                    animate={{ opacity: 1, scale: 1 }}
-                    exit={{ opacity: 0 }}
-                    className="w-full h-full flex flex-col items-center justify-center bg-black/5 dark:bg-white/5 border-2 border-dashed border-black/10 dark:border-white/10 rounded-2xl p-8 sm:p-12 text-center gap-4 sm:gap-6"
+              <ZoomControls autoFitScale={autoFitScale} />
+              <TransformComponent 
+                wrapperStyle={{ width: "100%", height: "100%" }} 
+                contentStyle={{ width: "100%", height: "100%", display: "flex", alignItems: "center", justifyContent: "center" }}
+              >
+                <div
+                  className="flex-shrink-0"
+                  style={{
+                    width: SLIDE_WIDTH,
+                    height: SLIDE_HEIGHT,
+                  }}
+                >
+                  {/* Slide shadow/ring container */}
+                  <div
+                    className="w-full h-full rounded-sm overflow-hidden"
+                    style={{
+                      boxShadow: '0 8px 40px -12px rgba(0,0,0,0.25), 0 0 0 1px rgba(0,0,0,0.05)',
+                    }}
                   >
-                    <div className="w-16 h-16 sm:w-24 sm:h-24 rounded-2xl sm:rounded-3xl bg-primary/10 flex items-center justify-center">
-                      <LayoutGrid className="w-8 h-8 sm:w-12 sm:h-12 text-primary/40" />
-                    </div>
-                    <div className="space-y-1 sm:space-y-2">
-                      <h3 className="text-lg sm:text-xl font-semibold">No slide selected</h3>
-                      <p className="text-muted-foreground text-sm sm:text-base max-w-xs">Select a slide from the sidebar to begin editing your masterpiece.</p>
-                    </div>
-                  </motion.div>
-                )}
-              </AnimatePresence>
-            </div>
-          </div>
-
-          {/* Zoom Controls — responsive positioning & sizing */}
-          <div className="absolute bottom-3 right-3 sm:bottom-6 sm:right-6 lg:bottom-8 lg:right-8 z-50 flex items-center gap-1 sm:gap-2 bg-black/80 backdrop-blur-xl border border-white/10 p-1 sm:p-1.5 rounded-full shadow-2xl">
-            <Button
-              variant="ghost"
-              size="icon"
-              className="h-7 w-7 sm:h-8 sm:w-8 rounded-full text-white/70 hover:text-white hover:bg-white/10"
-              onClick={() => { setAutoScale(false); setScale(s => Math.max(0.1, s - 0.1)); }}
-            >
-              <ZoomOut className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
-            </Button>
-            <div
-              className="px-1.5 sm:px-2 min-w-[40px] sm:min-w-[50px] text-center text-[10px] sm:text-xs font-medium text-white/90 cursor-pointer select-none"
-              onClick={() => setAutoScale(true)}
-              title="Click to auto-fit"
-            >
-              {Math.round(scale * 100)}%
-            </div>
-            <Button
-              variant="ghost"
-              size="icon"
-              className="h-7 w-7 sm:h-8 sm:w-8 rounded-full text-white/70 hover:text-white hover:bg-white/10"
-              onClick={() => { setAutoScale(false); setScale(s => Math.min(2, s + 0.1)); }}
-            >
-              <ZoomIn className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
-            </Button>
-            <div className="w-px h-3 sm:h-4 bg-white/10 mx-0.5 sm:mx-1" />
-            <Button
-              variant="ghost"
-              size="icon"
-              className={cn(
-                "h-7 w-7 sm:h-8 sm:w-8 rounded-full text-white/70 hover:text-white hover:bg-white/10",
-                autoScale && "text-primary"
-              )}
-              onClick={() => setAutoScale(true)}
-              title="Auto-fit"
-            >
-              <RotateCcw className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
-            </Button>
-          </div>
+                    <AnimatePresence mode="wait">
+                      {currentSlideData ? (
+                        <SlideCanvas
+                          key={currentSlideData.id}
+                          slide={currentSlideData}
+                          index={currentSlide}
+                          handleDelete={handleDelete}
+                          isEditable={isEditable}
+                        />
+                      ) : (
+                        <motion.div
+                          key="empty-state"
+                          initial={{ opacity: 0, scale: 0.95 }}
+                          animate={{ opacity: 1, scale: 1 }}
+                          exit={{ opacity: 0 }}
+                          className="w-full h-full flex flex-col items-center justify-center bg-black/5 dark:bg-white/5 border-2 border-dashed border-black/10 dark:border-white/10 rounded-2xl p-8 sm:p-12 text-center gap-4 sm:gap-6"
+                        >
+                          <div className="w-16 h-16 sm:w-24 sm:h-24 rounded-2xl sm:rounded-3xl bg-primary/10 flex items-center justify-center">
+                            <LayoutGrid className="w-8 h-8 sm:w-12 sm:h-12 text-primary/40" />
+                          </div>
+                          <div className="space-y-1 sm:space-y-2">
+                            <h3 className="text-lg sm:text-xl font-semibold">No slide selected</h3>
+                            <p className="text-muted-foreground text-sm sm:text-base max-w-xs">Select a slide from the sidebar to begin editing your masterpiece.</p>
+                          </div>
+                        </motion.div>
+                      )}
+                    </AnimatePresence>
+                  </div>
+                </div>
+              </TransformComponent>
+            </TransformWrapper>
+          )}
         </div>
       )}
       <EditorToolbar isEditable={isEditable} />

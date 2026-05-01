@@ -29,7 +29,8 @@ export interface UseAgenticGenerationV2Return {
     topic: string,
     additionalContext?: string,
     theme?: string,
-    providedOutlines?: string[]
+    providedOutlines?: string[],
+    projectId?: string
   ) => Promise<void>
   reset: () => void
   agentSteps: AgentStep[]
@@ -80,7 +81,8 @@ export function useAgenticGenerationV2(): UseAgenticGenerationV2Return {
     topic: string,
     additionalContext?: string,
     theme: string = 'Default',
-    providedOutlines?: string[]
+    providedOutlines?: string[],
+    projectId?: string
   ) => {
     let pollInterval: ReturnType<typeof setInterval> | null = null
 
@@ -139,7 +141,8 @@ export function useAgenticGenerationV2(): UseAgenticGenerationV2Return {
         additionalContext,
         theme,
         providedOutlines,
-        runId
+        runId,
+        projectId
       )
 
       if (pollInterval) {
@@ -163,7 +166,7 @@ export function useAgenticGenerationV2(): UseAgenticGenerationV2Return {
         if ('projectId' in result && result.projectId) {
           router.push(`/presentation/${result.projectId}`)
         }
-      }, 3000)
+      }, 2000)
     } catch (err) {
       if (pollInterval) {
         clearInterval(pollInterval)
@@ -173,9 +176,8 @@ export function useAgenticGenerationV2(): UseAgenticGenerationV2Return {
         err instanceof Error ? err.message : 'Unknown error occurred'
       setError(errorMessage)
       setCurrentAgent('')
-      throw new Error(errorMessage)
-    } finally {
       setIsGenerating(false)
+      throw new Error(errorMessage)
     }
   }, [router, setSlides, reset])
 

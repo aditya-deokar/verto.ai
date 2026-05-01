@@ -50,6 +50,8 @@ interface SlideState {
   ) => void;
   selectedComponentId: string | null;
   setSelectedComponent: (id: string | null) => void;
+  slideDimensions: import("@/lib/types").SlideDimensions;
+  setSlideDimensions: (dimensions: import("@/lib/types").SlideDimensions) => void;
 }
 
 const defaultTheme: Theme = {
@@ -73,6 +75,8 @@ export const useSlideStore = create(
       setSlides: (slides: any) => set({ slides }),
       currentSlide: 0,
       currentTheme: defaultTheme,
+      slideDimensions: { width: 1280, height: 720, preset: "16:9" },
+      setSlideDimensions: (dimensions) => set({ slideDimensions: dimensions }),
       undo: () => set((state) => {
         if (state.past.length === 0) return state;
         const previous = state.past[state.past.length - 1];
@@ -378,6 +382,7 @@ export const useSlideStore = create(
           future: [],
           currentSlide: 0,
           currentTheme: defaultTheme,
+          slideDimensions: { width: 1280, height: 720, preset: "16:9" },
         });
         localStorage.removeItem("slides-storage"); // 👈 Clears persisted data too
       },

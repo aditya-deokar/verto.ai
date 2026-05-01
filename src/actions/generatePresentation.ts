@@ -14,7 +14,8 @@ export async function generatePresentationAction(
   additionalContext?: string,
   themePreference: string = 'Default',
   providedOutlines?: string[],
-  generationRunId?: string
+  generationRunId?: string,
+  projectId?: string
 ) {
   try {
     const { userId } = await auth()
@@ -55,6 +56,7 @@ export async function generatePresentationAction(
       topic,
       themePreference,
       providedOutlineCount: normalizedOutlines?.length ?? 0,
+      projectId
     })
 
     const result = await generateAdvancedPresentation(
@@ -63,7 +65,8 @@ export async function generatePresentationAction(
       additionalContext,
       themePreference,
       normalizedOutlines,
-      generationRunId
+      generationRunId,
+      projectId
     )
 
     if (result.success) {

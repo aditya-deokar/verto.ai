@@ -1,7 +1,7 @@
 // agents/layoutSelector.ts - Agent 4: Select Optimal Layouts (AI-Powered)
 
 import { generateObject } from "ai";
-import { model, modelConfigs } from "../lib/llm";
+import { getModel, modelConfigs } from "../lib/llm";
 import { AdvancedPresentationState } from "../lib/state";
 import { layoutSelectionSchema, validateSlideCount } from "../lib/validators";
 import { LAYOUT_DESCRIPTIONS, getLayoutTemplate } from "../lib/layoutTemplates";
@@ -80,6 +80,7 @@ Generate layout selections for all ${slides.length} slides NOW:`;
 
     console.log("🤖 Calling AI to select layouts...");
 
+    const model = await getModel();
     const { object } = await generateObject({
       model: model,
       schema: layoutSelectionSchema,

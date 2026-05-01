@@ -4,6 +4,7 @@ import { auth } from "@clerk/nextjs/server";
 import prisma from "@/lib/prisma";
 import { inngest } from "@/mobile-design/inngest/client";
 import { revalidatePath } from "next/cache";
+import { checkAndIncrementUsage } from "@/lib/usage-limit";
 
 export async function createMobileProject(formData: {
     name: string;
@@ -21,6 +22,17 @@ export async function createMobileProject(formData: {
 
     if (!user) {
         throw new Error("User not found");
+    }
+
+    // --- Usage Limit Check ---
+    const usageCheck = await checkAndIncrementUsage(user.id);
+    if (!usageCheck.success) {
+        return { 
+            success: false, 
+            error: usageCheck.error,
+            usage: usageCheck.usage,
+            limit: usageCheck.limit 
+        };
     }
 
     const project = await prisma.mobileProject.create({

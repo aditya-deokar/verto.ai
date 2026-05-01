@@ -1,7 +1,7 @@
 // agents/imageQueryGenerator.ts - Agent 5: Generate Image Search Queries
 
 import { generateObject } from "ai";
-import { model, modelConfigs } from "../lib/llm";
+import { getModel, modelConfigs } from "../lib/llm";
 import { AdvancedPresentationState } from "../lib/state";
 import { imageQuerySchema } from "../lib/validators";
 import { getLayoutTemplate } from "../lib/layoutTemplates";
@@ -103,6 +103,7 @@ Generate image queries for all ${slidesNeedingImages.length} slides:`;
 
     console.log("🤖 Calling AI to generate image queries...");
 
+    const model = await getModel();
     const { object } = await generateObject({
       model: model,
       schema: imageQuerySchema,

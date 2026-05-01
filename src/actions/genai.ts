@@ -1,7 +1,7 @@
 'use server'
 
 import { generateObject, generateText} from 'ai'
-import { google } from '@ai-sdk/google'
+import { getAiModel } from '@/lib/ai-provider';
 import { v4 as uuidv4 } from "uuid";
 import { ContentItem, ContentType, Slide } from '@/lib/types';
 import { GeneratedOutputSchema, outlineSchema } from '@/lib/zodSchema';
@@ -18,7 +18,7 @@ export const generateCreativePrompt=async (userPrompt:string)=>{
     
     // console.log("🟢 Generating creative prompt...", userPrompt);
     const { object } = await generateObject({
-      model: google("gemini-2.5-flash"),
+      model: await getAiModel("gemini-2.5-flash"),
       schema: outlineSchema,
       system:`You are an ELITE presentation strategist and content architect. You specialize in creating compelling, well-structured presentation outlines that tell a story and engage audiences.`,
       prompt: `Create a strategic, comprehensive outline for a presentation on: "${userPrompt}"
@@ -176,7 +176,7 @@ Generate an image that looks like it was shot by a professional photographer or 
 `;
 
     const result = await generateText({
-      model: google('gemini-2.5-flash'),
+      model: await getAiModel('gemini-2.5-flash'),
       providerOptions: {
         google: { responseModalities: ['TEXT', 'IMAGE'] },
       },
@@ -631,7 +631,7 @@ const sanitizeSlide = (slide: any): any => {
 //     console.log("🟢 Generating rich layouts based on outlines...");
     
 //     const { object } = await generateObject({
-//       model: google("gemini-2.5-flash"),
+//       model: await getAiModel("gemini-2.5-flash"),
 //       schema: ReferedLayoutsSchema,
 //       system: `You are a creative AI assistant that generates presentation slide layouts in valid JSON format based on user-provided outlines and a rich set of component types.`,
 //       prompt: prompt,
@@ -876,7 +876,7 @@ Generate the complete JSON array now!
     console.log("🟢 Generating rich layouts based on outlines...");
 
     const { object } = await generateObject({
-      model: google("gemini-2.5-flash"), // Consider using 1.5 Flash or Pro for complex JSON
+      model: await getAiModel("gemini-2.5-flash"), // Consider using 1.5 Flash or Pro for complex JSON
       schema: ReferedLayoutsSchema, // Assuming this Zod schema matches the new structure
       system: `You are a creative AI assistant that generates presentation slide layouts in a specific, valid JSON format based on user-provided outlines and a rich set of component types. You must adhere strictly to the provided examples and structural rules.`,
       prompt: prompt,

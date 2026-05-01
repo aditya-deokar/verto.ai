@@ -7,7 +7,7 @@
 
 import { NextRequest, NextResponse } from "next/server";
 import { streamText, Output } from "ai";
-import { google } from "@ai-sdk/google";
+import { getAiModel } from "@/lib/ai-provider";
 import { auth } from "@clerk/nextjs/server";
 import { v4 as uuidv4 } from "uuid";
 import prisma from "@/lib/prisma";
@@ -166,7 +166,7 @@ export async function POST(request: NextRequest) {
         // of DeepPartial<Slide[]> that behaves identically to the old
         // `partialObjectStream` from `streamObject`.
         const result = streamText({
-          model: google("gemini-3.1-flash-lite-preview"),
+          model: await getAiModel("gemini-3.1-flash-lite-preview"),
           system,
           prompt: user,
           temperature: 0.7,

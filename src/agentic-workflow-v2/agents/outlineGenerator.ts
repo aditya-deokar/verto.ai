@@ -1,7 +1,7 @@
 // agents/outlineGenerator.ts - Agent 2: Generate Presentation Outline
 
 import { generateObject } from "ai";
-import { model, modelConfigs } from "../lib/llm";
+import { getModel, modelConfigs } from "../lib/llm";
 import { AdvancedPresentationState } from "../lib/state";
 import { outlineSchema, validateSlideCount } from "../lib/validators";
 
@@ -148,7 +148,7 @@ Now generate your comprehensive outline:`;
     console.log("🤖 Calling AI to generate outline...");
 
     const { object } = await generateObject({
-      model: model,
+      model: await getModel(),
       schema: outlineSchema,
       prompt: prompt,
       temperature: modelConfigs.outline.temperature,

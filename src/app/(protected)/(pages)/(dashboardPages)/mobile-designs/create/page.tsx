@@ -10,6 +10,7 @@ import { useForm } from "react-hook-form";
 import { useTransition } from "react";
 import { toast } from "sonner";
 import { createMobileProject } from "@/mobile-design/actions/create-project";
+import { useUsageLimit } from "@/hooks/use-usage-limit";
 
 interface FormData {
     name: string;
@@ -19,6 +20,7 @@ interface FormData {
 export default function CreateMobileDesignPage() {
     const router = useRouter();
     const [isPending, startTransition] = useTransition();
+    const { checkUsage, UsageModal } = useUsageLimit();
     const {
         register,
         handleSubmit,
@@ -27,6 +29,10 @@ export default function CreateMobileDesignPage() {
 
     const onSubmit = (data: FormData) => {
         startTransition(async () => {
+            // --- Usage Limit Check ---
+            const canGenerate = await checkUsage();
+            if (!canGenerate) return;
+
             try {
                 const res = await createMobileProject(data);
                 if (res.project) {
@@ -124,6 +130,8 @@ export default function CreateMobileDesignPage() {
                     </form>
                 </CardContent>
             </Card>
+
+            <UsageModal />
         </div>
     );
 }

@@ -54,12 +54,12 @@ export function AgenticStreamViewer({
   }, [currentTokens, events])
 
   return (
-    <div className={cn("flex flex-col h-full rounded-2xl border border-white/5 bg-black/40 backdrop-blur-md overflow-hidden shadow-inner", className)}>
+    <div className={cn("flex flex-col h-full rounded-2xl border border-border/50 bg-background/40 backdrop-blur-md overflow-hidden shadow-inner", className)}>
       {/* Terminal Header */}
-      <div className="flex items-center justify-between px-4 py-3 border-b border-white/5 bg-white/5">
+      <div className="flex items-center justify-between px-4 py-3 border-b border-border/50 bg-muted/20">
         <div className="flex items-center gap-3">
-          <Terminal className="h-4 w-4 text-white/50" />
-          <span className="text-xs font-mono font-bold text-white/50 uppercase tracking-widest">
+          <Terminal className="h-4 w-4 text-muted-foreground" />
+          <span className="text-xs font-mono font-bold text-muted-foreground uppercase tracking-widest">
             AI Execution Telemetry
           </span>
         </div>
@@ -104,7 +104,7 @@ export function AgenticStreamViewer({
                 className="mb-8 relative"
               >
                 {/* Connecting Line (if multiple agents) */}
-                <div className="absolute left-4 top-10 bottom-[-32px] w-[1px] bg-gradient-to-b from-white/10 to-transparent" />
+                <div className="absolute left-4 top-10 bottom-[-32px] w-[1px] bg-gradient-to-b from-border to-transparent" />
 
                 <div className="flex gap-4">
                   {/* Agent Icon Avatar */}
@@ -129,7 +129,7 @@ export function AgenticStreamViewer({
                     <div className="flex items-center gap-2 mb-2">
                       <span className={cn(
                         "font-mono text-xs font-bold uppercase tracking-widest",
-                        isActive ? "text-white" : "text-white/40"
+                        isActive ? "text-foreground" : "text-muted-foreground"
                       )}>
                         {agent.name}
                       </span>
@@ -144,7 +144,7 @@ export function AgenticStreamViewer({
                     <div className="relative mt-2">
                       <div className={cn(
                         "text-[13px] leading-relaxed font-mono whitespace-pre-wrap break-words rounded-xl",
-                        isActive ? "text-white/90" : "text-white/60"
+                        isActive ? "text-foreground" : "text-muted-foreground"
                       )}>
                         {tokens || (isActive ? "Initializing module..." : "Process completed.")}
                         

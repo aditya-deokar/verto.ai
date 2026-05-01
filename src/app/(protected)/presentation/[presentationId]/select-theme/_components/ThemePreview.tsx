@@ -9,6 +9,8 @@ import { ArrowLeft } from 'lucide-react'
 import ThemeCard from './ThemeCard'
 import ThemePicker from './ThemePicker'
 import { themes } from '@/lib/constants'
+import { getProjectById } from '@/actions/projects'
+import { toast } from 'sonner'
 
 type Props = {}
 
@@ -17,7 +19,7 @@ const ThemePreview = (props: Props) => {
     const router = useRouter();
     const controls = useAnimation();
 
-    const { currentTheme, setCurrentTheme, project, } = useSlideStore();
+    const { currentTheme, setCurrentTheme, project, setProject } = useSlideStore();
 
     const [selectedTheme, setSelectedTheme] = useState<Theme>(currentTheme);
 
@@ -27,6 +29,25 @@ const ThemePreview = (props: Props) => {
             redirect(`/presentation/${params.presentationId}`);
         }
     }, [project])
+
+    useEffect(() => {
+        if (!project || project.id !== params.presentationId) {
+            const fetchProject = async () => {
+                try {
+                    const res = await getProjectById(params.presentationId as string);
+                    if (res.status === 200 && res.data) {
+                        setProject(res.data as any);
+                    } else {
+                        toast.error("Error", { description: "Project not found." });
+                        router.push("/create-page");
+                    }
+                } catch (error) {
+                    console.error(error);
+                }
+            };
+            fetchProject();
+        }
+    }, [params.presentationId, project?.id, setProject, router]);
 
     useEffect(() => {
         controls.start('visible')
@@ -151,64 +172,73 @@ const ThemePreview = (props: Props) => {
 
 
     return (
-        <div className='h-screen w-full flex'
+        <div className='h-screen w-full flex overflow-hidden'
         style={{
             backgroundColor:selectedTheme.backgroundColor,
             color:selectedTheme.accentColor,
             fontFamily:selectedTheme.fontFamily,
+            backgroundImage: `radial-gradient(circle at top left, ${selectedTheme.accentColor}15 0%, transparent 40%), radial-gradient(circle at bottom right, ${selectedTheme.accentColor}10 0%, transparent 40%)`,
         }}>
-            <div className='grow overflow-y-hidden '>
-                <div className='p-12 flex flex-col items-center min-h-screen'>
+            <div className='grow overflow-hidden flex flex-col relative'>
+                {/* Header */}
+                <div className='absolute top-0 left-0 w-full p-8 flex items-center justify-between z-10'>
                     <Button
-                    variant={"outline"}
-                    className='mb-12 self-start'
-                    style={{
-                        backgroundColor:selectedTheme.accentColor + '10',
-                        color:selectedTheme.accentColor,
-                        borderColor:selectedTheme.accentColor + '20',
-
-                    }}
-                    onClick={()=> router.push('/create-page')}
+                        variant={"outline"}
+                        className='rounded-full px-6 h-12 flex items-center shadow-sm hover:shadow-md transition-all duration-300 backdrop-blur-md'
+                        style={{
+                            backgroundColor:selectedTheme.backgroundColor + 'cc',
+                            color:selectedTheme.accentColor,
+                            borderColor:selectedTheme.accentColor + '30',
+                        }}
+                        onClick={()=> router.push('/create-page')}
                     >
                         <ArrowLeft className='mr-2 h-5 w-5'/>
-                        Back
+                        Back to Outline
                     </Button>
+                    
+                    <div className="flex flex-col items-end">
+                        <span className="text-sm font-semibold uppercase tracking-wider opacity-60">Live Preview</span>
+                        <span className="text-xl font-bold">{selectedTheme.name}</span>
+                    </div>
+                </div>
 
-                    <div className='w-full flex justify-center items-center relative grow'>
+                <div className='w-full h-full flex flex-col justify-center items-center relative grow px-12 pt-20 pb-12'>
+                    {/* Decorative Background Elements */}
+                    <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[400px] blur-[120px] rounded-full opacity-20 pointer-events-none transition-all duration-1000" style={{ backgroundColor: selectedTheme.accentColor }} />
+                    
+                    <div className='w-full max-w-6xl flex justify-center items-center relative z-10 scale-95 origin-center transition-all duration-500 hover:scale-100'>
                         <ThemeCard
-                            title='Quick Start'
+                            title='Setup'
                             content={leftCardContent}
-                            description='Get up and running in no time'
+                            description='Quick instructions'
                             variant='left'
                             theme={selectedTheme}
                             controls={controls}
                         />
                         <ThemeCard
-                            title='Quick Start'
+                            title='Content Elements'
                             content={mainCardContent}
-                            description='Get up and running in no time'
+                            description='Typography and buttons'
                             variant='main'
                             theme={selectedTheme}
                             controls={controls}
                         />
                         <ThemeCard
-                            title='Quick Start'
+                            title='Key Features'
                             content={rightCardContent}
-                            description='Get up and running in no time'
+                            description='Theme capabilities'
                             variant='right'
                             theme={selectedTheme}
                             controls={controls}
                         />
-
                     </div>
                 </div>
             </div>
 
-
             <ThemePicker 
-            selectedTheme={selectedTheme}
-            themes={themes}
-            onThemeSelect={applyTheme}
+                selectedTheme={selectedTheme}
+                themes={themes}
+                onThemeSelect={applyTheme}
             />
         </div>
     )

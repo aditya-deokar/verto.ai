@@ -77,13 +77,13 @@ export default function MenuOverlayV2({ isOpen, onClose }: { isOpen: boolean; on
             ref={containerRef}
             aria-label="Main Menu Overlay"
             className={cn(
-                "fixed inset-0 z-100 flex pl-[96px] md:pl-[120px] pr-6 py-6 overflow-hidden md:pr-10 transition-all duration-0",
+                "fixed inset-0 z-100 flex px-4 md:px-0 md:pl-[120px] md:pr-10 py-6 overflow-hidden transition-all duration-0",
                 isOpen ? "visible pointer-events-auto delay-0" : "invisible pointer-events-none delay-500"
             )}
         >
 
             <div className="overlay-bg absolute inset-0 bg-background/40 backdrop-blur-md z-0" />
-            <div className="flex-1 flex h-full pointer-events-auto gap-4 md:gap-6 relative z-10">
+            <div className="flex-1 flex flex-col md:flex-row h-full pointer-events-auto gap-4 md:gap-6 relative z-10">
                 {menuItems.map((item, index) => (
                     <Link
                         key={index}
@@ -105,10 +105,10 @@ export default function MenuOverlayV2({ isOpen, onClose }: { isOpen: boolean; on
                         </div>
 
                         <div className={cn("relative z-10 p-4 text-center", index === menuItems.length - 1 && "md:-translate-y-[55px]")}>
-                            <span className="menu-desc block text-xs tracking-[0.2em] text-primary dark:text-primary mb-4 font-mono uppercase">
+                            <span className="menu-desc block text-[10px] md:text-xs tracking-[0.2em] text-primary dark:text-primary mb-2 md:mb-4 font-mono uppercase">
                                 {`0${index + 1} / ${item.description}`}
                             </span>
-                            <h2 className="menu-text text-4xl md:text-5xl lg:text-6xl font-[family-name:var(--font-inter)] font-black tracking-tighter text-black dark:text-white transition-all duration-300 transform group-hover:scale-105">
+                            <h2 className="menu-text text-2xl md:text-5xl lg:text-6xl font-[family-name:var(--font-inter)] font-black tracking-tighter text-black dark:text-white transition-all duration-300 transform group-hover:scale-105">
                                 {item.label}
                             </h2>
                             <div className="mt-6 opacity-0 group-hover:opacity-100 transform translate-y-4 group-hover:translate-y-0 transition-all duration-500">

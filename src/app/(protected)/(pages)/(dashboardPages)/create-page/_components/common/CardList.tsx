@@ -42,15 +42,15 @@ export const CardList: React.FC<CardListProps> = ({
     if (dragOverIndex === null || draggedItem === null) return {};
     if (cardIndex === dragOverIndex) {
       return {
-        borderTop: "2px solid #000",
-        marginTop: "0.5rem",
-        transition: "margin 0.2s cubic-bezier(0.25, 0.1, 0.25, 1)",
+        borderTop: "1px solid hsl(var(--foreground))",
+        marginTop: "0.25rem",
+        transition: "all 0.2s cubic-bezier(0.25, 0.1, 0.25, 1)",
       };
     } else if (cardIndex === dragOverIndex - 1) {
       return {
-        borderBottom: "2px solid #000",
-        marginBottom: "0.5rem",
-        transition: "margin 0.2s cubic-bezier(0.25, 0.1, 0.25, 1)",
+        borderBottom: "1px solid hsl(var(--foreground))",
+        marginBottom: "0.25rem",
+        transition: "all 0.2s cubic-bezier(0.25, 0.1, 0.25, 1)",
       };
     }
     return {};

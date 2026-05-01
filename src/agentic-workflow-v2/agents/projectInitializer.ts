@@ -20,6 +20,22 @@ export async function runProjectInitializer(
   console.log("└─────────────────────────────────────────┘");
 
   try {
+    if (state.projectId) {
+      console.log(`✅ Using existing project: ${state.projectId}`);
+      
+      // Update the theme if provided
+      await prisma.project.update({
+        where: { id: state.projectId },
+        data: { themeName: state.themePreference || "light" }
+      });
+      
+      return {
+        projectId: state.projectId,
+        currentStep: "Project Initialized",
+        progress: 10,
+      };
+    }
+
     // Extract presentation title from user input (first 100 chars)
     const presentationTitle = state.userInput.slice(0, 100).trim();
     

@@ -4,11 +4,21 @@ import { ScrollArea } from "@/components/ui/scroll-area";
 import { layouts } from "@/lib/constants";
 import { Layout } from "@/lib/types";
 import { useSlideStore } from "@/store/useSlideStore";
+import { Button } from "@/components/ui/button";
+import { cn } from "@/lib/utils";
 import React, { useState } from "react";
 import { useDrag } from "react-dnd";
 import LayoutPreviewItem from "./components-tab/LayoutPreviewItem";
 import { Badge } from "@/components/ui/badge";
-import { Sparkles, Search, Info } from "lucide-react";
+import { Sparkles, Search, Info, Monitor, Smartphone, Maximize, Square, ChevronDown } from "lucide-react";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 
 export const DraggableLayoutItem = ({
   component,
@@ -55,8 +65,17 @@ export const DraggableLayoutItem = ({
 };
 
 const LayoutChooser = () => {
-  const { currentTheme } = useSlideStore();
+  const { currentTheme, slideDimensions, setSlideDimensions } = useSlideStore();
   const [searchQuery, setSearchQuery] = useState("");
+
+  const dimensionPresets = [
+    { name: '16:9 Desktop', width: 1280, height: 720, preset: '16:9', icon: Monitor },
+    { name: '9:16 Mobile', width: 400, height: 711, preset: '9:16', icon: Smartphone },
+    { name: '4:3 Classic', width: 1024, height: 768, preset: '4:3', icon: Maximize },
+    { name: '1:1 Square', width: 800, height: 800, preset: '1:1', icon: Square },
+  ];
+
+  const currentPreset = dimensionPresets.find(p => p.preset === slideDimensions.preset) || dimensionPresets[0];
 
   // New layout types from the latest additions
   const newLayoutTypes = [
@@ -82,7 +101,50 @@ const LayoutChooser = () => {
   })).filter(group => group.layouts.length > 0);
 
   return (
-    <div className="flex flex-col h-full max-h-full overflow-hidden bg-transparent">
+    <div className="flex-1 flex flex-col min-h-0 overflow-hidden bg-transparent">
+      {/* Canvas Dimensions Selector */}
+      <div className="px-4 pt-2 shrink-0">
+        <div className="flex flex-col gap-2 p-3 rounded-xl border border-border/50 bg-muted/20">
+          <div className="flex items-center justify-between">
+            <span className="text-[10px] font-bold text-muted-foreground uppercase tracking-wider">Canvas Size</span>
+            <Badge variant="outline" className="text-[10px] h-5 bg-background/50">
+              {slideDimensions.width} × {slideDimensions.height}
+            </Badge>
+          </div>
+          
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <Button variant="outline" size="sm" className="w-full justify-between bg-background/50 border-border/50 h-9 rounded-lg">
+                <div className="flex items-center gap-2">
+                  <currentPreset.icon className="w-3.5 h-3.5 text-primary" />
+                  <span className="text-xs font-medium">{currentPreset.name}</span>
+                </div>
+                <ChevronDown className="w-3.5 h-3.5 opacity-50" />
+              </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="end" className="w-56 bg-background/95 backdrop-blur-xl border-border/50">
+              <DropdownMenuLabel className="text-[10px] font-bold text-muted-foreground uppercase px-2 py-1.5">Select Aspect Ratio</DropdownMenuLabel>
+              <DropdownMenuSeparator />
+              {dimensionPresets.map((preset) => (
+                <DropdownMenuItem 
+                  key={preset.preset}
+                  onClick={() => setSlideDimensions({ width: preset.width, height: preset.height, preset: preset.preset })}
+                  className="flex items-center justify-between cursor-pointer py-2"
+                >
+                  <div className="flex items-center gap-2">
+                    <preset.icon className={cn("w-4 h-4", slideDimensions.preset === preset.preset ? "text-primary" : "text-muted-foreground")} />
+                    <span className={cn("text-sm", slideDimensions.preset === preset.preset ? "font-bold text-primary" : "font-medium")}>
+                      {preset.name}
+                    </span>
+                  </div>
+                  <span className="text-[10px] text-muted-foreground opacity-70">{preset.preset}</span>
+                </DropdownMenuItem>
+              ))}
+            </DropdownMenuContent>
+          </DropdownMenu>
+        </div>
+      </div>
+
       {/* Search Bar */}
       <div className="p-4 shrink-0 bg-transparent">
         <div className="relative group">

@@ -1,12 +1,12 @@
-// lib/llm.ts - LLM Configuration for Advanced Workflow
-
-import { google } from "@ai-sdk/google";
+import { getAiModel } from "@/lib/ai-provider";
 
 /**
  * Shared LLM model instance for all agents
- * Using Google's Gemini 2.0 Flash for fast, high-quality generation
+ * Using getAiModel to support BYOAK with fallback to system defaults.
  */
-export const model = google("gemini-2.5-flash");
+export async function getModel() {
+  return await getAiModel("gemini-2.5-flash");
+}
 
 /**
  * Configuration for different agent types

@@ -49,8 +49,6 @@ export default function StreamableSlidePreview({
           style={{
             width: SLIDE_WIDTH,
             height: SLIDE_HEIGHT,
-            transform: `scale(${scale})`,
-            transformOrigin: 'center center',
           }}
         >
           {/* Outer glow */}

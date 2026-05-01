@@ -76,13 +76,13 @@ const ThemeCard = ({
     }}
     >
         <Card
-        className='h-full shadow-2xl backdrop-blur-xs'
+        className='h-full shadow-2xl backdrop-blur-md rounded-2xl overflow-hidden transition-all duration-500'
         style={{
-            backgroundColor:theme.slideBackgroundColor,
-            border:`1px solid ${theme.accentColor}20`,
-
+            backgroundColor: `${theme.slideBackgroundColor}ee`, // Slight transparency for glass effect
+            border:`1px solid ${theme.accentColor}30`,
+            boxShadow: `0 25px 50px -12px ${theme.accentColor}20`
         }}>
-            <div className='flex flex-col md:flex-row '>
+            <div className='flex flex-col md:flex-row h-full'>
                 <CardContent className='flex-1 p-8 space-y-6'>
                     <div className='space-y-3'>
                         <h2 className='text-3xl font-bold tracking-tight'
@@ -101,12 +101,14 @@ const ThemeCard = ({
                     {content}
                 </CardContent>
 
-                <div className='relative w-full md:w-1/2 h-80 md:h-auto overflow-hidden rounded-r-lg'>
+                <div className='relative w-full md:w-2/5 min-h-[300px] md:h-auto overflow-hidden'>
+                        {/* Overlay to integrate image slightly better with theme */}
+                        <div className="absolute inset-0 z-10 mix-blend-overlay opacity-30" style={{ backgroundColor: theme.accentColor }} />
                         <Image
                          objectFit='cover'
                          layout='fill'
                          alt='img' 
-                         className='transition-transform duration-500 hover:scale-110'
+                         className='transition-transform duration-700 hover:scale-105'
                          src={'https://images.unsplash.com/photo-1747372248943-33e9064aefab?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D'}
                          />
                 </div>

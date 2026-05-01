@@ -107,13 +107,7 @@ export function useStreamingGeneration(): UseStreamingGenerationReturn {
         }
 
         if (data.type === 'agent_complete') {
-          if (data.agentId) {
-            setCurrentTokens(prev => {
-              const updated = { ...prev }
-              delete updated[data.agentId!]
-              return updated
-            })
-          }
+          // Intentionally keeping the tokens in state so the UI can display them even after completion.
         }
 
         if (data.type === 'error') {
