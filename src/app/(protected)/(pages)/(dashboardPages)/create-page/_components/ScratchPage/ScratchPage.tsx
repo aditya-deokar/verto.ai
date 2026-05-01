@@ -21,6 +21,7 @@ import useScratchStore from "@/store/useScratchStore";
 import InlineThemeSelector from "../common/InlineThemeSelector";
 import { useAgenticGenerationV2 } from "@/hooks/useAgenticGenerationV2";
 import AgenticWorkflowDialog from "@/components/global/agentic-workflow/AgenticWorkflowDialog";
+import { useUsageLimit } from "@/hooks/use-usage-limit";
 
 interface ScratchPageProps {
   onBack: () => void;
@@ -34,6 +35,7 @@ export default function ScratchPage({ onBack }: ScratchPageProps) {
   const [selectedTheme, setSelectedTheme] = useState<Theme>(themes[0]);
   const { outlines, resetOutlines, addOutline, addMultipleOutlines } =
     useScratchStore();
+  const { checkUsage, UsageModal } = useUsageLimit();
 
   const {
     generate,
@@ -74,6 +76,9 @@ export default function ScratchPage({ onBack }: ScratchPageProps) {
       });
       return;
     }
+
+    const canGenerate = await checkUsage();
+    if (!canGenerate) return;
 
     const selectedOutlines = outlines.map((outline) => outline.title);
     const deckTitle = outlines[0]?.title || "Custom Presentation";
@@ -234,6 +239,7 @@ export default function ScratchPage({ onBack }: ScratchPageProps) {
         currentAgentDescription={currentAgentDescription}
         runId={runId}
       />
+      <UsageModal />
     </>
   );
 }

@@ -94,6 +94,12 @@ export interface Theme {
   shadowPreset?: 'none' | 'soft' | 'medium' | 'dramatic';
 }
 
+export interface SlideDimensions {
+  width: number;
+  height: number;
+  preset: string; // e.g., '16:9', '4:3', '9:16', '1:1', 'custom'
+}
+
 export interface OutlineCard {
   title: string
   id: string

@@ -5,17 +5,48 @@ import { motion } from "framer-motion";
 import { Button } from "@/components/ui/button";
 import { ArrowRight, Play, Wand2 } from "lucide-react";
 import Link from "next/link";
-import { useRef } from "react";
+import { useRef, useEffect, useState } from "react";
+import FloatingLines from './FloatingLines';
+import { useTheme } from "next-themes";
 
 export default function HeroV2() {
     const containerRef = useRef<HTMLDivElement>(null);
-    // Removed scroll animations for cleaner/static feel per user request
+    const { theme, resolvedTheme } = useTheme();
+    const [mounted, setMounted] = useState(false);
+
+    useEffect(() => {
+        setMounted(true);
+    }, []);
+
+    // Default to dark mode colors if not mounted yet
+    const currentTheme = mounted ? (resolvedTheme || theme) : 'dark';
+    
+    const linesColors = currentTheme === 'dark' 
+        ? ["#d0693f", "#0f0f0f", "#917b7b"] 
+        : ["#F55C7A", "#F6BC66", "#8B5CF6"]; // Light mode: vibrant brand colors
+
     const opacity = 1;
     const y = 0;
 
 
     return (
         <section ref={containerRef} className="relative min-h-[100vh] flex flex-col justify-center pt-32 pb-20 md:pt-48 bg-white dark:bg-[#050505] overflow-hidden transition-colors duration-500">
+
+            {/* Floating Lines Background */}
+            <div className="absolute inset-0 z-0 pointer-events-none opacity-30 dark:opacity-20">
+                <FloatingLines 
+                    enabledWaves={["top","middle","bottom"]}
+                    lineCount={8}
+                    lineDistance={8}
+                    bendRadius={8}
+                    bendStrength={-2}
+                    interactive
+                    parallax={true}
+                    animationSpeed={1}
+                    linesGradient={linesColors}
+                    mixBlendMode={currentTheme === 'dark' ? 'screen' : 'multiply'}
+                />
+            </div>
 
             {/* Background Glow */}
             <div className="absolute top-0 left-0 w-full h-full overflow-hidden pointer-events-none">

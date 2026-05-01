@@ -5,6 +5,7 @@ import { onAuthenticateUser } from "./user";
 import { OutlineCard } from "@/lib/types";
 import { JsonValue } from "@/generated/prisma/runtime/library";
 import { getOwnedProject } from "./project-access";
+import { checkAndIncrementUsage } from "@/lib/usage-limit";
 
 export const getAllProjects = async () => {
   try {
@@ -217,6 +218,17 @@ export const createProject = async (title: string, outlines: OutlineCard[]) => {
 
     if (checkUser.status !== 200 || !checkUser.user) {
       return { status: 403, error: "User not authenticated" };
+    }
+
+    // --- Usage Limit Check ---
+    const usageCheck = await checkAndIncrementUsage(checkUser.user.id);
+    if (!usageCheck.success) {
+      return { 
+        status: 403, 
+        error: usageCheck.error,
+        usage: usageCheck.usage,
+        limit: usageCheck.limit 
+      };
     }
 
     const project = await prisma.project.create({

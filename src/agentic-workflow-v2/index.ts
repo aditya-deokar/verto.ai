@@ -90,4 +90,4 @@ export {
 } from "./utils/retryLogic";
 
 // LLM configuration
-export { model, modelConfigs } from "./lib/llm";
+export { getModel, modelConfigs } from "./lib/llm";

@@ -13,9 +13,9 @@ export default function SidebarV2({
     isOpen: boolean;
 }) {
     return (
-        <aside className="fixed left-6 top-6 bottom-6 w-[60px] md:w-[72px] bg-white/80 dark:bg-black/40 backdrop-blur-2xl border border-black/5 dark:border-white/10 shadow-2xl z-101 flex flex-col items-center py-8 rounded-[36px] transition-colors duration-500">
+        <aside className="fixed bottom-6 left-6 right-6 h-16 md:bottom-6 md:top-6 md:left-6 md:right-auto md:w-[72px] md:h-auto bg-white/80 dark:bg-black/40 backdrop-blur-2xl border border-black/5 dark:border-white/10 shadow-2xl z-101 flex flex-row md:flex-col items-center justify-between md:justify-start px-6 md:px-0 py-0 md:py-8 rounded-2xl md:rounded-[36px] transition-all duration-500">
             {/* Brand Icon / Home Link */}
-            <Link href="/" className="mb-12 group">
+            <Link href="/" className="md:mb-12 group">
                 <img
                     src="/logoipsum-246.png"
                     alt="Verto AI Logo"
@@ -54,8 +54,8 @@ export default function SidebarV2({
                 </AnimatePresence>
             </button>
 
-            {/* Vertical Text */}
-            <div className="flex-1 flex items-center justify-center mt-12 pb-4">
+            {/* Vertical Text - Hidden on mobile */}
+            <div className="hidden md:flex flex-1 items-center justify-center mt-12 pb-4">
                 <div className="rotate-180 [writing-mode:vertical-rl] text-[10px] font-bold tracking-[0.3em] text-black/20 dark:text-white/20 flex items-center gap-6 font-mono uppercase select-none">
                     <span>Verto AI</span>
                     <span className="w-px h-8 bg-black/10 dark:bg-white/10" />

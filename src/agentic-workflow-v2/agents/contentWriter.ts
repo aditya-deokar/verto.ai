@@ -1,7 +1,7 @@
 // agents/contentWriter.ts - Agent 3: Layout-Aware Content Writer (Bulk)
 
 import { generateObject } from "ai";
-import { model, modelConfigs } from "../lib/llm";
+import { getModel, modelConfigs } from "../lib/llm";
 import { AdvancedPresentationState } from "../lib/state";
 import { layoutAwareContentSchema } from "../lib/validators";
 
@@ -170,6 +170,7 @@ Generate compelling, layout-aware content for ALL ${outlines.length} slides NOW:
 
     console.log("🤖 Calling AI to generate layout-aware content...");
 
+    const model = await getModel();
     const { object } = await generateObject({
       model: model,
       schema: layoutAwareContentSchema,

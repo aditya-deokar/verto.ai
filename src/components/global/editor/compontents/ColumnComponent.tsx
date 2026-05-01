@@ -2,7 +2,7 @@ import { MasterRecursiveComponent } from '@/app/(protected)/presentation/[presen
 import { ResizableHandle, ResizablePanel, ResizablePanelGroup } from '@/components/ui/resizable'
 import { ContentItem } from '@/lib/types'
 import { cn } from '@/lib/utils'
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useState, useRef } from 'react'
 import { v4 as uuidv4 } from 'uuid'
 
 type Props = {
@@ -26,6 +26,7 @@ const ColumnComponent = ({
   isEditable = true,
 }: Props) => {
   const [columns, setColumns] = useState<ContentItem[]>([])
+  const containerRef = useRef<HTMLDivElement>(null)
 
   const createDefaultColumns = (count: number) => {
     return Array(count)
@@ -48,16 +49,21 @@ const ColumnComponent = ({
       setColumns(content)
     }
 
-    const checkMobile = () => {
-      setIsMobile(window.innerWidth < 768)
+    const observer = new ResizeObserver((entries) => {
+      for (let entry of entries) {
+        setIsMobile(entry.contentRect.width < 600)
+      }
+    })
+
+    if (containerRef.current) {
+      observer.observe(containerRef.current)
     }
-    checkMobile()
-    window.addEventListener('resize', checkMobile)
-    return () => window.removeEventListener('resize', checkMobile)
+
+    return () => observer.disconnect()
   }, [content])
 
   return (
-    <div className="relative w-full h-full">
+    <div className="relative w-full h-full" ref={containerRef}>
       <ResizablePanelGroup
         direction={isMobile ? "vertical" : "horizontal"}
         className={cn(

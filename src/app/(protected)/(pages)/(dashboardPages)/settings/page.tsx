@@ -11,6 +11,7 @@ import { Button } from "@/components/ui/button";
 import { useTheme } from "next-themes";
 import { themes } from "@/lib/constants";
 import { toast } from "sonner";
+import { AiConfiguration } from "./_components/AiConfiguration";
 
 export default function SettingsPage() {
   const { theme, setTheme } = useTheme();
@@ -52,6 +53,7 @@ export default function SettingsPage() {
       <Tabs defaultValue="account" className="space-y-6">
         <TabsList>
           <TabsTrigger value="account">Account</TabsTrigger>
+          <TabsTrigger value="ai-config">AI Configuration</TabsTrigger>
         </TabsList>
 
         {/* Account Settings */}
@@ -96,6 +98,19 @@ export default function SettingsPage() {
               <div className="pt-4">
                 <Button variant="destructive" onClick={handleDeleteAccount}>Delete Account</Button>
               </div>
+            </CardContent>
+          </Card>
+        </TabsContent>
+
+        {/* AI Configuration */}
+        <TabsContent value="ai-config">
+          <Card>
+            <CardHeader>
+              <CardTitle>AI Provider Settings</CardTitle>
+              <CardDescription>Configure your custom AI model providers</CardDescription>
+            </CardHeader>
+            <CardContent>
+              <AiConfiguration />
             </CardContent>
           </Card>
         </TabsContent>

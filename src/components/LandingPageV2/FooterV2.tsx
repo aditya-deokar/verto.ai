@@ -3,15 +3,19 @@
 import Link from "next/link";
 import { Twitter, Linkedin, Github, DiscIcon as Discord } from "lucide-react";
 import { useUser } from "@clerk/nextjs";
+import { GradientBars } from "./GradientBars";
 
 export default function FooterV2() {
     const { isSignedIn } = useUser();
     return (
         <footer className="relative z-10 py-6 px-4 md:pl-[120px] md:pr-10 bg-white dark:bg-[#050505] transition-colors duration-500">
-            <div className="w-full bg-gray-100/50 dark:bg-[#111] border border-black/5 dark:border-white/5 rounded-[40px] p-10 md:p-20 overflow-hidden relative">
+
+            <GradientBars colors={["#F55C7A", "#F6BC66", "transparent"]} bars={20} />
+
+            {/* <div className="w-full bg-gray-100/50 dark:bg-[#111] border border-black/5 dark:border-white/5 rounded-[40px] p-10 md:p-20 overflow-hidden relative"> */}
 
                 {/* Optional: Subtle Grain or Gradient Overlay for that extra "Apple" feel */}
-                <div className="absolute inset-0 bg-linear-to-b from-transparent to-black/5 dark:to-white/5 opacity-50 pointer-events-none" />
+                {/* <div className="absolute inset-0 bg-linear-to-b from-transparent to-black/5 dark:to-white/5 opacity-50 pointer-events-none" /> */}
 
                 <div className="relative z-10 grid grid-cols-1 md:grid-cols-4 gap-12 md:gap-6 mb-20">
 
@@ -76,7 +80,7 @@ export default function FooterV2() {
 
                 {/* Premium Big Text Highlight */}
                 <div className="relative z-10 mb-20 pointer-events-none select-none">
-                    <h2 className="text-[15vw] leading-none font-black tracking-[-0.05em] text-center uppercase text-transparent bg-clip-text bg-linear-to-b from-black/5 to-black/20 dark:from-white/5 dark:to-white/20 transition-all duration-700">
+                    <h2 className="text-[15vw] leading-none font-black tracking-[-0.05em] text-center uppercase text-primary  transition-all duration-700">
                         Verto AI
                     </h2>
                 </div>
@@ -90,7 +94,7 @@ export default function FooterV2() {
                         <Link href="#" className="hover:text-black dark:hover:text-white transition-colors">Cookie Settings</Link>
                     </div>
                 </div>
-            </div>
+            {/* </div> */}
         </footer>
     );
 }

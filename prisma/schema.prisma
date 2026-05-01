@@ -26,6 +26,12 @@ enum PresentationGenerationStatus {
   FAILED
 }
 
+enum AiProvider {
+  GOOGLE
+  OPENAI
+  GROQ
+}
+
 enum TemplateCategory {
   BUSINESS
   STARTUP_PITCH
@@ -66,6 +72,8 @@ model User {
   GenerationRuns     PresentationGenerationRun[]
   Subscription       Subscription?
   TemplateFavorites  TemplateFavorite[]
+  AiKeys             UserAiKey[]
+  usageCount         Int                         @default(0)
 }
 
 enum SubscriptionStatus {
@@ -241,5 +249,21 @@ model TemplateFavorite {
   template PresentationTemplate @relation(fields: [templateId], references: [id], onDelete: Cascade)
 
   @@unique([userId, templateId])
+  @@index([userId])
+}
+
+model UserAiKey {
+  id           String     @id @default(cuid())
+  userId       String     @db.Uuid
+  provider     AiProvider
+  key          String     // Encrypted key string
+  iv           String     // Initialization vector for AES
+  tag          String     // Authentication tag for GCM
+  createdAt    DateTime   @default(now())
+  updatedAt    DateTime   @updatedAt
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, provider])
   @@index([userId])
 }

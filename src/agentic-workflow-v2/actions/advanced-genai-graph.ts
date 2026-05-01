@@ -188,7 +188,8 @@ export async function generateAdvancedPresentation(
   additionalContext?: string,
   themePreference: string = "Default",
   providedOutlines?: string[],
-  generationRunId?: string
+  generationRunId?: string,
+  projectId?: string
 ) {
   console.log("\n");
   console.log("═══════════════════════════════════════════════════════════");
@@ -197,6 +198,7 @@ export async function generateAdvancedPresentation(
   console.log(`📝 Topic: ${topic}`);
   console.log(`👤 User: ${userId}`);
   console.log(`🎨 Theme: ${themePreference}`);
+  if (projectId) console.log(`📦 Existing Project ID: ${projectId}`);
   if (additionalContext) {
     console.log(`📎 Context: ${additionalContext.slice(0, 100)}...`);
   }
@@ -220,7 +222,7 @@ export async function generateAdvancedPresentation(
     // Initial state
     const initialState: AdvancedPresentationState = {
       generationRunId,
-      projectId: null,
+      projectId: projectId || null,
       userId: userId,
       userInput: topic,
       additionalContext: additionalContext,
