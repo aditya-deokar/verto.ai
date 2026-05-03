@@ -125,7 +125,7 @@ export async function testAiKeyConnection(provider: AiProvider, key: string) {
         const { text } = await generateText({
             model,
             prompt: "Say 'Hello' only.",
-            maxTokens: 5,
+            maxOutputTokens: 5,
         });
 
         if (text && text.length > 0) {

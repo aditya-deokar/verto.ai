@@ -8,6 +8,7 @@ const isPublicRoute = createRouteMatcher([
   "/api/webhook(.*)",
   "/api/inngest(.*)",
   "/api/mobile-design/inngest(.*)",
+  "/api/mcp(.*)",
   "/features(.*)",
   "/",
 ]);

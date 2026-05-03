@@ -8,7 +8,9 @@
     "inngest:dev": "inngest-cli dev -u http://127.0.0.1:3000/api/mobile-design/inngest",
     "build": "next build",
     "start": "next start",
-    "lint": "next lint"
+    "lint": "next lint",
+    "mcp:dev": "npx tsx src/mcp/transport/stdio.ts",
+    "mcp:inspect": "npx @modelcontextprotocol/inspector npx tsx src/mcp/transport/stdio.ts"
   },
   "dependencies": {
     "@ai-sdk/google": "^3.0.14",
@@ -22,6 +24,7 @@
     "@inngest/realtime": "^0.4.5",
     "@langchain/google-genai": "^0.2.16",
     "@langchain/langgraph": "^0.4.8",
+    "@modelcontextprotocol/sdk": "^1.29.0",
     "@openrouter/ai-sdk-provider": "1.5.3",
     "@prisma/client": "^6.7.0",
     "@radix-ui/react-accordion": "^1.2.10",
