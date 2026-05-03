@@ -12,6 +12,7 @@ import { useTheme } from "next-themes";
 import { themes } from "@/lib/constants";
 import { toast } from "sonner";
 import { AiConfiguration } from "./_components/AiConfiguration";
+import { McpApiKeys } from "./_components/McpApiKeys";
 
 export default function SettingsPage() {
   const { theme, setTheme } = useTheme();
@@ -54,6 +55,7 @@ export default function SettingsPage() {
         <TabsList>
           <TabsTrigger value="account">Account</TabsTrigger>
           <TabsTrigger value="ai-config">AI Configuration</TabsTrigger>
+          <TabsTrigger value="mcp-keys">MCP API Keys</TabsTrigger>
         </TabsList>
 
         {/* Account Settings */}
@@ -64,15 +66,6 @@ export default function SettingsPage() {
               <CardDescription>Manage your account preferences</CardDescription>
             </CardHeader>
             <CardContent className="space-y-6">
-              <div className="space-y-2">
-                <Label>API Keys</Label>
-                <div className="space-y-4">
-                  <div className="flex items-center space-x-2">
-                    <Input type="password" value="••••••••••••••••" readOnly />
-                    <Button variant="outline" onClick={handleRegenerateApiKey}>Regenerate</Button>
-                  </div>
-                </div>
-              </div>
 
               <div className="space-y-6">
                 <h3 className="text-lg font-semibold">Change Password</h3>
@@ -111,6 +104,19 @@ export default function SettingsPage() {
             </CardHeader>
             <CardContent>
               <AiConfiguration />
+            </CardContent>
+          </Card>
+        </TabsContent>
+
+        {/* MCP API Keys */}
+        <TabsContent value="mcp-keys">
+          <Card>
+            <CardHeader>
+              <CardTitle>MCP API Keys</CardTitle>
+              <CardDescription>Manage API keys for MCP client access (Claude Desktop, Cursor, Antigravity)</CardDescription>
+            </CardHeader>
+            <CardContent>
+              <McpApiKeys />
             </CardContent>
           </Card>
         </TabsContent>

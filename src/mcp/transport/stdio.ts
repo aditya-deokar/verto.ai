@@ -16,6 +16,7 @@ import { StdioServerTransport } from '@modelcontextprotocol/sdk/server/stdio.js'
 import { createMcpServer } from '../server';
 import { registerAllTools } from '../tools/registry';
 import { registerAllResources } from '../resources/registry';
+import { setTransportType } from '../tools/presentation/index';
 
 // Import tool/resource plugins to trigger self-registration
 import '../tools/presentation/index';
@@ -24,6 +25,9 @@ import '../resources/templates';
 import '../resources/themes';
 
 async function main(): Promise<void> {
+  // Set transport type for tool handlers
+  setTransportType('stdio');
+
   console.error('─────────────────────────────────────────────');
   console.error('  Verto AI MCP Server (stdio transport)');
   console.error('─────────────────────────────────────────────');

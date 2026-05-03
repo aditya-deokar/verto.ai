@@ -21,6 +21,7 @@ import {
 } from "@/components/ui/sheet"
 import { Layers, LayoutTemplate, PanelLeft, PanelRight } from 'lucide-react'
 import { Button } from '@/components/ui/button'
+import PresentationSkeleton from './_components/PresentationSkeleton'
 
 type Props = {}
 
@@ -71,11 +72,7 @@ const page = (props: Props) => {
 
 
   if (isLoading) {
-    return (
-      <div className='flex items-center justify-center h-screen '>
-        <Loader2 className='w-8 h-8 animate-spin text-primary' />
-      </div>
-    )
+    return <PresentationSkeleton />
   }
 
   return (
