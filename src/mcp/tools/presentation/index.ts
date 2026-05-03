@@ -9,13 +9,38 @@
 import { z } from 'zod';
 import type { McpServer } from '@modelcontextprotocol/sdk/server/mcp.js';
 import { registerToolPlugin } from '../registry';
-import { TOOL_NAMES, PAGINATION } from '../../config/constants';
-import { handlePresentationList } from './list';
-import { handlePresentationGet } from './get';
+import { TOOL_NAMES, PAGINATION, LIMITS } from '../../config/constants';
 import { Errors } from '../_shared/errors';
 import { resolveAuth, type TransportType } from '../../auth/middleware';
 import { withErrorBoundary } from '../../middleware/error-handler';
-import type { PresentationListInput, PresentationGetInput } from './schemas';
+
+// ─── Phase 1: Read-Only Handlers ───────────────────────────────
+import { handlePresentationList } from './list';
+import { handlePresentationGet } from './get';
+
+// ─── Phase 2: Mutation Handlers ────────────────────────────────
+import { handlePresentationCreate } from './create';
+import { handlePresentationDelete } from './delete';
+import { handlePresentationRecover } from './recover';
+import { handlePresentationDeletePermanently } from './delete-permanently';
+import { handlePresentationUpdateSlides } from './update-slides';
+import { handlePresentationUpdateTheme } from './update-theme';
+import { handlePresentationPublish } from './publish';
+import { handlePresentationUnpublish } from './unpublish';
+
+// ─── Typed Inputs ──────────────────────────────────────────────
+import type {
+  PresentationListInput,
+  PresentationGetInput,
+  PresentationCreateInput,
+  PresentationDeleteInput,
+  PresentationRecoverInput,
+  PresentationDeletePermanentlyInput,
+  PresentationUpdateSlidesInput,
+  PresentationUpdateThemeInput,
+  PresentationPublishInput,
+  PresentationUnpublishInput,
+} from './schemas';
 
 /**
  * The transport type for tools registered in this plugin.
@@ -34,7 +59,9 @@ export function setTransportType(transport: TransportType): void {
  * Register all presentation tools.
  */
 function registerPresentationTools(server: McpServer): void {
-  // ─── Phase 1: Read-Only Tools ────────────────────────────────
+  // ═══════════════════════════════════════════════════════════════
+  // Phase 1: Read-Only Tools
+  // ═══════════════════════════════════════════════════════════════
 
   server.tool(
     TOOL_NAMES.PRESENTATION_LIST,
@@ -88,20 +115,203 @@ function registerPresentationTools(server: McpServer): void {
     }
   );
 
-  // ─── Phase 2: Mutation Tools ─────────────────────────────────
-  // TODO: Import and register presentation_create
-  // TODO: Import and register presentation_delete
-  // TODO: Import and register presentation_recover
-  // TODO: Import and register presentation_delete_permanently
-  // TODO: Import and register presentation_update_slides
-  // TODO: Import and register presentation_update_theme
-  // TODO: Import and register presentation_publish
-  // TODO: Import and register presentation_unpublish
+  // ═══════════════════════════════════════════════════════════════
+  // Phase 2: Mutation Tools
+  // ═══════════════════════════════════════════════════════════════
+
+  server.tool(
+    TOOL_NAMES.PRESENTATION_CREATE,
+    'Create a new presentation with a title and slide outlines. Each outline becomes a slide placeholder. Returns the created presentation with metadata. Usage limits are enforced.',
+    {
+      title: z.string().min(1).max(LIMITS.MAX_TITLE_LENGTH)
+        .describe('The title of the new presentation.'),
+      outlines: z.array(
+        z.object({
+          title: z.string().min(1).max(LIMITS.MAX_TITLE_LENGTH),
+          order: z.number().int().min(0),
+        })
+      ).min(1).max(LIMITS.MAX_OUTLINES)
+        .describe('Slide outline cards. Each has a title and display order.'),
+      request_id: z.string().uuid().optional()
+        .describe('Client-generated UUID for idempotent creation.'),
+    },
+    async (args, _extra) => {
+      const auth = await resolveAuth(currentTransport);
+      if (!auth) return Errors.unauthorized();
+
+      const handler = withErrorBoundary(
+        TOOL_NAMES.PRESENTATION_CREATE,
+        handlePresentationCreate,
+        currentTransport
+      );
+
+      return handler(args as PresentationCreateInput, auth);
+    }
+  );
+
+  server.tool(
+    TOOL_NAMES.PRESENTATION_DELETE,
+    'Soft-delete a presentation. The presentation can be recovered later using presentation_recover. Idempotent: calling on an already-deleted presentation returns success.',
+    {
+      presentation_id: z.string().min(1)
+        .describe('ID of the presentation to soft-delete.'),
+    },
+    async (args, _extra) => {
+      const auth = await resolveAuth(currentTransport);
+      if (!auth) return Errors.unauthorized();
+
+      const handler = withErrorBoundary(
+        TOOL_NAMES.PRESENTATION_DELETE,
+        handlePresentationDelete,
+        currentTransport
+      );
+
+      return handler(args as PresentationDeleteInput, auth);
+    }
+  );
+
+  server.tool(
+    TOOL_NAMES.PRESENTATION_RECOVER,
+    'Recover a soft-deleted presentation, restoring it to active status. Idempotent: calling on an active presentation returns success.',
+    {
+      presentation_id: z.string().min(1)
+        .describe('ID of the soft-deleted presentation to recover.'),
+    },
+    async (args, _extra) => {
+      const auth = await resolveAuth(currentTransport);
+      if (!auth) return Errors.unauthorized();
+
+      const handler = withErrorBoundary(
+        TOOL_NAMES.PRESENTATION_RECOVER,
+        handlePresentationRecover,
+        currentTransport
+      );
+
+      return handler(args as PresentationRecoverInput, auth);
+    }
+  );
+
+  server.tool(
+    TOOL_NAMES.PRESENTATION_DELETE_PERMANENTLY,
+    'PERMANENTLY delete presentations from the database. This action CANNOT be undone. Requires confirm: true to proceed. Only deletes presentations you own. Maximum 20 IDs per call.',
+    {
+      presentation_ids: z.array(z.string().min(1)).min(1).max(LIMITS.MAX_PERMANENT_DELETE_BATCH)
+        .describe('Array of presentation IDs to permanently delete.'),
+      confirm: z.literal(true)
+        .describe('Must be exactly true to confirm permanent deletion. Prevents accidental data loss.'),
+    },
+    async (args, _extra) => {
+      const auth = await resolveAuth(currentTransport);
+      if (!auth) return Errors.unauthorized();
+
+      const handler = withErrorBoundary(
+        TOOL_NAMES.PRESENTATION_DELETE_PERMANENTLY,
+        handlePresentationDeletePermanently,
+        currentTransport
+      );
+
+      return handler(args as PresentationDeletePermanentlyInput, auth);
+    }
+  );
+
+  server.tool(
+    TOOL_NAMES.PRESENTATION_UPDATE_SLIDES,
+    'Replace ALL slides in a presentation with the provided Slide[] array. This is a FULL REPLACEMENT — not a patch. Always use presentation_get first to read current slides, modify the array, then call this tool with the complete updated array.',
+    {
+      presentation_id: z.string().min(1)
+        .describe('The unique identifier of the presentation to update.'),
+      slides: z.array(z.object({
+        id: z.string(),
+        slideName: z.string(),
+        type: z.string(),
+        content: z.any(),
+        slideOrder: z.number().optional(),
+        className: z.string().optional(),
+      })).describe('The complete Slide[] array. Replaces all existing slides.'),
+    },
+    async (args, _extra) => {
+      const auth = await resolveAuth(currentTransport);
+      if (!auth) return Errors.unauthorized();
+
+      const handler = withErrorBoundary(
+        TOOL_NAMES.PRESENTATION_UPDATE_SLIDES,
+        handlePresentationUpdateSlides,
+        currentTransport
+      );
+
+      return handler(args as PresentationUpdateSlidesInput, auth);
+    }
+  );
+
+  server.tool(
+    TOOL_NAMES.PRESENTATION_UPDATE_THEME,
+    "Change the visual theme of a presentation. Use the 'verto://themes' resource to browse valid theme names before calling this tool.",
+    {
+      presentation_id: z.string().min(1)
+        .describe('The unique identifier of the presentation to update.'),
+      theme_name: z.string().min(1)
+        .describe("Name of the theme to apply. Use the 'verto://themes' resource for valid names."),
+    },
+    async (args, _extra) => {
+      const auth = await resolveAuth(currentTransport);
+      if (!auth) return Errors.unauthorized();
+
+      const handler = withErrorBoundary(
+        TOOL_NAMES.PRESENTATION_UPDATE_THEME,
+        handlePresentationUpdateTheme,
+        currentTransport
+      );
+
+      return handler(args as PresentationUpdateThemeInput, auth);
+    }
+  );
+
+  server.tool(
+    TOOL_NAMES.PRESENTATION_PUBLISH,
+    'Make a presentation publicly shareable via a unique share URL. Idempotent: calling on an already-published presentation returns the existing share URL.',
+    {
+      presentation_id: z.string().min(1)
+        .describe('ID of the presentation to publish.'),
+    },
+    async (args, _extra) => {
+      const auth = await resolveAuth(currentTransport);
+      if (!auth) return Errors.unauthorized();
+
+      const handler = withErrorBoundary(
+        TOOL_NAMES.PRESENTATION_PUBLISH,
+        handlePresentationPublish,
+        currentTransport
+      );
+
+      return handler(args as PresentationPublishInput, auth);
+    }
+  );
+
+  server.tool(
+    TOOL_NAMES.PRESENTATION_UNPUBLISH,
+    'Remove public access from a presentation. The share URL will no longer work. Idempotent: calling on an already-unpublished presentation returns success.',
+    {
+      presentation_id: z.string().min(1)
+        .describe('ID of the presentation to unpublish.'),
+    },
+    async (args, _extra) => {
+      const auth = await resolveAuth(currentTransport);
+      if (!auth) return Errors.unauthorized();
+
+      const handler = withErrorBoundary(
+        TOOL_NAMES.PRESENTATION_UNPUBLISH,
+        handlePresentationUnpublish,
+        currentTransport
+      );
+
+      return handler(args as PresentationUnpublishInput, auth);
+    }
+  );
 
   // ─── Phase 3: AI Generation ──────────────────────────────────
   // TODO: Import and register presentation_generate
 
-  console.error('[MCP] Presentation plugin: 2 tools registered (list, get)');
+  console.error('[MCP] Presentation plugin: 10 tools registered (2 read, 8 mutation)');
 }
 
 // Self-register as a plugin
