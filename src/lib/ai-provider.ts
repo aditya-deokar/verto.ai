@@ -91,7 +91,7 @@ export async function getAiModel(modelName?: string, providerPreference?: AiProv
         return provider('llama-3.3-70b-versatile');
       case AiProvider.GOOGLE:
       default:
-        return provider('gemini-2.5-flash');
+        return provider('gemini-3-flash-preview');
     }
   }
 

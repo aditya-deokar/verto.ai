@@ -5,7 +5,7 @@ import { getAiModel } from "@/lib/ai-provider";
  * Using getAiModel to support BYOAK with fallback to system defaults.
  */
 export async function getModel() {
-  return await getAiModel("gemini-2.5-flash");
+  return await getAiModel("gemini-3-flash-preview");
 }
 
 /**

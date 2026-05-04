@@ -152,10 +152,24 @@ function normalizeAcceptHeader(headers: Headers): string {
 }
 
 function normalizeRequestHeaders(request: Request): Request {
-  const headers = new Headers(request.headers);
+  const headers = new Headers();
+  request.headers.forEach((v, k) => headers.set(k, v));
   headers.set('accept', normalizeAcceptHeader(headers));
 
-  return new Request(request, { headers });
+  // Create a new request from scratch to avoid "private member #state" errors
+  // which happen when passing a Next.js Request object to the standard Request constructor.
+  const init: RequestInit = {
+    method: request.method,
+    headers: headers,
+  };
+
+  if (!['GET', 'HEAD'].includes(request.method) && request.body) {
+    init.body = request.body;
+    // @ts-ignore - duplex is required for streaming bodies in some environments
+    init.duplex = 'half';
+  }
+
+  return new Request(request.url, init);
 }
 
 async function parseRequestBody(request: Request): Promise<ParsedRequestBody> {
