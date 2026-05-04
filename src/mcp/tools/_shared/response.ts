@@ -54,7 +54,8 @@ export function mcpPaginated(
 export function mcpError(
   code: string,
   message: string,
-  suggestion?: string
+  suggestion?: string,
+  details?: Record<string, unknown>
 ): McpToolResponse {
   return {
     content: [
@@ -62,7 +63,7 @@ export function mcpError(
         type: 'text',
         text: JSON.stringify({
           success: false,
-          error: { code, message, ...(suggestion ? { suggestion } : {}) },
+          error: { code, message, ...(suggestion ? { suggestion } : {}), ...(details ?? {}) },
         }),
       },
     ],

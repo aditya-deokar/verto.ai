@@ -49,6 +49,7 @@ export const Errors = {
       ERROR_CODES.RATE_LIMITED,
       `Rate limit exceeded. Try again in ${retryAfterSeconds} seconds.`,
       `Wait ${retryAfterSeconds} seconds before making another request.`,
+      { retry_after_seconds: retryAfterSeconds },
     );
   },
 
