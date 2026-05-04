@@ -71,7 +71,7 @@ Authentication is handled entirely by **Clerk**, a managed identity provider.
 
 ### Middleware Protection
 
-**File**: `src/middleware.ts`
+**File**: [src/middleware.ts](../src/middleware.ts)
 
 All routes are protected by default. Only explicitly listed public routes bypass authentication:
 
@@ -99,7 +99,7 @@ export default clerkMiddleware(async (auth, req) => {
 
 ### User Provisioning
 
-Users are auto-provisioned on first authentication via `onAuthenticateUser()`:
+Users are auto-provisioned on first authentication via `onAuthenticateUser()` (defined in [src/actions/user.ts](../src/actions/user.ts)):
 
 ```mermaid
 sequenceDiagram
@@ -135,7 +135,7 @@ Verto AI uses a **strict ownership model**: users can only access their own reso
 
 ### Centralized Ownership Check
 
-**File**: `src/actions/project-access.ts`
+**File**: [src/actions/project-access.ts](../src/actions/project-access.ts)
 
 Every project mutation routes through `getOwnedProject()`:
 

@@ -564,7 +564,7 @@ npx prisma studio
 
 ### Creating a New Model
 
-1. Define the model in `prisma/schema.prisma`
+1. Define the model in [prisma/schema.prisma](../prisma/schema.prisma)
 2. Add relations to existing models if needed
 3. Run `npx prisma migrate dev --name add_new_model`
 4. Run `npx prisma generate` (or restart dev server — `predev` handles this)
@@ -572,7 +572,7 @@ npx prisma studio
 
 ### Important Notes
 
-- **Generated client path**: `src/generated/prisma` (non-default). Import types from `@/generated/prisma`.
+- **Generated client path**: [src/generated/prisma](../src/generated/prisma) (non-default). Import types from `@/generated/prisma`.
 - **`predev` script**: `prisma generate` runs automatically before `bun run dev`
 - **Backup**: A schema backup exists at `prisma/schema.prisma.backup`
 - **UUID generation**: User IDs use `gen_random_uuid()` (PostgreSQL native)

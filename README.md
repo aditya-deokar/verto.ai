@@ -175,6 +175,11 @@ pptmaker/
 | [Deployment Guide](docs/08-deployment-guide.md) | Production deployment & infrastructure |
 | [Security](docs/09-security.md) | Auth, authorization, data protection |
 | [Testing Strategy](docs/10-testing-strategy.md) | Smoke tests, future testing approach |
+| [Contributing Guide](docs/contributing.md) | Guidelines for code style and PR process |
+| [Glossary](docs/glossary.md) | Definitions of terms and concepts |
+| [Templates Specification](docs/templates-specs.md) | Deep-dive into the templates feature |
+| [Engineering Walkthrough](docs/V2_ENGINEERING_WALKTHROUGH.md) | Technical walkthrough of the V2 architecture |
+| [Walkthrough Guide](docs/WALKTHROUGH_GUIDE.md) | Step-by-step guide to the codebase |
 
 ## Scripts
 

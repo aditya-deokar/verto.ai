@@ -22,7 +22,7 @@
 Verto AI uses the **Next.js App Router** with route groups to separate concerns.
 
 ```
-src/app/
+[src/app/](../src/app/)
 ├── layout.tsx                         # Root layout (Clerk + Theme + Toaster)
 ├── page.tsx                           # Landing page redirect
 ├── globals.css                        # Global styles
@@ -96,7 +96,7 @@ graph TD
     style PagesLayout fill:#10b981,color:#fff
 ```
 
-### Root Layout (`app/layout.tsx`)
+### Root Layout ([src/app/layout.tsx](../src/app/layout.tsx))
 
 The outermost layout wraps the entire application with providers:
 
