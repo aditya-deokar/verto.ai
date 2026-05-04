@@ -98,6 +98,8 @@ export const presentationGenerateSchema = z.object({
     .describe('Preferred visual theme for the generated presentation.'),
   outlines: z.array(z.string().min(1).max(LIMITS.MAX_TITLE_LENGTH)).max(LIMITS.MAX_OUTLINES).optional()
     .describe('Optional pre-defined slide outlines. If omitted, AI generates outlines automatically.'),
+  wait_timeout_ms: z.number().int().min(1000).max(LIMITS.GENERATION_TIMEOUT_MS).optional()
+    .describe(`How long to wait for completion before returning RUNNING. Defaults to ${LIMITS.GENERATION_TIMEOUT_MS} ms.`),
 });
 
 // ─── Schema Types ──────────────────────────────────────────────

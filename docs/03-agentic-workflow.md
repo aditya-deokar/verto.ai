@@ -25,8 +25,8 @@ The Agentic Workflow V2 is a **LangGraph-based state machine** that orchestrates
 
 | Property | Value |
 |----------|-------|
-| **Entry point** | `generateAdvancedPresentation()` in `src/agentic-workflow-v2/actions/advanced-genai-graph.ts` |
-| **Server action wrapper** | `generatePresentationAction()` in `src/actions/generatePresentation.ts` |
+| **Entry point** | `generateAdvancedPresentation()` in [src/agentic-workflow-v2/actions/advanced-genai-graph.ts](../src/agentic-workflow-v2/actions/advanced-genai-graph.ts) |
+| **Server action wrapper** | `generatePresentationAction()` in [src/actions/generatePresentation.ts](../src/actions/generatePresentation.ts) |
 | **Framework** | LangGraph (`@langchain/langgraph@^0.4.8`) |
 | **LLM** | Google Gemini 2.5 Flash |
 | **Agent count** | 8 sequential agents |
@@ -523,7 +523,7 @@ When any agent fails:
 
 **Model**: `google("gemini-2.5-flash")` via `@ai-sdk/google`
 
-**File**: `src/agentic-workflow-v2/lib/llm.ts`
+**File**: [src/agentic-workflow-v2/lib/llm.ts](../src/agentic-workflow-v2/lib/llm.ts)
 
 ### Per-Agent Configuration
 
@@ -547,7 +547,7 @@ export const modelConfigs = {
 
 The layout template system defines all available slide structures and their rendering properties.
 
-**Defined in**: `src/agentic-workflow-v2/lib/layoutTemplates.ts`
+**Defined in**: [src/agentic-workflow-v2/lib/layoutTemplates.ts](../src/agentic-workflow-v2/lib/layoutTemplates.ts)
 
 ### LayoutTemplate Interface
 

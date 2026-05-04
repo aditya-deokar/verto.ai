@@ -18,7 +18,7 @@ export const generateCreativePrompt=async (userPrompt:string)=>{
     
     // console.log("🟢 Generating creative prompt...", userPrompt);
     const { object } = await generateObject({
-      model: await getAiModel("gemini-2.5-flash"),
+      model: await getAiModel("gemini-3-flash-preview"),
       schema: outlineSchema,
       system:`You are an ELITE presentation strategist and content architect. You specialize in creating compelling, well-structured presentation outlines that tell a story and engage audiences.`,
       prompt: `Create a strategic, comprehensive outline for a presentation on: "${userPrompt}"
@@ -176,7 +176,7 @@ Generate an image that looks like it was shot by a professional photographer or 
 `;
 
     const result = await generateText({
-      model: await getAiModel('gemini-2.5-flash'),
+      model: await getAiModel('gemini-3-flash-preview'),
       providerOptions: {
         google: { responseModalities: ['TEXT', 'IMAGE'] },
       },

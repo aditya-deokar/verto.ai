@@ -4,6 +4,7 @@
   "private": true,
   "scripts": {
     "predev": "prisma generate --schema prisma/schema.prisma",
+    "postinstall": "prisma generate",
     "dev": "next dev --turbopack",
     "inngest:dev": "inngest-cli dev -u http://127.0.0.1:3000/api/mobile-design/inngest",
     "build": "next build",

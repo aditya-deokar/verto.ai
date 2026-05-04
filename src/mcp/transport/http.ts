@@ -1,222 +1,427 @@
 /**
- * MCP Transport — Streamable HTTP (Next.js API Route)
- *
- * Handles MCP protocol over HTTP for remote/production clients.
- *
- * The SDK v1 StreamableHTTPServerTransport expects Node.js http module
- * objects (IncomingMessage, ServerResponse). Since Next.js App Router
- * uses Web standard Request/Response, we bridge the gap by using
- * a lightweight Node.js HTTP server internally for protocol handling.
- *
- * Endpoint: POST /api/mcp  (JSON-RPC messages)
- *           DELETE /api/mcp (session termination)
+ * MCP Transport - Streamable HTTP (Next.js API Route)
  */
 
+import { randomUUID } from 'node:crypto';
 import { McpServer } from '@modelcontextprotocol/sdk/server/mcp.js';
-import { StreamableHTTPServerTransport } from '@modelcontextprotocol/sdk/server/streamableHttp.js';
-import type { AuthInfo } from '@modelcontextprotocol/sdk/server/auth/types.js';
-import { IncomingMessage, ServerResponse } from 'node:http';
-import { Socket } from 'node:net';
+import { WebStandardStreamableHTTPServerTransport } from '@modelcontextprotocol/sdk/server/webStandardStreamableHttp.js';
+import { isInitializeRequest } from '@modelcontextprotocol/sdk/types.js';
+import { MCP_PROTOCOL_VERSION } from '../config/constants';
+import { validateMcpEnv } from '../config/env';
 import { createMcpServer } from '../server';
 import { registerAllTools } from '../tools/registry';
 import { registerAllResources } from '../resources/registry';
+import { setTransportType } from '../tools/presentation/index';
 
-// Import tool/resource plugins to trigger self-registration
 import '../tools/presentation/index';
 import '../resources/presentations';
 import '../resources/templates';
 import '../resources/themes';
+import '../resources/generation-progress';
 
-/**
- * In-memory session store for HTTP transport.
- * Maps session IDs to transport instances.
- *
- * TODO (Phase 4): Replace with Redis for multi-instance deployments.
- */
-const sessions = new Map<string, StreamableHTTPServerTransport>();
-
-/** Lazy-initialized server singleton */
-let _server: McpServer | null = null;
-
-function getServer(): McpServer {
-  if (!_server) {
-    _server = createMcpServer();
-    registerAllTools(_server);
-    registerAllResources(_server);
-    console.error('[MCP] ✓ HTTP server initialized');
-  }
-  return _server;
+interface HttpSession {
+  server: McpServer;
+  transport: WebStandardStreamableHTTPServerTransport;
 }
 
-/**
- * Convert a Web API Request to Node.js IncomingMessage.
- */
-async function webRequestToNodeRequest(request: Request): Promise<{
-  req: IncomingMessage & { auth?: AuthInfo };
+interface ParsedRequestBody {
+  request: Request;
   body: unknown;
-}> {
-  const url = new URL(request.url);
-  const body = request.method !== 'GET' && request.method !== 'HEAD'
-    ? await request.json().catch(() => undefined)
-    : undefined;
-
-  // Create a fake IncomingMessage
-  const socket = new Socket();
-  const req = new IncomingMessage(socket) as IncomingMessage & { auth?: AuthInfo };
-  req.method = request.method;
-  req.url = url.pathname + url.search;
-
-  // Copy headers
-  request.headers.forEach((value, key) => {
-    req.headers[key.toLowerCase()] = value;
-  });
-
-  return { req, body };
 }
 
-/**
- * Capture Node.js ServerResponse as a Web API Response.
- */
-function captureNodeResponse(): {
-  res: ServerResponse;
-  getResponse: () => Promise<Response>;
-} {
-  const socket = new Socket();
-  const req = new IncomingMessage(socket);
-  const res = new ServerResponse(req);
+const sessions = new Map<string, HttpSession>();
 
-  let resolvePromise: (value: Response) => void;
-  const responsePromise = new Promise<Response>((resolve) => {
-    resolvePromise = resolve;
-  });
+function createServerInstance(): McpServer {
+  setTransportType('http');
 
-  // Buffer the response data
-  const chunks: Buffer[] = [];
+  const server = createMcpServer();
+  registerAllTools(server);
+  registerAllResources(server);
 
-  // Override write methods to capture data
-  const origWrite = res.write.bind(res);
-  const origEnd = res.end.bind(res);
+  console.error('[MCP] HTTP server initialized');
+  return server;
+}
 
-  res.write = function (chunk: unknown, ...args: unknown[]): boolean {
-    if (chunk) {
-      chunks.push(Buffer.isBuffer(chunk) ? chunk : Buffer.from(String(chunk)));
-    }
-    return origWrite(chunk, ...args as [BufferEncoding, (() => void)?]);
-  } as typeof res.write;
+function getAllowedOrigins(): string[] {
+  const env = validateMcpEnv();
+  const configured = env.MCP_ALLOWED_ORIGINS
+    .split(',')
+    .map((origin) => origin.trim())
+    .filter(Boolean);
 
-  res.end = function (chunk?: unknown, ...args: unknown[]): ServerResponse {
-    if (chunk) {
-      chunks.push(Buffer.isBuffer(chunk) ? chunk : Buffer.from(String(chunk)));
-    }
+  if (configured.length > 0) {
+    return configured;
+  }
 
-    const headers = new Headers();
-    const rawHeaders = res.getHeaders();
-    for (const [key, value] of Object.entries(rawHeaders)) {
-      if (value !== undefined) {
-        headers.set(key, Array.isArray(value) ? value.join(', ') : String(value));
-      }
-    }
+  return [env.NEXT_PUBLIC_APP_URL, 'http://localhost:3000', 'http://127.0.0.1:3000'];
+}
 
-    const body = Buffer.concat(chunks);
-    resolvePromise!(
-      new Response(body.length > 0 ? body : null, {
-        status: res.statusCode,
-        headers,
-      })
+function isOriginAllowed(origin: string | null): boolean {
+  if (!origin) {
+    return true;
+  }
+
+  const allowedOrigins = getAllowedOrigins();
+  return allowedOrigins.includes('*') || allowedOrigins.includes(origin);
+}
+
+function applyCorsHeaders(request: Request, response: Response): Response {
+  const headers = new Headers(response.headers);
+  const origin = request.headers.get('origin');
+  const allowedOrigins = getAllowedOrigins();
+
+  if (origin && isOriginAllowed(origin)) {
+    headers.set(
+      'Access-Control-Allow-Origin',
+      allowedOrigins.includes('*') ? '*' : origin
     );
+    headers.set('Vary', 'Origin');
+  }
 
-    return origEnd(...args as [(() => void)?]) as ServerResponse;
-  } as typeof res.end;
+  headers.set('Access-Control-Allow-Methods', 'GET, POST, DELETE, OPTIONS');
+  headers.set(
+    'Access-Control-Allow-Headers',
+    'Content-Type, Accept, Authorization, MCP-Session-Id, MCP-Protocol-Version, Last-Event-ID'
+  );
+  headers.set('Access-Control-Expose-Headers', 'MCP-Session-Id');
+  headers.set('Access-Control-Max-Age', '86400');
 
-  return { res, getResponse: () => responsePromise };
+  return new Response(response.body, {
+    status: response.status,
+    statusText: response.statusText,
+    headers,
+  });
 }
 
-/**
- * Handle POST requests — JSON-RPC messages from MCP clients.
- */
+function jsonResponse(request: Request, status: number, body: unknown): Response {
+  return applyCorsHeaders(
+    request,
+    new Response(JSON.stringify(body), {
+      status,
+      headers: {
+        'Content-Type': 'application/json',
+      },
+    })
+  );
+}
+
+function validateJsonDepth(value: unknown, maxDepth: number, depth = 0): boolean {
+  if (depth > maxDepth) {
+    return false;
+  }
+
+  if (value === null || typeof value !== 'object') {
+    return true;
+  }
+
+  if (Array.isArray(value)) {
+    return value.every((item) => validateJsonDepth(item, maxDepth, depth + 1));
+  }
+
+  return Object.values(value).every((item) => validateJsonDepth(item, maxDepth, depth + 1));
+}
+
+function normalizeAcceptHeader(headers: Headers): string {
+  const accept = headers.get('accept');
+
+  if (!accept || accept.trim() === '' || accept.includes('*/*')) {
+    return 'application/json, text/event-stream';
+  }
+
+  const acceptedTypes = accept
+    .split(',')
+    .map((entry) => entry.trim())
+    .filter(Boolean);
+
+  const includesJson = acceptedTypes.some((entry) => entry.includes('application/json'));
+  const includesEventStream = acceptedTypes.some((entry) => entry.includes('text/event-stream'));
+
+  if (includesJson && includesEventStream) {
+    return accept;
+  }
+
+  const normalized = [...acceptedTypes];
+  if (!includesJson) {
+    normalized.push('application/json');
+  }
+  if (!includesEventStream) {
+    normalized.push('text/event-stream');
+  }
+
+  return normalized.join(', ');
+}
+
+function normalizeRequestHeaders(request: Request): Request {
+  const headers = new Headers();
+  request.headers.forEach((v, k) => headers.set(k, v));
+  headers.set('accept', normalizeAcceptHeader(headers));
+
+  // Create a new request from scratch to avoid "private member #state" errors
+  // which happen when passing a Next.js Request object to the standard Request constructor.
+  const init: RequestInit = {
+    method: request.method,
+    headers: headers,
+  };
+
+  if (!['GET', 'HEAD'].includes(request.method) && request.body) {
+    init.body = request.body;
+    // @ts-ignore - duplex is required for streaming bodies in some environments
+    init.duplex = 'half';
+  }
+
+  return new Request(request.url, init);
+}
+
+async function parseRequestBody(request: Request): Promise<ParsedRequestBody> {
+  const env = validateMcpEnv();
+
+  if (['GET', 'HEAD', 'DELETE'].includes(request.method)) {
+    return {
+      request: normalizeRequestHeaders(request),
+      body: undefined,
+    };
+  }
+
+  const contentLengthHeader = request.headers.get('content-length');
+  if (contentLengthHeader) {
+    const contentLength = Number(contentLengthHeader);
+    if (Number.isFinite(contentLength) && contentLength > env.MCP_MAX_REQUEST_BYTES) {
+      throw new Error('REQUEST_TOO_LARGE');
+    }
+  }
+
+  const rawText = await request.text();
+  const requestBytes = Buffer.byteLength(rawText, 'utf8');
+
+  if (requestBytes > env.MCP_MAX_REQUEST_BYTES) {
+    throw new Error('REQUEST_TOO_LARGE');
+  }
+
+  const normalizedRequest = normalizeRequestHeaders(
+    new Request(request.url, {
+      method: request.method,
+      headers: request.headers,
+      body: rawText,
+    })
+  );
+
+  if (rawText.trim().length === 0) {
+    return {
+      request: normalizedRequest,
+      body: undefined,
+    };
+  }
+
+  let body: unknown;
+  try {
+    body = JSON.parse(rawText);
+  } catch {
+    throw new Error('INVALID_JSON');
+  }
+
+  if (!validateJsonDepth(body, env.MCP_MAX_JSON_DEPTH)) {
+    throw new Error('JSON_TOO_DEEP');
+  }
+
+  return {
+    request: normalizedRequest,
+    body,
+  };
+}
+
+async function closeSession(sessionId: string): Promise<void> {
+  const session = sessions.get(sessionId);
+  if (!session) {
+    return;
+  }
+
+  sessions.delete(sessionId);
+
+  try {
+    await session.transport.close();
+  } catch {
+    // ignore cleanup errors
+  }
+
+  try {
+    await session.server.close();
+  } catch {
+    // ignore cleanup errors
+  }
+}
+
+function getErrorResponse(request: Request, error: unknown): Response {
+  if (error instanceof Error) {
+    switch (error.message) {
+      case 'REQUEST_TOO_LARGE':
+        return jsonResponse(request, 413, {
+          jsonrpc: '2.0',
+          error: { code: -32001, message: 'Request exceeds the 10MB MCP limit.' },
+          id: null,
+        });
+      case 'INVALID_JSON':
+        return jsonResponse(request, 400, {
+          jsonrpc: '2.0',
+          error: { code: -32700, message: 'Invalid JSON body.' },
+          id: null,
+        });
+      case 'JSON_TOO_DEEP':
+        return jsonResponse(request, 400, {
+          jsonrpc: '2.0',
+          error: { code: -32002, message: 'Request JSON exceeds the maximum nesting depth.' },
+          id: null,
+        });
+      default:
+        break;
+    }
+  }
+
+  return jsonResponse(request, 500, {
+    jsonrpc: '2.0',
+    error: { code: -32603, message: 'Internal server error' },
+    id: null,
+  });
+}
+
+async function createSessionTransport(): Promise<HttpSession> {
+  const server = createServerInstance();
+  const transport = new WebStandardStreamableHTTPServerTransport({
+    sessionIdGenerator: () => randomUUID(),
+    onsessioninitialized: (sessionId) => {
+      sessions.set(sessionId, { server, transport });
+    },
+    onsessionclosed: (sessionId) => {
+      sessions.delete(sessionId);
+    },
+  });
+
+  transport.onerror = (error) => {
+    console.error('[MCP HTTP] Transport error:', error);
+  };
+
+  await server.connect(transport);
+
+  return { server, transport };
+}
+
 export async function handlePost(request: Request): Promise<Response> {
   try {
-    const sessionId = request.headers.get('mcp-session-id');
-    let transport: StreamableHTTPServerTransport;
-
-    if (sessionId && sessions.has(sessionId)) {
-      transport = sessions.get(sessionId)!;
-    } else {
-      transport = new StreamableHTTPServerTransport({
-        sessionIdGenerator: () => crypto.randomUUID(),
+    if (!isOriginAllowed(request.headers.get('origin'))) {
+      return jsonResponse(request, 403, {
+        jsonrpc: '2.0',
+        error: { code: -32003, message: 'Origin not allowed.' },
+        id: null,
       });
-
-      const server = getServer();
-      await server.connect(transport);
-
-      const newSessionId = transport.sessionId;
-      if (newSessionId) {
-        sessions.set(newSessionId, transport);
-      }
     }
 
-    const { req, body } = await webRequestToNodeRequest(request);
-    const { res, getResponse } = captureNodeResponse();
+    const { request: normalizedRequest, body } = await parseRequestBody(request);
+    const sessionId = normalizedRequest.headers.get('mcp-session-id');
+    let session: HttpSession | undefined;
 
-    await transport.handleRequest(req, res, body);
+    if (sessionId) {
+      session = sessions.get(sessionId);
+      if (!session) {
+        return jsonResponse(request, 400, {
+          jsonrpc: '2.0',
+          error: { code: -32000, message: 'Invalid or expired session ID.' },
+          id: null,
+        });
+      }
+    } else {
+      if (!isInitializeRequest(body)) {
+        return jsonResponse(request, 400, {
+          jsonrpc: '2.0',
+          error: {
+            code: -32000,
+            message: 'No valid session ID provided. Send an initialize request first.',
+          },
+          id: null,
+        });
+      }
 
-    return await getResponse();
+      session = await createSessionTransport();
+    }
+
+    const response = await session.transport.handleRequest(normalizedRequest, {
+      parsedBody: body,
+    });
+
+    if (!sessionId && !session.transport.sessionId) {
+      await session.transport.close().catch(() => undefined);
+      await session.server.close().catch(() => undefined);
+    }
+
+    return applyCorsHeaders(request, response);
   } catch (error) {
     console.error('[MCP HTTP] Error handling POST:', error);
-    return new Response(
-      JSON.stringify({
-        jsonrpc: '2.0',
-        error: { code: -32603, message: 'Internal server error' },
-        id: null,
-      }),
-      {
-        status: 500,
-        headers: { 'Content-Type': 'application/json' },
-      }
-    );
+    return getErrorResponse(request, error);
   }
 }
 
-/**
- * Handle GET requests — SSE event stream for server-initiated notifications.
- */
 export async function handleGet(request: Request): Promise<Response> {
-  const sessionId = request.headers.get('mcp-session-id');
-
-  if (!sessionId || !sessions.has(sessionId)) {
-    return new Response(
-      JSON.stringify({
-        jsonrpc: '2.0',
-        error: { code: -32000, message: 'No active session. Send a POST first.' },
-        id: null,
-      }),
-      {
-        status: 400,
-        headers: { 'Content-Type': 'application/json' },
-      }
-    );
+  if (!isOriginAllowed(request.headers.get('origin'))) {
+    return jsonResponse(request, 403, {
+      jsonrpc: '2.0',
+      error: { code: -32003, message: 'Origin not allowed.' },
+      id: null,
+    });
   }
 
-  const transport = sessions.get(sessionId)!;
-  const { req } = await webRequestToNodeRequest(request);
-  const { res, getResponse } = captureNodeResponse();
+  const sessionId = request.headers.get('mcp-session-id');
+  if (!sessionId) {
+    const env = validateMcpEnv();
+    return jsonResponse(request, 200, {
+      name: env.MCP_SERVER_NAME,
+      version: env.MCP_SERVER_VERSION,
+      protocol_version: MCP_PROTOCOL_VERSION,
+      endpoint: '/api/mcp',
+      capabilities: ['tools', 'resources', 'logging'],
+      transports: ['streamable-http'],
+    });
+  }
 
-  await transport.handleRequest(req, res);
+  const session = sessions.get(sessionId);
+  if (!session) {
+    return jsonResponse(request, 400, {
+      jsonrpc: '2.0',
+      error: { code: -32000, message: 'Invalid or expired session ID.' },
+      id: null,
+    });
+  }
 
-  return await getResponse();
+  const normalizedRequest = normalizeRequestHeaders(request);
+  const response = await session.transport.handleRequest(normalizedRequest);
+
+  return applyCorsHeaders(request, response);
 }
 
-/**
- * Handle DELETE requests — session termination.
- */
-export async function handleDelete(_request: Request): Promise<Response> {
-  const sessionId = _request.headers.get('mcp-session-id');
+export async function handleDelete(request: Request): Promise<Response> {
+  try {
+    if (!isOriginAllowed(request.headers.get('origin'))) {
+      return jsonResponse(request, 403, {
+        jsonrpc: '2.0',
+        error: { code: -32003, message: 'Origin not allowed.' },
+        id: null,
+      });
+    }
 
-  if (sessionId && sessions.has(sessionId)) {
-    const transport = sessions.get(sessionId)!;
-    await transport.close();
-    sessions.delete(sessionId);
+    const sessionId = request.headers.get('mcp-session-id');
+    if (!sessionId) {
+      return applyCorsHeaders(request, new Response(null, { status: 204 }));
+    }
+
+    await closeSession(sessionId);
+    return applyCorsHeaders(request, new Response(null, { status: 204 }));
+  } catch (error) {
+    console.error('[MCP HTTP] Error handling DELETE:', error);
+    return getErrorResponse(request, error);
+  }
+}
+
+export async function handleOptions(request: Request): Promise<Response> {
+  if (!isOriginAllowed(request.headers.get('origin'))) {
+    return jsonResponse(request, 403, { error: 'Origin not allowed.' });
   }
 
-  return new Response(null, { status: 204 });
+  return applyCorsHeaders(request, new Response(null, { status: 204 }));
 }

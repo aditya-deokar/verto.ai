@@ -47,6 +47,7 @@ export const RESOURCE_URIS = {
   PRESENTATIONS: 'verto://presentations',
   TEMPLATES: 'verto://templates',
   THEMES: 'verto://themes',
+  GENERATION_PROGRESS: 'verto://generation/{runId}/progress',
 } as const;
 
 // ─── Error Codes ───────────────────────────────────────────────

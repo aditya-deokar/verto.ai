@@ -80,7 +80,7 @@ graph TD
     subgraph P0["Priority 0 — Implement First"]
         UnitAgents[Unit: Agent Functions]
         UnitValidators[Unit: Zod Validators]
-        UnitStore[Unit: useSlideStore]
+        UnitStore[Unit: [src/store/useSlideStore.tsx](../src/store/useSlideStore.tsx)]
     end
     
     subgraph P1["Priority 1 — High Value"]

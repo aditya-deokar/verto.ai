@@ -35,9 +35,9 @@ The **Templates** feature introduces a curated library of pre-designed, fully-st
 
 | Concept | What it is | Where it lives |
 |---------|-----------|----------------|
-| **Layout** | A single-slide structural skeleton (e.g., "Two Columns", "Bento Grid") | `src/agentic-workflow-v2/lib/layoutTemplates.ts` |
-| **Theme** | A color/font/style configuration applied globally | `src/lib/constants.ts` (themes array) |
-| **Template** *(new)* | A complete multi-slide presentation blueprint with layouts + content + theme bound together | `src/lib/templates/` + Database |
+| **Layout** | A single-slide structural skeleton (e.g., "Two Columns", "Bento Grid") | [src/agentic-workflow-v2/lib/layoutTemplates.ts](../src/agentic-workflow-v2/lib/layoutTemplates.ts) |
+| **Theme** | A color/font/style configuration applied globally | [src/lib/constants.ts](../src/lib/constants.ts) (themes array) |
+| **Template** *(new)* | A complete multi-slide presentation blueprint with layouts + content + theme bound together | [src/lib/templates/](../src/lib/templates/) + Database |
 
 ---
 
@@ -482,7 +482,7 @@ Below the main preview, show a horizontal scrollable strip of all slide thumbnai
 
 ## 9. API & Server Actions
 
-### 9.1 New Server Actions (`src/actions/templates.ts`)
+### 9.1 New Server Actions ([src/actions/templates.ts](../src/actions/templates.ts))
 
 ```typescript
 // ─── Read Operations ───
@@ -797,7 +797,7 @@ A typical 12-slide template JSON is ~15-25KB. Mitigation:
 
 Initial seed templates (30+) should be:
 1. Defined as JSON files in `src/lib/templates/seed-templates/`
-2. Loaded into the database via a **seed script** (`prisma/seed.ts`)
+2. Loaded into the database via a **seed script** ([prisma/seed-agentic-ai.ts](../prisma/seed-agentic-ai.ts))
 3. Not shipped to the client bundle (database-only after seeding)
 
 ---
@@ -917,7 +917,7 @@ Initial seed templates (30+) should be:
 ---
 
 *Related docs:*
-- [01-architecture-overview.md](file:///c:/Users/adity/Documents/PPT%20Gen/pptmaker/docs/01-architecture-overview.md) — system context
-- [03-agentic-workflow.md](file:///c:/Users/adity/Documents/PPT%20Gen/pptmaker/docs/03-agentic-workflow.md) — AI pipeline details
-- [04-data-model.md](file:///c:/Users/adity/Documents/PPT%20Gen/pptmaker/docs/04-data-model.md) — existing database schema
-- [06-frontend-architecture.md](file:///c:/Users/adity/Documents/PPT%20Gen/pptmaker/docs/06-frontend-architecture.md) — UI component patterns
+- [01-architecture-overview.md](01-architecture-overview.md) — system context
+- [03-agentic-workflow.md](03-agentic-workflow.md) — AI pipeline details
+- [04-data-model.md](04-data-model.md) — existing database schema
+- [06-frontend-architecture.md](06-frontend-architecture.md) — UI component patterns

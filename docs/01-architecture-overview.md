@@ -131,7 +131,7 @@ graph TB
 
 ## Core Subsystems
 
-### 1. AI Generation Engine (`src/agentic-workflow-v2/`)
+### 1. AI Generation Engine ([src/agentic-workflow-v2/](../src/agentic-workflow-v2/))
 
 The heart of Verto AI. A **LangGraph state machine** that orchestrates 8 specialized agents to transform a topic into a complete slide deck.
 
@@ -144,7 +144,7 @@ The heart of Verto AI. A **LangGraph state machine** that orchestrates 8 special
 
 → **Deep dive**: [03-agentic-workflow.md](03-agentic-workflow.md)
 
-### 2. Slide Editor (`src/app/(protected)/presentation/`)
+### 2. Slide Editor ([src/app/(protected)/presentation/](../src/app/(protected)/presentation/))
 
 A visual editor built on a **recursive component tree**. Slides are stored as nested `ContentItem` JSON, rendered by `MasterRecursiveComponent`, and managed by a Zustand store with undo/redo.
 
@@ -152,9 +152,9 @@ A visual editor built on a **recursive component tree**. Slides are stored as ne
 - `[presentationId]/page.tsx` — Editor page
 - `_components/editor/MasterRecursiveComponent.tsx` — Recursive renderer
 - `_components/editor/Editor.tsx` — Editor layout
-- `src/store/useSlideStore.tsx` — Slide state with undo/redo
+- [src/store/useSlideStore.tsx](../src/store/useSlideStore.tsx) — Slide state with undo/redo
 
-### 3. Server Actions (`src/actions/`)
+### 3. Server Actions ([src/actions/](../src/actions/))
 
 All backend operations are implemented as Next.js **Server Actions** — no traditional REST endpoints. Every action authenticates the user via Clerk and enforces project ownership.
 
@@ -166,7 +166,7 @@ All backend operations are implemented as Next.js **Server Actions** — no trad
 
 → **Deep dive**: [05-api-reference.md](05-api-reference.md)
 
-### 4. Mobile Design System (`src/mobile-design/`)
+### 4. Mobile Design System ([src/mobile-design/](../src/mobile-design/))
 
 A separate subsystem for generating mobile UI screens using AI. Unlike presentations, this uses **Inngest background functions** for generation because it produces raw HTML frames.
 
@@ -174,7 +174,7 @@ A separate subsystem for generating mobile UI screens using AI. Unlike presentat
 - `inngest/functions/generateScreens.ts` — Screen generation function
 - `inngest/functions/regenerateFrame.ts` — Individual frame regeneration
 
-### 5. Payment & Subscription (`src/actions/subscription.ts`, `payment.ts`)
+### 5. Payment & Subscription ([src/actions/subscription.ts](../src/actions/subscription.ts), [payment.ts](../src/actions/payment.ts))
 
 Lemon Squeezy integration for subscription billing. The flow is:
 1. User initiates checkout via `buySubscription()` → redirects to Lemon Squeezy

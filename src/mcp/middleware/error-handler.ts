@@ -10,13 +10,16 @@ import { Errors } from '../tools/_shared/errors';
 import { logAuditEntry, createTimer, createTraceId } from './audit-logger';
 import type { AuthContext } from '../auth/types';
 import type { TransportType } from '../auth/middleware';
+import type { McpRequestContext } from './request-context';
+import { acquireRateLimit } from './rate-limiter';
 
 /**
  * Tool handler function signature.
  */
 export type ToolHandler<TArgs = Record<string, unknown>> = (
   args: TArgs,
-  auth: AuthContext
+  auth: AuthContext,
+  context?: McpRequestContext
 ) => Promise<McpToolResponse>;
 
 /**
@@ -28,24 +31,64 @@ export type ToolHandler<TArgs = Record<string, unknown>> = (
 export function withErrorBoundary<TArgs = Record<string, unknown>>(
   toolName: string,
   handler: ToolHandler<TArgs>,
-  transport: TransportType
+  transport: TransportType,
+  requestContext?: McpRequestContext
 ): (args: TArgs, auth: AuthContext) => Promise<McpToolResponse> {
   return async (args: TArgs, auth: AuthContext): Promise<McpToolResponse> => {
     const timer = createTimer();
     const traceId = createTraceId();
+    const executionContext: McpRequestContext = {
+      transport,
+      ...requestContext,
+      traceId,
+    };
+    const rateLimit = acquireRateLimit(auth);
+
+    if (!rateLimit.ok) {
+      const result = Errors.rateLimited(rateLimit.retryAfterSeconds ?? 1);
+
+      logAuditEntry(
+        {
+          timestamp: new Date().toISOString(),
+          trace_id: traceId,
+          user_id: auth.userId,
+          tool_name: toolName,
+          tool_input: args,
+          status: 'error',
+          latency_ms: timer(),
+          transport,
+          client_info: executionContext.clientInfo,
+          session_id: executionContext.sessionId,
+          request_id: executionContext.requestId,
+          request_size_bytes: executionContext.requestSizeBytes,
+          error_code: 'RATE_LIMITED',
+        },
+        result
+      );
+
+      return result;
+    }
 
     try {
-      const result = await handler(args, auth);
+      const result = await handler(args, auth, executionContext);
 
-      logAuditEntry({
-        timestamp: new Date().toISOString(),
-        trace_id: traceId,
-        user_id: auth.userId,
-        tool_name: toolName,
-        status: result.isError ? 'error' : 'success',
-        latency_ms: timer(),
-        transport,
-      });
+      logAuditEntry(
+        {
+          timestamp: new Date().toISOString(),
+          trace_id: traceId,
+          user_id: auth.userId,
+          tool_name: toolName,
+          tool_input: args,
+          status: result.isError ? 'error' : 'success',
+          latency_ms: timer(),
+          transport,
+          client_info: executionContext.clientInfo,
+          session_id: executionContext.sessionId,
+          request_id: executionContext.requestId,
+          request_size_bytes: executionContext.requestSizeBytes,
+        },
+        result
+      );
 
       return result;
     } catch (error) {
@@ -53,18 +96,30 @@ export function withErrorBoundary<TArgs = Record<string, unknown>>(
 
       console.error(`[MCP] Unhandled error in ${toolName}:`, error);
 
-      logAuditEntry({
-        timestamp: new Date().toISOString(),
-        trace_id: traceId,
-        user_id: auth.userId,
-        tool_name: toolName,
-        status: 'error',
-        latency_ms: latencyMs,
-        transport,
-        error_code: 'INTERNAL_ERROR',
-      });
+      const result = Errors.internal();
 
-      return Errors.internal();
+      logAuditEntry(
+        {
+          timestamp: new Date().toISOString(),
+          trace_id: traceId,
+          user_id: auth.userId,
+          tool_name: toolName,
+          tool_input: args,
+          status: 'error',
+          latency_ms: latencyMs,
+          transport,
+          client_info: executionContext.clientInfo,
+          session_id: executionContext.sessionId,
+          request_id: executionContext.requestId,
+          request_size_bytes: executionContext.requestSizeBytes,
+          error_code: 'INTERNAL_ERROR',
+        },
+        result
+      );
+
+      return result;
+    } finally {
+      rateLimit.release?.();
     }
   };
 }

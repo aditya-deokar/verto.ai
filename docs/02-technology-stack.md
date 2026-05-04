@@ -111,15 +111,15 @@ Primary relational datastore. Chosen for strong JSON support (slide data stored 
 
 | Setting | Value |
 |---------|-------|
-| Schema file | `prisma/schema.prisma` |
-| Client output | `src/generated/prisma` |
+| Schema file | [prisma/schema.prisma](../prisma/schema.prisma) |
+| Client output | [src/generated/prisma](../src/generated/prisma) |
 | Provider | PostgreSQL |
-| Migrations | `prisma/migrations/` |
+| Migrations | [prisma/migrations/](../prisma/migrations/) |
 
 **Key patterns**:
-- Generated client is output to `src/generated/prisma` (non-default location)
+- Generated client is output to [src/generated/prisma](../src/generated/prisma) (non-default location)
 - `predev` script auto-generates client before dev server starts
-- All queries go through the singleton Prisma instance (`src/lib/prisma.ts`)
+- All queries go through the singleton Prisma instance ([src/lib/prisma.ts](../src/lib/prisma.ts))
 
 **Models**: User, Project, MobileProject, MobileFrame, PresentationGenerationRun, Subscription
 
@@ -133,8 +133,8 @@ Primary relational datastore. Chosen for strong JSON support (slide data stored 
 
 | Feature | Implementation |
 |---------|---------------|
-| Route protection | `clerkMiddleware()` in `src/middleware.ts` |
-| User identity | `currentUser()` / `auth()` in server actions |
+| Route protection | `clerkMiddleware()` in [src/middleware.ts](../src/middleware.ts) |
+| User identity | `auth()` in server actions |
 | Theme | Dark base theme (`@clerk/themes`) |
 | User sync | Auto-creates DB User on first auth (`onAuthenticateUser`) |
 
@@ -177,10 +177,10 @@ Client-side state management with **6 stores**:
 
 | Feature | Implementation |
 |---------|---------------|
-| Client | `src/mobile-design/inngest/client.ts` |
-| Functions | `src/mobile-design/inngest/functions/` |
+| Client | [src/mobile-design/inngest/client.ts](../src/mobile-design/inngest/client.ts) |
+| Functions | [src/mobile-design/inngest/functions/](../src/mobile-design/inngest/functions/) |
 | Dev server | `inngest-cli dev -u http://127.0.0.1:3000/api/mobile-design/inngest` |
-| API route | `src/app/api/mobile-design/inngest/route.ts` |
+| API route | [src/app/api/mobile-design/inngest/route.ts](../src/app/api/mobile-design/inngest/route.ts) |
 
 **Functions**:
 1. **`generateScreens`** — Generates multiple mobile UI screens for a project
@@ -202,10 +202,10 @@ Merchant-of-Record (MoR) service handling all payment processing, tax collection
 
 | Component | Implementation |
 |-----------|---------------|
-| API client | `src/lib/axios.ts` — Axios instance for LS API |
+| API client | [src/lib/axios.ts](../src/lib/axios.ts) — Axios instance for LS API |
 | Checkout | `actions/payment.ts` → `buySubscription()` |
 | Subscription CRUD | `actions/subscription.ts` |
-| Webhook handler | `src/app/api/webhook/lemon-squeezy/` |
+| Webhook handler | [src/app/api/webhook/lemon-squeezy/](../src/app/api/webhook/lemon-squeezy/) |
 | DB model | `Subscription` table |
 
 **Why Lemon Squeezy over Stripe**: Acts as Merchant of Record — handles VAT, sales tax, and compliance globally. Simpler integration for indie/small-team SaaS. No need to manage tax collection infrastructure.
