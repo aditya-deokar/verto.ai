@@ -44,9 +44,8 @@ const AnalysisSchema = z.object({
 });
 
 export const generateScreens = inngest.createFunction(
-  { id: "generate-ui-screens" },
-  { event: "ui/generate.screens" },
-  async ({ event, step, publish }) => {
+  { id: "generate-ui-screens", triggers: [{ event: "ui/generate.screens" }] },
+  async ({ event, step, publish }: any) => {
     const {
       userId,
       projectId,
@@ -111,7 +110,7 @@ export const generateScreens = inngest.createFunction(
         `.trim();
 
       const { object } = await generateObject({
-        model: google("gemini-2.5-flash"),
+        model: google("gemini-1.5-flash"),
         schema: AnalysisSchema,
         system: ANALYSIS_PROMPT,
         prompt: analysisPrompt,
@@ -169,7 +168,7 @@ export const generateScreens = inngest.createFunction(
 
       await step.run(`generated-screen-${i}`, async () => {
         const result = await generateText({
-          model: google("gemini-2.5-flash"),
+          model: google("gemini-1.5-flash"),
           system: GENERATION_SYSTEM_PROMPT,
           tools: {
             searchUnsplash: unsplashTool,

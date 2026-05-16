@@ -7,9 +7,8 @@ import { unsplashTool } from "../tool";
 import { google } from "@/mobile-design/lib/google";
 
 export const regenerateFrame = inngest.createFunction(
-  { id: "regenerate-frame" },
-  { event: "ui/regenerate.frame" },
-  async ({ event, step, publish }) => {
+  { id: "regenerate-frame", triggers: [{ event: "ui/regenerate.frame" }] },
+  async ({ event, step, publish }: any) => {
     const {
       userId,
       projectId,
@@ -44,7 +43,7 @@ export const regenerateFrame = inngest.createFunction(
       `;
 
       const aiResult = await generateText({
-        model: google("gemini-2.5-flash"),
+        model: google("gemini-1.5-flash"),
         system: GENERATION_SYSTEM_PROMPT,
         tools: {
           searchUnsplash: unsplashTool,
