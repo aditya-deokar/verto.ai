@@ -140,10 +140,10 @@ export type ProjectData = DetailedProject;
 export type FooterCtaData = FooterCta;
 export type FooterData = Footer;
 
-const docsBaseUrl = "https://github.com/aditya-deokar/pptmaker/blob/master/docs";
+const docsBaseUrl = "https://github.com/aditya-deokar/verto-ai/blob/master/docs";
 
-export const pptmakerDetailedProjectData: DetailedProject = {
-  name: "Verto AI (PPT Maker)",
+export const vertoAiDetailedProjectData: DetailedProject = {
+  name: "Verto AI",
   tagline: "Layout-first, multi-agent presentation generation with production-grade full-stack architecture",
   year: "2026",
   role: "Founder Engineer / Full-Stack + AI Systems",
@@ -393,11 +393,11 @@ export const pptmakerDetailedProjectData: DetailedProject = {
     },
     primaryButton: {
       text: "Read Full Documentation",
-      url: "https://github.com/aditya-deokar/pptmaker/tree/master/docs",
+      url: "https://github.com/aditya-deokar/verto-ai/tree/master/docs",
     },
     secondaryButton: {
       text: "View Source Repository",
-      url: "https://github.com/aditya-deokar/pptmaker",
+      url: "https://github.com/aditya-deokar/verto-ai",
     },
     contactInfo: [
       {
@@ -432,15 +432,15 @@ export const pptmakerDetailedProjectData: DetailedProject = {
     social: [
       {
         name: "GitHub",
-        url: "https://github.com/aditya-deokar/pptmaker",
+        url: "https://github.com/aditya-deokar/verto-ai",
       },
       {
         name: "Documentation",
-        url: "https://github.com/aditya-deokar/pptmaker/tree/master/docs",
+        url: "https://github.com/aditya-deokar/verto-ai/tree/master/docs",
       },
     ],
     quickLinks: ["Overview", "Architecture", "Features", "Process", "Outcomes", "Docs"],
-    projects: ["Verto AI (PPT Maker)", "Agentic Workflow V2", "Mobile Design Generator"],
+    projects: ["Verto AI", "Agentic Workflow V2", "Mobile Design Generator"],
     resources: [
       `${docsBaseUrl}/01-architecture-overview.md`,
       `${docsBaseUrl}/02-technology-stack.md`,
@@ -457,4 +457,4 @@ export const pptmakerDetailedProjectData: DetailedProject = {
   },
 };
 
-export default pptmakerDetailedProjectData;
+export default vertoAiDetailedProjectData;

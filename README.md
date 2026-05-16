@@ -95,7 +95,7 @@ graph TB
 
 ```bash
 # 1. Clone the repository
-git clone <repo-url> && cd pptmaker
+git clone <repo-url> && cd verto-ai
 
 # 2. Install dependencies
 bun install
@@ -120,7 +120,7 @@ bun run inngest:dev
 ## Project Structure
 
 ```
-pptmaker/
+verto-ai/
 ├── prisma/
 │   └── schema.prisma              # Database schema (6 models)
 ├── src/

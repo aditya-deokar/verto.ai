@@ -80,7 +80,7 @@ Verto AI supports two MCP transports:
     "verto-ai": {
       "command": "npx",
       "args": ["tsx", "src/mcp/transport/stdio.ts"],
-      "cwd": "C:/Users/adity/Documents/PPT Gen/pptmaker",
+      "cwd": "C:/Users/adity/Documents/PPT Gen/verto-ai",
       "env": {
         "VERTO_API_KEY": "verto_your_api_key_here"
       }
@@ -102,7 +102,7 @@ Add to your Claude Desktop config file:
     "verto-ai": {
       "command": "npx",
       "args": ["tsx", "src/mcp/transport/stdio.ts"],
-      "cwd": "C:/Users/adity/Documents/PPT Gen/pptmaker",
+      "cwd": "C:/Users/adity/Documents/PPT Gen/verto-ai",
       "env": {
         "VERTO_API_KEY": "verto_your_api_key_here"
       }
@@ -119,7 +119,7 @@ Add to your Claude Desktop config file:
     "verto-ai": {
       "command": "npx",
       "args": ["tsx", "src/mcp/transport/stdio.ts"],
-      "cwd": "C:/Users/adity/Documents/PPT Gen/pptmaker",
+      "cwd": "C:/Users/adity/Documents/PPT Gen/verto-ai",
       "env": {
         "VERTO_API_KEY": "verto_your_api_key_here"
       }
@@ -136,7 +136,7 @@ Add to your Claude Desktop config file:
     "verto-ai": {
       "command": "npx",
       "args": ["tsx", "src/mcp/transport/stdio.ts"],
-      "cwd": "C:/Users/adity/Documents/PPT Gen/pptmaker",
+      "cwd": "C:/Users/adity/Documents/PPT Gen/verto-ai",
       "env": {
         "VERTO_API_KEY": "verto_your_api_key_here"
       }
@@ -458,7 +458,7 @@ bun run mcp:inspect
     //     "tsx",
     //     "src/mcp/transport/stdio.ts"
     //   ],
-    //   "cwd": "C:/Users/adity/Documents/PPT Gen/pptmaker",
+    //   "cwd": "C:/Users/adity/Documents/PPT Gen/verto-ai",
     //   "env": {
     //     "VERTO_API_KEY": "vk_live_01f252f55a17f24e9a384099ac411ea7de16792b"
     //   },
