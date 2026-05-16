@@ -3,6 +3,6 @@ import { realtimeMiddleware } from "@inngest/realtime/middleware";
 
 // Create Inngest client for mobile design
 export const inngest = new Inngest({
-    id: "pptmaker-mobile-design",
+    id: "verto-ai-mobile-design",
     middleware: [realtimeMiddleware()],
 });

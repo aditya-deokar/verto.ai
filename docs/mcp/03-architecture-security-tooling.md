@@ -200,7 +200,7 @@ bun run mcp:inspect
     "verto-ai": {
       "command": "npx",
       "args": ["tsx", "src/mcp/transport/stdio.ts"],
-      "cwd": "/path/to/pptmaker",
+      "cwd": "/path/to/verto-ai",
       "env": { "VERTO_API_KEY": "vk_dev_..." }
     }
   }
@@ -446,7 +446,7 @@ Cons:
 When the MCP server needs independent scaling:
 
 ```
-pptmaker/
+verto-ai/
 ├── apps/
 │   ├── web/          # Next.js frontend + API
 │   └── mcp-server/   # Standalone MCP server (npm package)

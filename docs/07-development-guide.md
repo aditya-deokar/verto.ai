@@ -46,7 +46,7 @@
 
 ```bash
 git clone <repo-url>
-cd pptmaker
+cd verto-ai
 bun install
 ```
 
@@ -61,7 +61,7 @@ Edit `.env` with your values (see [Environment Variables Reference](#environment
 **Minimum viable `.env`** (for basic development):
 ```env
 # Database
-DATABASE_URL="postgresql://user:password@localhost:5432/pptmaker"
+DATABASE_URL="postgresql://user:password@localhost:5432/verto-ai"
 
 # Clerk Auth (from clerk.com dashboard)
 NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY="pk_test_..."
@@ -438,7 +438,7 @@ import { Project } from '@/generated/prisma';
 
 | Variable | Description | Example |
 |----------|-------------|---------|
-| `DATABASE_URL` | PostgreSQL connection string | `postgresql://user:pass@localhost:5432/pptmaker` |
+| `DATABASE_URL` | PostgreSQL connection string | `postgresql://user:pass@localhost:5432/verto-ai` |
 | `NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY` | Clerk public key | `pk_test_...` |
 | `CLERK_SECRET_KEY` | Clerk secret key | `sk_test_...` |
 | `NEXT_PUBLIC_CLERK_SIGN_IN_URL` | Sign-in route | `/sign-in` |

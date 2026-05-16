@@ -28,7 +28,7 @@
 
 ```bash
 # Clone and install
-git clone <repo-url> && cd pptmaker
+git clone <repo-url> && cd verto-ai
 bun install
 
 # Environment

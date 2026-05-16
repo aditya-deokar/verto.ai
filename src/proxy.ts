@@ -13,7 +13,7 @@ const isPublicRoute = createRouteMatcher([
   '/',
 ]);
 
-export default clerkMiddleware(async (auth, req) => {
+export const proxy = clerkMiddleware(async (auth, req) => {
   if (req.nextUrl.pathname.startsWith('/.well-known/oauth-protected-resource')) {
     const suffix = req.nextUrl.pathname.replace('/.well-known/oauth-protected-resource', '');
     const rewriteUrl = new URL(`/api/mcp/oauth-protected-resource${suffix}`, req.url);

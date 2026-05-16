@@ -33,7 +33,7 @@
 ## Documentation Architecture
 
 ```
-pptmaker/
+verto-ai/
 ├── README.md                          # Project README (root level, replaces current)
 ├── docs/
 │   ├── docs-plan.md                   # THIS FILE — the plan
