@@ -1,11 +1,10 @@
 // /agents/databaseAgent.ts
 
-import { PrismaClient } from "@prisma/client";
+import prisma from "@/lib/prisma";
 import { PresentationGraphState } from "../lib/state";
 import { currentUser } from '@clerk/nextjs/server';
 
-// Initialize a single Prisma client instance to be reused.
-const prisma = new PrismaClient();
+// Removed local PrismaClient initialization to use shared instance from @/lib/prisma.
 
 /**
  * Final Node: Saves the generated outlines and slides to the database.
