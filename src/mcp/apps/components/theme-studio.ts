@@ -25,6 +25,7 @@ import {
   renderDeepLinkMenu,
   setWidgetTheme,
 } from './shared/verto-skin';
+import { iconLabel, setControlLabel } from './shared/icons';
 
 const INITIAL_VISIBLE_THEMES = 24;
 
@@ -355,8 +356,8 @@ function ensureMarkup(): void {
       </section>
       <aside class="ts-confirm" id="confirm-strip" hidden aria-label="Apply theme confirmation">
         <span class="ts-confirm-text" id="confirm-text"></span>
-        <button class="ts-button primary" id="confirm-apply" type="button">Apply theme</button>
-        <button class="ts-button ghost" id="confirm-cancel" type="button">Cancel</button>
+        <button class="ts-button primary vt-has-icon" id="confirm-apply" type="button">${iconLabel('check', 'Apply theme')}</button>
+        <button class="ts-button ghost vt-has-icon" id="confirm-cancel" type="button">${iconLabel('x', 'Cancel')}</button>
       </aside>
       <section aria-label="Theme gallery">
         <div class="ts-grid" id="theme-grid"></div>
@@ -704,7 +705,7 @@ async function applySelectedTheme(): Promise<void> {
   const applyButton = byId('confirm-apply') as HTMLButtonElement;
   applyButton.classList.add('is-busy');
   applyButton.disabled = true;
-  applyButton.textContent = 'Applying…';
+  setControlLabel(applyButton, 'Applying…');
 
   try {
     const payload = await callMcpTool('presentation_update_theme', {
@@ -735,7 +736,7 @@ async function applySelectedTheme(): Promise<void> {
   } finally {
     applyButton.classList.remove('is-busy');
     applyButton.disabled = false;
-    applyButton.textContent = 'Apply theme';
+    setControlLabel(applyButton, 'Apply theme');
   }
 }
 

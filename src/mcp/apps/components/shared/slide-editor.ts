@@ -11,6 +11,8 @@
  * before→after diff strip and an Undo chip.
  */
 
+import { iconLabel } from './icons';
+
 export interface SlideEditPatch {
   slideId: string;
   slideTitle: string;
@@ -640,24 +642,24 @@ export function createSlideEditor(options: SlideEditorOptions): SlideEditorHandl
             <p class="vte-hint" id="vte-name"></p>
           </div>
           <div class="vte-nav">
-            <button class="vte-btn" id="vte-prev" type="button">‹ Previous</button>
-            <button class="vte-btn" id="vte-next" type="button">Next ›</button>
-            <button class="vte-btn danger" id="vte-close" type="button" aria-label="Close editor and discard changes">Close</button>
+            <button class="vte-btn vt-has-icon" id="vte-prev" type="button">${iconLabel('chevron-left', 'Previous')}</button>
+            <button class="vte-btn vt-has-icon" id="vte-next" type="button">${iconLabel('chevron-right', 'Next')}</button>
+            <button class="vte-btn danger vt-has-icon" id="vte-close" type="button" aria-label="Close editor and discard changes">${iconLabel('x', 'Close')}</button>
           </div>
         </header>
         <section class="vte-diff" aria-label="Last saved changes" hidden>
           <p class="vte-diff-title" id="vte-diff-title"></p>
           <ul class="vte-diff-list" id="vte-diff-list"></ul>
           <div class="vte-diff-actions">
-            <button class="vte-btn" id="vte-undo" type="button">Undo changes</button>
+            <button class="vte-btn vt-has-icon" id="vte-undo" type="button">${iconLabel('rotate-ccw', 'Undo changes')}</button>
           </div>
         </section>
         <div class="vte-fields vt-slide-surface" id="vte-fields" aria-label="Slide text"></div>
         <footer class="vte-foot">
           <span class="vte-chip" id="vte-chip" hidden></span>
           <div class="vte-foot-actions">
-            <button class="vte-btn" id="vte-cancel" type="button">Cancel</button>
-            <button class="vte-btn primary" id="vte-save" type="button" disabled>Save changes</button>
+            <button class="vte-btn vt-has-icon" id="vte-cancel" type="button">${iconLabel('x', 'Cancel')}</button>
+            <button class="vte-btn primary vt-has-icon" id="vte-save" type="button" disabled>${iconLabel('check', 'Save changes')}</button>
           </div>
         </footer>
         <p class="vte-note" id="vte-note" aria-live="polite"></p>

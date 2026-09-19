@@ -1,5 +1,5 @@
-﻿/**
- * Verto Skin â€” shared design foundation for MCP Apps widgets (plan 10 Â§5).
+/**
+ * Verto Skin — shared design foundation for MCP Apps widgets (plan 10 §5).
  *
  * Layers:
  *  1. Design tokens mirroring the dashboard `globals.css` (brand gradient,
@@ -11,6 +11,8 @@
  *     before the Verto skin is applied and re-applied on context changes.
  *  4. Motion kit + focus rings, all gated by `prefers-reduced-motion`.
  *  5. Deep-link helpers (`openVertoLink`, overflow menu) for plan F9.
+ *  6. The shared inline-SVG icon set (`icons.ts`), folded in here so every
+ *     widget aligns and sizes its icons identically.
  *
  * This module must stay dependency-free of `runtime.ts` (runtime wires it in).
  */
@@ -21,6 +23,7 @@ import {
   applyHostFonts,
   getDocumentTheme,
 } from '@modelcontextprotocol/ext-apps';
+import { iconElement, iconStyles } from './icons';
 import { VERTO_THEMES, type VertoThemeData } from '../../generated/themes-data';
 import {
   ensureReadable,
@@ -60,7 +63,7 @@ export interface ResolvedVertoTheme {
 
 /**
  * Full widget stylesheet. Keeps every class from the former `baseStyles`
- * (.row/.bar/.fill/.slides/.slide/â€¦) so existing widgets keep working, while
+ * (.row/.bar/.fill/.slides/.slide/…) so existing widgets keep working, while
  * re-skinning them with Verto tokens.
  */
 export const vertoSkinStyles = `
@@ -83,7 +86,7 @@ export const vertoSkinStyles = `
     --vt-glass-border: rgba(255, 255, 255, 0.1);
     --vt-glass-blur: blur(12px);
 
-    /* Deck-theme layer â€” neutral defaults until setWidgetTheme() resolves */
+    /* Deck-theme layer — neutral defaults until setWidgetTheme() resolves */
     --vt-accent: var(--accent);
     --vt-fill: var(--vt-brand-gradient);
     --vt-accent-gradient: var(--vt-brand-gradient);
@@ -315,7 +318,7 @@ export const vertoSkinStyles = `
     color: var(--accent);
   }
 
-  /* Motion kit â€” every animation is gated below */
+  /* Motion kit — every animation is gated below */
   @keyframes vt-fade-slide-in {
     from { opacity: 0; transform: translateY(6px); }
     to { opacity: 1; transform: none; }
@@ -337,12 +340,12 @@ export const vertoSkinStyles = `
   }
 
   /* ---------------------------------------------------------------- */
-  /* Plan 10 F10 â€” host-adaptive layout.                               */
+  /* Plan 10 F10 — host-adaptive layout.                               */
   /* Root classes are driven from host context (attachHostAdaptation): */
   /*   .vt-mobile   platform === 'mobile'                              */
   /*   .vt-touch    deviceCapabilities.touch === true                  */
-  /*   .vt-narrow   viewport â‰¤560px (matchMedia watcher)               */
-  /*   .vt-pip      displayMode === 'pip' â†’ compact variant            */
+  /*   .vt-narrow   viewport ≤560px (matchMedia watcher)               */
+  /*   .vt-pip      displayMode === 'pip' → compact variant            */
   /*   .vt-fullscreen  displayMode === 'fullscreen'                    */
   /* Safe-area insets arrive as --vt-safe-* variables.                 */
   /* ---------------------------------------------------------------- */
@@ -354,7 +357,7 @@ export const vertoSkinStyles = `
       var(--vt-safe-left, 0px);
   }
 
-  /* Touch-first hosts get â‰¥44px hit targets on primary controls. */
+  /* Touch-first hosts get ≥44px hit targets on primary controls. */
   :is(.vt-mobile, .vt-touch, .vt-narrow) button {
     min-height: 44px;
   }
@@ -428,6 +431,7 @@ export const vertoSkinStyles = `
       transition: none !important;
     }
   }
+${iconStyles}
 `;
 
 const SHADOW_MAP: Record<string, string> = {
@@ -537,7 +541,7 @@ export function setWidgetTheme(themeName: string | null | undefined): ResolvedVe
 }
 
 /* ------------------------------------------------------------------ */
-/* Color helpers â€” moved to lib/slides/render-core/color.ts            */
+/* Color helpers — moved to lib/slides/render-core/color.ts            */
 /* ------------------------------------------------------------------ */
 
 /* ------------------------------------------------------------------ */
@@ -613,7 +617,7 @@ function applyHostContext(app: App): void {
     applyDocumentTheme(context.theme);
   } else {
     // Plan 10 F11: hosts that force a scheme without announcing it in the
-    // context still leave a document theme behind â€” adopt it so widgets
+    // context still leave a document theme behind — adopt it so widgets
     // never flash the wrong scheme before the Verto skin applies.
     try {
       const documentTheme = getDocumentTheme();
@@ -661,7 +665,7 @@ function applyHostContext(app: App): void {
 
 let narrowWatcherInstalled = false;
 
-/** Mirrors â‰¤560px viewports into a `.vt-narrow` class for basic-hosts that
+/** Mirrors ≤560px viewports into a `.vt-narrow` class for basic-hosts that
  * never report a mobile platform. */
 function installNarrowViewportWatcher(): void {
   if (narrowWatcherInstalled) return;
@@ -684,7 +688,7 @@ function installNarrowViewportWatcher(): void {
 
 /**
  * Whether the host advertised fullscreen display support. `null` when the
- * host did not advertise any modes (assume yes â€” the presenter falls back
+ * host did not advertise any modes (assume yes — the presenter falls back
  * to its inline stage regardless).
  */
 export function canPresentFullscreen(): boolean | null {
@@ -770,7 +774,7 @@ export function extractWidgetLinks(payload: Record<string, unknown>): WidgetLink
 
 /**
  * Renders an overflow menu ("Open in editor" / "Present" / "Share") using a
- * native `<details>` disclosure â€” keyboard accessible without extra script.
+ * native `<details>` disclosure — keyboard accessible without extra script.
  * The container is left empty when no links are available.
  */
 export function renderDeepLinkMenu(
@@ -792,8 +796,8 @@ export function renderDeepLinkMenu(
   menu.className = 'vt-menu';
 
   const summary = document.createElement('summary');
-  summary.className = 'vt-menu-btn';
-  summary.textContent = 'â‹¯';
+  summary.className = 'vt-menu-btn vt-has-icon vt-icon-only';
+  summary.appendChild(iconElement('more-horizontal', '1.15em'));
   summary.setAttribute('aria-label', 'Open this presentation in Verto');
   menu.appendChild(summary);
 

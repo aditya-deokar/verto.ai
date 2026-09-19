@@ -1,4 +1,4 @@
-﻿/**
+/**
  * Generation Progress widget (plan 10 F7).
  *
  * Ambient live-generation experience bound to `presentation_generate` /
@@ -30,6 +30,12 @@ import {
   renderDeepLinkMenu,
   setWidgetTheme,
 } from './shared/verto-skin';
+import {
+  getControlLabel,
+  iconLabel,
+  setButtonIcon,
+  setControlLabel,
+} from './shared/icons';
 
 const POLL_BASE_MS = 3000;
 const POLL_MAX_MS = 8000;
@@ -580,8 +586,8 @@ function ensureMarkup(): void {
         </article>
         <aside class="action-panel" aria-label="Generation actions">
           <p class="action-title">Next action</p>
-          <a class="button primary" id="open-link">Open deck</a>
-          <button class="button" id="inspect-action" type="button">Check status</button>
+          <a class="button primary vt-has-icon" id="open-link">${iconLabel('external-link', 'Open deck')}</a>
+          <button class="button vt-has-icon" id="inspect-action" type="button">${iconLabel('refresh', 'Check status')}</button>
           <p class="action-note" id="action-note">Wait for Verto to finish the deck.</p>
         </aside>
       </section>
@@ -1037,7 +1043,7 @@ function configureActions(generation: GenerationViewModel): void {
   const note = byId('action-note');
 
   if (openLink instanceof HTMLAnchorElement) {
-    openLink.textContent = generation.isComplete ? 'Open deck' : 'Deck not ready';
+    setControlLabel(openLink, generation.isComplete ? 'Open deck' : 'Deck not ready');
 
     if (generation.isComplete && generation.presentationOpenUrl) {
       openLink.href = generation.presentationOpenUrl;
@@ -1057,16 +1063,16 @@ function configureActions(generation: GenerationViewModel): void {
     inspectButton.onclick = null;
 
     if (generation.isFailed) {
-      inspectButton.textContent = 'Ask ChatGPT to retry';
+      setButtonIcon(inspectButton, 'rotate-ccw', 'Ask ChatGPT to retry');
       inspectButton.onclick = () => askChatGptToRetry(generation, inspectButton, note);
     } else if (generation.isComplete && generation.presentationId) {
-      inspectButton.textContent = 'Inspect with ChatGPT';
+      setButtonIcon(inspectButton, 'eye', 'Inspect with ChatGPT');
       inspectButton.onclick = () => askChatGptToInspect(generation, inspectButton, note);
     } else if (generation.runId) {
-      inspectButton.textContent = 'Check status';
+      setButtonIcon(inspectButton, 'refresh', 'Check status');
       inspectButton.onclick = () => refreshGenerationStatus(generation, inspectButton, note);
     } else {
-      inspectButton.textContent = 'Check status';
+      setButtonIcon(inspectButton, 'refresh', 'Check status');
       inspectButton.disabled = true;
       inspectButton.setAttribute('aria-disabled', 'true');
     }
@@ -1136,11 +1142,11 @@ async function runButtonAction(
   busyLabel: string,
   action: () => Promise<void>
 ): Promise<void> {
-  const previousLabel = button.textContent || '';
+  const previousLabel = getControlLabel(button);
   button.disabled = true;
   button.classList.add('is-busy');
   button.setAttribute('aria-disabled', 'true');
-  button.textContent = busyLabel;
+  setControlLabel(button, busyLabel);
 
   try {
     await action();
@@ -1150,8 +1156,8 @@ async function runButtonAction(
     button.disabled = false;
     button.classList.remove('is-busy');
     button.setAttribute('aria-disabled', 'false');
-    if (button.textContent === busyLabel) {
-      button.textContent = previousLabel;
+    if (getControlLabel(button) === busyLabel) {
+      setControlLabel(button, previousLabel);
     }
   }
 }
@@ -1185,7 +1191,7 @@ function stageForProgress(progress: number): DisplayStage {
 }
 
 /* ------------------------------------------------------------------ */
-/* Timeline â€” real run steps first, cosmetic stages as fallback         */
+/* Timeline — real run steps first, cosmetic stages as fallback         */
 /* ------------------------------------------------------------------ */
 
 function normalizeStepStatus(value: string): StageState {

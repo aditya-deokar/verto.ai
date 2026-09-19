@@ -17,6 +17,12 @@ import {
   resolveThemeTokens,
   setWidgetTheme,
 } from './shared/verto-skin';
+import {
+  getControlLabel,
+  iconLabel,
+  setButtonIcon,
+  setControlLabel,
+} from './shared/icons';
 
 const listStyles = `
   .list-shell {
@@ -459,9 +465,9 @@ function ensureMarkup(): void {
         </article>
         <aside class="action-panel" aria-label="List actions">
           <p class="action-title">Next action</p>
-          <a class="button primary" id="open-latest-link">Open latest</a>
-          <button class="button" id="preview-latest-action" type="button">Preview latest</button>
-          <button class="button" id="refresh-list-action" type="button">Refresh list</button>
+          <a class="button primary vt-has-icon" id="open-latest-link">${iconLabel('external-link', 'Open latest')}</a>
+          <button class="button vt-has-icon" id="preview-latest-action" type="button">${iconLabel('eye', 'Preview latest')}</button>
+          <button class="button vt-has-icon" id="refresh-list-action" type="button">${iconLabel('refresh', 'Refresh list')}</button>
           <p class="action-note" id="action-note">Choose a presentation to preview or open in Verto.</p>
         </aside>
       </section>
@@ -622,39 +628,39 @@ function renderRows(list: PresentationListViewModel): void {
     if (presentation.isDeleted) {
       const recoverBtn = document.createElement('button');
       recoverBtn.className = 'row-action-btn';
-      recoverBtn.textContent = 'Recover';
+      setButtonIcon(recoverBtn, 'rotate-ccw', 'Recover');
       recoverBtn.onclick = () => performRowAction(presentation, 'recover', recoverBtn);
       actions.appendChild(recoverBtn);
 
       const deleteBtn = document.createElement('button');
       deleteBtn.className = 'row-action-btn danger';
-      deleteBtn.textContent = 'Delete forever';
+      setButtonIcon(deleteBtn, 'trash', 'Delete forever');
       deleteBtn.onclick = () => performRowAction(presentation, 'delete-forever', deleteBtn);
       actions.appendChild(deleteBtn);
     } else {
       const previewBtn = document.createElement('button');
       previewBtn.className = 'row-action-btn';
-      previewBtn.textContent = 'Preview';
+      setButtonIcon(previewBtn, 'eye', 'Preview');
       previewBtn.onclick = () => askChatGptToPreview(presentation, previewBtn, byId('action-note'));
       actions.appendChild(previewBtn);
 
       if (presentation.isPublished) {
         const unpubBtn = document.createElement('button');
         unpubBtn.className = 'row-action-btn';
-        unpubBtn.textContent = 'Unpublish';
+        setButtonIcon(unpubBtn, 'eye', 'Unpublish');
         unpubBtn.onclick = () => performRowAction(presentation, 'unpublish', unpubBtn);
         actions.appendChild(unpubBtn);
       } else {
         const pubBtn = document.createElement('button');
         pubBtn.className = 'row-action-btn';
-        pubBtn.textContent = 'Publish';
+        setButtonIcon(pubBtn, 'share', 'Publish');
         pubBtn.onclick = () => performRowAction(presentation, 'publish', pubBtn);
         actions.appendChild(pubBtn);
       }
 
       const delBtn = document.createElement('button');
       delBtn.className = 'row-action-btn danger';
-      delBtn.textContent = 'Delete';
+      setButtonIcon(delBtn, 'trash', 'Delete');
       delBtn.onclick = () => performRowAction(presentation, 'delete', delBtn);
       actions.appendChild(delBtn);
     }
@@ -673,7 +679,7 @@ function configureActions(list: PresentationListViewModel): void {
   const note = byId('action-note');
 
   if (openLink instanceof HTMLAnchorElement) {
-    openLink.textContent = 'Open latest';
+    setControlLabel(openLink, 'Open latest');
     if (latest?.openUrl) {
       openLink.href = latest.openUrl;
       openLink.target = '_blank';
@@ -742,11 +748,11 @@ async function runButtonAction(
   busyLabel: string,
   action: () => Promise<void>
 ): Promise<void> {
-  const previousLabel = button.textContent || '';
+  const previousLabel = getControlLabel(button);
   button.disabled = true;
   button.classList.add('is-busy');
   button.setAttribute('aria-disabled', 'true');
-  button.textContent = busyLabel;
+  setControlLabel(button, busyLabel);
 
   try {
     await action();
@@ -756,8 +762,8 @@ async function runButtonAction(
     button.disabled = false;
     button.classList.remove('is-busy');
     button.setAttribute('aria-disabled', 'false');
-    if (button.textContent === busyLabel) {
-      button.textContent = previousLabel;
+    if (getControlLabel(button) === busyLabel) {
+      setControlLabel(button, previousLabel);
     }
   }
 }
@@ -767,9 +773,9 @@ async function performRowAction(
   action: 'publish' | 'unpublish' | 'delete' | 'recover' | 'delete-forever',
   button: HTMLButtonElement
 ): Promise<void> {
-  const originalText = button.textContent;
+  const originalText = getControlLabel(button);
   button.disabled = true;
-  button.textContent = '...';
+  setControlLabel(button, '...');
   
   let toolName = '';
   if (action === 'publish') toolName = 'presentation_publish';
@@ -789,7 +795,7 @@ async function performRowAction(
     renderListPayload(payload);
   } catch (error) {
     button.disabled = false;
-    button.textContent = originalText || '';
+    setControlLabel(button, originalText);
     const msg = error && typeof error === 'object' && 'message' in error ? String((error as any).message) : 'Action failed';
     alert(msg);
   }

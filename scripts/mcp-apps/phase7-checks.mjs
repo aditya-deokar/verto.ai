@@ -523,7 +523,7 @@ check(
 );
 check(
   'deck preview exposes Edit this slide with unsaved-chips guardrails (F6)',
-  deckWidgetSource.includes('>Edit this slide<') &&
+  deckWidgetSource.includes("'Edit this slide'") &&
     deckWidgetSource.includes('hasUnsavedEdits') &&
     slideEditorSource.includes('unsaved') &&
     slideEditorSource.includes('requestClose')
@@ -531,7 +531,7 @@ check(
 check(
   'slide edits confirm with a diff strip, undo chip, and model context push (F6/F8)',
   slideEditorSource.includes(`Updated \${patches.length} text `) &&
-    slideEditorSource.includes('>Undo changes<') &&
+    slideEditorSource.includes("'Undo changes'") &&
     deckWidgetSource.includes("event: 'slides_edited'") &&
     deckWidgetSource.includes('pushModelContext')
 );
