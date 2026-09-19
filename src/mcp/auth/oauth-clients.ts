@@ -2,7 +2,15 @@ import { randomBytes } from 'node:crypto';
 import prisma from '@/lib/prisma';
 
 const CLIENT_ID_PREFIX = 'vc_';
-const CLIENT_METADATA_TIMEOUT_MS = 3000;
+/**
+ * Budget for fetching a Client ID Metadata Document.
+ *
+ * This runs inside an interactive /oauth/authorize request, so it stays
+ * bounded, but 3s was too tight: the first request from a cold container pays
+ * DNS plus a TLS handshake before the response starts, and a timeout here is
+ * indistinguishable to the user from an unknown client.
+ */
+const CLIENT_METADATA_TIMEOUT_MS = 8000;
 
 interface StaticOAuthClient {
   client_id: string;
@@ -49,6 +57,34 @@ function isAllowedRedirectUri(value: string): boolean {
   } catch {
     return false;
   }
+}
+
+/**
+ * Whether a client can make an unauthenticated token request.
+ *
+ * Verto's token endpoint authenticates nobody: it is a public-client
+ * authorization server that proves possession with PKCE S256 instead, and its
+ * metadata says so (`token_endpoint_auth_methods_supported: ['none']`).
+ *
+ * `token_endpoint_auth_method` is the client's *preferred* method, not the
+ * only one it can use. The ChatGPT connector declares `private_key_jwt` there
+ * while listing `["none", "private_key_jwt"]` in
+ * `token_endpoint_auth_methods_supported`, so reading only the preference
+ * rejects a client that supports exactly what this server implements. What
+ * matters is the intersection, and `none` has to be in it.
+ */
+export function supportsUnauthenticatedTokenRequest(
+  metadata: Record<string, unknown>
+): boolean {
+  const preferred = metadata.token_endpoint_auth_method;
+
+  if (typeof preferred !== 'string' || preferred === 'none') {
+    return true;
+  }
+
+  return parseStringArray(
+    metadata.token_endpoint_auth_methods_supported
+  ).includes('none');
 }
 
 function isClientMetadataDocumentUrl(clientId: string): boolean {
@@ -146,23 +182,29 @@ async function fetchClientMetadata(clientId: string): Promise<OAuthClientInfo | 
     });
 
     if (!response.ok) {
+      console.warn('[OAuth] Client metadata fetch returned a non-2xx status', {
+        clientId,
+        status: String(response.status),
+      });
       return null;
     }
 
     const metadata = await response.json() as Record<string, unknown>;
     const metadataClientId = metadata.client_id;
     const redirectUris = parseStringArray(metadata.redirect_uris);
-    const tokenEndpointAuthMethod = metadata.token_endpoint_auth_method;
 
     if (
       typeof metadataClientId !== 'string'
       || metadataClientId !== clientId
       || redirectUris.length === 0
-      || (
-        typeof tokenEndpointAuthMethod === 'string'
-        && tokenEndpointAuthMethod !== 'none'
-      )
+      || !supportsUnauthenticatedTokenRequest(metadata)
     ) {
+      console.warn('[OAuth] Client metadata document rejected', {
+        clientId,
+        clientIdMatches: String(metadataClientId === clientId),
+        redirectUriCount: String(redirectUris.length),
+        supportsNoneAuth: String(supportsUnauthenticatedTokenRequest(metadata)),
+      });
       return null;
     }
 
@@ -172,7 +214,12 @@ async function fetchClientMetadata(clientId: string): Promise<OAuthClientInfo | 
         typeof metadata.client_name === 'string' ? metadata.client_name : null,
       redirectUris: redirectUris.filter(isAllowedRedirectUri),
     };
-  } catch {
+  } catch (error) {
+    console.warn('[OAuth] Client metadata fetch failed', {
+      clientId,
+      ...getErrorSummary(error),
+      timeoutMs: String(CLIENT_METADATA_TIMEOUT_MS),
+    });
     return null;
   } finally {
     clearTimeout(timeout);
