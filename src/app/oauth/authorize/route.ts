@@ -175,8 +175,14 @@ function handleAuthorizeException(
 }
 
 function redirectToSignIn(request: Request): Response {
+  const returnTo = new URL(request.url);
+  // `_rsc` is Next's own router-navigation marker. Echoing it into
+  // `redirect_url` sends the user back to a URL the OAuth client never asked
+  // for, and it survives every later hop through sign-in.
+  returnTo.searchParams.delete('_rsc');
+
   const signInUrl = new URL('/sign-in', request.url);
-  signInUrl.searchParams.set('redirect_url', request.url);
+  signInUrl.searchParams.set('redirect_url', returnTo.toString());
   return Response.redirect(signInUrl);
 }
 
@@ -406,6 +412,11 @@ export async function GET(request: Request): Promise<Response> {
 
     const user = await resolveCurrentOAuthUser();
     if (!user) {
+      // Nothing recorded this before, so a sign-in bounce and a server error
+      // looked identical from outside: both are a 302.
+      console.warn('[OAuth] Authorize has no app user; bouncing to sign-in', {
+        clientId: params.clientId ?? '(none)',
+      });
       return redirectToSignIn(request);
     }
 
@@ -444,6 +455,11 @@ export async function POST(request: Request): Promise<Response> {
 
     const user = await resolveCurrentOAuthUser();
     if (!user) {
+      // Nothing recorded this before, so a sign-in bounce and a server error
+      // looked identical from outside: both are a 302.
+      console.warn('[OAuth] Authorize has no app user; bouncing to sign-in', {
+        clientId: params.clientId ?? '(none)',
+      });
       return redirectToSignIn(request);
     }
 
