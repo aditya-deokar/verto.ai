@@ -4,8 +4,10 @@
 > Verified: focused typecheck (77 files), all 275 Phase 7 checks, runtime
 > smoke test over InMemoryTransport (12 tools / 4 UI resources / clean meta /
 > auth challenge intact), Phase 9H visual QA (10/10 states).
-> Only remaining item: the **manual** basic-host live smoke test
-> (commands in Phase 4 below and `07-testing-plan.md §13`).
+> The basic-host smoke test is no longer manual: `npm run mcp:smoke` drives
+> the widgets against a real `AppBridge` host in Puppeteer and asserts the
+> tool calls each button makes. A live pass against the ext-apps reference
+> host and against ChatGPT/Claude is still worth doing before listing.
 >
 > **Implementation deviations from the original sketch:**
 > 1. `window.__VERTO_MCP_PAYLOAD__` kept as a documented standalone/QA hook —
@@ -217,7 +219,22 @@ Runtime checks:
       `registerAppTool` wrapper.
 - [x] Phase 9H visual QA (`npm run mcp:phase9h`) — all 10 widget states render
       from the SDK-bundled HTML in Puppeteer (layout/contrast/keyboard/reduced-motion).
-- [ ] basic-host smoke test — **manual, remaining** (reference host from ext-apps repo):
+- [x] basic-host smoke test — **automated**: `npm run mcp:smoke`
+      (`scripts/mcp-apps/basic-host-smoke.mjs`). Runs each widget inside an
+      iframe driven by a real `AppBridge`: real `ui/*` handshake over
+      postMessage, real MCP client, stub server that records tool calls and
+      enforces the same app-visibility gate a host applies. 15 interactions
+      cover loading, `ontoolresult` rendering, in-widget tool calls,
+      destructive-action confirmation, pagination, error surfacing, and the
+      follow-up message path.
+
+      ```bash
+      npm run mcp:smoke            # headless
+      npm run mcp:smoke -- --headful   # watch it click
+      ```
+
+      Still worth doing live before listing, since no harness models a real
+      host's sandbox policy exactly:
 
       ```bash
       # terminal 1
@@ -226,12 +243,6 @@ Runtime checks:
       cd examples/basic-host && npm install
       SERVERS='["http://localhost:3000/mcp"]' npm run start
       ```
-
-      Then verify per widget:
-      1. App loads without console errors
-      2. `ontoolresult` fires and renders data (list / preview / progress / action result)
-      3. In-widget actions (`callMcpTool` → refresh/publish/status) work
-      4. Follow-up message path works where host supports it
 
       Also documented in `07-testing-plan.md §13`.
 

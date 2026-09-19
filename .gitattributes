@@ -1,0 +1,12 @@
+# scripts/mcp-apps/build-widgets.mjs --check byte-compares every generated
+# artifact against a freshly bundled one, and the bundler always emits LF.
+# With core.autocrlf=true a fresh Windows checkout rewrites these files to
+# CRLF, so `npm run mcp:phase7` fails before it has checked anything real.
+# Pin them to LF so the gate means the same thing on every machine.
+src/mcp/apps/generated/** text eol=lf
+
+# The widget sources carry literal glyphs (arrows, ellipses) that ship into
+# the bundle. Keep them UTF-8 and diffable as text; scripts/mcp-apps/
+# check-encoding.mjs fails the build if one is ever saved as cp1252.
+src/mcp/apps/components/** text eol=lf
+src/lib/slides/render-core/** text eol=lf

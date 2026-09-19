@@ -1,4 +1,4 @@
-﻿import {
+import {
   byId,
   callMcpTool,
   getArray,
@@ -21,6 +21,13 @@ import {
   resolveThemeTokens,
   setWidgetTheme,
 } from './shared/verto-skin';
+import {
+  getControlLabel,
+  iconElement,
+  iconLabel,
+  setButtonIcon,
+  setControlLabel,
+} from './shared/icons';
 import { renderSlideContent } from '../../../lib/slides/render-core/index';
 import {
   applyPatchesToSlides,
@@ -426,12 +433,12 @@ function ensureMarkup(): void {
         </article>
         <aside class="action-panel" aria-label="Deck actions">
           <p class="action-title">Next action</p>
-          <button class="button primary present-btn" id="present-action" type="button">Present live</button>
-          <button class="button" id="edit-action" type="button">Edit this slide</button>
-          <button class="button" id="theme-action" type="button">Change theme</button>
-          <a class="button" id="open-link">Open in Verto</a>
-          <button class="button" id="secondary-action" type="button">Copy link</button>
-          <button class="button" id="refresh-action" type="button">Refresh preview</button>
+          <button class="button primary present-btn vt-has-icon" id="present-action" type="button">${iconLabel('maximize', 'Present live')}</button>
+          <button class="button vt-has-icon" id="edit-action" type="button">${iconLabel('pencil', 'Edit this slide')}</button>
+          <button class="button vt-has-icon" id="theme-action" type="button">${iconLabel('palette', 'Change theme')}</button>
+          <a class="button vt-has-icon" id="open-link">${iconLabel('external-link', 'Open in Verto')}</a>
+          <button class="button vt-has-icon" id="secondary-action" type="button">${iconLabel('share', 'Copy link')}</button>
+          <button class="button vt-has-icon" id="refresh-action" type="button">${iconLabel('refresh', 'Refresh preview')}</button>
           <p class="action-note" id="action-note">Open the deck to continue editing in Verto.</p>
         </aside>
       </section>
@@ -581,7 +588,7 @@ function configureOpenLink(deck: DeckViewModel): void {
   if (!(link instanceof HTMLAnchorElement)) return;
 
   link.classList.remove('primary');
-  link.textContent = 'Open in Verto';
+  setControlLabel(link, 'Open in Verto');
 
   if (!deck.openUrl) {
     link.removeAttribute('href');
@@ -601,7 +608,7 @@ function configurePresentAction(deck: DeckViewModel): void {
   if (!(button instanceof HTMLButtonElement)) return;
 
   // Plan 10 F10: when the host advertises its display modes and fullscreen
-  // is not among them, the presenter would only duplicate this preview â€”
+  // is not among them, the presenter would only duplicate this preview —
   // hide the hero entry point.
   const fullscreenAvailable = canPresentFullscreen();
   button.hidden = fullscreenAvailable === false;
@@ -623,11 +630,11 @@ async function presentDeck(
   button: HTMLButtonElement,
   note: HTMLElement
 ): Promise<void> {
-  await runButtonAction(button, note, 'Opening presenterâ€¦', async () => {
+  await runButtonAction(button, note, 'Opening presenter…', async () => {
     await callMcpTool('presentation_render_deck', {
       presentation_id: deck.id,
     });
-    note.textContent = 'Presenter opened. Use â† â†’ to navigate.';
+    note.textContent = 'Presenter opened. Use ← → to navigate.';
   });
 }
 
@@ -669,7 +676,7 @@ async function openThemeStudio(
   button: HTMLButtonElement,
   note: HTMLElement
 ): Promise<void> {
-  await runButtonAction(button, note, 'Opening theme studioâ€¦', async () => {
+  await runButtonAction(button, note, 'Opening theme studio…', async () => {
     await callMcpTool('presentation_render_theme_studio', {
       presentation_id: deck.id,
     });
@@ -688,20 +695,20 @@ function configureSecondaryAction(deck: DeckViewModel): void {
   button.onclick = null;
 
   if (deck.shareUrl) {
-    button.textContent = 'Copy share link';
+    setButtonIcon(button, 'copy', 'Copy share link');
     note.textContent = 'This deck is published. Share the public link when you are ready.';
     button.onclick = () => copyShareLink(deck.shareUrl, button, note);
     return;
   }
 
   if (deck.actions.canPublish !== false && deck.id) {
-    button.textContent = 'Publish from chat';
+    setButtonIcon(button, 'share', 'Publish from chat');
     note.textContent = 'Publish when you want a public share link.';
     button.onclick = () => confirmOrPublishDeck(deck, button, note);
     return;
   }
 
-  button.textContent = 'Share unavailable';
+  setButtonIcon(button, 'share', 'Share unavailable');
   button.disabled = true;
   button.setAttribute('aria-disabled', 'true');
   note.textContent = 'Sharing is unavailable for this deck state.';
@@ -713,7 +720,7 @@ function configureRefreshAction(deck: DeckViewModel): void {
 
   if (!(button instanceof HTMLButtonElement)) return;
 
-  button.textContent = 'Refresh preview';
+  setControlLabel(button, 'Refresh preview');
   button.onclick = null;
 
   if (!deck.id) {
@@ -864,12 +871,12 @@ function confirmOrPublishDeck(
 ): void {
   if (pendingPublishPresentationId !== deck.id) {
     pendingPublishPresentationId = deck.id;
-    button.textContent = 'Confirm publish';
+    setControlLabel(button, 'Confirm publish');
     note.textContent = 'This creates a public share link for this deck.';
     window.setTimeout(() => {
-      if (pendingPublishPresentationId === deck.id && button.textContent === 'Confirm publish') {
+      if (pendingPublishPresentationId === deck.id && getControlLabel(button) === 'Confirm publish') {
         pendingPublishPresentationId = '';
-        button.textContent = 'Publish from chat';
+        setControlLabel(button, 'Publish from chat');
         note.textContent = 'Publish when you want a public share link.';
       }
     }, 6000);
@@ -925,11 +932,11 @@ async function runButtonAction(
   busyLabel: string,
   action: () => Promise<void>
 ): Promise<void> {
-  const previousLabel = button.textContent || '';
+  const previousLabel = getControlLabel(button);
   button.disabled = true;
   button.classList.add('is-busy');
   button.setAttribute('aria-disabled', 'true');
-  button.textContent = busyLabel;
+  setControlLabel(button, busyLabel);
 
   try {
     await action();
@@ -939,8 +946,8 @@ async function runButtonAction(
     button.disabled = false;
     button.classList.remove('is-busy');
     button.setAttribute('aria-disabled', 'false');
-    if (button.textContent === busyLabel) {
-      button.textContent = previousLabel;
+    if (getControlLabel(button) === busyLabel) {
+      setControlLabel(button, previousLabel);
     }
   }
 }
@@ -953,7 +960,7 @@ function getActionErrorMessage(error: unknown): string {
     }
   }
 
-  return 'ChatGPT could not complete that Verto action. Try again in a moment.';
+  return 'Verto could not complete that action. Try again in a moment.';
 }
 
 async function copyShareLink(
@@ -963,10 +970,10 @@ async function copyShareLink(
 ): Promise<void> {
   try {
     await navigator.clipboard?.writeText(shareUrl);
-    button.textContent = 'Copied';
+    setControlLabel(button, 'Copied');
     note.textContent = 'Share link copied.';
     window.setTimeout(() => {
-      button.textContent = 'Copy share link';
+      setControlLabel(button, 'Copy share link');
     }, 1400);
   } catch {
     note.textContent = shareUrl;
@@ -982,25 +989,29 @@ async function reorderSlide(deck: DeckViewModel, index: number, direction: -1 | 
   rawSlides[index] = rawSlides[newIndex];
   rawSlides[newIndex] = temp;
 
-  const originalText = button.textContent;
+  const originalText = getControlLabel(button);
   button.disabled = true;
-  button.textContent = '...';
+  setControlLabel(button, '...');
 
   try {
-    const updatedPayload = await callMcpTool('presentation_update_slides', {
+    await callMcpTool('presentation_update_slides', {
       presentation_id: deck.id,
-      slides: rawSlides
+      slides: rawSlides,
     });
+
     const refreshedPayload = await callMcpTool('presentation_get', {
       presentation_id: deck.id,
-      include_slides: true
+      include_slides: true,
     });
+
     renderDeckPayload(refreshedPayload);
+    byId('action-note').textContent = 'Slide order saved.';
   } catch (error) {
-    console.error(error);
     button.disabled = false;
-    button.textContent = originalText || '';
-    alert('Failed to reorder slide.');
+    setControlLabel(button, originalText);
+    // alert() is inert inside the host's sandboxed iframe, so the failure has
+    // to land somewhere the user can actually see it.
+    byId('action-note').textContent = getActionErrorMessage(error);
   }
 }
 
@@ -1030,13 +1041,17 @@ function renderSlides(deck: DeckViewModel): void {
 
       const upBtn = document.createElement('button');
       upBtn.className = 'reorder-btn';
-      upBtn.textContent = 'â†‘';
+      upBtn.classList.add('vt-has-icon', 'vt-icon-only');
+      upBtn.setAttribute('aria-label', `Move slide ${index + 1} earlier`);
+      upBtn.appendChild(iconElement('arrow-up', '1em'));
       upBtn.disabled = index === 0;
       upBtn.onclick = () => reorderSlide(deck, index, -1, upBtn);
 
       const downBtn = document.createElement('button');
       downBtn.className = 'reorder-btn';
-      downBtn.textContent = 'â†“';
+      downBtn.classList.add('vt-has-icon', 'vt-icon-only');
+      downBtn.setAttribute('aria-label', `Move slide ${index + 1} later`);
+      downBtn.appendChild(iconElement('arrow-down', '1em'));
       downBtn.disabled = index === deck.slides.length - 1;
       downBtn.onclick = () => reorderSlide(deck, index, 1, downBtn);
 
@@ -1085,7 +1100,7 @@ function renderLoading(): void {
   root.classList.add('is-loading');
   currentDeck = null;
   byId('title').textContent = 'Loading deck preview';
-  byId('summary').textContent = 'Waiting for Verto deck data from ChatGPT.';
+  byId('summary').textContent = 'Waiting for deck data from Verto.';
   renderBadges({
     id: '',
     title: 'Deck preview',

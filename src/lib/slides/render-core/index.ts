@@ -675,7 +675,7 @@ function handleNumberedList(item: Record<string, unknown>): string {
   const rows = items
     .map((text, index) =>
       `<li><span class="vts-num-badge" aria-hidden="true">${index + 1}</span>` +
-      `<span class="vts-li-text"${listIdAttr(item, index)}>${escapeHtml(text)}</span></li>`
+      `<span class="vts-li-text"${listIdAttr(item, index)}>${renderRichText(text)}</span></li>`
     )
     .join('');
   return `<ol class="vts-list"${styleAttr(item)}>${rows}</ol>`;
@@ -686,7 +686,7 @@ function handleBulletList(item: Record<string, unknown>): string {
   const rows = items
     .map((text, index) =>
       `<li><span class="vts-bullet-dot" aria-hidden="true"></span>` +
-      `<span class="vts-li-text"${listIdAttr(item, index)}>${escapeHtml(text)}</span></li>`
+      `<span class="vts-li-text"${listIdAttr(item, index)}>${renderRichText(text)}</span></li>`
     )
     .join('');
   return `<ul class="vts-list"${styleAttr(item)}>${rows}</ul>`;
@@ -702,7 +702,7 @@ function handleTodoList(item: Record<string, unknown>): string {
         `<li><span class="vts-todo-check${checked ? ' checked' : ''}" aria-hidden="true">` +
         (checked ? TODO_CHECK_SVG : '') +
         `</span><span class="vts-li-text vts-todo-label${checked ? ' checked' : ''}"${listIdAttr(item, index)}>` +
-        `${escapeHtml(label)}</span></li>`
+        `${renderRichText(label)}</span></li>`
       );
     })
     .join('');
@@ -771,7 +771,7 @@ function handleStatBox(item: Record<string, unknown>): string {
     `<span class="vts-stat-icon" aria-hidden="true">${escapeHtml(icon)}</span>` +
     `<span class="vts-stat-sep" aria-hidden="true"></span>` +
     `<span class="vts-stat-value"${idAttr(item)}>${escapeHtml(value)}</span>` +
-    (label ? `<span class="vts-stat-label"${fieldAttr(item, 'label')}>${escapeHtml(label)}</span>` : '') +
+    (label ? `<span class="vts-stat-label"${fieldAttr(item, 'label')}>${renderRichText(label)}</span>` : '') +
     `</div>`
   );
 }
@@ -785,8 +785,8 @@ function handleTimelineCard(item: Record<string, unknown>): string {
     `<span class="vts-timeline-dot" aria-hidden="true"></span>` +
     `<span class="vts-timeline-stem" aria-hidden="true"></span>` +
     (year ? `<span class="vts-timeline-year">${escapeHtml(year)}</span>` : '') +
-    `<h4 class="vts-timeline-title"${idAttr(item)}>${escapeHtml(title)}</h4>` +
-    (description ? `<p class="vts-timeline-desc"${fieldAttr(item, 'placeholder')}>${escapeHtml(description)}</p>` : '') +
+    `<h4 class="vts-timeline-title"${idAttr(item)}>${renderRichText(title)}</h4>` +
+    (description ? `<p class="vts-timeline-desc"${fieldAttr(item, 'placeholder')}>${renderRichText(description)}</p>` : '') +
     `</article>`
   );
 }
@@ -797,7 +797,7 @@ function handleTable(item: Record<string, unknown>): string {
 
 function handleTableOfContents(item: Record<string, unknown>): string {
   const items = stringList(item.content);
-  const rows = items.map((text) => `<div class="vts-toc-item">${escapeHtml(text)}</div>`).join('');
+  const rows = items.map((text) => `<div class="vts-toc-item">${renderRichText(text)}</div>`).join('');
   return `<nav class="vts-toc" aria-label="Table of contents"${styleAttr(item)}>${rows}</nav>`;
 }
 
@@ -974,7 +974,7 @@ function renderTable(content: unknown): string {
     .map((row) => {
       const cells = Array.isArray(row) ? row : [row];
       return (
-        `<tr>${cells.map((cell) => `<td>${escapeHtml(stringifyCell(cell))}</td>`).join('')}</tr>`
+        `<tr>${cells.map((cell) => `<td>${renderRichText(stringifyCell(cell))}</td>`).join('')}</tr>`
       );
     })
     .join('');
@@ -1001,7 +1001,7 @@ function renderTextBlock(text: string): string {
   if (/^https?:\/\/\S+$/i.test(trimmed)) {
     return `<a class="vts-link" href="${escapeAttr(trimmed)}" target="_blank" rel="noopener noreferrer">${escapeHtml(trimmed)}</a>`;
   }
-  return `<p class="vts-p">${escapeHtml(text)}</p>`;
+  return `<p class="vts-p">${renderRichText(text)}</p>`;
 }
 
 function renderInline(content: unknown): string {
@@ -1015,14 +1015,14 @@ function renderInline(content: unknown): string {
     }
     return renderInline(record.content);
   }
-  return escapeHtml(String(content));
+  return renderRichText(String(content));
 }
 
 function renderInner(content: unknown): string {
   if (content == null) return '';
   if (Array.isArray(content)) return content.map(renderItem).join('');
   if (typeof content === 'object') return renderItem(content);
-  return `<p class="vts-p">${escapeHtml(String(content))}</p>`;
+  return `<p class="vts-p">${renderRichText(String(content))}</p>`;
 }
 
 /* ------------------------------------------------------------------ */
@@ -1171,6 +1171,50 @@ function escapeHtml(value: string): string {
 
 function escapeAttr(value: string): string {
   return escapeHtml(value);
+}
+
+/**
+ * Inline markup the deck generator is allowed to emit inside prose.
+ *
+ * Model-written slide text routinely contains `<em>` and `<strong>`. Escaping
+ * all of it printed the tags verbatim on the slide; rendering all of it would
+ * hand model output a script injection into every host iframe. So: escape
+ * first, then re-admit exactly these tags when they carry no attributes.
+ */
+const INLINE_MARKUP = /&lt;(\/?)(em|strong|b|i|u|br)\s*\/?&gt;/gi;
+
+/**
+ * Escapes `value`, then restores the allowlisted inline tags and balances
+ * them. Anything else — attributes, unknown tags, stray closers — stays
+ * escaped or is dropped, so emphasis can never bleed past its own text.
+ */
+function renderRichText(value: string): string {
+  const open: string[] = [];
+
+  let html = escapeHtml(value).replace(
+    INLINE_MARKUP,
+    (_match, slash: string, rawTag: string) => {
+      const tag = rawTag.toLowerCase();
+
+      if (tag === 'br') return '<br />';
+
+      if (slash === '/') {
+        const index = open.lastIndexOf(tag);
+        if (index === -1) return '';
+        open.splice(index, 1);
+        return `</${tag}>`;
+      }
+
+      open.push(tag);
+      return `<${tag}>`;
+    }
+  );
+
+  while (open.length > 0) {
+    html += `</${open.pop()}>`;
+  }
+
+  return html;
 }
 
 /* ------------------------------------------------------------------ */

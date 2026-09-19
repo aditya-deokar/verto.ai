@@ -1,4 +1,4 @@
-﻿import { App } from '@modelcontextprotocol/ext-apps';
+import { App } from '@modelcontextprotocol/ext-apps';
 import {
   byId,
   getArray,
@@ -14,6 +14,7 @@ import {
   setWidgetTheme,
   vertoSkinStyles,
 } from './shared/verto-skin';
+import { icon, iconLabel } from './shared/icons';
 import { renderSlideContent } from '../../../lib/slides/render-core/index';
 
 /**
@@ -21,7 +22,7 @@ import { renderSlideContent } from '../../../lib/slides/render-core/index';
  * payloads from the app-only `presentation_render_deck` tool and presents
  * real themed slides inline or fullscreen, mirroring PresentationViewer:
  * 16:9 stage, prev/next pills, dot progress, counter, swipe, keyboard
- * (â†/â†’/Space/Home/End/Esc/G), grid overview, thin progress bar, and
+ * (←/→/Space/Home/End/Esc/G), grid overview, thin progress bar, and
  * chrome auto-hide after 3 s idle.
  */
 const app = new App(
@@ -508,21 +509,21 @@ function ensureMarkup(): void {
       </section>
       <div class="live-controls" id="controls">
         <div class="nav-group">
-          <button class="pill-btn" id="prev-btn" type="button" aria-label="Previous slide">â†</button>
+          <button class="pill-btn vt-has-icon vt-icon-only" id="prev-btn" type="button" aria-label="Previous slide">${icon('chevron-left', '1.2em')}</button>
           <span class="counter" id="counter">0 / 0</span>
-          <button class="pill-btn" id="next-btn" type="button" aria-label="Next slide">â†’</button>
+          <button class="pill-btn vt-has-icon vt-icon-only" id="next-btn" type="button" aria-label="Next slide">${icon('chevron-right', '1.2em')}</button>
         </div>
         <div class="dot-row" id="dot-row" role="group" aria-label="Slide picker"></div>
         <div class="nav-group">
-          <button class="pill-btn" id="grid-btn" type="button" aria-expanded="false" aria-label="Toggle slide grid overview (G)">Grid</button>
-          <button class="pill-btn fullscreen-btn primary" id="fs-btn" type="button">Present fullscreen</button>
+          <button class="pill-btn vt-has-icon" id="grid-btn" type="button" aria-expanded="false" aria-label="Toggle slide grid overview (G)">${iconLabel('grid', 'Grid')}</button>
+          <button class="pill-btn fullscreen-btn primary vt-has-icon" id="fs-btn" type="button">${iconLabel('maximize', 'Present fullscreen')}</button>
         </div>
       </div>
-      <p class="hint" id="hint">Use â† â†’ or Space to navigate, G for the grid overview, Esc to exit.</p>
+      <p class="hint" id="hint">Use ← → or Space to navigate, G for the grid overview, Esc to exit.</p>
       <section class="vt-grid" id="grid" role="region" aria-label="Slide grid overview">
         <div class="vt-grid-head">
           <h2 class="vt-grid-title">All slides</h2>
-          <button class="vt-grid-close" id="grid-close" type="button">Close (Esc)</button>
+          <button class="vt-grid-close vt-has-icon" id="grid-close" type="button">${iconLabel('x', 'Close (Esc)')}</button>
         </div>
         <div class="vt-grid-list" id="grid-list"></div>
       </section>
@@ -721,7 +722,7 @@ function canRequestFullscreen(): boolean {
 async function enterFullscreen(): Promise<void> {
   presenterState.fullscreen = true;
   document.body.classList.add('vt-fullscreen');
-  (byId('fs-btn') as HTMLButtonElement).textContent = 'Exit fullscreen';
+  (byId('fs-btn') as HTMLButtonElement).innerHTML = iconLabel('minimize', 'Exit fullscreen');
 
   if (canRequestFullscreen()) {
     try {
@@ -737,7 +738,7 @@ async function enterFullscreen(): Promise<void> {
 async function exitFullscreen(): Promise<void> {
   presenterState.fullscreen = false;
   document.body.classList.remove('vt-fullscreen', 'vt-idle');
-  (byId('fs-btn') as HTMLButtonElement).textContent = 'Present fullscreen';
+  (byId('fs-btn') as HTMLButtonElement).innerHTML = iconLabel('maximize', 'Present fullscreen');
 
   if (presenterState.idleTimer) clearTimeout(presenterState.idleTimer);
 
@@ -897,7 +898,7 @@ function renderDeckLivePayload(payload: Record<string, unknown>): void {
     byId('title').textContent = 'Presenter';
     byId('badges').textContent = '';
     byId('canvas').innerHTML =
-      '<div class="vt-slide-fallback"><h2>Waiting for the deckâ€¦</h2>' +
+      '<div class="vt-slide-fallback"><h2>Waiting for the deck…</h2>' +
       '<p>Open a presentation and choose Present to launch the live view.</p></div>';
     byId('counter').textContent = '0 / 0';
     updateProgress();

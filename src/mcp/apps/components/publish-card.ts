@@ -19,6 +19,12 @@ import {
 } from './shared/runtime';
 import { extractWidgetLinks, openVertoLink, renderDeepLinkMenu } from './shared/verto-skin';
 import { drawQrToCanvas } from './shared/qrcode';
+import {
+  getControlLabel,
+  iconLabel,
+  setButtonIcon,
+  setControlLabel,
+} from './shared/icons';
 
 const CONFETTI_COLORS = ['#ef4444', '#f97316', '#F55C7A', '#F6BC66', '#3b82f6', '#22c55e'];
 
@@ -317,8 +323,8 @@ function ensureMarkup(): void {
           <p class="pc-panel-title">Public share link</p>
           <a class="pc-share-url" id="share-url">Waiting for the share link.</a>
           <div class="pc-share-actions">
-            <button class="pc-button primary" id="copy-action" type="button">Copy link</button>
-            <button class="pc-button" id="open-action" type="button">Open share page</button>
+            <button class="pc-button primary vt-has-icon" id="copy-action" type="button">${iconLabel('copy', 'Copy link')}</button>
+            <button class="pc-button vt-has-icon" id="open-action" type="button">${iconLabel('external-link', 'Open share page')}</button>
           </div>
           <p class="pc-note" id="share-note">Anyone with this link can view the deck.</p>
         </article>
@@ -328,7 +334,7 @@ function ensureMarkup(): void {
         </aside>
       </section>
       <section class="pc-manage" aria-label="Manage publication">
-        <button class="pc-button danger" id="unpublish-action" type="button">Unpublish deck</button>
+        <button class="pc-button danger vt-has-icon" id="unpublish-action" type="button">${iconLabel('trash', 'Unpublish deck')}</button>
         <p class="pc-note" id="action-note">Unpublishing removes public access immediately.</p>
       </section>
     </main>
@@ -439,7 +445,7 @@ function renderSharePanel(): void {
   }
 
   copyButton.disabled = !published || !state.canCopyShareLink;
-  copyButton.textContent = 'Copy link';
+  setControlLabel(copyButton, 'Copy link');
   copyButton.onclick = published ? () => void copyShareLink(copyButton) : null;
 
   openButton.disabled = !published || !state.canOpenShareLink;
@@ -467,10 +473,10 @@ async function copyShareLink(button: HTMLButtonElement): Promise<void> {
 
   try {
     await navigator.clipboard?.writeText(state.shareUrl);
-    button.textContent = 'Copied';
+    setControlLabel(button, 'Copied');
     byId('share-note').textContent = 'Share link copied to your clipboard.';
     window.setTimeout(() => {
-      button.textContent = 'Copy link';
+      setControlLabel(button, 'Copy link');
     }, 1600);
   } catch {
     byId('share-note').textContent = state.shareUrl;
@@ -492,7 +498,7 @@ function renderManageRow(): void {
 
   if (state?.isPublished) {
     manageButton.classList.add('danger');
-    manageButton.textContent = 'Unpublish deck';
+    setButtonIcon(manageButton, 'trash', 'Unpublish deck');
     manageButton.setAttribute('aria-label', 'Unpublish deck');
     manageButton.onclick = () => confirmOrUnpublish(manageButton, note);
     note.textContent = 'Unpublishing removes public access immediately.';
@@ -500,7 +506,7 @@ function renderManageRow(): void {
   }
 
   manageButton.classList.remove('danger');
-  manageButton.textContent = 'Publish again';
+  setButtonIcon(manageButton, 'share', 'Publish again');
   manageButton.removeAttribute('aria-label');
   manageButton.onclick = () => void republish(manageButton, note);
 
@@ -519,7 +525,7 @@ function confirmOrUnpublish(
 ): void {
   if (!pendingUnpublish) {
     pendingUnpublish = true;
-    button.textContent = 'Confirm unpublish';
+    setControlLabel(button, 'Confirm unpublish');
     note.textContent = 'This makes the share link stop working right away.';
     window.setTimeout(() => {
       if (pendingUnpublish) {
@@ -577,10 +583,10 @@ async function runManagedAction(
   busyLabel: string,
   action: () => Promise<void>
 ): Promise<void> {
-  const previousLabel = button.textContent || '';
+  const previousLabel = getControlLabel(button);
   button.disabled = true;
   button.classList.add('is-busy');
-  button.textContent = busyLabel;
+  setControlLabel(button, busyLabel);
 
   try {
     await action();
@@ -588,8 +594,8 @@ async function runManagedAction(
     note.textContent = getActionErrorMessage(error);
     renderManageRow();
   } finally {
-    if (button.textContent === busyLabel) {
-      button.textContent = previousLabel;
+    if (getControlLabel(button) === busyLabel) {
+      setControlLabel(button, previousLabel);
     }
   }
 }
@@ -638,7 +644,7 @@ function getActionErrorMessage(error: unknown): string {
     }
   }
 
-  return 'ChatGPT could not complete that Verto action. Try again in a moment.';
+  return 'Verto could not complete that action. Try again in a moment.';
 }
 
 mountWidget((payload) => {

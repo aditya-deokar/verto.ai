@@ -267,7 +267,7 @@ const scenarios = [
     viewport: { width: 1200, height: 900 },
     colorScheme: 'light',
     expectations: {
-      text: ['Verto AI generation', '100%', 'Open deck', 'Inspect with ChatGPT', 'FIRST SLIDE', 'Built in'],
+      text: ['Verto AI generation', '100%', 'Open deck', 'Preview deck', 'FIRST SLIDE', 'Built in'],
       stageCount: 8,
       rendererCounts: {
         '.vts-stat': 1,
@@ -291,7 +291,7 @@ const scenarios = [
     viewport: { width: 390, height: 860 },
     colorScheme: 'dark',
     expectations: {
-      text: ['Verto AI generation', 'FAILED', 'Ask ChatGPT to retry', 'Needs retry'],
+      text: ['Verto AI generation', 'FAILED', 'Ask assistant to retry', 'Needs retry'],
       stageCount: 8,
     },
   },
@@ -344,7 +344,7 @@ const scenarios = [
     viewport: { width: 1200, height: 900 },
     colorScheme: 'dark',
     expectations: {
-      text: ['Verto AI result', 'Presentation published', 'Open in Verto', 'Preview with ChatGPT', 'Copy share link', 'Unpublish deck'],
+      text: ['Verto AI result', 'Presentation published', 'Open in Verto', 'Preview deck', 'Copy share link', 'Unpublish deck'],
     },
   },
   {

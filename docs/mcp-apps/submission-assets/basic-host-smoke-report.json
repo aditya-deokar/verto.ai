@@ -1,0 +1,95 @@
+{
+  "generatedAt": "2026-09-19T17:00:01.649Z",
+  "results": [
+    {
+      "id": "list-preview-uses-bridge",
+      "label": "Workspace list: Preview calls presentation_get over the bridge",
+      "status": "pass",
+      "failures": []
+    },
+    {
+      "id": "list-publish-round-trip",
+      "label": "Workspace list: Publish calls the tool and refreshes the list",
+      "status": "pass",
+      "failures": []
+    },
+    {
+      "id": "list-delete-needs-confirmation",
+      "label": "Workspace list: Delete waits for a second click, then calls the tool",
+      "status": "pass",
+      "failures": []
+    },
+    {
+      "id": "list-recover-deleted-row",
+      "label": "Workspace list: Recover calls presentation_recover",
+      "status": "pass",
+      "failures": []
+    },
+    {
+      "id": "list-permanent-delete-keeps-model-turn",
+      "label": "Workspace list: Delete forever asks the assistant instead of deleting",
+      "status": "pass",
+      "failures": []
+    },
+    {
+      "id": "list-pager-sends-cursor",
+      "label": "Workspace list: Load more sends the pagination cursor",
+      "status": "pass",
+      "failures": []
+    },
+    {
+      "id": "list-failure-is-visible",
+      "label": "Workspace list: a rejected tool call reports in the widget",
+      "status": "pass",
+      "failures": []
+    },
+    {
+      "id": "deck-theme-studio-opens",
+      "label": "Deck preview: Change theme calls presentation_render_theme_studio",
+      "status": "pass",
+      "failures": []
+    },
+    {
+      "id": "deck-reorder-saves-slides",
+      "label": "Deck preview: reorder saves through presentation_update_slides",
+      "status": "pass",
+      "failures": []
+    },
+    {
+      "id": "theme-studio-tabs-track-state",
+      "label": "Theme studio: filter tabs mark themselves pressed",
+      "status": "pass",
+      "failures": []
+    },
+    {
+      "id": "theme-studio-apply",
+      "label": "Theme studio: applying a theme calls presentation_update_theme",
+      "status": "pass",
+      "failures": []
+    },
+    {
+      "id": "action-result-preview-uses-bridge",
+      "label": "Action result: Preview deck calls presentation_get over the bridge",
+      "status": "pass",
+      "failures": []
+    },
+    {
+      "id": "action-result-recover",
+      "label": "Action result: Recover deck calls presentation_recover",
+      "status": "pass",
+      "failures": []
+    },
+    {
+      "id": "publish-card-unpublish",
+      "label": "Publish card: Unpublish confirms, then calls presentation_unpublish",
+      "status": "pass",
+      "failures": []
+    },
+    {
+      "id": "generation-progress-check-status",
+      "label": "Generation progress: Check status polls presentation_generation_status",
+      "status": "pass",
+      "failures": []
+    }
+  ]
+}

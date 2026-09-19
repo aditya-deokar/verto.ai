@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-08-24T06:05:07.460Z",
+  "generatedAt": "2026-09-19T16:59:33.834Z",
   "source": "scripts/mcp-apps/phase9h-visual-qa.mjs",
   "results": [
     {
@@ -50,9 +50,9 @@
       "failures": [],
       "metrics": {
         "focusableCount": 5,
-        "contrastChecked": 17,
-        "textElementCount": 17,
-        "bodyTextLength": 362,
+        "contrastChecked": 16,
+        "textElementCount": 16,
+        "bodyTextLength": 358,
         "screenshotWidth": 1200
       }
     },
@@ -68,9 +68,9 @@
       "failures": [],
       "metrics": {
         "focusableCount": 2,
-        "contrastChecked": 13,
-        "textElementCount": 15,
-        "bodyTextLength": 341,
+        "contrastChecked": 14,
+        "textElementCount": 14,
+        "bodyTextLength": 337,
         "screenshotWidth": 390
       }
     },
@@ -85,10 +85,10 @@
       "colorScheme": "light",
       "failures": [],
       "metrics": {
-        "focusableCount": 18,
-        "contrastChecked": 99,
-        "textElementCount": 103,
-        "bodyTextLength": 1633,
+        "focusableCount": 26,
+        "contrastChecked": 90,
+        "textElementCount": 91,
+        "bodyTextLength": 1568,
         "screenshotWidth": 1200
       }
     },
@@ -104,9 +104,9 @@
       "failures": [],
       "metrics": {
         "focusableCount": 7,
-        "contrastChecked": 15,
-        "textElementCount": 16,
-        "bodyTextLength": 353,
+        "contrastChecked": 14,
+        "textElementCount": 14,
+        "bodyTextLength": 328,
         "screenshotWidth": 1200
       }
     },
@@ -122,9 +122,9 @@
       "failures": [],
       "metrics": {
         "focusableCount": 7,
-        "contrastChecked": 15,
-        "textElementCount": 16,
-        "bodyTextLength": 351,
+        "contrastChecked": 14,
+        "textElementCount": 14,
+        "bodyTextLength": 326,
         "screenshotWidth": 390
       }
     },
@@ -139,10 +139,10 @@
       "colorScheme": "dark",
       "failures": [],
       "metrics": {
-        "focusableCount": 11,
-        "contrastChecked": 87,
-        "textElementCount": 90,
-        "bodyTextLength": 1501,
+        "focusableCount": 19,
+        "contrastChecked": 77,
+        "textElementCount": 78,
+        "bodyTextLength": 1440,
         "screenshotWidth": 1200
       }
     },
@@ -157,10 +157,10 @@
       "colorScheme": "light",
       "failures": [],
       "metrics": {
-        "focusableCount": 11,
-        "contrastChecked": 88,
-        "textElementCount": 91,
-        "bodyTextLength": 1520,
+        "focusableCount": 19,
+        "contrastChecked": 78,
+        "textElementCount": 79,
+        "bodyTextLength": 1459,
         "screenshotWidth": 390
       }
     },
@@ -175,10 +175,10 @@
       "colorScheme": "dark",
       "failures": [],
       "metrics": {
-        "focusableCount": 8,
+        "focusableCount": 9,
         "contrastChecked": 70,
         "textElementCount": 70,
-        "bodyTextLength": 834,
+        "bodyTextLength": 840,
         "screenshotWidth": 1200
       }
     },
@@ -193,10 +193,10 @@
       "colorScheme": "light",
       "failures": [],
       "metrics": {
-        "focusableCount": 8,
+        "focusableCount": 9,
         "contrastChecked": 64,
         "textElementCount": 64,
-        "bodyTextLength": 785,
+        "bodyTextLength": 791,
         "screenshotWidth": 390
       }
     },
@@ -212,7 +212,7 @@
       "failures": [],
       "metrics": {
         "focusableCount": 1,
-        "contrastChecked": 33,
+        "contrastChecked": 34,
         "textElementCount": 34,
         "bodyTextLength": 771,
         "screenshotWidth": 1200
@@ -230,9 +230,9 @@
       "failures": [],
       "metrics": {
         "focusableCount": 3,
-        "contrastChecked": 43,
-        "textElementCount": 43,
-        "bodyTextLength": 898,
+        "contrastChecked": 42,
+        "textElementCount": 42,
+        "bodyTextLength": 907,
         "screenshotWidth": 1200
       }
     },
@@ -248,9 +248,9 @@
       "failures": [],
       "metrics": {
         "focusableCount": 1,
-        "contrastChecked": 32,
+        "contrastChecked": 33,
         "textElementCount": 33,
-        "bodyTextLength": 851,
+        "bodyTextLength": 854,
         "screenshotWidth": 390
       }
     },
@@ -265,10 +265,10 @@
       "colorScheme": "dark",
       "failures": [],
       "metrics": {
-        "focusableCount": 9,
-        "contrastChecked": 52,
-        "textElementCount": 54,
-        "bodyTextLength": 1054,
+        "focusableCount": 17,
+        "contrastChecked": 41,
+        "textElementCount": 41,
+        "bodyTextLength": 1002,
         "screenshotWidth": 1200
       }
     },
@@ -283,10 +283,10 @@
       "colorScheme": "light",
       "failures": [],
       "metrics": {
-        "focusableCount": 9,
-        "contrastChecked": 53,
-        "textElementCount": 55,
-        "bodyTextLength": 1073,
+        "focusableCount": 17,
+        "contrastChecked": 42,
+        "textElementCount": 42,
+        "bodyTextLength": 1021,
         "screenshotWidth": 1200
       }
     },
@@ -301,10 +301,10 @@
       "colorScheme": "light",
       "failures": [],
       "metrics": {
-        "focusableCount": 9,
-        "contrastChecked": 52,
-        "textElementCount": 54,
-        "bodyTextLength": 1057,
+        "focusableCount": 17,
+        "contrastChecked": 41,
+        "textElementCount": 41,
+        "bodyTextLength": 1005,
         "screenshotWidth": 390
       }
     },
@@ -320,9 +320,9 @@
       "failures": [],
       "metrics": {
         "focusableCount": 5,
-        "contrastChecked": 26,
-        "textElementCount": 26,
-        "bodyTextLength": 368,
+        "contrastChecked": 25,
+        "textElementCount": 25,
+        "bodyTextLength": 348,
         "screenshotWidth": 1200
       }
     },
@@ -338,9 +338,9 @@
       "failures": [],
       "metrics": {
         "focusableCount": 0,
-        "contrastChecked": 18,
+        "contrastChecked": 20,
         "textElementCount": 20,
-        "bodyTextLength": 436,
+        "bodyTextLength": 428,
         "screenshotWidth": 390
       }
     },
@@ -355,10 +355,10 @@
       "colorScheme": "light",
       "failures": [],
       "metrics": {
-        "focusableCount": 11,
-        "contrastChecked": 87,
-        "textElementCount": 90,
-        "bodyTextLength": 1483,
+        "focusableCount": 19,
+        "contrastChecked": 77,
+        "textElementCount": 78,
+        "bodyTextLength": 1422,
         "screenshotWidth": 1200
       }
     },
@@ -373,10 +373,10 @@
       "colorScheme": "dark",
       "failures": [],
       "metrics": {
-        "focusableCount": 11,
-        "contrastChecked": 87,
-        "textElementCount": 90,
-        "bodyTextLength": 1483,
+        "focusableCount": 19,
+        "contrastChecked": 77,
+        "textElementCount": 78,
+        "bodyTextLength": 1422,
         "screenshotWidth": 1200
       }
     },
@@ -391,10 +391,10 @@
       "colorScheme": "light",
       "failures": [],
       "metrics": {
-        "focusableCount": 11,
-        "contrastChecked": 87,
-        "textElementCount": 90,
-        "bodyTextLength": 1501,
+        "focusableCount": 19,
+        "contrastChecked": 77,
+        "textElementCount": 78,
+        "bodyTextLength": 1440,
         "screenshotWidth": 1200
       }
     },
@@ -409,10 +409,10 @@
       "colorScheme": "dark",
       "failures": [],
       "metrics": {
-        "focusableCount": 11,
-        "contrastChecked": 87,
-        "textElementCount": 90,
-        "bodyTextLength": 1501,
+        "focusableCount": 19,
+        "contrastChecked": 77,
+        "textElementCount": 78,
+        "bodyTextLength": 1440,
         "screenshotWidth": 1200
       }
     },
@@ -427,10 +427,10 @@
       "colorScheme": "light",
       "failures": [],
       "metrics": {
-        "focusableCount": 11,
-        "contrastChecked": 87,
-        "textElementCount": 90,
-        "bodyTextLength": 1495,
+        "focusableCount": 19,
+        "contrastChecked": 77,
+        "textElementCount": 78,
+        "bodyTextLength": 1434,
         "screenshotWidth": 1200
       }
     },
@@ -445,10 +445,10 @@
       "colorScheme": "dark",
       "failures": [],
       "metrics": {
-        "focusableCount": 11,
-        "contrastChecked": 87,
-        "textElementCount": 90,
-        "bodyTextLength": 1495,
+        "focusableCount": 19,
+        "contrastChecked": 77,
+        "textElementCount": 78,
+        "bodyTextLength": 1434,
         "screenshotWidth": 1200
       }
     },
@@ -463,10 +463,10 @@
       "colorScheme": "light",
       "failures": [],
       "metrics": {
-        "focusableCount": 11,
-        "contrastChecked": 87,
-        "textElementCount": 90,
-        "bodyTextLength": 1495,
+        "focusableCount": 19,
+        "contrastChecked": 77,
+        "textElementCount": 78,
+        "bodyTextLength": 1434,
         "screenshotWidth": 1200
       }
     },
@@ -481,10 +481,10 @@
       "colorScheme": "dark",
       "failures": [],
       "metrics": {
-        "focusableCount": 11,
-        "contrastChecked": 87,
-        "textElementCount": 90,
-        "bodyTextLength": 1495,
+        "focusableCount": 19,
+        "contrastChecked": 77,
+        "textElementCount": 78,
+        "bodyTextLength": 1434,
         "screenshotWidth": 1200
       }
     },
@@ -499,10 +499,10 @@
       "colorScheme": "light",
       "failures": [],
       "metrics": {
-        "focusableCount": 11,
-        "contrastChecked": 87,
-        "textElementCount": 90,
-        "bodyTextLength": 1501,
+        "focusableCount": 19,
+        "contrastChecked": 77,
+        "textElementCount": 78,
+        "bodyTextLength": 1440,
         "screenshotWidth": 1200
       }
     },
@@ -517,10 +517,10 @@
       "colorScheme": "dark",
       "failures": [],
       "metrics": {
-        "focusableCount": 11,
-        "contrastChecked": 87,
-        "textElementCount": 90,
-        "bodyTextLength": 1501,
+        "focusableCount": 19,
+        "contrastChecked": 77,
+        "textElementCount": 78,
+        "bodyTextLength": 1440,
         "screenshotWidth": 1200
       }
     },
@@ -535,10 +535,10 @@
       "colorScheme": "light",
       "failures": [],
       "metrics": {
-        "focusableCount": 11,
-        "contrastChecked": 87,
-        "textElementCount": 90,
-        "bodyTextLength": 1504,
+        "focusableCount": 19,
+        "contrastChecked": 77,
+        "textElementCount": 78,
+        "bodyTextLength": 1443,
         "screenshotWidth": 1200
       }
     },
@@ -553,10 +553,10 @@
       "colorScheme": "dark",
       "failures": [],
       "metrics": {
-        "focusableCount": 11,
-        "contrastChecked": 87,
-        "textElementCount": 90,
-        "bodyTextLength": 1504,
+        "focusableCount": 19,
+        "contrastChecked": 77,
+        "textElementCount": 78,
+        "bodyTextLength": 1443,
         "screenshotWidth": 1200
       }
     },
@@ -571,10 +571,10 @@
       "colorScheme": "light",
       "failures": [],
       "metrics": {
-        "focusableCount": 11,
-        "contrastChecked": 87,
-        "textElementCount": 90,
-        "bodyTextLength": 1483,
+        "focusableCount": 19,
+        "contrastChecked": 77,
+        "textElementCount": 78,
+        "bodyTextLength": 1422,
         "screenshotWidth": 390
       }
     },
@@ -589,10 +589,10 @@
       "colorScheme": "dark",
       "failures": [],
       "metrics": {
-        "focusableCount": 11,
-        "contrastChecked": 87,
-        "textElementCount": 90,
-        "bodyTextLength": 1501,
+        "focusableCount": 19,
+        "contrastChecked": 77,
+        "textElementCount": 78,
+        "bodyTextLength": 1440,
         "screenshotWidth": 390
       }
     }

@@ -7,7 +7,6 @@ import {
   getString,
   injectStyles,
   mountWidget,
-  sendFollowUpMessage,
 } from './shared/runtime';
 import {
   extractThemeName,
@@ -15,6 +14,12 @@ import {
   renderDeepLinkMenu,
   setWidgetTheme,
 } from './shared/verto-skin';
+import {
+  getControlLabel,
+  iconLabel,
+  setButtonIcon,
+  setControlLabel,
+} from './shared/icons';
 
 const actionResultStyles = `
   .result-shell {
@@ -311,10 +316,10 @@ function ensureMarkup(): void {
         </article>
         <aside class="action-panel" aria-label="Result actions">
           <p class="action-title">Next action</p>
-          <a class="button primary" id="open-link">Open in Verto</a>
+          <a class="button primary vt-has-icon" id="open-link">${iconLabel('external-link', 'Open in Verto')}</a>
           <div id="dynamic-actions" style="display: grid; gap: 12px;"></div>
-          <button class="button" id="preview-action" type="button">Preview with ChatGPT</button>
-          <button class="button" id="copy-action" type="button">Copy share link</button>
+          <button class="button vt-has-icon" id="preview-action" type="button">${iconLabel('eye', 'Preview deck')}</button>
+          <button class="button vt-has-icon" id="copy-action" type="button">${iconLabel('copy', 'Copy share link')}</button>
           <p class="action-note" id="action-note">Choose what to do next.</p>
         </aside>
       </section>
@@ -504,14 +509,14 @@ function configureActions(result: ActionResultViewModel): void {
       openLink.href = presentation.openUrl;
       openLink.target = '_blank';
       openLink.rel = 'noopener noreferrer';
-      openLink.textContent = 'Open in Verto';
+      setControlLabel(openLink, 'Open in Verto');
       openLink.classList.add('primary');
       openLink.setAttribute('aria-label', `Open presentation: ${presentation.title}`);
       openLink.setAttribute('aria-disabled', 'false');
     } else {
       openLink.removeAttribute('href');
       openLink.removeAttribute('aria-label');
-      openLink.textContent = 'Open unavailable';
+      setControlLabel(openLink, 'Open unavailable');
       openLink.classList.remove('primary');
       openLink.setAttribute('aria-disabled', 'true');
     }
@@ -547,19 +552,19 @@ function configureActions(result: ActionResultViewModel): void {
     if (result.kind === 'delete' || result.kind === 'presentation_delete') {
       const btn = document.createElement('button');
       btn.className = 'button';
-      btn.textContent = 'Recover deck';
+      setButtonIcon(btn, 'rotate-ccw', 'Recover deck');
       btn.onclick = () => performUndoAction(presentation.id, 'presentation_recover', btn, note);
       dynamicContainer.appendChild(btn);
     } else if (result.kind === 'publish' || result.kind === 'presentation_publish') {
       const btn = document.createElement('button');
       btn.className = 'button';
-      btn.textContent = 'Unpublish deck';
+      setButtonIcon(btn, 'trash', 'Unpublish deck');
       btn.onclick = () => performUndoAction(presentation.id, 'presentation_unpublish', btn, note);
       dynamicContainer.appendChild(btn);
     } else if (result.kind === 'unpublish' || result.kind === 'presentation_unpublish') {
       const btn = document.createElement('button');
       btn.className = 'button';
-      btn.textContent = 'Publish deck';
+      setButtonIcon(btn, 'share', 'Publish deck');
       btn.onclick = () => performUndoAction(presentation.id, 'presentation_publish', btn, note);
       dynamicContainer.appendChild(btn);
     }
@@ -568,7 +573,7 @@ function configureActions(result: ActionResultViewModel): void {
   note.textContent = presentation?.isDeleted
     ? 'This deck is deleted. Recover it before opening or previewing.'
     : presentation?.id
-      ? 'Open the deck, preview it with ChatGPT, or copy the share link when available.'
+      ? 'Open the deck, preview it here, or copy the share link when available.'
       : 'The operation finished. Review the affected presentation list above.';
 }
 
@@ -589,11 +594,12 @@ async function previewPresentation(
   button: HTMLButtonElement,
   note: HTMLElement
 ): Promise<void> {
-  await runButtonAction(button, note, 'Asking ChatGPT...', async () => {
-    await sendFollowUpMessage(
-      `Show me a visual preview of Verto presentation ${presentation.id}.`
-    );
-    note.textContent = 'Asked ChatGPT to preview this deck.';
+  await runButtonAction(button, note, 'Opening preview...', async () => {
+    await callMcpTool('presentation_get', {
+      presentation_id: presentation.id,
+      include_slides: true,
+    });
+    note.textContent = `Opened the preview for "${presentation.title}".`;
   });
 }
 
@@ -614,11 +620,11 @@ async function runButtonAction(
   busyLabel: string,
   action: () => Promise<void>
 ): Promise<void> {
-  const previousLabel = button.textContent || '';
+  const previousLabel = getControlLabel(button);
   button.disabled = true;
   button.classList.add('is-busy');
   button.setAttribute('aria-disabled', 'true');
-  button.textContent = busyLabel;
+  setControlLabel(button, busyLabel);
 
   try {
     await action();
@@ -628,8 +634,8 @@ async function runButtonAction(
     button.disabled = false;
     button.classList.remove('is-busy');
     button.setAttribute('aria-disabled', 'false');
-    if (button.textContent === busyLabel) {
-      button.textContent = previousLabel;
+    if (getControlLabel(button) === busyLabel) {
+      setControlLabel(button, previousLabel);
     }
   }
 }
@@ -642,7 +648,7 @@ function getActionErrorMessage(error: unknown): string {
     }
   }
 
-  return 'ChatGPT could not complete that Verto action. Try again in a moment.';
+  return 'Verto could not complete that action. Try again in a moment.';
 }
 
 function formatKind(kind: string): string {

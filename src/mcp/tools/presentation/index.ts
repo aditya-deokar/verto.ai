@@ -124,6 +124,10 @@ const PRESENTATION_TOOL_METADATA: Record<
   [TOOL_NAMES.PRESENTATION_DELETE]: {
     title: 'Soft-delete presentation',
     uiResourceUri: MCP_APP_UI_RESOURCE_URIS.ACTION_RESULT,
+    // The workspace list and action-result widgets both offer Delete. Without
+    // app visibility the host rejects the call and the button does nothing.
+    // Deletion is recoverable and the widgets ask for a second click first.
+    appCallable: true,
     annotations: {
       readOnlyHint: false,
       destructiveHint: false,
@@ -134,6 +138,8 @@ const PRESENTATION_TOOL_METADATA: Record<
   [TOOL_NAMES.PRESENTATION_RECOVER]: {
     title: 'Recover presentation',
     uiResourceUri: MCP_APP_UI_RESOURCE_URIS.ACTION_RESULT,
+    // Undo for the delete above, offered from the same two surfaces.
+    appCallable: true,
     annotations: {
       readOnlyHint: false,
       destructiveHint: false,
@@ -144,6 +150,9 @@ const PRESENTATION_TOOL_METADATA: Record<
   [TOOL_NAMES.PRESENTATION_DELETE_PERMANENTLY]: {
     title: 'Permanently delete presentations',
     uiResourceUri: MCP_APP_UI_RESOURCE_URIS.ACTION_RESULT,
+    // Deliberately NOT app-callable: this one is irreversible, so it keeps
+    // its model turn. The workspace widget routes Delete forever through a
+    // follow-up message instead of calling the tool itself.
     annotations: {
       readOnlyHint: false,
       destructiveHint: true,
