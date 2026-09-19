@@ -267,6 +267,8 @@ const presentationDeletePermanently = read('src/mcp/tools/presentation/delete-pe
 const packageJson = read('package.json');
 const widgetBuildScript = read('scripts/mcp-apps/build-widgets.mjs');
 const protectedResourceMetadata = read('src/app/api/mcp/oauth-protected-resource/metadata.ts');
+const oauthClients = read('src/mcp/auth/oauth-clients.ts');
+const oauthMetadata = read('src/mcp/auth/oauth-metadata.ts');
 const prismaSchema = read('prisma/schema.prisma');
 const readme = read('docs/mcp-apps/README.md');
 const implementationPlan = read('docs/mcp-apps/implementation.md');
@@ -708,6 +710,32 @@ check('GET /mcp advertises rate limit metadata', httpTransport.includes('rate_li
 check('GET /mcp advertises output limits', httpTransport.includes('output_limits'));
 check('protected resource metadata exposes scopes', protectedResourceMetadata.includes('scopes_supported'));
 check('protected resource metadata exposes authorization server', protectedResourceMetadata.includes('authorization_servers'));
+
+// A client id metadata document states a *preferred* token endpoint auth
+// method. Verto is a public-client AS (PKCE S256, no client authentication),
+// so what matters is whether the client can also do `none`. Reading only the
+// preference locked out the ChatGPT connector, which prefers private_key_jwt
+// while supporting none.
+check(
+  'CIMD auth method is negotiated, not read from the preference alone',
+  oauthClients.includes('supportsUnauthenticatedTokenRequest')
+    && oauthClients.includes('token_endpoint_auth_methods_supported')
+);
+check(
+  'authorization server advertises the none auth method it implements',
+  oauthMetadata.includes("token_endpoint_auth_methods_supported: ['none']")
+    && oauthMetadata.includes('client_id_metadata_document_supported: true')
+);
+check(
+  'client metadata fetch allows for a cold TLS handshake',
+  /CLIENT_METADATA_TIMEOUT_MS = (\d+)/.test(oauthClients)
+    && Number(oauthClients.match(/CLIENT_METADATA_TIMEOUT_MS = (\d+)/)[1]) >= 5000
+);
+check(
+  'client metadata rejections are logged with a reason',
+  oauthClients.includes('Client metadata document rejected')
+    && oauthClients.includes('Client metadata fetch failed')
+);
 
 for (const modelName of [
   'McpOAuthClient',

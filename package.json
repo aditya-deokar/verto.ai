@@ -24,7 +24,8 @@
     "mcp:phase7:typecheck": "node scripts/mcp-apps/focused-typecheck.mjs",
     "mcp:phase7": "npm run mcp:apps:encoding && npm run mcp:apps:check && npm run mcp:phase7:checks && npm run mcp:phase7:typecheck",
     "mcp:phase9h": "node scripts/mcp-apps/phase9h-visual-qa.mjs",
-    "mcp:smoke": "node scripts/mcp-apps/basic-host-smoke.mjs"
+    "mcp:smoke": "node scripts/mcp-apps/basic-host-smoke.mjs",
+    "mcp:oauth:check": "npx tsx scripts/mcp-apps/oauth-client-check.mts"
   },
   "dependencies": {
     "@ai-sdk/google": "^3.0.14",
