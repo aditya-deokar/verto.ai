@@ -1,11 +1,71 @@
 {
   "version": 1,
   "skills": {
+    "code-review-loop": {
+      "source": "aditya-deokar/software-factory",
+      "sourceType": "github",
+      "skillPath": "skills/code-review-loop/SKILL.md",
+      "computedHash": "92c762f6dc0fbe4633175021d3edcd96bad363ad45f9e7a522ef45753db1f459"
+    },
+    "code-review-loop-large": {
+      "source": "aditya-deokar/software-factory",
+      "sourceType": "github",
+      "skillPath": "skills/code-review-loop-large/SKILL.md",
+      "computedHash": "8113cd2b7b601c1e1cc6b4c3fdb71cbea3ae5c8e4c6a97c185957f703e0381bb"
+    },
     "create-mcp-app": {
       "source": "modelcontextprotocol/ext-apps",
       "sourceType": "github",
       "skillPath": "plugins/mcp-apps/skills/create-mcp-app/SKILL.md",
       "computedHash": "39f1ce1c5d4c43b8281e7e51332f9a05f4b689ddd9bf426b4833fb671237f757"
+    },
+    "cross-platform-shell": {
+      "source": "aditya-deokar/software-factory",
+      "sourceType": "github",
+      "skillPath": "skills/cross-platform-shell/SKILL.md",
+      "computedHash": "455b4b400c1403a834825a3c7a25825de268316c8af04944b3ee1d3711a97dd4"
+    },
+    "package-release": {
+      "source": "aditya-deokar/software-factory",
+      "sourceType": "github",
+      "skillPath": "skills/package-release/SKILL.md",
+      "computedHash": "08582f1a5e7e3d428e669700cb5a315f75da4d52c9b71ebd5cd7b4d89a462fc4"
+    },
+    "prose-cleanup": {
+      "source": "aditya-deokar/software-factory",
+      "sourceType": "github",
+      "skillPath": "skills/prose-cleanup/SKILL.md",
+      "computedHash": "af9d1544f635a5f1be1b94d40f4fca25143d432a791ab0572df62532aa7e9ff8"
+    },
+    "service-layer": {
+      "source": "aditya-deokar/software-factory",
+      "sourceType": "github",
+      "skillPath": "skills/service-layer/SKILL.md",
+      "computedHash": "cf3322f5423fd48d32c778adab47d16611577d16da380468a3a181f3e5e57a89"
+    },
+    "skill-authoring": {
+      "source": "aditya-deokar/software-factory",
+      "sourceType": "github",
+      "skillPath": "skills/skill-authoring/SKILL.md",
+      "computedHash": "23707a06214b4ce70f501db087392fd3231e7e1c0feaa4adc8c391bf2fca3df6"
+    },
+    "test-evidence": {
+      "source": "aditya-deokar/software-factory",
+      "sourceType": "github",
+      "skillPath": "skills/test-evidence/SKILL.md",
+      "computedHash": "f05c2bb29e0151fb3e1cab57a900deaa3c96ea7a2633b8a6f0d8df2d6e93214e"
+    },
+    "visual-diff": {
+      "source": "aditya-deokar/software-factory",
+      "sourceType": "github",
+      "skillPath": "skills/visual-diff/SKILL.md",
+      "computedHash": "c790802fe3f0b838e14c00309978b5d248531a73462d12fca4953275b9030495"
+    },
+    "worktree-isolation": {
+      "source": "aditya-deokar/software-factory",
+      "sourceType": "github",
+      "skillPath": "skills/worktree-isolation/SKILL.md",
+      "computedHash": "056bf95faff1262e5df1f8d11aa0e8224057f1e9bc4f26bf488f4aab694de2b1"
     }
   }
 }
