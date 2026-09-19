@@ -116,6 +116,7 @@ Claude:
 | `11-immersive-widgets-architecture.md` | Architecture deep-dive for the Plan 10 immersive widget layer (layers, data flows, decisions). |
 | `12-mcp-apps-audit-report.md` | Full audit of the MCP Apps feature vs. actual code: consistency check, UI-connection analysis, missing pieces, and a phased improvement plan (A–D) with quick wins. |
 | `13-phase-d-deep-dive-plan.md` | Implementation-ready deep dive for Phase D (UI story): shared render kernel, SSE-first progress, `core/` service extraction, widget enhancement backlog, dead-code deletion — with verified file:line evidence, execution order (D5→D3→D2→D1→D4), gates, and risk table. |
+| `14-in-chat-ui-gaps.md` | What a person still cannot do without leaving the chat: outline composer, slide add/delete, image control, cancel, export, workspace search/trash/multi-select, plus platform debts (resource stub, bundle headroom, missing unit tests). Each gap cited to file:line, with a suggested order. |
 | `architecture-deep-dive/` | **Full system architecture series** (interview-grade): 10 documents with Mermaid flowcharts/sequence/state diagrams covering transport & sessions, OAuth security model, tool pipeline, generation engine, widget system, shared kernel, ADR trade-off catalog, scaling limits, and an interview playbook. Start at its `README.md`. |
 | `submission-assets/` | Place final icons, screenshots, and evidence files here before app review. |
 
