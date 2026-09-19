@@ -536,7 +536,7 @@ function renderSummary(): void {
   const summary = byId('studio-summary');
   summary.textContent = state.themes.length > 0
     ? `${state.themes.length} catalog themes. Current look: ${state.currentThemeName || 'Default'}.`
-    : 'Theme catalog unavailable. Ask ChatGPT to apply a theme instead.';
+    : 'Theme catalog unavailable. Ask the assistant to apply a theme instead.';
 
   const tabs = [
     ['all', byId('tab-all')],
@@ -776,7 +776,7 @@ function getActionErrorMessage(error: unknown): string {
     }
   }
 
-  return 'ChatGPT could not complete that Verto action. Try again in a moment.';
+  return 'Verto could not complete that action. Try again in a moment.';
 }
 
 function wireStaticControls(): void {

@@ -960,7 +960,7 @@ function getActionErrorMessage(error: unknown): string {
     }
   }
 
-  return 'ChatGPT could not complete that Verto action. Try again in a moment.';
+  return 'Verto could not complete that action. Try again in a moment.';
 }
 
 async function copyShareLink(
@@ -994,20 +994,24 @@ async function reorderSlide(deck: DeckViewModel, index: number, direction: -1 | 
   setControlLabel(button, '...');
 
   try {
-    const updatedPayload = await callMcpTool('presentation_update_slides', {
+    await callMcpTool('presentation_update_slides', {
       presentation_id: deck.id,
-      slides: rawSlides
+      slides: rawSlides,
     });
+
     const refreshedPayload = await callMcpTool('presentation_get', {
       presentation_id: deck.id,
-      include_slides: true
+      include_slides: true,
     });
+
     renderDeckPayload(refreshedPayload);
+    byId('action-note').textContent = 'Slide order saved.';
   } catch (error) {
-    console.error(error);
     button.disabled = false;
     setControlLabel(button, originalText);
-    alert('Failed to reorder slide.');
+    // alert() is inert inside the host's sandboxed iframe, so the failure has
+    // to land somewhere the user can actually see it.
+    byId('action-note').textContent = getActionErrorMessage(error);
   }
 }
 
@@ -1096,7 +1100,7 @@ function renderLoading(): void {
   root.classList.add('is-loading');
   currentDeck = null;
   byId('title').textContent = 'Loading deck preview';
-  byId('summary').textContent = 'Waiting for Verto deck data from ChatGPT.';
+  byId('summary').textContent = 'Waiting for deck data from Verto.';
   renderBadges({
     id: '',
     title: 'Deck preview',

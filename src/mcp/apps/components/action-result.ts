@@ -7,7 +7,6 @@ import {
   getString,
   injectStyles,
   mountWidget,
-  sendFollowUpMessage,
 } from './shared/runtime';
 import {
   extractThemeName,
@@ -319,7 +318,7 @@ function ensureMarkup(): void {
           <p class="action-title">Next action</p>
           <a class="button primary vt-has-icon" id="open-link">${iconLabel('external-link', 'Open in Verto')}</a>
           <div id="dynamic-actions" style="display: grid; gap: 12px;"></div>
-          <button class="button vt-has-icon" id="preview-action" type="button">${iconLabel('eye', 'Preview with ChatGPT')}</button>
+          <button class="button vt-has-icon" id="preview-action" type="button">${iconLabel('eye', 'Preview deck')}</button>
           <button class="button vt-has-icon" id="copy-action" type="button">${iconLabel('copy', 'Copy share link')}</button>
           <p class="action-note" id="action-note">Choose what to do next.</p>
         </aside>
@@ -574,7 +573,7 @@ function configureActions(result: ActionResultViewModel): void {
   note.textContent = presentation?.isDeleted
     ? 'This deck is deleted. Recover it before opening or previewing.'
     : presentation?.id
-      ? 'Open the deck, preview it with ChatGPT, or copy the share link when available.'
+      ? 'Open the deck, preview it here, or copy the share link when available.'
       : 'The operation finished. Review the affected presentation list above.';
 }
 
@@ -595,11 +594,12 @@ async function previewPresentation(
   button: HTMLButtonElement,
   note: HTMLElement
 ): Promise<void> {
-  await runButtonAction(button, note, 'Asking ChatGPT...', async () => {
-    await sendFollowUpMessage(
-      `Show me a visual preview of Verto presentation ${presentation.id}.`
-    );
-    note.textContent = 'Asked ChatGPT to preview this deck.';
+  await runButtonAction(button, note, 'Opening preview...', async () => {
+    await callMcpTool('presentation_get', {
+      presentation_id: presentation.id,
+      include_slides: true,
+    });
+    note.textContent = `Opened the preview for "${presentation.title}".`;
   });
 }
 
@@ -648,7 +648,7 @@ function getActionErrorMessage(error: unknown): string {
     }
   }
 
-  return 'ChatGPT could not complete that Verto action. Try again in a moment.';
+  return 'Verto could not complete that action. Try again in a moment.';
 }
 
 function formatKind(kind: string): string {

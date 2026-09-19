@@ -1,13 +1,13 @@
 import {
   byId,
   callMcpTool,
+  sendFollowUpMessage,
   getArray,
   getNumber,
   getRecord,
   getString,
   injectStyles,
   mountWidget,
-  sendFollowUpMessage,
 } from './shared/runtime';
 import {
   extractWidgetLinks,
@@ -126,6 +126,11 @@ const listStyles = `
     font-weight: 600;
     text-transform: uppercase;
     letter-spacing: 0.02em;
+  }
+  .list-pager {
+    display: flex;
+    justify-content: center;
+    padding: 12px 0 4px;
   }
   .presentation-row {
     display: grid;
@@ -410,6 +415,16 @@ const listStyles = `
 
 let stylesInjected = false;
 
+/**
+ * Last rendered list. Kept so the pager can append the next page and so row
+ * actions can re-render from a known state after a tool call.
+ */
+let listState: PresentationListViewModel | null = null;
+
+/** Row id awaiting a second click before a destructive action runs. */
+let pendingDestructive = '';
+let pendingDestructiveTimer = 0;
+
 type PresentationListItemViewModel = {
   id: string;
   title: string;
@@ -426,6 +441,7 @@ type PresentationListViewModel = {
   totalCount: number;
   pageSize: number;
   hasMore: boolean;
+  nextCursor: string;
   publishedCount: number;
   draftCount: number;
   deletedCount: number;
@@ -462,6 +478,9 @@ function ensureMarkup(): void {
             <span style="text-align: right">Actions</span>
           </div>
           <div id="presentations"></div>
+          <div class="list-pager">
+            <button class="button vt-has-icon" id="load-more-action" type="button" hidden>${iconLabel('arrow-down', 'Load more')}</button>
+          </div>
         </article>
         <aside class="action-panel" aria-label="List actions">
           <p class="action-title">Next action</p>
@@ -488,6 +507,7 @@ function toListViewModel(payload: Record<string, unknown>): PresentationListView
       totalCount: getNumber(summary.totalCount, getNumber(pagination.totalCount, presentations.length)),
       pageSize: getNumber(pagination.pageSize, presentations.length),
       hasMore: Boolean(pagination.hasMore),
+      nextCursor: getString(pagination.nextCursor),
       publishedCount: getNumber(summary.publishedCount),
       draftCount: getNumber(summary.draftCount),
       deletedCount: getNumber(summary.deletedCount),
@@ -503,6 +523,7 @@ function toListViewModel(payload: Record<string, unknown>): PresentationListView
     totalCount: getNumber(pagination.total_count, presentations.length),
     pageSize: getNumber(pagination.page_size, presentations.length),
     hasMore: Boolean(pagination.has_more),
+    nextCursor: getString(pagination.next_cursor),
     publishedCount: presentations.filter((item) => item.isPublished).length,
     draftCount: presentations.filter((item) => !item.isPublished && !item.isDeleted).length,
     deletedCount: presentations.filter((item) => item.isDeleted).length,
@@ -525,10 +546,33 @@ function mapPresentationItem(value: unknown): PresentationListItemViewModel {
 }
 
 function renderListPayload(payload: Record<string, unknown>): void {
+  renderList(toListViewModel(payload), payload);
+}
+
+/**
+ * Merges the next page onto the rows already shown. `presentation_list`
+ * returns one page at a time; before this the widget dropped everything past
+ * the first response and the cursor was never sent at all.
+ */
+function appendListPayload(payload: Record<string, unknown>): void {
+  const next = toListViewModel(payload);
+
+  if (listState) {
+    const seen = new Set(listState.presentations.map((item) => item.id));
+    next.presentations = [
+      ...listState.presentations,
+      ...next.presentations.filter((item) => !seen.has(item.id)),
+    ];
+  }
+
+  renderList(next, payload);
+}
+
+function renderList(list: PresentationListViewModel, payload: Record<string, unknown>): void {
   ensureListStyles();
   ensureMarkup();
 
-  const list = toListViewModel(payload);
+  listState = list;
 
   setWidgetTheme(extractThemeName(payload));
   renderDeepLinkMenu(byId('list-links'), extractWidgetLinks(payload));
@@ -541,6 +585,38 @@ function renderListPayload(payload: Record<string, unknown>): void {
   renderBadges(list);
   renderRows(list);
   configureActions(list);
+  configurePager(list);
+}
+
+function configurePager(list: PresentationListViewModel): void {
+  const button = byId('load-more-action');
+
+  if (!(button instanceof HTMLButtonElement)) return;
+
+  const canLoadMore = list.hasMore && Boolean(list.nextCursor);
+  button.hidden = !canLoadMore;
+  button.disabled = !canLoadMore;
+  button.onclick = canLoadMore
+    ? () => loadMorePresentations(list, button, byId('action-note'))
+    : null;
+}
+
+async function loadMorePresentations(
+  list: PresentationListViewModel,
+  button: HTMLButtonElement,
+  note: HTMLElement
+): Promise<void> {
+  await runButtonAction(button, note, 'Loading...', async () => {
+    const payload = await callMcpTool('presentation_list', {
+      cursor: list.nextCursor,
+      limit: list.pageSize || 20,
+      include_deleted: false,
+      sort_by: 'updated_at',
+      sort_order: 'desc',
+    });
+    appendListPayload(payload);
+    byId('action-note').textContent = 'Loaded the next page of presentations.';
+  });
 }
 
 function renderBadges(list: PresentationListViewModel): void {
@@ -581,7 +657,7 @@ function renderRows(list: PresentationListViewModel): void {
     return;
   }
 
-  list.presentations.slice(0, 8).forEach((presentation) => {
+  list.presentations.forEach((presentation) => {
     const row = document.createElement('article');
     row.className = 'presentation-row';
 
@@ -641,7 +717,7 @@ function renderRows(list: PresentationListViewModel): void {
       const previewBtn = document.createElement('button');
       previewBtn.className = 'row-action-btn';
       setButtonIcon(previewBtn, 'eye', 'Preview');
-      previewBtn.onclick = () => askChatGptToPreview(presentation, previewBtn, byId('action-note'));
+      previewBtn.onclick = () => previewPresentation(presentation, previewBtn, byId('action-note'));
       actions.appendChild(previewBtn);
 
       if (presentation.isPublished) {
@@ -697,7 +773,7 @@ function configureActions(list: PresentationListViewModel): void {
     previewButton.disabled = !latest?.id;
     previewButton.setAttribute('aria-disabled', latest?.id ? 'false' : 'true');
     previewButton.onclick = latest?.id
-      ? () => askChatGptToPreview(latest, previewButton, note)
+      ? () => previewPresentation(latest, previewButton, note)
       : null;
   }
 
@@ -712,16 +788,25 @@ function configureActions(list: PresentationListViewModel): void {
     : 'Generate a Verto deck to populate this workspace.';
 }
 
-async function askChatGptToPreview(
+/**
+ * Opens the deck preview through the app bridge.
+ *
+ * This used to post a natural-language follow-up asking the assistant to
+ * preview the deck: a full model turn, billed tokens, and seconds of latency
+ * for something the host can proxy directly. `presentation_get` is
+ * app-visible and already bound to the deck-preview UI resource.
+ */
+async function previewPresentation(
   presentation: PresentationListItemViewModel,
   button: HTMLButtonElement,
   note: HTMLElement
 ): Promise<void> {
-  await runButtonAction(button, note, 'Asking ChatGPT...', async () => {
-    await sendFollowUpMessage(
-      `Show me a visual preview of Verto presentation ${presentation.id}.`
-    );
-    note.textContent = 'Asked ChatGPT to preview the latest deck.';
+  await runButtonAction(button, note, 'Opening preview...', async () => {
+    await callMcpTool('presentation_get', {
+      presentation_id: presentation.id,
+      include_slides: true,
+    });
+    note.textContent = `Opened the preview for "${presentation.title}".`;
   });
 }
 
@@ -768,37 +853,100 @@ async function runButtonAction(
   }
 }
 
+type RowAction = 'publish' | 'unpublish' | 'delete' | 'recover' | 'delete-forever';
+
+type BridgeRowAction = Exclude<RowAction, 'delete-forever'>;
+
+const ROW_ACTION_TOOLS: Record<BridgeRowAction, string> = {
+  publish: 'presentation_publish',
+  unpublish: 'presentation_unpublish',
+  delete: 'presentation_delete',
+  recover: 'presentation_recover',
+};
+
+const ROW_ACTION_DONE: Record<RowAction, (title: string) => string> = {
+  publish: (title) => `Published "${title}". The share link is live.`,
+  unpublish: (title) => `Unpublished "${title}". The share link stopped working.`,
+  delete: (title) => `Deleted "${title}". Recover it from the deleted rows.`,
+  recover: (title) => `Recovered "${title}".`,
+  'delete-forever': (title) => `Permanently deleted "${title}".`,
+};
+
+/** Actions that need a second click before they run. */
+const DESTRUCTIVE_ACTIONS = new Set<RowAction>(['delete', 'delete-forever']);
+
+function clearPendingDestructive(): void {
+  pendingDestructive = '';
+
+  if (pendingDestructiveTimer) {
+    window.clearTimeout(pendingDestructiveTimer);
+    pendingDestructiveTimer = 0;
+  }
+}
+
+/**
+ * Runs a row action over the app bridge.
+ *
+ * Every tool here is declared `visibility: ['model', 'app']`, so the host
+ * proxies the call straight to the server: no model turn, no tokens, and the
+ * list re-renders from the response. Failures land in the action note, which
+ * is `aria-live`; the previous `alert()` was a no-op inside the host's
+ * sandboxed iframe, so a rejected call looked like nothing happening at all.
+ */
 async function performRowAction(
   presentation: PresentationListItemViewModel,
-  action: 'publish' | 'unpublish' | 'delete' | 'recover' | 'delete-forever',
+  action: RowAction,
   button: HTMLButtonElement
 ): Promise<void> {
+  const note = byId('action-note');
+  const key = `${action}:${presentation.id}`;
   const originalText = getControlLabel(button);
-  button.disabled = true;
-  setControlLabel(button, '...');
-  
-  let toolName = '';
-  if (action === 'publish') toolName = 'presentation_publish';
-  if (action === 'unpublish') toolName = 'presentation_unpublish';
-  if (action === 'delete') toolName = 'presentation_delete';
-  if (action === 'recover') toolName = 'presentation_recover';
-  if (action === 'delete-forever') toolName = 'presentation_delete_permanently';
-  
-  try {
-    await callMcpTool(toolName, { presentation_id: presentation.id });
+
+  if (DESTRUCTIVE_ACTIONS.has(action) && pendingDestructive !== key) {
+    clearPendingDestructive();
+    pendingDestructive = key;
+    setControlLabel(button, 'Confirm');
+    note.textContent = action === 'delete-forever'
+      ? `Click again to permanently delete "${presentation.title}". This cannot be undone.`
+      : `Click again to delete "${presentation.title}". You can recover it afterwards.`;
+
+    pendingDestructiveTimer = window.setTimeout(() => {
+      if (pendingDestructive !== key) return;
+      clearPendingDestructive();
+      setControlLabel(button, originalText);
+      note.textContent = 'Delete cancelled.';
+    }, 6000);
+
+    return;
+  }
+
+  clearPendingDestructive();
+
+  if (action === 'delete-forever') {
+    await runButtonAction(button, note, 'Asking assistant...', async () => {
+      await sendFollowUpMessage(
+        `Permanently delete Verto presentation ${presentation.id} `
+          + `("${presentation.title}"). This cannot be undone, so confirm with me first.`
+      );
+      byId('action-note').textContent =
+        'Asked the assistant to confirm the permanent delete.';
+    });
+    return;
+  }
+
+  await runButtonAction(button, note, '...', async () => {
+    await callMcpTool(ROW_ACTION_TOOLS[action], { presentation_id: presentation.id });
+
     const payload = await callMcpTool('presentation_list', {
-      limit: 20,
+      limit: listState?.pageSize || 20,
       include_deleted: false,
       sort_by: 'updated_at',
       sort_order: 'desc',
     });
+
     renderListPayload(payload);
-  } catch (error) {
-    button.disabled = false;
-    setControlLabel(button, originalText);
-    const msg = error && typeof error === 'object' && 'message' in error ? String((error as any).message) : 'Action failed';
-    alert(msg);
-  }
+    byId('action-note').textContent = ROW_ACTION_DONE[action](presentation.title);
+  });
 }
 
 function getActionErrorMessage(error: unknown): string {
@@ -809,7 +957,7 @@ function getActionErrorMessage(error: unknown): string {
     }
   }
 
-  return 'ChatGPT could not complete that Verto action. Try again in a moment.';
+  return 'Verto could not complete that action. Try again in a moment.';
 }
 
 function formatUpdatedAt(value: string): string {

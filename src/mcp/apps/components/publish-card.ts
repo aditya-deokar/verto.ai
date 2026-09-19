@@ -644,7 +644,7 @@ function getActionErrorMessage(error: unknown): string {
     }
   }
 
-  return 'ChatGPT could not complete that Verto action. Try again in a moment.';
+  return 'Verto could not complete that action. Try again in a moment.';
 }
 
 mountWidget((payload) => {

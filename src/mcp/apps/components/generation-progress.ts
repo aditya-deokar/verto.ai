@@ -993,8 +993,8 @@ function renderError(generation: GenerationViewModel): void {
 
   errorCard.classList.add('is-visible');
   errorCard.textContent = generation.error
-    ? `Error: ${generation.error}. Ask ChatGPT to retry generation with a simpler topic or fewer constraints.`
-    : 'Ask ChatGPT to retry generation with a simpler topic or fewer constraints.';
+    ? `Error: ${generation.error}. Ask the assistant to retry with a simpler topic or fewer constraints.`
+    : 'Ask the assistant to retry with a simpler topic or fewer constraints.';
 }
 
 function renderPreview(generation: GenerationViewModel): void {
@@ -1063,11 +1063,11 @@ function configureActions(generation: GenerationViewModel): void {
     inspectButton.onclick = null;
 
     if (generation.isFailed) {
-      setButtonIcon(inspectButton, 'rotate-ccw', 'Ask ChatGPT to retry');
-      inspectButton.onclick = () => askChatGptToRetry(generation, inspectButton, note);
+      setButtonIcon(inspectButton, 'rotate-ccw', 'Ask assistant to retry');
+      inspectButton.onclick = () => askAssistantToRetry(generation, inspectButton, note);
     } else if (generation.isComplete && generation.presentationId) {
-      setButtonIcon(inspectButton, 'eye', 'Inspect with ChatGPT');
-      inspectButton.onclick = () => askChatGptToInspect(generation, inspectButton, note);
+      setButtonIcon(inspectButton, 'eye', 'Preview deck');
+      inspectButton.onclick = () => previewGeneratedDeck(generation, inspectButton, note);
     } else if (generation.runId) {
       setButtonIcon(inspectButton, 'refresh', 'Check status');
       inspectButton.onclick = () => refreshGenerationStatus(generation, inspectButton, note);
@@ -1079,11 +1079,11 @@ function configureActions(generation: GenerationViewModel): void {
   }
 
   if (generation.isFailed) {
-    note.textContent = 'Ask ChatGPT to retry generation with clearer constraints.';
+    note.textContent = 'Ask the assistant to retry generation with clearer constraints.';
   } else if (generation.isComplete) {
     note.textContent = generation.presentationId
-      ? 'Open the deck or ask ChatGPT to inspect, edit, or publish it.'
-      : 'Ask ChatGPT to check the completed generation status.';
+      ? 'Open the deck, preview it here, or ask the assistant to edit it.'
+      : 'Check the completed generation status.';
   } else {
     note.textContent = 'This card refreshes automatically until the deck is ready.';
   }
@@ -1105,34 +1105,45 @@ async function refreshGenerationStatus(
   });
 }
 
-async function askChatGptToInspect(
+/**
+ * Opens the finished deck over the app bridge. Inspecting a deck the user can
+ * already see does not need a model turn; `presentation_get` is app-visible
+ * and renders the deck-preview widget directly.
+ */
+async function previewGeneratedDeck(
   generation: GenerationViewModel,
   button: HTMLButtonElement,
   note: HTMLElement
 ): Promise<void> {
   if (!generation.presentationId) return;
 
-  await runButtonAction(button, note, 'Asking ChatGPT...', async () => {
-    await sendFollowUpMessage(
-      `Inspect Verto presentation ${generation.presentationId}, summarize the deck, and suggest the next best edits.`
-    );
-    note.textContent = 'Asked ChatGPT to inspect this deck.';
+  await runButtonAction(button, note, 'Opening preview...', async () => {
+    await callMcpTool('presentation_get', {
+      presentation_id: generation.presentationId,
+      include_slides: true,
+    });
+    note.textContent = 'Opened the deck preview.';
   });
 }
 
-async function askChatGptToRetry(
+/**
+ * Retry is the one action that still needs the model: `presentation_generate`
+ * is deliberately not app-visible, because a retry has to re-reason about the
+ * topic and constraints rather than replay an argument list.
+ */
+async function askAssistantToRetry(
   generation: GenerationViewModel,
   button: HTMLButtonElement,
   note: HTMLElement
 ): Promise<void> {
-  await runButtonAction(button, note, 'Asking ChatGPT...', async () => {
+  await runButtonAction(button, note, 'Asking assistant...', async () => {
     const topic = generation.topic === 'Generation progress'
       ? 'this Verto presentation'
       : `"${generation.topic}"`;
     await sendFollowUpMessage(
       `Retry the Verto presentation generation for ${topic}. Use simpler constraints and avoid starting duplicate runs unless needed.`
     );
-    note.textContent = 'Asked ChatGPT to prepare a retry.';
+    note.textContent = 'Asked the assistant to prepare a retry.';
   });
 }
 
@@ -1170,7 +1181,7 @@ function getActionErrorMessage(error: unknown): string {
     }
   }
 
-  return 'ChatGPT could not complete that Verto action. Try again in a moment.';
+  return 'Verto could not complete that action. Try again in a moment.';
 }
 
 function assertSuccess(payload: Record<string, unknown>): void {
@@ -1361,8 +1372,8 @@ function announceCompletion(generation: GenerationViewModel, previous: Generatio
 
   setActionNote(
     generation.presentationId
-      ? 'Deck ready! Open it or ask ChatGPT what to do next.'
-      : 'Deck ready. Ask ChatGPT to open it.'
+      ? 'Deck ready. Open it, preview it here, or ask the assistant what is next.'
+      : 'Deck ready. Open it to keep editing.'
   );
 }
 

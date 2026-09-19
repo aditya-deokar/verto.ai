@@ -96,6 +96,15 @@ export function getHostDisplayContext(): {
   };
 }
 
+/**
+ * Calls a server tool over the MCP Apps bridge.
+ *
+ * The SDK only throws for transport failures; a tool that fails server-side
+ * comes back as a normal result carrying `isError`. Widgets were reading
+ * those results as success, so a rejected delete or publish looked like it
+ * had worked. This surfaces both failure modes as one thrown Error that the
+ * calling button reports in its own note.
+ */
 export async function callMcpTool(
   name: string,
   args: Record<string, unknown>
@@ -104,7 +113,35 @@ export async function callMcpTool(
     { name, arguments: args },
     { timeout: TOOL_CALL_TIMEOUT_MS }
   );
-  return normalizePayload(result);
+
+  const payload = normalizePayload(result);
+
+  if (result && typeof result === 'object' && (result as { isError?: boolean }).isError) {
+    throw new Error(readToolErrorMessage(payload, result));
+  }
+
+  if (payload.success === false) {
+    throw new Error(readToolErrorMessage(payload, result));
+  }
+
+  return payload;
+}
+
+/** Best-effort human message from a failed tool result. */
+function readToolErrorMessage(payload: VertoPayload, raw: unknown): string {
+  const structured = getRecord(payload.error);
+  const structuredMessage = getString(structured.message);
+  if (structuredMessage) return structuredMessage;
+
+  const content = getArray(getRecord(raw).content);
+  for (const item of content) {
+    const record = getRecord(item);
+    if (record.type === 'text' && typeof record.text === 'string' && record.text.trim()) {
+      return record.text.trim();
+    }
+  }
+
+  return 'Verto could not complete that action. Try again in a moment.';
 }
 
 export async function sendFollowUpMessage(prompt: string): Promise<void> {

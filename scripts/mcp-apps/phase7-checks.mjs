@@ -235,6 +235,11 @@ const listWidgetSource = read('src/mcp/apps/components/presentation-list.ts');
 const generationWidgetSource = read('src/mcp/apps/components/generation-progress.ts');
 const deckWidgetSource = read('src/mcp/apps/components/deck-preview.ts');
 const actionResultWidgetSource = read('src/mcp/apps/components/action-result.ts');
+/** Source with comments removed, so prose about a banned call is not a hit. */
+function stripComments(source) {
+  return source.replace(/\/\*[\s\S]*?\*\//g, '').replace(/\/\/.*$/gm, '');
+}
+
 const themeStudioWidgetSource = read('src/mcp/apps/components/theme-studio.ts');
 const publishCardWidgetSource = read('src/mcp/apps/components/publish-card.ts');
 const slideEditorSource = read('src/mcp/apps/components/shared/slide-editor.ts');
@@ -322,16 +327,21 @@ for (const key of [
   'PRESENTATION_PUBLISH',
   'PRESENTATION_UNPUBLISH',
   'PRESENTATION_GENERATION_STATUS',
+  // Both render as buttons in the workspace widget, and both are reversible:
+  // delete is a soft delete and recover is its undo.
+  'PRESENTATION_DELETE',
+  'PRESENTATION_RECOVER',
 ]) {
   check(`${key} is explicitly app-callable`, blockFor(toolIndex, key).includes('appCallable: true'));
 }
 
 check(
-  'unsafe broad mutation tools are not app-callable',
+  // Irreversible or open-ended work keeps its model turn: permanent deletion
+  // cannot be undone, and create/generate have to reason about their inputs
+  // rather than replay an argument list a widget assembled.
+  'irreversible and open-ended tools are not app-callable',
   [
     'PRESENTATION_CREATE',
-    'PRESENTATION_DELETE',
-    'PRESENTATION_RECOVER',
     'PRESENTATION_DELETE_PERMANENTLY',
     'PRESENTATION_GENERATE',
   ].every((key) => !blockFor(toolIndex, key).includes('appCallable: true'))
@@ -536,10 +546,24 @@ check(
     deckWidgetSource.includes('pushModelContext')
 );
 check('widget runtime uses MCP Apps SDK bridge', appUiRuntime.includes("from '@modelcontextprotocol/ext-apps'"));
+check('widget bridge surfaces tool-level failures', appUiRuntime.includes('isError') && appUiRuntime.includes('readToolErrorMessage'));
+check(
+  'widget copy stays host-neutral',
+  [listWidgetSource, deckWidgetSource, actionResultWidgetSource, generationWidgetSource, themeStudioWidgetSource, publishCardWidgetSource]
+    .every((source) => !source.includes('ChatGPT'))
+);
+check(
+  'widgets report failures in-page instead of a sandbox-blocked alert()',
+  [listWidgetSource, deckWidgetSource].every((source) => !stripComments(source).includes('alert('))
+);
 check('premium presentation list has workspace surface', listWidgetSource.includes('Presentation workspace') && listWidgetSource.includes('presentation-panel') && listWidgetSource.includes('badge-row'));
 check('premium presentation list has list actions', listWidgetSource.includes('Refresh list') && listWidgetSource.includes('Preview latest') && listWidgetSource.includes('Open latest'));
 check('premium presentation list refreshes through safe tool call', listWidgetSource.includes("callMcpTool('presentation_list'") && listWidgetSource.includes('Workspace list refreshed'));
-check('premium presentation list uses follow-up for preview', listWidgetSource.includes('sendFollowUpMessage') && listWidgetSource.includes('Show me a visual preview'));
+check('presentation list previews over the app bridge, not a model turn', listWidgetSource.includes("callMcpTool('presentation_get'") && listWidgetSource.includes('previewPresentation') && !listWidgetSource.includes('Show me a visual preview'));
+check('presentation list row actions call tools directly', listWidgetSource.includes('ROW_ACTION_TOOLS') && listWidgetSource.includes("presentation_delete") && listWidgetSource.includes("presentation_recover"));
+check('presentation list confirms destructive row actions in-widget', listWidgetSource.includes('DESTRUCTIVE_ACTIONS') && listWidgetSource.includes('pendingDestructive'));
+check('presentation list keeps permanent delete behind a model turn', listWidgetSource.includes('Permanently delete Verto presentation') && !listWidgetSource.includes("callMcpTool('presentation_delete_permanently'"));
+check('presentation list pages through the cursor', listWidgetSource.includes('load-more-action') && listWidgetSource.includes('nextCursor') && listWidgetSource.includes('appendListPayload'));
 check('premium presentation list includes responsive mobile layout', listWidgetSource.includes('@media (max-width: 780px)') && listWidgetSource.includes('@media (max-width: 440px)'));
 check('premium deck preview has cover preview surface', deckWidgetSource.includes('cover-preview') && deckWidgetSource.includes('renderCover'));
 check('premium deck preview has metadata badges', deckWidgetSource.includes('badge-row') && deckWidgetSource.includes('formatUpdatedAt'));
@@ -549,15 +573,15 @@ check('premium deck preview publishes only after confirmation', deckWidgetSource
 check('premium deck preview has filmstrip layout', deckWidgetSource.includes('filmstrip-grid') && deckWidgetSource.includes('renderSlides'));
 check('premium deck preview handles loading and partial states', deckWidgetSource.includes('renderLoading') && deckWidgetSource.includes('Slide previews are not available yet'));
 check('premium deck preview includes responsive mobile layout', deckWidgetSource.includes('@media (max-width: 560px)'));
-check('premium action result has summary, affected list, and CTAs', actionResultWidgetSource.includes('summary-grid') && actionResultWidgetSource.includes('affected-panel') && actionResultWidgetSource.includes('Open in Verto') && actionResultWidgetSource.includes('Preview with ChatGPT') && actionResultWidgetSource.includes('Copy share link'));
-check('premium action result uses follow-up for preview', actionResultWidgetSource.includes('sendFollowUpMessage') && actionResultWidgetSource.includes('Show me a visual preview'));
+check('premium action result has summary, affected list, and CTAs', actionResultWidgetSource.includes('summary-grid') && actionResultWidgetSource.includes('affected-panel') && actionResultWidgetSource.includes('Open in Verto') && actionResultWidgetSource.includes('Preview deck') && actionResultWidgetSource.includes('Copy share link'));
+check('action result previews over the app bridge, not a model turn', actionResultWidgetSource.includes("callMcpTool('presentation_get'") && !actionResultWidgetSource.includes('sendFollowUpMessage'));
 check('premium action result includes responsive mobile layout', actionResultWidgetSource.includes('@media (max-width: 720px)') && actionResultWidgetSource.includes('@media (max-width: 440px)'));
 check('premium generation progress has progress surface', generationWidgetSource.includes('progress-panel') && generationWidgetSource.includes('progress-percent') && generationWidgetSource.includes('progress-fill'));
 check('premium generation progress has six-stage timeline', generationWidgetSource.includes('DISPLAY_STAGES') && generationWidgetSource.includes("id: 'queued'") && generationWidgetSource.includes("id: 'complete'"));
-check('premium generation progress has failure recovery state', generationWidgetSource.includes('error-card') && generationWidgetSource.includes('Ask ChatGPT to retry generation'));
+check('premium generation progress has failure recovery state', generationWidgetSource.includes('error-card') && generationWidgetSource.includes('Ask the assistant to retry'));
 check('premium generation progress has final deck action', generationWidgetSource.includes('Open deck') && generationWidgetSource.includes('presentationOpenUrl'));
 check('premium generation progress refreshes through safe tool call', generationWidgetSource.includes("callMcpTool('presentation_generation_status'") && generationWidgetSource.includes('Check status'));
-check('premium generation progress uses follow-up for inspect and retry', generationWidgetSource.includes('sendFollowUpMessage') && generationWidgetSource.includes('Inspect Verto presentation') && generationWidgetSource.includes('Retry the Verto presentation'));
+check('generation progress previews over the app bridge and keeps retry on the model', generationWidgetSource.includes("callMcpTool('presentation_get'") && generationWidgetSource.includes('sendFollowUpMessage') && generationWidgetSource.includes('Retry the Verto presentation'));
 check('premium generation progress respects reduced motion', generationWidgetSource.includes('prefers-reduced-motion'));
 check('premium generation progress includes responsive layout', generationWidgetSource.includes('@media (max-width: 700px)') && generationWidgetSource.includes('@media (max-width: 440px)'));
 check(
