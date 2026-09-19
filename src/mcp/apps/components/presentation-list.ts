@@ -117,7 +117,7 @@ const listStyles = `
   }
   .list-head {
     display: grid;
-    grid-template-columns: minmax(0, 1.35fr) 64px 116px 92px 88px 236px;
+    grid-template-columns: minmax(0, 1.15fr) 64px 116px 92px 88px 300px;
     gap: 12px;
     padding: 4px 12px 12px;
     border-bottom: 1px solid color-mix(in srgb, var(--line) 40%, transparent);
@@ -134,7 +134,7 @@ const listStyles = `
   }
   .presentation-row {
     display: grid;
-    grid-template-columns: minmax(0, 1.35fr) 64px 116px 92px 88px 236px;
+    grid-template-columns: minmax(0, 1.15fr) 64px 116px 92px 88px 300px;
     gap: 12px;
     align-items: center;
     min-height: 64px;
@@ -253,7 +253,7 @@ const listStyles = `
   }
   .row-actions {
     display: flex;
-    gap: 6px;
+    gap: 5px;
     justify-content: flex-end;
     flex-wrap: wrap;
   }
@@ -262,7 +262,10 @@ const listStyles = `
     align-items: center;
     justify-content: center;
     min-height: 30px;
-    padding: 4px 12px;
+    /* Three icon-bearing actions have to sit on one line, or every row grows
+       a second line and the list loses half its density in chat. */
+    padding: 4px 10px;
+    gap: 5px;
     font-size: 12px;
     font-weight: 650;
     color: var(--fg);
