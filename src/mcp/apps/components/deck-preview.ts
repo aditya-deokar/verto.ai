@@ -11,15 +11,18 @@ import {
   onTeardown,
   onToolInputPartial,
   pushModelContext,
+  requestDisplayMode,
 } from './shared/runtime';
 import {
   canPresentFullscreen,
   extractThemeName,
   extractWidgetLinks,
   findTheme,
+  openVertoLink,
   renderDeepLinkMenu,
   resolveThemeTokens,
   setWidgetTheme,
+  VERTO_THEMES,
 } from './shared/verto-skin';
 import {
   getControlLabel,
@@ -377,6 +380,149 @@ const deckStyles = `
     .action-panel { grid-template-columns: 1fr; }
     .filmstrip-grid { grid-template-columns: 1fr; }
   }
+
+  /* Presenter Mode Overlay */
+  .presenter-overlay {
+    position: fixed;
+    inset: 0;
+    z-index: 100;
+    display: flex;
+    flex-direction: column;
+    background: var(--bg);
+    color: var(--fg);
+    padding: 16px;
+    box-sizing: border-box;
+  }
+  .presenter-overlay[hidden] { display: none; }
+  .presenter-bar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 8px 16px;
+    margin-bottom: 8px;
+  }
+  .presenter-counter {
+    font-size: 14px;
+    font-weight: 700;
+    color: var(--muted);
+  }
+  .presenter-stage-box {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 0;
+  }
+  .presenter-canvas {
+    position: relative;
+    width: 100%;
+    max-width: 960px;
+    aspect-ratio: 16 / 9;
+    max-height: 80vh;
+    padding: clamp(16px, 4%, 48px);
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    border-radius: var(--vt-radius, 12px);
+    box-shadow: 0 16px 48px rgba(0,0,0,0.2);
+    overflow: hidden;
+  }
+  .presenter-nav {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 16px;
+    padding: 12px 0 4px;
+  }
+
+  /* Theme Studio Drawer */
+  .theme-drawer {
+    position: fixed;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    width: min(380px, 92vw);
+    z-index: 90;
+    display: flex;
+    flex-direction: column;
+    background: var(--surface);
+    border-left: 1px solid var(--line);
+    box-shadow: -8px 0 32px rgba(0, 0, 0, 0.16);
+    padding: 20px;
+    overflow-y: auto;
+    animation: vt-fade-slide-in 200ms ease both;
+  }
+  .theme-drawer[hidden] { display: none; }
+  .theme-drawer-head {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 8px;
+  }
+  .theme-drawer-title {
+    margin: 0;
+    font-size: 18px;
+    font-weight: 800;
+  }
+  .theme-drawer-sub {
+    margin: 0 0 14px;
+    font-size: 13px;
+    color: var(--muted);
+  }
+  .theme-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 10px;
+    margin: 8px 0 20px;
+  }
+  .theme-card {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    padding: 10px;
+    border: 1px solid var(--line);
+    border-radius: 10px;
+    background: color-mix(in srgb, var(--surface) 80%, transparent);
+    cursor: pointer;
+    text-align: left;
+    transition: all 0.18s ease;
+  }
+  .theme-card:hover {
+    border-color: var(--accent);
+    transform: translateY(-1px);
+  }
+  .theme-card.is-active {
+    border-color: var(--accent);
+    box-shadow: 0 0 0 2px var(--accent);
+    background: color-mix(in srgb, var(--accent) 10%, transparent);
+  }
+  .theme-card-head {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .theme-card-name {
+    font-size: 12px;
+    font-weight: 700;
+    color: var(--fg);
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+  .theme-card-type {
+    font-size: 10px;
+    text-transform: uppercase;
+    color: var(--muted);
+    font-weight: 600;
+  }
+  .theme-drawer-actions {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+    margin-top: auto;
+    padding-top: 14px;
+    border-top: 1px solid var(--line);
+  }
 `;
 
 let stylesInjected = false;
@@ -450,6 +596,35 @@ function ensureMarkup(): void {
         <div class="filmstrip-grid" id="slides"></div>
       </section>
       <section id="slide-editor" aria-label="Guided slide editor"></section>
+
+      <!-- Presenter Mode Overlay -->
+      <div class="presenter-overlay" id="presenter-overlay" hidden>
+        <div class="presenter-bar">
+          <span class="presenter-counter" id="presenter-counter">Slide 1 of 1</span>
+          <button class="button vt-has-icon" id="presenter-close-btn" type="button" style="width: auto; min-height: 34px; padding: 4px 14px;">✕ Exit Presenter</button>
+        </div>
+        <div class="presenter-stage-box">
+          <div class="presenter-canvas vt-slide-surface" id="presenter-canvas"></div>
+        </div>
+        <div class="presenter-nav">
+          <button class="button vt-has-icon" id="presenter-prev-btn" type="button" style="width: auto; min-height: 38px; padding: 6px 16px;">&larr; Prev</button>
+          <button class="button primary vt-has-icon" id="presenter-next-btn" type="button" style="width: auto; min-height: 38px; padding: 6px 16px;">Next &rarr;</button>
+        </div>
+      </div>
+
+      <!-- Theme Studio Drawer -->
+      <aside class="theme-drawer" id="theme-drawer" aria-label="Theme Studio" hidden>
+        <div class="theme-drawer-head">
+          <h2 class="theme-drawer-title">Theme Studio</h2>
+          <button class="button vt-has-icon vt-icon-only" id="theme-drawer-close" type="button" aria-label="Close theme studio" style="width: 32px; min-height: 32px; padding: 0;">✕</button>
+        </div>
+        <p class="theme-drawer-sub">Choose a visual theme. Live preview updates on the deck behind.</p>
+        <div class="theme-grid" id="theme-drawer-grid"></div>
+        <div class="theme-drawer-actions">
+          <button class="button" id="theme-cancel-btn" type="button">Cancel</button>
+          <button class="button primary" id="theme-apply-btn" type="button">Apply Theme</button>
+        </div>
+      </aside>
     </main>
   `;
 }
@@ -593,6 +768,7 @@ function configureOpenLink(deck: DeckViewModel): void {
   if (!deck.openUrl) {
     link.removeAttribute('href');
     link.setAttribute('aria-disabled', 'true');
+    link.onclick = null;
     return;
   }
 
@@ -600,6 +776,111 @@ function configureOpenLink(deck: DeckViewModel): void {
   link.target = '_blank';
   link.rel = 'noopener noreferrer';
   link.setAttribute('aria-disabled', 'false');
+  link.onclick = (event) => {
+    event.preventDefault();
+    void openVertoLink(deck.openUrl);
+  };
+}
+
+let presenterCurrentIndex = 0;
+let presenterKeyHandler: ((e: KeyboardEvent) => void) | null = null;
+
+function openInWidgetPresenter(deck: DeckViewModel): void {
+  const overlay = document.getElementById('presenter-overlay');
+  const canvas = document.getElementById('presenter-canvas');
+  const counter = document.getElementById('presenter-counter');
+  const prevBtn = document.getElementById('presenter-prev-btn') as HTMLButtonElement | null;
+  const nextBtn = document.getElementById('presenter-next-btn') as HTMLButtonElement | null;
+  const closeBtn = document.getElementById('presenter-close-btn') as HTMLButtonElement | null;
+
+  if (!overlay || !canvas) return;
+
+  const slides = deck.slides.length > 0 ? deck.slides : [{ title: deck.title, previewText: 'Slide preview unavailable' }];
+  presenterCurrentIndex = 0;
+
+  void requestDisplayMode('fullscreen');
+  overlay.removeAttribute('hidden');
+
+  const renderCurrentPresenterSlide = () => {
+    const slide = getRecord(slides[presenterCurrentIndex]);
+    canvas.textContent = '';
+    if (slide.content) {
+      const wrapper = document.createElement('div');
+      wrapper.className = 'slide-content-html';
+      wrapper.innerHTML = renderSlideContent(slide.content);
+      canvas.appendChild(wrapper);
+    } else {
+      const heading = document.createElement('h2');
+      heading.className = 'cover-title vt-slide-heading';
+      heading.textContent = getSlideTitle(slide, presenterCurrentIndex);
+      const text = document.createElement('p');
+      text.className = 'cover-text';
+      text.textContent = getSlidePreview(slide);
+      canvas.appendChild(heading);
+      canvas.appendChild(text);
+    }
+
+    if (counter) {
+      counter.textContent = `Slide ${presenterCurrentIndex + 1} of ${slides.length}`;
+    }
+    if (prevBtn) prevBtn.disabled = presenterCurrentIndex <= 0;
+    if (nextBtn) nextBtn.disabled = presenterCurrentIndex >= slides.length - 1;
+  };
+
+  const closePresenter = () => {
+    overlay.setAttribute('hidden', 'true');
+    void requestDisplayMode('inline');
+    if (presenterKeyHandler) {
+      window.removeEventListener('keydown', presenterKeyHandler);
+      presenterKeyHandler = null;
+    }
+  };
+
+  if (closeBtn) closeBtn.onclick = closePresenter;
+
+  if (prevBtn) {
+    prevBtn.onclick = () => {
+      if (presenterCurrentIndex > 0) {
+        presenterCurrentIndex--;
+        renderCurrentPresenterSlide();
+      }
+    };
+  }
+
+  if (nextBtn) {
+    nextBtn.onclick = () => {
+      if (presenterCurrentIndex < slides.length - 1) {
+        presenterCurrentIndex++;
+        renderCurrentPresenterSlide();
+      }
+    };
+  }
+
+  if (presenterKeyHandler) {
+    window.removeEventListener('keydown', presenterKeyHandler);
+  }
+
+  presenterKeyHandler = (e: KeyboardEvent) => {
+    if (e.key === 'ArrowRight' || e.key === ' ' || e.key === 'PageDown') {
+      e.preventDefault();
+      if (presenterCurrentIndex < slides.length - 1) {
+        presenterCurrentIndex++;
+        renderCurrentPresenterSlide();
+      }
+    } else if (e.key === 'ArrowLeft' || e.key === 'PageUp') {
+      e.preventDefault();
+      if (presenterCurrentIndex > 0) {
+        presenterCurrentIndex--;
+        renderCurrentPresenterSlide();
+      }
+    } else if (e.key === 'Escape') {
+      e.preventDefault();
+      closePresenter();
+    }
+  };
+
+  window.addEventListener('keydown', presenterKeyHandler);
+  renderCurrentPresenterSlide();
 }
 
 function configurePresentAction(deck: DeckViewModel): void {
@@ -631,11 +912,135 @@ async function presentDeck(
   note: HTMLElement
 ): Promise<void> {
   await runButtonAction(button, note, 'Opening presenter…', async () => {
-    await callMcpTool('presentation_render_deck', {
-      presentation_id: deck.id,
-    });
-    note.textContent = 'Presenter opened. Use ← → to navigate.';
+    try {
+      await callMcpTool('presentation_render_deck', {
+        presentation_id: deck.id,
+      });
+    } catch {
+      // Tool call is best effort
+    }
+    openInWidgetPresenter(deck);
+    note.textContent = 'Presenter opened. Use ← → or Space to navigate, Esc to exit.';
   });
+}
+
+let originalThemeBeforeStudio = '';
+let activeStudioTheme = '';
+
+function openThemeStudioDrawer(deck: DeckViewModel, note: HTMLElement): void {
+  const drawer = document.getElementById('theme-drawer');
+  const grid = document.getElementById('theme-drawer-grid');
+  const closeBtn = document.getElementById('theme-drawer-close');
+  const cancelBtn = document.getElementById('theme-cancel-btn');
+  const applyBtn = document.getElementById('theme-apply-btn') as HTMLButtonElement | null;
+
+  if (!drawer || !grid) return;
+
+  originalThemeBeforeStudio = deck.themeName;
+  activeStudioTheme = deck.themeName;
+  drawer.removeAttribute('hidden');
+
+  const themes = VERTO_THEMES.slice(0, 16);
+
+  const renderThemeCards = () => {
+    grid.textContent = '';
+    for (const theme of themes) {
+      const card = document.createElement('div');
+      const isActive = theme.name.toLowerCase() === activeStudioTheme.toLowerCase();
+      card.className = `theme-card${isActive ? ' is-active' : ''}`;
+      card.setAttribute('role', 'button');
+      card.setAttribute('tabindex', '0');
+
+      const head = document.createElement('div');
+      head.className = 'theme-card-head';
+
+      const swatch = document.createElement('span');
+      swatch.className = 'vt-swatch';
+      swatch.style.background = theme.accentGradient || theme.accentColor;
+      head.appendChild(swatch);
+
+      const name = document.createElement('span');
+      name.className = 'theme-card-name';
+      name.textContent = theme.name;
+      head.appendChild(name);
+
+      const type = document.createElement('span');
+      type.className = 'theme-card-type';
+      type.textContent = theme.type;
+
+      card.appendChild(head);
+      card.appendChild(type);
+
+      const selectTheme = () => {
+        activeStudioTheme = theme.name;
+        setWidgetTheme(theme.name);
+        renderBadges({ ...deck, themeName: theme.name });
+        renderCover({ ...deck, themeName: theme.name });
+        renderThemeCards();
+      };
+
+      card.onclick = selectTheme;
+      card.onkeydown = (e) => {
+        if (e.key === 'Enter' || e.key === ' ') {
+          e.preventDefault();
+          selectTheme();
+        }
+      };
+
+      grid.appendChild(card);
+    }
+  };
+
+  renderThemeCards();
+
+  const closeDrawer = () => {
+    drawer.setAttribute('hidden', 'true');
+  };
+
+  const cancelTheme = () => {
+    setWidgetTheme(originalThemeBeforeStudio);
+    renderBadges({ ...deck, themeName: originalThemeBeforeStudio });
+    renderCover({ ...deck, themeName: originalThemeBeforeStudio });
+    closeDrawer();
+  };
+
+  if (closeBtn) closeBtn.onclick = cancelTheme;
+  if (cancelBtn) cancelBtn.onclick = cancelTheme;
+
+  if (applyBtn) {
+    applyBtn.onclick = async () => {
+      const themeToApply = activeStudioTheme;
+      applyBtn.disabled = true;
+      setControlLabel(applyBtn, 'Applying…');
+
+      try {
+        await callMcpTool('presentation_update_theme', {
+          presentation_id: deck.id,
+          theme_name: themeToApply,
+        });
+
+        deck.themeName = themeToApply;
+        renderBadges(deck);
+        renderCover(deck);
+        closeDrawer();
+        note.textContent = `Theme updated to "${themeToApply}".`;
+
+        void pushModelContext(
+          {
+            event: 'theme_changed',
+            presentationId: deck.id,
+            themeName: themeToApply,
+          },
+          `User updated the presentation theme to "${themeToApply}" from chat.`
+        );
+      } catch (err) {
+        note.textContent = getActionErrorMessage(err);
+      } finally {
+        applyBtn.disabled = false;
+        setControlLabel(applyBtn, 'Apply Theme');
+      }
+    };
+  }
 }
 
 function configureThemeAction(deck: DeckViewModel): void {
@@ -677,9 +1082,14 @@ async function openThemeStudio(
   note: HTMLElement
 ): Promise<void> {
   await runButtonAction(button, note, 'Opening theme studio…', async () => {
-    await callMcpTool('presentation_render_theme_studio', {
-      presentation_id: deck.id,
-    });
+    try {
+      await callMcpTool('presentation_render_theme_studio', {
+        presentation_id: deck.id,
+      });
+    } catch {
+      // Best effort tool call
+    }
+    openThemeStudioDrawer(deck, note);
     note.textContent = 'Theme studio opened. Pick a look and apply it live.';
   });
 }

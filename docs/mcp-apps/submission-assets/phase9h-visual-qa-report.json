@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-09-19T16:59:33.834Z",
+  "generatedAt": "2026-09-20T05:54:41.995Z",
   "source": "scripts/mcp-apps/phase9h-visual-qa.mjs",
   "results": [
     {
@@ -175,10 +175,10 @@
       "colorScheme": "dark",
       "failures": [],
       "metrics": {
-        "focusableCount": 9,
-        "contrastChecked": 70,
-        "textElementCount": 70,
-        "bodyTextLength": 840,
+        "focusableCount": 10,
+        "contrastChecked": 76,
+        "textElementCount": 76,
+        "bodyTextLength": 870,
         "screenshotWidth": 1200
       }
     },
@@ -193,10 +193,10 @@
       "colorScheme": "light",
       "failures": [],
       "metrics": {
-        "focusableCount": 9,
-        "contrastChecked": 64,
-        "textElementCount": 64,
-        "bodyTextLength": 791,
+        "focusableCount": 10,
+        "contrastChecked": 70,
+        "textElementCount": 70,
+        "bodyTextLength": 821,
         "screenshotWidth": 390
       }
     },

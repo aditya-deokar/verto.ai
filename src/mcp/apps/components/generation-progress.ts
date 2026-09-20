@@ -27,6 +27,7 @@ import {
 import { renderSlideContent } from '../../../lib/slides/render-core/index';
 import {
   extractWidgetLinks,
+  openVertoLink,
   renderDeepLinkMenu,
   setWidgetTheme,
 } from './shared/verto-skin';
@@ -592,7 +593,14 @@ function ensureMarkup(): void {
         </aside>
       </section>
       <section class="preview-panel" id="preview-panel" aria-label="First slide preview" hidden>
-        <p class="preview-title">First slide</p>
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+          <p class="preview-title" id="preview-title">First slide</p>
+          <div id="preview-nav" style="display: none; align-items: center; gap: 8px;">
+            <button class="button vt-has-icon vt-icon-only" id="preview-prev-btn" type="button" aria-label="Previous slide" style="min-height: 28px; width: 28px; padding: 2px;">&larr;</button>
+            <span id="preview-counter" style="font-size: 12px; font-weight: 700; color: var(--muted);">1 / 1</span>
+            <button class="button vt-has-icon vt-icon-only" id="preview-next-btn" type="button" aria-label="Next slide" style="min-height: 28px; width: 28px; padding: 2px;">&rarr;</button>
+          </div>
+        </div>
         <div class="preview-stage vt-slide-surface" id="preview-stage"></div>
       </section>
       <section class="timeline-panel" aria-label="Generation stages">
@@ -997,11 +1005,18 @@ function renderError(generation: GenerationViewModel): void {
     : 'Ask the assistant to retry with a simpler topic or fewer constraints.';
 }
 
+let interactiveSlides: Array<Record<string, unknown>> = [];
+let interactiveSlideIndex = 0;
+
 function renderPreview(generation: GenerationViewModel): void {
   const panel = document.getElementById('preview-panel');
   const stage = byId('preview-stage');
 
   if (!panel) return;
+
+  if (interactiveSlides.length > 0) {
+    return;
+  }
 
   const content = generation.completion?.previewSlide?.content;
 
@@ -1019,6 +1034,83 @@ function renderPreview(generation: GenerationViewModel): void {
   }
 
   panel.removeAttribute('hidden');
+}
+
+function displayDeckPreviewInWidget(
+  payload: Record<string, unknown>,
+  generation: GenerationViewModel
+): void {
+  const data = getRecord(payload.data || payload);
+  const presentation = getRecord(data.presentation || data);
+  const widget = getRecord(payload.widget);
+  const rawSlides = getArray(presentation.slides || widget.slides);
+
+  const slides: Array<Record<string, unknown>> = rawSlides
+    .map((s) => (s && typeof s === 'object' ? getRecord(s) : null))
+    .filter((s): s is Record<string, unknown> => s !== null);
+
+  const panel = document.getElementById('preview-panel');
+  const stage = byId('preview-stage');
+  const nav = document.getElementById('preview-nav');
+  const title = document.getElementById('preview-title');
+  const counter = document.getElementById('preview-counter');
+  const prevBtn = document.getElementById('preview-prev-btn') as HTMLButtonElement | null;
+  const nextBtn = document.getElementById('preview-next-btn') as HTMLButtonElement | null;
+
+  if (!panel || !stage) return;
+
+  if (slides.length === 0) {
+    renderPreview(generation);
+    return;
+  }
+
+  interactiveSlides = slides;
+  interactiveSlideIndex = 0;
+
+  if (title) title.textContent = 'Slide preview';
+  if (nav) nav.style.display = 'flex';
+
+  const updateStage = () => {
+    const current = interactiveSlides[interactiveSlideIndex];
+    if (!current) return;
+    stage.textContent = '';
+    if (current.content) {
+      stage.innerHTML = renderSlideContent(current.content);
+    } else {
+      const p = document.createElement('p');
+      p.className = 'preview-empty';
+      p.textContent = getString(current.title || current.previewText, `Slide ${interactiveSlideIndex + 1}`);
+      stage.appendChild(p);
+    }
+    if (counter) {
+      counter.textContent = `${interactiveSlideIndex + 1} / ${interactiveSlides.length}`;
+    }
+    if (prevBtn) prevBtn.disabled = interactiveSlideIndex <= 0;
+    if (nextBtn) nextBtn.disabled = interactiveSlideIndex >= interactiveSlides.length - 1;
+  };
+
+  if (prevBtn) {
+    prevBtn.onclick = () => {
+      if (interactiveSlideIndex > 0) {
+        interactiveSlideIndex--;
+        updateStage();
+      }
+    };
+  }
+  if (nextBtn) {
+    nextBtn.onclick = () => {
+      if (interactiveSlideIndex < interactiveSlides.length - 1) {
+        interactiveSlideIndex++;
+        updateStage();
+      }
+    };
+  }
+
+  updateStage();
+  panel.removeAttribute('hidden');
+  try {
+    panel.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+  } catch {}
 }
 
 function createPreviewFallback(generation: GenerationViewModel): HTMLElement {
@@ -1050,9 +1142,14 @@ function configureActions(generation: GenerationViewModel): void {
       openLink.target = '_blank';
       openLink.rel = 'noopener noreferrer';
       openLink.setAttribute('aria-disabled', 'false');
+      openLink.onclick = (event) => {
+        event.preventDefault();
+        void openVertoLink(generation.presentationOpenUrl);
+      };
     } else {
       openLink.removeAttribute('href');
       openLink.setAttribute('aria-disabled', 'true');
+      openLink.onclick = null;
     }
   }
 
@@ -1106,9 +1203,7 @@ async function refreshGenerationStatus(
 }
 
 /**
- * Opens the finished deck over the app bridge. Inspecting a deck the user can
- * already see does not need a model turn; `presentation_get` is app-visible
- * and renders the deck-preview widget directly.
+ * Opens the finished deck over the app bridge and renders the slides interactively.
  */
 async function previewGeneratedDeck(
   generation: GenerationViewModel,
@@ -1118,11 +1213,12 @@ async function previewGeneratedDeck(
   if (!generation.presentationId) return;
 
   await runButtonAction(button, note, 'Opening preview...', async () => {
-    await callMcpTool('presentation_get', {
+    const payload = await callMcpTool('presentation_get', {
       presentation_id: generation.presentationId,
       include_slides: true,
     });
-    note.textContent = 'Opened the deck preview.';
+    displayDeckPreviewInWidget(payload, generation);
+    note.textContent = 'Previewing deck slides below. Use ← → to navigate.';
   });
 }
 

@@ -11,6 +11,7 @@ import {
 import {
   extractThemeName,
   extractWidgetLinks,
+  openVertoLink,
   renderDeepLinkMenu,
   setWidgetTheme,
 } from './shared/verto-skin';
@@ -513,12 +514,17 @@ function configureActions(result: ActionResultViewModel): void {
       openLink.classList.add('primary');
       openLink.setAttribute('aria-label', `Open presentation: ${presentation.title}`);
       openLink.setAttribute('aria-disabled', 'false');
+      openLink.onclick = (event) => {
+        event.preventDefault();
+        void openVertoLink(presentation.openUrl);
+      };
     } else {
       openLink.removeAttribute('href');
       openLink.removeAttribute('aria-label');
       setControlLabel(openLink, 'Open unavailable');
       openLink.classList.remove('primary');
       openLink.setAttribute('aria-disabled', 'true');
+      openLink.onclick = null;
     }
   }
 
