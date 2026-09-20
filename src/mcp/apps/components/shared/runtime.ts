@@ -221,6 +221,22 @@ export async function pushModelContext(
   }
 }
 
+/**
+ * Requests a display mode change (e.g. fullscreen for presentations or inline to return).
+ * Handled gracefully if unsupported by the host.
+ */
+export async function requestDisplayMode(
+  mode: 'fullscreen' | 'inline' | 'pip'
+): Promise<void> {
+  try {
+    if (typeof (app as any).requestDisplayMode === 'function') {
+      await (app as any).requestDisplayMode({ mode });
+    }
+  } catch {
+    // Best-effort request, host may deny or ignore.
+  }
+}
+
 export function byId(id: string): HTMLElement {
   const element = document.getElementById(id);
   if (!element) {

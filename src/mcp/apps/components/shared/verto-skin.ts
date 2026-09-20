@@ -36,7 +36,7 @@ import {
 
 // Color math lives in the shared slide-render kernel so the dashboard and
 // widget bundles resolve identical WCAG behavior from one implementation.
-export { ensureReadable };
+export { ensureReadable, VERTO_THEMES, type VertoThemeData };
 
 export interface ResolvedVertoTheme {
   name: string;
@@ -722,10 +722,10 @@ export async function openVertoLink(url: string): Promise<void> {
   if (!url) return;
 
   const app = openLinkHost;
-  if (app && canOpenLinks(app)) {
+  if (app && (canOpenLinks(app) || typeof app.openLink === 'function')) {
     try {
       const result = await app.openLink({ url });
-      if (result && result.isError) {
+      if (result && (result as { isError?: boolean }).isError) {
         window.open(url, '_blank', 'noopener,noreferrer');
       }
       return;
@@ -735,6 +735,23 @@ export async function openVertoLink(url: string): Promise<void> {
   }
 
   window.open(url, '_blank', 'noopener,noreferrer');
+}
+
+/**
+ * Attaches a click handler to an element (anchor or button) that intercepts
+ * default click and routes through `openVertoLink(url)` for sandboxed iframes.
+ */
+export function wireOpenLinkControl(
+  element: HTMLElement | null | undefined,
+  getUrl: () => string | null | undefined
+): void {
+  if (!element) return;
+  element.addEventListener('click', (event) => {
+    const url = getUrl();
+    if (!url) return;
+    event.preventDefault();
+    void openVertoLink(url);
+  });
 }
 
 /**

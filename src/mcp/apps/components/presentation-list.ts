@@ -13,6 +13,7 @@ import {
   extractWidgetLinks,
   extractThemeName,
   findTheme,
+  openVertoLink,
   renderDeepLinkMenu,
   resolveThemeTokens,
   setWidgetTheme,
@@ -742,6 +743,14 @@ function renderRows(list: PresentationListViewModel): void {
       setButtonIcon(delBtn, 'trash', 'Delete');
       delBtn.onclick = () => performRowAction(presentation, 'delete', delBtn);
       actions.appendChild(delBtn);
+
+      if (presentation.openUrl) {
+        const openBtn = document.createElement('button');
+        openBtn.className = 'row-action-btn';
+        setButtonIcon(openBtn, 'external-link', 'Open');
+        openBtn.onclick = () => void openVertoLink(presentation.openUrl);
+        actions.appendChild(openBtn);
+      }
     }
 
     row.appendChild(actions);
@@ -765,10 +774,15 @@ function configureActions(list: PresentationListViewModel): void {
       openLink.rel = 'noopener noreferrer';
       openLink.setAttribute('aria-label', `Open latest presentation: ${latest.title}`);
       openLink.setAttribute('aria-disabled', 'false');
+      openLink.onclick = (event) => {
+        event.preventDefault();
+        void openVertoLink(latest.openUrl);
+      };
     } else {
       openLink.removeAttribute('href');
       openLink.removeAttribute('aria-label');
       openLink.setAttribute('aria-disabled', 'true');
+      openLink.onclick = null;
     }
   }
 

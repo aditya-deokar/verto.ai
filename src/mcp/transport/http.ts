@@ -29,6 +29,7 @@ import '../resources/app-ui';
 interface HttpSession {
   server: McpServer;
   transport: WebStandardStreamableHTTPServerTransport;
+  lastActive: number;
 }
 
 interface ParsedRequestBody {
@@ -37,6 +38,16 @@ interface ParsedRequestBody {
 }
 
 const sessions = new Map<string, HttpSession>();
+const SESSION_TTL_MS = 2 * 60 * 60 * 1000; // 2 hours
+
+function pruneExpiredSessions(): void {
+  const now = Date.now();
+  for (const [id, session] of sessions.entries()) {
+    if (now - session.lastActive > SESSION_TTL_MS) {
+      void closeSession(id);
+    }
+  }
+}
 
 function createServerInstance(): McpServer {
   setTransportType('http');
@@ -49,6 +60,14 @@ function createServerInstance(): McpServer {
   return server;
 }
 
+const DEFAULT_HOST_ORIGINS = [
+  'https://chatgpt.com',
+  'https://chat.openai.com',
+  'https://claude.ai',
+  'http://localhost:3000',
+  'http://127.0.0.1:3000',
+];
+
 function getAllowedOrigins(): string[] {
   const env = validateMcpEnv();
   const configured = env.MCP_ALLOWED_ORIGINS
@@ -56,11 +75,13 @@ function getAllowedOrigins(): string[] {
     .map((origin: string) => origin.trim())
     .filter(Boolean);
 
-  if (configured.length > 0) {
-    return configured;
-  }
+  const origins = new Set<string>([
+    ...DEFAULT_HOST_ORIGINS,
+    env.NEXT_PUBLIC_APP_URL,
+    ...configured,
+  ]);
 
-  return [env.NEXT_PUBLIC_APP_URL, 'http://localhost:3000', 'http://127.0.0.1:3000'];
+  return Array.from(origins).filter(Boolean);
 }
 
 function isOriginAllowed(origin: string | null): boolean {
@@ -69,7 +90,31 @@ function isOriginAllowed(origin: string | null): boolean {
   }
 
   const allowedOrigins = getAllowedOrigins();
-  return allowedOrigins.includes('*') || allowedOrigins.includes(origin);
+  if (allowedOrigins.includes('*') || allowedOrigins.includes(origin)) {
+    return true;
+  }
+
+  try {
+    const url = new URL(origin);
+    const host = url.hostname;
+    if (
+      host === 'chatgpt.com' ||
+      host.endsWith('.chatgpt.com') ||
+      host === 'openai.com' ||
+      host.endsWith('.openai.com') ||
+      host === 'claude.ai' ||
+      host.endsWith('.claude.ai') ||
+      host === 'localhost' ||
+      host === '127.0.0.1' ||
+      host.endsWith('.vercel.app')
+    ) {
+      return true;
+    }
+  } catch {
+    // Ignore URL parse error
+  }
+
+  return false;
 }
 
 function applyCorsHeaders(request: Request, response: Response): Response {
@@ -394,12 +439,13 @@ function getErrorResponse(request: Request, error: unknown): Response {
   });
 }
 
-async function createSessionTransport(): Promise<HttpSession> {
+async function createSessionTransport(desiredSessionId?: string): Promise<HttpSession> {
+  pruneExpiredSessions();
   const server = createServerInstance();
   const transport = new WebStandardStreamableHTTPServerTransport({
-    sessionIdGenerator: () => randomUUID(),
+    sessionIdGenerator: desiredSessionId ? () => desiredSessionId : () => randomUUID(),
     onsessioninitialized: (sessionId) => {
-      sessions.set(sessionId, { server, transport });
+      sessions.set(sessionId, { server, transport, lastActive: Date.now() });
     },
     onsessionclosed: (sessionId) => {
       sessions.delete(sessionId);
@@ -412,7 +458,32 @@ async function createSessionTransport(): Promise<HttpSession> {
 
   await server.connect(transport);
 
-  return { server, transport };
+  if (desiredSessionId) {
+    transport.sessionId = desiredSessionId;
+    (transport as unknown as { _initialized: boolean })._initialized = true;
+    sessions.set(desiredSessionId, { server, transport, lastActive: Date.now() });
+  }
+
+  return { server, transport, lastActive: Date.now() };
+}
+
+let statelessSessionPromise: Promise<HttpSession> | null = null;
+
+async function getStatelessSession(): Promise<HttpSession> {
+  if (!statelessSessionPromise) {
+    statelessSessionPromise = (async () => {
+      const server = createServerInstance();
+      const transport = new WebStandardStreamableHTTPServerTransport({
+        sessionIdGenerator: undefined,
+      });
+      transport.onerror = (error) => {
+        console.error('[MCP HTTP Stateless] Transport error:', error);
+      };
+      await server.connect(transport);
+      return { server, transport, lastActive: Date.now() };
+    })();
+  }
+  return statelessSessionPromise;
 }
 
 export async function handlePost(request: Request): Promise<Response> {
@@ -437,32 +508,26 @@ export async function handlePost(request: Request): Promise<Response> {
     if (sessionId) {
       session = sessions.get(sessionId);
       if (!session) {
-        return jsonResponse(request, 400, {
-          jsonrpc: '2.0',
-          error: { code: -32000, message: 'Invalid or expired session ID.' },
-          id: null,
-        });
+        // Resilient fallback: recreate the session transport seamlessly so tool calls succeed
+        // even across Next.js worker restarts, HMR, or cold serverless containers!
+        console.warn(`[MCP HTTP] Session ${sessionId} not in memory, reconnecting session transport.`);
+        session = await createSessionTransport(sessionId);
       }
+      session.lastActive = Date.now();
     } else {
-      if (!isInitializeRequest(body)) {
-        return jsonResponse(request, 400, {
-          jsonrpc: '2.0',
-          error: {
-            code: -32000,
-            message: 'No valid session ID provided. Send an initialize request first.',
-          },
-          id: null,
-        });
+      if (isInitializeRequest(body)) {
+        session = await createSessionTransport();
+      } else {
+        // Stateless invocation: tools/call without a prior session ID
+        session = await getStatelessSession();
       }
-
-      session = await createSessionTransport();
     }
 
     const response = await session.transport.handleRequest(normalizedRequest, {
       parsedBody: body,
     });
 
-    if (!sessionId && !session.transport.sessionId) {
+    if (!sessionId && !session.transport.sessionId && session !== await statelessSessionPromise) {
       await session.transport.close().catch(() => undefined);
       await session.server.close().catch(() => undefined);
     }
@@ -525,14 +590,12 @@ export async function handleGet(request: Request): Promise<Response> {
     });
   }
 
-  const session = sessions.get(sessionId);
+  let session = sessions.get(sessionId);
   if (!session) {
-    return jsonResponse(request, 400, {
-      jsonrpc: '2.0',
-      error: { code: -32000, message: 'Invalid or expired session ID.' },
-      id: null,
-    });
+    console.warn(`[MCP HTTP GET] Session ${sessionId} not in memory, reconnecting.`);
+    session = await createSessionTransport(sessionId);
   }
+  session.lastActive = Date.now();
 
   const normalizedRequest = normalizeRequestHeaders(request);
   const response = await session.transport.handleRequest(normalizedRequest);
@@ -564,7 +627,8 @@ export async function handleDelete(request: Request): Promise<Response> {
 }
 
 export async function handleOptions(request: Request): Promise<Response> {
-  if (!isOriginAllowed(request.headers.get('origin'))) {
+  const origin = request.headers.get('origin');
+  if (!isOriginAllowed(origin)) {
     return jsonResponse(request, 403, { error: 'Origin not allowed.' });
   }
 
