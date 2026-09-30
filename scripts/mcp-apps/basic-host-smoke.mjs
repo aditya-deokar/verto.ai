@@ -339,24 +339,152 @@ function scenarios() {
     },
     {
       id: 'deck-reorder-saves-slides',
-      label: 'Deck preview: reorder saves through presentation_update_slides',
+      label: 'Deck preview: moving a slide fetches raw slides, then saves them renumbered',
       html: widgetHtml.deck,
       payload: deckPayload(),
-      readySelector: '.reorder-btn',
+      stubs: { presentation_get: deckGetResult() },
+      readySelector: '#move-down-action',
       async run({ page, frame }) {
-        await frame.evaluate(() => {
-          const buttons = [...document.querySelectorAll('.reorder-btn')].filter((b) => !b.disabled);
-          buttons[0].click();
-        });
+        await frame.click('#move-down-action');
         return settle(page, 900);
       },
       expect: (observed) => [
-        ...expectCall(observed, 'presentation_update_slides', (args) =>
-          Array.isArray(args.slides) && args.slides.length === 2
-            ? []
-            : [`expected the full slide array, got: ${JSON.stringify(args).slice(0, 120)}`]
-        ),
         ...expectCall(observed, 'presentation_get'),
+        ...expectCall(observed, 'presentation_update_slides', (args) => {
+          const slides = Array.isArray(args.slides) ? args.slides : [];
+          const order = slides.map((slide) => `${slide.id}:${slide.slideOrder}`).join(',');
+          return order === 's2:0,s1:1' && slides[0].type === 'title'
+            ? []
+            : [`expected raw slides s2,s1 renumbered, got: ${JSON.stringify(args).slice(0, 160)}`];
+        }),
+      ],
+    },
+    {
+      id: 'deck-thumbnail-selects-slide',
+      label: 'Deck preview: clicking a thumbnail puts that slide on the stage',
+      html: widgetHtml.deck,
+      payload: deckRawPayload(),
+      readySelector: '.thumb',
+      async run({ page, frame }) {
+        await frame.click('.thumb[data-index="1"]');
+        await settle(page, 200);
+        return frame.evaluate(() => ({
+          position: document.getElementById('stage-pos').textContent,
+          current: document.querySelector('.thumb[aria-current="true"]')?.dataset.index,
+        }));
+      },
+      expect: (observed) =>
+        observed.position === 'Slide 2 of 2' && observed.current === '1'
+          ? []
+          : [`stage did not follow the thumbnail: ${JSON.stringify(observed)}`],
+    },
+    {
+      id: 'deck-duplicate-slide',
+      label: 'Deck preview: Duplicate saves a copy with fresh ids',
+      html: widgetHtml.deck,
+      payload: deckRawPayload(),
+      readySelector: '#duplicate-slide-action',
+      async run({ page, frame }) {
+        await frame.click('#duplicate-slide-action');
+        return settle(page, 900);
+      },
+      expect: (observed) =>
+        expectCall(observed, 'presentation_update_slides', (args) => {
+          const slides = args.slides || [];
+          const copy = slides[1] || {};
+          return slides.length === 3 && copy.id !== 's1' && copy.slideName === 'Market shift (copy)'
+            && copy.content?.id !== 'c1'
+            ? []
+            : [`expected a copy after slide 1 with new ids, got: ${JSON.stringify(args).slice(0, 200)}`];
+        }),
+    },
+    {
+      id: 'deck-delete-then-undo',
+      label: 'Deck preview: Delete needs a second click, and Undo saves the slide back',
+      html: widgetHtml.deck,
+      payload: deckRawPayload(),
+      readySelector: '#delete-slide-action',
+      async run({ page, frame }) {
+        await frame.click('#delete-slide-action');
+        const afterFirst = await settle(page, 250);
+        await frame.click('#delete-slide-action');
+        await settle(page, 900);
+        const undoVisible = await frame.$eval('#undo-slide-action', (el) => !el.hidden);
+        await frame.click('#undo-slide-action');
+        const final = await settle(page, 900);
+        return { afterFirst, undoVisible, ...final };
+      },
+      expect: (observed) => {
+        const saves = observed.toolCalls.filter((call) => call.name === 'presentation_update_slides');
+        const lengths = saves.map((call) => call.arguments.slides.length).join(',');
+        return [
+          ...expectNoCall(observed.afterFirst, 'presentation_update_slides'),
+          ...(observed.undoVisible ? [] : ['Undo was not offered after the delete']),
+          ...(lengths === '1,2' ? [] : [`expected saves of 1 then 2 slides, got: ${lengths || 'none'}`]),
+        ];
+      },
+    },
+    {
+      id: 'deck-failed-save-rolls-back',
+      label: 'Deck preview: a rejected slide save restores the deck and says why',
+      html: widgetHtml.deck,
+      payload: deckRawPayload(),
+      readySelector: '#move-down-action',
+      async run({ page, frame }) {
+        await page.evaluate(() =>
+          window.__VERTO_HOST__.failTool('presentation_update_slides', 'Deck is locked by another editor.')
+        );
+        await frame.click('#move-down-action');
+        await settle(page, 900);
+        return frame.evaluate(() => ({
+          note: document.getElementById('action-note').textContent,
+          first: document.querySelector('.thumb[data-index="0"]')?.getAttribute('aria-label'),
+        }));
+      },
+      expect: (observed) => [
+        ...(observed.note.includes('Deck is locked') ? [] : [`note did not report the failure: "${observed.note}"`]),
+        ...(observed.first === 'Slide 1: Market shift' ? [] : [`order was not restored: ${observed.first}`]),
+      ],
+    },
+    {
+      id: 'deck-truncated-blocks-structure',
+      label: 'Deck preview: slide changes are off when the widget holds a partial deck',
+      html: widgetHtml.deck,
+      payload: deckRawPayload({ slideCount: 60 }),
+      readySelector: '#move-down-action',
+      async run({ page, frame }) {
+        const disabled = await frame.evaluate(() =>
+          ['move-down-action', 'duplicate-slide-action', 'delete-slide-action']
+            .every((id) => document.getElementById(id).disabled)
+        );
+        const observed = await settle(page, 200);
+        return { disabled, ...observed };
+      },
+      expect: (observed) => [
+        ...(observed.disabled ? [] : ['structure controls stayed enabled on a truncated deck']),
+        ...expectNoCall(observed, 'presentation_update_slides'),
+      ],
+    },
+    {
+      id: 'deck-inline-theme-apply',
+      label: 'Deck preview: the inline picker previews and applies a theme',
+      html: widgetHtml.deck,
+      payload: deckRawPayload(),
+      readySelector: '#theme-action',
+      async run({ page, frame }) {
+        await frame.click('#theme-action');
+        await frame.waitForSelector('.theme-card[data-theme-name="Neon Nights"]', { visible: true });
+        await frame.click('.theme-card[data-theme-name="Neon Nights"]');
+        await frame.click('#theme-apply-btn');
+        const observed = await settle(page, 700);
+        const pickerClosed = await frame.$eval('#theme-panel', (el) => el.hidden);
+        return { pickerClosed, ...observed };
+      },
+      expect: (observed) => [
+        ...expectCall(observed, 'presentation_update_theme', (args) =>
+          args.theme_name === 'Neon Nights' ? [] : [`wrong theme: ${JSON.stringify(args)}`]
+        ),
+        ...(observed.pickerClosed ? [] : ['picker stayed open after apply']),
       ],
     },
     {
@@ -521,6 +649,28 @@ function deckPayload() {
       ],
       actions: { canUpdateSlides: true, canPublish: true, canRefresh: true, canUpdateTheme: true },
     },
+  };
+}
+
+/** Raw slides as the server stores them, the way presentation_get returns them in `data`. */
+function deckRawSlides() {
+  return [
+    { id: 's1', slideName: 'Market shift', type: 'title', slideOrder: 0, content: { id: 'c1', type: 'title', content: 'Market shift' } },
+    { id: 's2', slideName: 'Problem', type: 'title', slideOrder: 1, content: { id: 'c2', type: 'title', content: 'Problem' } },
+  ];
+}
+
+function deckGetResult() {
+  return { success: true, data: { id: 'deck_1', title: 'AI tutoring investor pitch deck', slide_count: 2, slides: deckRawSlides() } };
+}
+
+function deckRawPayload({ slideCount = 2 } = {}) {
+  const payload = deckPayload();
+  payload.widget.presentation.slideCount = slideCount;
+  return {
+    success: true,
+    data: { id: 'deck_1', title: 'AI tutoring investor pitch deck', slide_count: slideCount, slides: deckRawSlides() },
+    ...payload,
   };
 }
 

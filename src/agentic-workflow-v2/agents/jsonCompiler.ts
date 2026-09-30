@@ -8,6 +8,7 @@ import {
   SlideGenerationData,
 } from "../lib/state";
 import { getLayoutTemplate } from "../lib/layoutTemplates";
+import { cleanSlideName } from "@/lib/slides/slide-names";
 
 /**
  * Parse content into list format
@@ -1628,7 +1629,9 @@ function compileSingleSlide(slide: SlideGenerationData): Slide {
 
   return {
     id: uuidv4(),
-    slideName: slide.outline || "Slide",
+    // The outline carries a content-type tag ("... [opening - creativeHero]")
+    // meant for the layout step; it must not become the slide's name.
+    slideName: slide.slideTitle?.trim() || cleanSlideName(slide.outline || "") || "Slide",
     type: layoutType,
     className: template?.className || "p-8 mx-auto flex justify-center items-center min-h-[200px]",
     content: content,

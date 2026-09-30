@@ -43,3 +43,6 @@ next-env.d.ts
 
 # prisma
 /src/generated
+
+# Local evidence captures (test-evidence recorder, deck-studio-evidence.mjs)
+.artifacts/

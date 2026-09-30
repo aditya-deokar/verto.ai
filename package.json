@@ -22,9 +22,11 @@
     "mcp:apps:encoding": "node scripts/mcp-apps/check-encoding.mjs",
     "mcp:phase7:checks": "node scripts/mcp-apps/phase7-checks.mjs",
     "mcp:phase7:typecheck": "node scripts/mcp-apps/focused-typecheck.mjs",
-    "mcp:phase7": "npm run mcp:apps:encoding && npm run mcp:apps:check && npm run mcp:phase7:checks && npm run mcp:phase7:typecheck",
+    "mcp:apps:test": "node --test \"scripts/mcp-apps/tests/*.test.mts\"",
+    "mcp:phase7": "npm run mcp:apps:encoding && npm run mcp:apps:check && npm run mcp:apps:test && npm run mcp:phase7:checks && npm run mcp:phase7:typecheck",
     "mcp:phase9h": "node scripts/mcp-apps/phase9h-visual-qa.mjs",
     "mcp:smoke": "node scripts/mcp-apps/basic-host-smoke.mjs",
+    "mcp:deck-evidence": "node scripts/mcp-apps/deck-studio-evidence.mjs",
     "mcp:oauth:check": "npx tsx scripts/mcp-apps/oauth-client-check.mts"
   },
   "dependencies": {

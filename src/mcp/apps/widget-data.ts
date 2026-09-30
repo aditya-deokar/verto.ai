@@ -5,6 +5,7 @@ import type {
 import type { PaginationMeta } from '../tools/_shared/pagination';
 import type { PresentationMCPResponse } from '../tools/presentation/mappers';
 import { VERTO_THEMES } from './generated/themes-data';
+import { cleanSlideName } from '../../lib/slides/slide-names';
 
 const WIDGET_DATA_VERSION = 2;
 const FALLBACK_PUBLIC_APP_URL = 'https://verto.ai.aditya-deokar.me';
@@ -318,7 +319,9 @@ function truncateText(value: string, maxLength = MAX_PREVIEW_TEXT_LENGTH): strin
 }
 
 function extractSlideTitle(slide: unknown, fallback: string): string {
-  return (
+  // Decks generated before jsonCompiler stopped storing outline tags still
+  // carry names like "Intro [opening - creativeHero]".
+  return cleanSlideName(
     readString(slide, 'title')
     || readString(slide, 'slideName')
     || readString(slide, 'slide_name')

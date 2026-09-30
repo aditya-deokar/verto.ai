@@ -12,6 +12,7 @@
  */
 
 import { iconLabel } from './icons';
+import { cleanSlideName } from '../../../../lib/slides/slide-names';
 
 export interface SlideEditPatch {
   slideId: string;
@@ -705,10 +706,12 @@ export function createSlideEditor(options: SlideEditorOptions): SlideEditorHandl
   }
 
   function slideTitle(slide: Record<string, unknown>): string {
-    return readString(slide.title)
-      ?? readString(slide.slideName)
-      ?? readString(slide.slide_name)
-      ?? `Slide ${currentIndex + 1}`;
+    return cleanSlideName(
+      readString(slide.title)
+        ?? readString(slide.slideName)
+        ?? readString(slide.slide_name)
+        ?? `Slide ${currentIndex + 1}`
+    );
   }
 
   function pendingFor(slideIdValue: string): Map<string, PendingEdit> {

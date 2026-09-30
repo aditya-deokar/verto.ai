@@ -175,6 +175,7 @@ const scenarios = [
     expectations: {
       text: ['Verto AI deck', 'Quarterly growth review', 'Market momentum'],
       minSlides: 6,
+      rendererScope: '#slides',
       rendererCounts: {
         '.vts-stat': 1,
         '.vts-timeline': 2,
@@ -196,6 +197,7 @@ const scenarios = [
     expectations: {
       text: ['Verto AI deck', 'Copy share link'],
       minSlides: 6,
+      rendererScope: '#slides',
       rendererCounts: {
         '.vts-stat': 1,
         '.vts-timeline': 2,
@@ -1274,10 +1276,13 @@ async function checkScenarioExpectations(page, scenario) {
     }
   }
 
+  // rendererScope limits the count to one container, for widgets that render
+  // the same slide twice (the deck preview's stage plus its thumbnail).
   for (const [selector, expected] of Object.entries(scenario.expectations.rendererCounts ?? {})) {
     const actual = await page.evaluate(
-      (sel) => document.querySelectorAll(sel).length,
-      selector
+      (sel, scope) => (scope ? document.querySelector(scope) : document)?.querySelectorAll(sel).length ?? 0,
+      selector,
+      scenario.expectations.rendererScope ?? null
     );
     if (actual !== expected) {
       failures.push(`Renderer snapshot mismatch: expected ${expected} × "${selector}", found ${actual}.`);

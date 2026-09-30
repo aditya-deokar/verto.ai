@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-09-20T05:54:41.995Z",
+  "generatedAt": "2026-09-30T13:12:00.946Z",
   "source": "scripts/mcp-apps/phase9h-visual-qa.mjs",
   "results": [
     {
@@ -85,10 +85,10 @@
       "colorScheme": "light",
       "failures": [],
       "metrics": {
-        "focusableCount": 26,
-        "contrastChecked": 90,
-        "textElementCount": 91,
-        "bodyTextLength": 1568,
+        "focusableCount": 15,
+        "contrastChecked": 100,
+        "textElementCount": 101,
+        "bodyTextLength": 1867,
         "screenshotWidth": 1200
       }
     },
@@ -139,10 +139,10 @@
       "colorScheme": "dark",
       "failures": [],
       "metrics": {
-        "focusableCount": 19,
-        "contrastChecked": 77,
-        "textElementCount": 78,
-        "bodyTextLength": 1440,
+        "focusableCount": 8,
+        "contrastChecked": 87,
+        "textElementCount": 88,
+        "bodyTextLength": 1737,
         "screenshotWidth": 1200
       }
     },
@@ -157,10 +157,10 @@
       "colorScheme": "light",
       "failures": [],
       "metrics": {
-        "focusableCount": 19,
-        "contrastChecked": 78,
-        "textElementCount": 79,
-        "bodyTextLength": 1459,
+        "focusableCount": 8,
+        "contrastChecked": 88,
+        "textElementCount": 89,
+        "bodyTextLength": 1735,
         "screenshotWidth": 390
       }
     },
@@ -265,10 +265,10 @@
       "colorScheme": "dark",
       "failures": [],
       "metrics": {
-        "focusableCount": 17,
-        "contrastChecked": 41,
-        "textElementCount": 41,
-        "bodyTextLength": 1002,
+        "focusableCount": 8,
+        "contrastChecked": 49,
+        "textElementCount": 49,
+        "bodyTextLength": 1203,
         "screenshotWidth": 1200
       }
     },
@@ -283,10 +283,10 @@
       "colorScheme": "light",
       "failures": [],
       "metrics": {
-        "focusableCount": 17,
-        "contrastChecked": 42,
-        "textElementCount": 42,
-        "bodyTextLength": 1021,
+        "focusableCount": 8,
+        "contrastChecked": 50,
+        "textElementCount": 50,
+        "bodyTextLength": 1201,
         "screenshotWidth": 1200
       }
     },
@@ -301,10 +301,10 @@
       "colorScheme": "light",
       "failures": [],
       "metrics": {
-        "focusableCount": 17,
-        "contrastChecked": 41,
-        "textElementCount": 41,
-        "bodyTextLength": 1005,
+        "focusableCount": 8,
+        "contrastChecked": 49,
+        "textElementCount": 49,
+        "bodyTextLength": 1205,
         "screenshotWidth": 390
       }
     },
@@ -355,10 +355,10 @@
       "colorScheme": "light",
       "failures": [],
       "metrics": {
-        "focusableCount": 19,
-        "contrastChecked": 77,
-        "textElementCount": 78,
-        "bodyTextLength": 1422,
+        "focusableCount": 8,
+        "contrastChecked": 87,
+        "textElementCount": 88,
+        "bodyTextLength": 1725,
         "screenshotWidth": 1200
       }
     },
@@ -373,10 +373,10 @@
       "colorScheme": "dark",
       "failures": [],
       "metrics": {
-        "focusableCount": 19,
-        "contrastChecked": 77,
-        "textElementCount": 78,
-        "bodyTextLength": 1422,
+        "focusableCount": 8,
+        "contrastChecked": 87,
+        "textElementCount": 88,
+        "bodyTextLength": 1725,
         "screenshotWidth": 1200
       }
     },
@@ -391,10 +391,10 @@
       "colorScheme": "light",
       "failures": [],
       "metrics": {
-        "focusableCount": 19,
-        "contrastChecked": 77,
-        "textElementCount": 78,
-        "bodyTextLength": 1440,
+        "focusableCount": 8,
+        "contrastChecked": 87,
+        "textElementCount": 88,
+        "bodyTextLength": 1737,
         "screenshotWidth": 1200
       }
     },
@@ -409,10 +409,10 @@
       "colorScheme": "dark",
       "failures": [],
       "metrics": {
-        "focusableCount": 19,
-        "contrastChecked": 77,
-        "textElementCount": 78,
-        "bodyTextLength": 1440,
+        "focusableCount": 8,
+        "contrastChecked": 87,
+        "textElementCount": 88,
+        "bodyTextLength": 1737,
         "screenshotWidth": 1200
       }
     },
@@ -427,10 +427,10 @@
       "colorScheme": "light",
       "failures": [],
       "metrics": {
-        "focusableCount": 19,
-        "contrastChecked": 77,
-        "textElementCount": 78,
-        "bodyTextLength": 1434,
+        "focusableCount": 8,
+        "contrastChecked": 87,
+        "textElementCount": 88,
+        "bodyTextLength": 1733,
         "screenshotWidth": 1200
       }
     },
@@ -445,10 +445,10 @@
       "colorScheme": "dark",
       "failures": [],
       "metrics": {
-        "focusableCount": 19,
-        "contrastChecked": 77,
-        "textElementCount": 78,
-        "bodyTextLength": 1434,
+        "focusableCount": 8,
+        "contrastChecked": 87,
+        "textElementCount": 88,
+        "bodyTextLength": 1733,
         "screenshotWidth": 1200
       }
     },
@@ -463,10 +463,10 @@
       "colorScheme": "light",
       "failures": [],
       "metrics": {
-        "focusableCount": 19,
-        "contrastChecked": 77,
-        "textElementCount": 78,
-        "bodyTextLength": 1434,
+        "focusableCount": 8,
+        "contrastChecked": 87,
+        "textElementCount": 88,
+        "bodyTextLength": 1733,
         "screenshotWidth": 1200
       }
     },
@@ -481,10 +481,10 @@
       "colorScheme": "dark",
       "failures": [],
       "metrics": {
-        "focusableCount": 19,
-        "contrastChecked": 77,
-        "textElementCount": 78,
-        "bodyTextLength": 1434,
+        "focusableCount": 8,
+        "contrastChecked": 87,
+        "textElementCount": 88,
+        "bodyTextLength": 1733,
         "screenshotWidth": 1200
       }
     },
@@ -499,10 +499,10 @@
       "colorScheme": "light",
       "failures": [],
       "metrics": {
-        "focusableCount": 19,
-        "contrastChecked": 77,
-        "textElementCount": 78,
-        "bodyTextLength": 1440,
+        "focusableCount": 8,
+        "contrastChecked": 87,
+        "textElementCount": 88,
+        "bodyTextLength": 1737,
         "screenshotWidth": 1200
       }
     },
@@ -517,10 +517,10 @@
       "colorScheme": "dark",
       "failures": [],
       "metrics": {
-        "focusableCount": 19,
-        "contrastChecked": 77,
-        "textElementCount": 78,
-        "bodyTextLength": 1440,
+        "focusableCount": 8,
+        "contrastChecked": 87,
+        "textElementCount": 88,
+        "bodyTextLength": 1737,
         "screenshotWidth": 1200
       }
     },
@@ -535,10 +535,10 @@
       "colorScheme": "light",
       "failures": [],
       "metrics": {
-        "focusableCount": 19,
-        "contrastChecked": 77,
-        "textElementCount": 78,
-        "bodyTextLength": 1443,
+        "focusableCount": 8,
+        "contrastChecked": 87,
+        "textElementCount": 88,
+        "bodyTextLength": 1739,
         "screenshotWidth": 1200
       }
     },
@@ -553,10 +553,10 @@
       "colorScheme": "dark",
       "failures": [],
       "metrics": {
-        "focusableCount": 19,
-        "contrastChecked": 77,
-        "textElementCount": 78,
-        "bodyTextLength": 1443,
+        "focusableCount": 8,
+        "contrastChecked": 87,
+        "textElementCount": 88,
+        "bodyTextLength": 1739,
         "screenshotWidth": 1200
       }
     },
@@ -571,10 +571,10 @@
       "colorScheme": "light",
       "failures": [],
       "metrics": {
-        "focusableCount": 19,
-        "contrastChecked": 77,
-        "textElementCount": 78,
-        "bodyTextLength": 1422,
+        "focusableCount": 8,
+        "contrastChecked": 87,
+        "textElementCount": 88,
+        "bodyTextLength": 1725,
         "screenshotWidth": 390
       }
     },
@@ -589,10 +589,10 @@
       "colorScheme": "dark",
       "failures": [],
       "metrics": {
-        "focusableCount": 19,
-        "contrastChecked": 77,
-        "textElementCount": 78,
-        "bodyTextLength": 1440,
+        "focusableCount": 8,
+        "contrastChecked": 87,
+        "textElementCount": 88,
+        "bodyTextLength": 1737,
         "screenshotWidth": 390
       }
     }

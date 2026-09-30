@@ -15,7 +15,6 @@ import {
 } from './shared/runtime';
 import {
   canPresentFullscreen,
-  extractThemeName,
   extractWidgetLinks,
   findTheme,
   openVertoLink,
@@ -32,497 +31,187 @@ import {
   setControlLabel,
 } from './shared/icons';
 import { renderSlideContent } from '../../../lib/slides/render-core/index';
+import { cleanSlideName } from '../../../lib/slides/slide-names';
 import {
   applyPatchesToSlides,
   createSlideEditor,
   type SlideEditPatch,
   type SlideEditorHandle,
 } from './shared/slide-editor';
+import {
+  duplicateSlide,
+  filterThemes,
+  insertSlide,
+  moveSlide,
+  removeSlide,
+} from './shared/deck-model';
+
+/**
+ * Every slide renders on one fixed logical canvas and is scaled to its frame,
+ * so the stage, the thumbnails and the presenter show the same layout.
+ */
+const CANVAS_WIDTH = 720;
+const UNDO_WINDOW_MS = 10_000;
+const CONFIRM_WINDOW_MS = 6_000;
 
 const deckStyles = `
   .deck-shell {
+    container-type: inline-size;
     display: grid;
     gap: 16px;
-    min-height: 360px;
     padding: 24px;
-    overflow: hidden;
     font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
     letter-spacing: -0.01em;
   }
-  .deck-header {
-    display: grid;
-    gap: 6px;
-    margin-bottom: 8px;
-    padding-right: 48px;
-  }
-  .deck-kicker {
-    color: var(--accent);
-    font-size: 13px;
-    font-weight: 700;
-    letter-spacing: 0.05em;
-  }
-  .deck-title {
-    margin: 0;
-    max-width: 42rem;
-    font-size: 26px;
-    font-weight: 800;
-    line-height: 1.2;
-    overflow-wrap: anywhere;
-  }
-  .deck-summary {
-    max-width: 44rem;
-    margin: 4px 0 12px;
-    color: var(--muted);
-    font-size: 15px;
-    overflow-wrap: anywhere;
-  }
-  .badge-row {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 8px;
-    min-height: 28px;
-  }
+  .deck-header { display: grid; gap: 6px; padding-right: 48px; }
+  .deck-kicker { color: var(--accent); font-size: 13px; font-weight: 700; letter-spacing: 0.05em; }
+  .deck-title { margin: 0; max-width: 42rem; font-size: 26px; font-weight: 800; line-height: 1.2; overflow-wrap: anywhere; }
+  .deck-summary { max-width: 44rem; margin: 2px 0 8px; color: var(--muted); font-size: 15px; overflow-wrap: anywhere; }
+  .badge-row { display: flex; flex-wrap: wrap; gap: 8px; min-height: 28px; }
   .badge {
-    display: inline-flex;
-    align-items: center;
-    min-height: 26px;
-    max-width: 100%;
-    border: 1px solid color-mix(in srgb, var(--line) 40%, transparent);
-    border-radius: 99px;
-    padding: 4px 12px;
-    background: color-mix(in srgb, var(--surface) 60%, transparent);
-    backdrop-filter: blur(12px);
-    -webkit-backdrop-filter: blur(12px);
-    color: var(--fg);
-    font-size: 12px;
-    font-weight: 600;
-    overflow-wrap: anywhere;
+    display: inline-flex; align-items: center; gap: 7px; min-height: 26px; max-width: 100%;
+    border: 1px solid color-mix(in srgb, var(--line) 40%, transparent); border-radius: 99px;
+    padding: 4px 12px; background: color-mix(in srgb, var(--surface) 60%, transparent);
+    color: var(--fg); font-size: 12px; font-weight: 600; overflow-wrap: anywhere;
   }
   .badge.is-published {
-    border-color: color-mix(in srgb, var(--accent) 40%, transparent);
-    color: var(--accent);
+    border-color: color-mix(in srgb, var(--accent) 40%, transparent); color: var(--accent);
     background: color-mix(in srgb, var(--accent) 10%, transparent);
   }
-  .deck-stage {
-    display: grid;
-    grid-template-columns: minmax(0, 1fr) minmax(200px, 240px);
-    gap: 20px;
-    align-items: stretch;
+
+  /* Stage + rail. align-items:start matters: a stretched 16:9 item derives
+     its width from the row height and overflows its column. */
+  .deck-stage { display: grid; grid-template-columns: minmax(0, 1fr); gap: 16px; align-items: start; }
+  @container (min-width: 720px) {
+    .deck-stage { grid-template-columns: minmax(0, 1fr) 248px; }
   }
-  .cover-preview {
-    position: relative;
-    display: grid;
-    align-content: space-between;
-    min-height: 242px;
-    aspect-ratio: 16 / 9;
+  .stage-col { display: grid; gap: 10px; min-width: 0; }
+
+  .slide-frame {
+    position: relative; width: 100%; aspect-ratio: 16 / 9; overflow: hidden;
     border: 1px solid color-mix(in srgb, var(--line) 60%, transparent);
-    padding: 24px;
+    border-radius: var(--vt-radius, 12px);
   }
-  .cover-meta {
-    display: flex;
-    justify-content: space-between;
-    gap: 12px;
-    color: var(--vt-slide-muted);
-    font-size: 13px;
-    font-weight: 700;
-    text-transform: uppercase;
-    letter-spacing: 0.05em;
+  .slide-canvas {
+    position: absolute; top: 0; left: 0; width: ${CANVAS_WIDTH}px; height: ${CANVAS_WIDTH * 9 / 16}px;
+    display: flex; flex-direction: column; justify-content: center; box-sizing: border-box;
+    padding: 36px 44px; overflow: hidden; transform-origin: 0 0; transform: scale(var(--vt-scale, 0.5));
   }
-  .cover-theme-chip {
-    display: inline-flex;
-    align-items: center;
-    gap: 7px;
-    max-width: 100%;
+  .slide-canvas .vts-title { font-size: 34px; }
+  .slide-canvas .vts-heading1 { font-size: 30px; }
+  .slide-canvas .vts-heading2 { font-size: 25px; }
+  .slide-canvas .vts-heading3 { font-size: 19px; }
+  .slide-canvas :is(.vts-p, .vts-li-text, .vts-toc, .vts-callout-body) { font-size: 16px; }
+  .slide-canvas .vts-stat-value { font-size: 34px; }
+  /* The kernel stacks columns on narrow viewports; the canvas is always
+     ${CANVAS_WIDTH}px wide, so it keeps the desktop layout and scales instead. */
+  .slide-canvas :is(.vts-row, .vts-media-row) { flex-direction: row; }
+  .slide-canvas .vts-media-row .vts-media-image { flex: 1 1 45%; width: auto; }
+  .slide-canvas .vts-media-row .vts-media-text { flex: 1 1 55%; width: auto; }
+  .slide-fallback-title { margin: 0 0 10px; font-family: var(--vt-heading-font); font-size: 34px; line-height: 1.15; overflow-wrap: anywhere; }
+  .slide-fallback-text { margin: 0; color: var(--vt-slide-muted); font-size: 17px; line-height: 1.5; overflow-wrap: anywhere; }
+
+  .stage-bar { display: flex; flex-wrap: wrap; align-items: center; gap: 8px 12px; min-width: 0; }
+  .stage-caption { display: grid; flex: 1 1 180px; min-width: 0; }
+  .stage-pos { color: var(--muted); font-size: 12px; font-weight: 700; letter-spacing: 0.04em; text-transform: uppercase; }
+  .stage-name { overflow: hidden; font-size: 14px; font-weight: 700; text-overflow: ellipsis; white-space: nowrap; }
+  .stage-tools { display: flex; flex-wrap: wrap; gap: 6px; }
+  .tool-btn {
+    display: inline-flex; align-items: center; justify-content: center; gap: 6px; min-width: 34px; min-height: 34px;
+    border: 1px solid color-mix(in srgb, var(--line) 60%, transparent); border-radius: 99px; padding: 0 12px;
+    background: var(--surface); color: var(--fg); font: inherit; font-size: 13px; font-weight: 600; cursor: pointer;
   }
-  .cover-title {
-    max-width: 78%;
-    margin: 22px 0 8px;
-    font-size: 32px;
-    font-weight: 800;
-    line-height: 1.1;
-    overflow-wrap: anywhere;
+  .tool-btn.vt-icon-only { padding: 0; }
+  .tool-btn:hover:not(:disabled) { border-color: var(--accent); }
+  .tool-btn:disabled { cursor: default; opacity: 0.45; }
+  .tool-btn.is-primary { border-color: var(--accent); background: var(--accent); color: var(--bg); }
+  .tool-btn.is-danger { border-color: #dc2626; background: #dc2626; color: #ffffff; }
+  .tool-btn[hidden] { display: none; }
+
+  .action-panel, .theme-panel {
+    display: grid; align-content: start; gap: 10px; min-width: 0;
+    border: 1px solid color-mix(in srgb, var(--line) 60%, transparent); border-radius: 16px; padding: 16px;
+    background: color-mix(in srgb, var(--surface) 85%, transparent); box-shadow: 0 12px 40px rgba(0, 0, 0, 0.06);
   }
-  .cover-text {
-    max-width: 68%;
-    margin: 0;
-    color: var(--vt-slide-muted);
-    font-size: 15px;
-    overflow-wrap: anywhere;
-  }
-  .cover-lines {
-    display: grid;
-    gap: 8px;
-    width: min(260px, 58%);
-    margin-top: 20px;
-  }
-  .cover-line {
-    height: 8px;
-    border-radius: 8px;
-    background: color-mix(in srgb, var(--vt-slide-fg) 20%, transparent);
-  }
-  .cover-line:nth-child(2) { width: 72%; }
-  .cover-line:nth-child(3) { width: 48%; }
-  .action-panel {
-    display: grid;
-    align-content: start;
-    gap: 12px;
-    border: 1px solid color-mix(in srgb, var(--line) 60%, transparent);
-    border-radius: 16px;
-    padding: 20px;
-    background: color-mix(in srgb, var(--surface) 75%, transparent);
-    backdrop-filter: blur(20px);
-    -webkit-backdrop-filter: blur(20px);
-    box-shadow: 0 12px 40px rgba(0, 0, 0, 0.06);
-  }
-  .action-title {
-    margin: 0;
-    font-size: 15px;
-    font-weight: 700;
-  }
-  .action-note {
-    min-height: 36px;
-    margin: 0;
-    color: var(--muted);
-    font-size: 13px;
-    line-height: 1.4;
-  }
+  .action-panel[hidden], .theme-panel[hidden] { display: none; }
+  .action-title { margin: 0; font-size: 15px; font-weight: 700; }
+  .action-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+  @container (min-width: 720px) { .action-grid { grid-template-columns: 1fr; } }
+  .action-note { min-height: 36px; margin: 0; color: var(--muted); font-size: 13px; line-height: 1.4; }
   .button {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    width: 100%;
-    min-height: 42px;
-    border: 1px solid color-mix(in srgb, var(--line) 50%, transparent);
-    border-radius: 99px;
-    padding: 8px 16px;
-    background: color-mix(in srgb, var(--surface) 80%, transparent);
-    color: var(--fg);
-    font: inherit;
-    font-size: 14px;
-    font-weight: 600;
-    text-align: center;
-    text-decoration: none;
-    cursor: pointer;
-    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+    display: inline-flex; align-items: center; justify-content: center; width: 100%; min-height: 38px;
+    border: 1px solid color-mix(in srgb, var(--line) 50%, transparent); border-radius: 99px; padding: 7px 14px;
+    background: color-mix(in srgb, var(--surface) 80%, transparent); color: var(--fg);
+    font: inherit; font-size: 14px; font-weight: 600; text-align: center; text-decoration: none; cursor: pointer;
+    transition: background 0.2s, box-shadow 0.2s, transform 0.2s;
   }
-  .button:hover:not(:disabled) {
-    background: var(--surface);
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
-    transform: translateY(-1px);
+  .button:hover:not(:disabled) { background: var(--surface); box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05); transform: translateY(-1px); }
+  .button.primary { border-color: var(--accent); background: var(--accent); color: var(--bg); }
+  .button.present-btn { border-color: transparent; background-color: #dc2626; background-image: var(--vt-brand-gradient); color: #ffffff; }
+  .button[aria-disabled="true"], .button:disabled { cursor: default; opacity: 0.5; }
+  .button.is-busy { cursor: wait; opacity: 0.7; }
+
+  .theme-panel-head { display: flex; align-items: center; justify-content: space-between; gap: 8px; }
+  .theme-panel-title { margin: 0; font-size: 15px; font-weight: 800; }
+  .theme-panel-buttons { display: flex; gap: 6px; }
+  .theme-search {
+    width: 100%; min-height: 36px; box-sizing: border-box; border: 1px solid var(--line); border-radius: 10px;
+    padding: 6px 10px; background: var(--bg); color: var(--fg); font: inherit; font-size: 13px;
   }
-  .button.primary {
-    border-color: var(--accent);
-    background: var(--accent);
-    color: var(--bg);
+  .theme-list { display: grid; grid-template-columns: 1fr; gap: 6px; max-height: 292px; overflow-y: auto; padding: 2px; }
+  @container (max-width: 719px) { .theme-list { grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); } }
+  .theme-card {
+    display: flex; align-items: center; gap: 10px; width: 100%; min-width: 0; border: 1px solid var(--line);
+    border-radius: 10px; padding: 6px; background: var(--surface); color: var(--fg); font: inherit; text-align: left; cursor: pointer;
   }
-  .button.primary:hover:not(:disabled) {
-    opacity: 0.9;
-    box-shadow: 0 6px 16px color-mix(in srgb, var(--accent) 30%, transparent);
+  .theme-card:hover { border-color: var(--accent); }
+  .theme-card[aria-pressed="true"] { border-color: var(--accent); box-shadow: 0 0 0 2px var(--accent); }
+  .theme-chip {
+    position: relative; display: grid; place-items: center; flex: none; width: 46px; height: 30px; overflow: hidden;
+    border: 1px solid rgba(127, 127, 127, 0.25); border-radius: 6px; font-size: 13px; font-weight: 800;
   }
-  .button.present-btn {
-    border-color: transparent;
-    /* Solid fallback doubles as the WCAG-measured background for white text */
-    background-color: #dc2626;
-    background-image: var(--vt-brand-gradient);
-    color: #ffffff;
-  }
-  .button.present-btn:hover:not(:disabled) {
-    opacity: 1;
-    box-shadow: 0 6px 16px rgba(239, 68, 68, 0.35);
-  }
-  .button[aria-disabled="true"],
-  .button:disabled {
-    cursor: default;
-    opacity: 0.5;
-  }
-  .button.is-busy {
-    cursor: wait;
-    opacity: 0.7;
-  }
-  .filmstrip {
-    display: grid;
-    gap: 12px;
-  }
+  .theme-chip::after { content: ""; position: absolute; left: 6px; right: 6px; bottom: 4px; height: 3px; border-radius: 3px; background: var(--chip-accent); }
+  .theme-card-text { display: grid; min-width: 0; }
+  .theme-card-name { overflow: hidden; font-size: 13px; font-weight: 700; text-overflow: ellipsis; white-space: nowrap; }
+  .theme-card-type { color: var(--muted); font-size: 11px; font-weight: 600; text-transform: uppercase; }
+  .theme-empty { margin: 8px 0; color: var(--muted); font-size: 13px; }
+
+  .filmstrip { display: grid; gap: 10px; }
   .filmstrip-head {
-    display: flex;
-    justify-content: space-between;
-    gap: 12px;
-    color: var(--muted);
-    font-size: 13px;
-    font-weight: 700;
-    text-transform: uppercase;
-    letter-spacing: 0.05em;
+    display: flex; justify-content: space-between; gap: 12px; color: var(--muted);
+    font-size: 13px; font-weight: 700; letter-spacing: 0.05em; text-transform: uppercase;
   }
-  .filmstrip-grid {
-    display: grid;
-    grid-template-columns: 1fr;
-    gap: 16px;
+  .filmstrip-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 12px; }
+  .thumb {
+    display: grid; gap: 6px; min-width: 0; border: 0; border-radius: 12px; padding: 4px;
+    background: transparent; color: var(--fg); font: inherit; text-align: left; cursor: pointer;
   }
-  .slide-card {
-    display: flex;
-    gap: 16px;
-    align-items: stretch;
-    min-width: 0;
-  }
-  .slide-reorder-controls {
-    display: flex;
-    flex-direction: column;
-    gap: 8px;
-    justify-content: center;
-  }
-  .reorder-btn {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    width: 28px;
-    height: 28px;
-    border: 1px solid var(--line);
-    border-radius: 4px;
-    background: var(--surface);
-    color: var(--muted);
-    cursor: pointer;
-    font-size: 16px;
-    line-height: 1;
-    padding: 0;
-  }
-  .reorder-btn:hover:not(:disabled) {
-    background: var(--line);
-    color: var(--fg);
-  }
-  .reorder-btn:disabled {
-    opacity: 0.3;
-    cursor: default;
-  }
-  .slide-preview {
-    flex: 1;
-    position: relative;
-    display: flex;
-    flex-direction: column;
-    aspect-ratio: auto;
-    min-height: 120px;
-    border: 1px solid color-mix(in srgb, var(--line) 40%, transparent);
-    padding: 16px;
-    transition: filter 0.2s;
-  }
-  .slide-preview:hover {
-    filter: brightness(1.05);
-    box-shadow: 0 4px 12px rgba(0,0,0,0.05);
-  }
-  .slide-content-html {
-    margin-top: 0;
-    min-width: 0;
-  }
-  .slide-number {
-    display: inline-flex;
-    align-self: flex-start;
-    min-width: 24px;
-    border: 1px solid color-mix(in srgb, var(--vt-slide-fg) 18%, transparent);
-    border-radius: 99px;
-    padding: 2px 8px;
-    background: color-mix(in srgb, var(--vt-slide-fg) 10%, transparent);
-    color: var(--vt-slide-fg);
-    font-size: 11px;
-    font-weight: 700;
-    text-align: center;
-    margin-bottom: 8px;
-  }
-  .slide-title {
-    display: -webkit-box;
-    -webkit-box-orient: vertical;
-    -webkit-line-clamp: 2;
-    margin: 0;
-    color: var(--vt-slide-fg);
-    font-family: var(--vt-heading-font);
-    font-size: 13px;
-    font-weight: 700;
-    overflow: hidden;
-    overflow-wrap: anywhere;
-  }
-  .slide-preview-text {
-    display: -webkit-box;
-    -webkit-box-orient: vertical;
-    -webkit-line-clamp: 2;
-    min-height: 36px;
-    margin: 0;
-    color: var(--vt-slide-muted);
-    font-size: 13px;
-    overflow: hidden;
-    overflow-wrap: anywhere;
-  }
+  .thumb .slide-frame { border-radius: 8px; }
+  .thumb:hover .slide-frame { border-color: var(--accent); }
+  .thumb[aria-current="true"] { box-shadow: 0 0 0 2px var(--accent); }
+  .thumb-caption { display: flex; gap: 6px; min-width: 0; font-size: 12px; font-weight: 600; }
+  .thumb-num { flex: none; color: var(--muted); }
+  .thumb-name { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
   .empty-state {
-    border: 1px dashed color-mix(in srgb, var(--line) 60%, transparent);
-    border-radius: 12px;
-    padding: 24px;
-    color: var(--muted);
-    background: color-mix(in srgb, var(--surface) 40%, transparent);
-    text-align: center;
-    font-size: 14px;
+    border: 1px dashed color-mix(in srgb, var(--line) 60%, transparent); border-radius: 12px; padding: 24px;
+    color: var(--muted); background: color-mix(in srgb, var(--surface) 40%, transparent); text-align: center; font-size: 14px;
   }
-  .is-loading .cover-preview,
-  .is-loading .badge,
-  .is-loading .button,
-  .is-loading .slide-preview {
-    opacity: 0.6;
-    pointer-events: none;
-  }
+  .is-loading :is(.slide-frame, .badge, .button, .thumb) { opacity: 0.6; pointer-events: none; }
   @media (max-width: 560px) {
     .deck-shell { padding: 16px; }
-    .deck-stage { grid-template-columns: 1fr; }
-    .cover-preview {
-      min-height: 220px;
-      aspect-ratio: 4 / 3;
-    }
-    .cover-title {
-      max-width: 100%;
-      font-size: 26px;
-    }
-    .cover-text { max-width: 100%; }
-    .action-panel { grid-template-columns: 1fr; }
-    .filmstrip-grid { grid-template-columns: 1fr; }
+    .filmstrip-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
   }
 
-  /* Presenter Mode Overlay */
-  .presenter-overlay {
-    position: fixed;
-    inset: 0;
-    z-index: 100;
-    display: flex;
-    flex-direction: column;
-    background: var(--bg);
-    color: var(--fg);
-    padding: 16px;
-    box-sizing: border-box;
-  }
-  .presenter-overlay[hidden] { display: none; }
-  .presenter-bar {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 8px 16px;
-    margin-bottom: 8px;
-  }
-  .presenter-counter {
-    font-size: 14px;
-    font-weight: 700;
-    color: var(--muted);
-  }
-  .presenter-stage-box {
-    flex: 1;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    min-height: 0;
-  }
-  .presenter-canvas {
-    position: relative;
-    width: 100%;
-    max-width: 960px;
-    aspect-ratio: 16 / 9;
-    max-height: 80vh;
-    padding: clamp(16px, 4%, 48px);
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    border-radius: var(--vt-radius, 12px);
-    box-shadow: 0 16px 48px rgba(0,0,0,0.2);
-    overflow: hidden;
-  }
-  .presenter-nav {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    gap: 16px;
-    padding: 12px 0 4px;
-  }
-
-  /* Theme Studio Drawer */
-  .theme-drawer {
-    position: fixed;
-    top: 0;
-    right: 0;
-    bottom: 0;
-    width: min(380px, 92vw);
-    z-index: 90;
-    display: flex;
-    flex-direction: column;
-    background: var(--surface);
-    border-left: 1px solid var(--line);
-    box-shadow: -8px 0 32px rgba(0, 0, 0, 0.16);
-    padding: 20px;
-    overflow-y: auto;
-    animation: vt-fade-slide-in 200ms ease both;
-  }
-  .theme-drawer[hidden] { display: none; }
-  .theme-drawer-head {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 8px;
-  }
-  .theme-drawer-title {
-    margin: 0;
-    font-size: 18px;
-    font-weight: 800;
-  }
-  .theme-drawer-sub {
-    margin: 0 0 14px;
-    font-size: 13px;
-    color: var(--muted);
-  }
-  .theme-grid {
-    display: grid;
-    grid-template-columns: repeat(2, 1fr);
-    gap: 10px;
-    margin: 8px 0 20px;
-  }
-  .theme-card {
-    display: flex;
-    flex-direction: column;
-    gap: 6px;
-    padding: 10px;
-    border: 1px solid var(--line);
-    border-radius: 10px;
-    background: color-mix(in srgb, var(--surface) 80%, transparent);
-    cursor: pointer;
-    text-align: left;
-    transition: all 0.18s ease;
-  }
-  .theme-card:hover {
-    border-color: var(--accent);
-    transform: translateY(-1px);
-  }
-  .theme-card.is-active {
-    border-color: var(--accent);
-    box-shadow: 0 0 0 2px var(--accent);
-    background: color-mix(in srgb, var(--accent) 10%, transparent);
-  }
-  .theme-card-head {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-  }
-  .theme-card-name {
-    font-size: 12px;
-    font-weight: 700;
-    color: var(--fg);
-    overflow: hidden;
-    text-overflow: ellipsis;
-    white-space: nowrap;
-  }
-  .theme-card-type {
-    font-size: 10px;
-    text-transform: uppercase;
-    color: var(--muted);
-    font-weight: 600;
-  }
-  .theme-drawer-actions {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 10px;
-    margin-top: auto;
-    padding-top: 14px;
-    border-top: 1px solid var(--line);
-  }
+  /* Presenting hides everything else, so an inline host that refuses
+     fullscreen shrinks the iframe to the presenter instead of stretching it. */
+  .deck-shell[data-mode="present"] > :not(.presenter) { display: none; }
+  .presenter { display: grid; gap: 12px; }
+  .presenter[hidden] { display: none; }
+  .presenter-bar, .presenter-nav { display: flex; align-items: center; justify-content: space-between; gap: 12px; }
+  .presenter-nav { justify-content: center; }
+  .presenter-counter { color: var(--muted); font-size: 14px; font-weight: 700; }
+  .presenter .slide-frame { width: min(100%, calc((100vh - 150px) * 16 / 9)); margin: 0 auto; }
+  .presenter .button { width: auto; min-height: 36px; }
 `;
 
 let stylesInjected = false;
@@ -530,6 +219,7 @@ let stylesInjected = false;
 type DeckViewModel = {
   id: string;
   title: string;
+  /** The theme actually painted: a catalog name, never a stored style prompt. */
   themeName: string;
   slideCount: number;
   updatedAt: string;
@@ -537,8 +227,24 @@ type DeckViewModel = {
   shareUrl: string;
   openUrl: string;
   actions: Record<string, unknown>;
+  /** What the widget shows: raw slides when it has them, else the widget summary. */
   slides: unknown[];
+  /** Raw slides from `data.presentation.slides`, the only shape safe to save. */
   rawSlides: unknown[];
+};
+
+const EMPTY_DECK: DeckViewModel = {
+  id: '',
+  title: 'Deck preview',
+  themeName: 'Default',
+  slideCount: 0,
+  updatedAt: '',
+  isPublished: false,
+  shareUrl: '',
+  openUrl: '',
+  actions: {},
+  slides: [],
+  rawSlides: [],
 };
 
 function ensureDeckStyles(): void {
@@ -562,74 +268,80 @@ function ensureMarkup(): void {
         <div class="badge-row" id="badges" aria-label="Deck metadata"></div>
       </section>
       <section class="deck-stage" aria-label="Deck overview">
-        <article class="cover-preview vt-slide-surface" id="cover-preview">
-          <div class="cover-meta">
-            <span class="cover-theme-chip"><span class="vt-swatch" aria-hidden="true"></span><span id="cover-theme">Theme</span></span>
-            <span id="cover-count">0 slides</span>
-          </div>
-          <div>
-            <h2 class="cover-title vt-slide-heading" id="cover-title">Deck preview</h2>
-            <p class="cover-text" id="cover-text">Slide preview will appear here.</p>
-            <div class="cover-lines" aria-hidden="true">
-              <span class="cover-line"></span>
-              <span class="cover-line"></span>
-              <span class="cover-line"></span>
+        <div class="stage-col">
+          <article class="slide-frame" id="cover-preview" aria-label="Selected slide"></article>
+          <div class="stage-bar" id="slide-tools" role="toolbar" aria-label="Slide tools">
+            <div class="stage-caption" aria-live="polite">
+              <span class="stage-pos" id="stage-pos">Slide 0 of 0</span>
+              <span class="stage-name" id="stage-name">Deck preview</span>
+            </div>
+            <div class="stage-tools">
+              <button class="tool-btn" id="move-up-action" type="button"></button>
+              <button class="tool-btn" id="move-down-action" type="button"></button>
+              <button class="tool-btn vt-has-icon" id="duplicate-slide-action" type="button">${iconLabel('copy', 'Duplicate')}</button>
+              <button class="tool-btn vt-has-icon" id="delete-slide-action" type="button">${iconLabel('trash', 'Delete')}</button>
+              <button class="tool-btn vt-has-icon" id="undo-slide-action" type="button" hidden>${iconLabel('rotate-ccw', 'Undo')}</button>
             </div>
           </div>
-        </article>
-        <aside class="action-panel" aria-label="Deck actions">
+        </div>
+        <aside class="action-panel" id="action-panel" aria-label="Deck actions">
           <p class="action-title">Next action</p>
-          <button class="button primary present-btn vt-has-icon" id="present-action" type="button">${iconLabel('maximize', 'Present live')}</button>
-          <button class="button vt-has-icon" id="edit-action" type="button">${iconLabel('pencil', 'Edit this slide')}</button>
-          <button class="button vt-has-icon" id="theme-action" type="button">${iconLabel('palette', 'Change theme')}</button>
-          <a class="button vt-has-icon" id="open-link">${iconLabel('external-link', 'Open in Verto')}</a>
-          <button class="button vt-has-icon" id="secondary-action" type="button">${iconLabel('share', 'Copy link')}</button>
-          <button class="button vt-has-icon" id="refresh-action" type="button">${iconLabel('refresh', 'Refresh preview')}</button>
-          <p class="action-note" id="action-note">Open the deck to continue editing in Verto.</p>
+          <button class="button present-btn vt-has-icon" id="present-action" type="button">${iconLabel('maximize', 'Present live')}</button>
+          <div class="action-grid">
+            <button class="button vt-has-icon" id="edit-action" type="button">${iconLabel('pencil', 'Edit this slide')}</button>
+            <button class="button vt-has-icon" id="theme-action" type="button">${iconLabel('palette', 'Change theme')}</button>
+            <a class="button vt-has-icon" id="open-link">${iconLabel('external-link', 'Open in Verto')}</a>
+            <button class="button vt-has-icon" id="secondary-action" type="button">${iconLabel('share', 'Copy link')}</button>
+            <button class="button vt-has-icon" id="refresh-action" type="button">${iconLabel('refresh', 'Refresh preview')}</button>
+          </div>
+          <p class="action-note" id="action-note" role="status" aria-live="polite">Open the deck to continue editing in Verto.</p>
         </aside>
+        <section class="theme-panel" id="theme-panel" aria-label="Theme picker" hidden>
+          <div class="theme-panel-head">
+            <h2 class="theme-panel-title">Theme</h2>
+            <div class="theme-panel-buttons">
+              <button class="tool-btn" id="theme-cancel-btn" type="button">Cancel</button>
+              <button class="tool-btn is-primary" id="theme-apply-btn" type="button">Apply</button>
+            </div>
+          </div>
+          <input class="theme-search" id="theme-search" type="search" autocomplete="off" aria-label="Search themes" placeholder="Search ${VERTO_THEMES.length} themes" />
+          <div class="theme-list" id="theme-list" aria-label="Themes"></div>
+          <p class="action-note" id="theme-note" role="status" aria-live="polite"></p>
+        </section>
       </section>
       <section class="filmstrip" aria-label="Slide filmstrip">
         <div class="filmstrip-head">
-          <span>Slide preview</span>
+          <span>Slides</span>
           <span id="filmstrip-count">0 shown</span>
         </div>
         <div class="filmstrip-grid" id="slides"></div>
       </section>
       <section id="slide-editor" aria-label="Guided slide editor"></section>
-
-      <!-- Presenter Mode Overlay -->
-      <div class="presenter-overlay" id="presenter-overlay" hidden>
+      <section class="presenter" id="presenter" aria-label="Presenter" hidden>
         <div class="presenter-bar">
           <span class="presenter-counter" id="presenter-counter">Slide 1 of 1</span>
-          <button class="button vt-has-icon" id="presenter-close-btn" type="button" style="width: auto; min-height: 34px; padding: 4px 14px;">✕ Exit Presenter</button>
+          <button class="button vt-has-icon" id="presenter-close-btn" type="button">${iconLabel('x', 'Exit presenter')}</button>
         </div>
-        <div class="presenter-stage-box">
-          <div class="presenter-canvas vt-slide-surface" id="presenter-canvas"></div>
-        </div>
+        <div class="slide-frame" id="presenter-frame"></div>
         <div class="presenter-nav">
-          <button class="button vt-has-icon" id="presenter-prev-btn" type="button" style="width: auto; min-height: 38px; padding: 6px 16px;">&larr; Prev</button>
-          <button class="button primary vt-has-icon" id="presenter-next-btn" type="button" style="width: auto; min-height: 38px; padding: 6px 16px;">Next &rarr;</button>
+          <button class="button vt-has-icon" id="presenter-prev-btn" type="button">${iconLabel('chevron-left', 'Previous')}</button>
+          <button class="button primary vt-has-icon" id="presenter-next-btn" type="button">${iconLabel('chevron-right', 'Next')}</button>
         </div>
-      </div>
-
-      <!-- Theme Studio Drawer -->
-      <aside class="theme-drawer" id="theme-drawer" aria-label="Theme Studio" hidden>
-        <div class="theme-drawer-head">
-          <h2 class="theme-drawer-title">Theme Studio</h2>
-          <button class="button vt-has-icon vt-icon-only" id="theme-drawer-close" type="button" aria-label="Close theme studio" style="width: 32px; min-height: 32px; padding: 0;">✕</button>
-        </div>
-        <p class="theme-drawer-sub">Choose a visual theme. Live preview updates on the deck behind.</p>
-        <div class="theme-grid" id="theme-drawer-grid"></div>
-        <div class="theme-drawer-actions">
-          <button class="button" id="theme-cancel-btn" type="button">Cancel</button>
-          <button class="button primary" id="theme-apply-btn" type="button">Apply Theme</button>
-        </div>
-      </aside>
+      </section>
     </main>
   `;
+
+  setButtonIcon(byId('move-up-action'), 'arrow-up', '', 'Move slide earlier');
+  setButtonIcon(byId('move-down-action'), 'arrow-down', '', 'Move slide later');
+  wireStaticControls();
 }
 
-function getDeckPayload(payload: Record<string, unknown>): {  presentation: Record<string, unknown>;
+/* ------------------------------------------------------------------ */
+/* Payload                                                             */
+/* ------------------------------------------------------------------ */
+
+function getDeckPayload(payload: Record<string, unknown>): {
+  presentation: Record<string, unknown>;
   slides: unknown[];
   actions: Record<string, unknown>;
 } {
@@ -643,8 +355,7 @@ function getDeckPayload(payload: Record<string, unknown>): {  presentation: Reco
     };
   }
 
-  const data = getRecord(payload.data || payload);
-  const presentation = getRecord(data.presentation || data);
+  const presentation = readPresentation(getRecord(payload.data || payload));
 
   return {
     presentation,
@@ -653,24 +364,42 @@ function getDeckPayload(payload: Record<string, unknown>): {  presentation: Reco
   };
 }
 
+/** Tool results put the presentation at `data.presentation` or at `data`. */
+function readPresentation(data: Record<string, unknown>): Record<string, unknown> {
+  return getRecord(data.presentation || data);
+}
+
 function toDeckViewModel(payload: Record<string, unknown>): DeckViewModel {
   const { presentation, slides, actions } = getDeckPayload(payload);
+  const rawSlides = extractRawSlides(payload);
+  const storedTheme = getString(presentation.theme_name || presentation.themeName);
 
   return {
     id: getString(presentation.id),
     title: getString(presentation.title, 'Deck preview'),
-    themeName: getString(presentation.theme_name || presentation.themeName, 'Default'),
-    slideCount: getNumber(presentation.slide_count || presentation.slideCount, slides.length),
+    themeName: findTheme(storedTheme)?.name ?? 'Default',
+    slideCount: getNumber(
+      presentation.slide_count ?? presentation.slideCount,
+      Math.max(slides.length, rawSlides.length)
+    ),
     updatedAt: getString(presentation.updated_at || presentation.updatedAt),
     isPublished: Boolean(presentation.is_published || presentation.isPublished),
     shareUrl: getString(presentation.share_url || presentation.shareUrl),
     openUrl: getString(presentation.open_url || presentation.openUrl || presentation.verto_url || presentation.url),
     actions,
-    slides,
-    rawSlides: getArray(getRecord(getRecord(payload.data || payload).presentation || getRecord(payload.data || payload)).slides).length > 0 
-      ? getArray(getRecord(getRecord(payload.data || payload).presentation || getRecord(payload.data || payload)).slides)
-      : slides,
+    slides: rawSlides.length > 0 ? rawSlides : slides,
+    rawSlides,
   };
+}
+
+/**
+ * Raw slides live only in `data.presentation.slides`. The widget summary in
+ * `widget.slides` is a mapped shape (no type, className or slideName), and
+ * saving it back would strip those fields from every slide.
+ */
+function extractRawSlides(payload: Record<string, unknown>): unknown[] {
+  if (!payload.data) return [];
+  return getArray(readPresentation(getRecord(payload.data)).slides);
 }
 
 function hasDeckData(deck: DeckViewModel): boolean {
@@ -678,20 +407,12 @@ function hasDeckData(deck: DeckViewModel): boolean {
 }
 
 function getSlideTitle(slide: Record<string, unknown>, index: number): string {
-  return getString(
-    slide.title || slide.slideName || slide.slide_name,
-    `Slide ${index + 1}`
-  );
+  return cleanSlideName(getString(slide.title || slide.slideName || slide.slide_name, `Slide ${index + 1}`));
 }
 
 function getSlidePreview(slide: Record<string, unknown>): string {
   return getString(
-    slide.previewText
-      || slide.preview_text
-      || slide.subtitle
-      || slide.description
-      || slide.body
-      || slide.content
+    slide.previewText || slide.preview_text || slide.subtitle || slide.description || slide.body
   );
 }
 
@@ -703,21 +424,68 @@ function formatUpdatedAt(value: string): string {
     return 'Updated time unavailable';
   }
 
-  return `Updated ${new Intl.DateTimeFormat(undefined, {
-    month: 'short',
-    day: 'numeric',
-  }).format(date)}`;
+  return `Updated ${new Intl.DateTimeFormat(undefined, { month: 'short', day: 'numeric' }).format(date)}`;
 }
 
 function slideCountLabel(count: number): string {
   return `${count} slide${count === 1 ? '' : 's'}`;
 }
 
-function renderBadge(label: string, className = ''): HTMLElement {
-  const badge = document.createElement('span');
-  badge.className = `badge${className ? ` ${className}` : ''}`;
-  badge.textContent = label;
-  return badge;
+function summaryFor(deck: DeckViewModel): string {
+  return deck.slides.length > 0
+    ? `${slideCountLabel(deck.slideCount)} in the ${deck.themeName} theme. Pick a slide to preview, edit or rearrange it.`
+    : 'Deck metadata is ready. Slide previews are still unavailable.';
+}
+
+/* ------------------------------------------------------------------ */
+/* Slide rendering                                                     */
+/* ------------------------------------------------------------------ */
+
+const frameScaler = typeof ResizeObserver === 'function'
+  ? new ResizeObserver((entries) => {
+      for (const entry of entries) {
+        const frame = entry.target as HTMLElement;
+        frame.style.setProperty('--vt-scale', String(entry.contentRect.width / CANVAS_WIDTH));
+      }
+    })
+  : null;
+
+/** Paints `slide` into `frame` on the shared scaled canvas. */
+function paintSlide(frame: HTMLElement, slide: Record<string, unknown>, index: number, interactive: boolean): void {
+  frame.textContent = '';
+  frame.classList.add('vt-slide-surface');
+
+  const canvas = document.createElement('div');
+  canvas.className = 'slide-canvas';
+
+  if (slide.content) {
+    canvas.innerHTML = renderSlideContent(slide.content);
+  } else {
+    const heading = document.createElement('h2');
+    heading.className = 'slide-fallback-title';
+    heading.textContent = getSlideTitle(slide, index);
+    canvas.appendChild(heading);
+
+    const preview = getSlidePreview(slide);
+    if (preview) {
+      const text = document.createElement('p');
+      text.className = 'slide-fallback-text';
+      text.textContent = preview;
+      canvas.appendChild(text);
+    }
+  }
+
+  if (!interactive) {
+    // Thumbnails sit inside a button, which must not contain other controls.
+    canvas.setAttribute('aria-hidden', 'true');
+    canvas.inert = true;
+    canvas.querySelectorAll('a[href]').forEach((link) => link.removeAttribute('href'));
+  }
+
+  frame.appendChild(canvas);
+  const width = frame.getBoundingClientRect().width;
+  if (width > 0) frame.style.setProperty('--vt-scale', String(width / CANVAS_WIDTH));
+  frameScaler?.observe(frame);
 }
 
 function renderBadges(deck: DeckViewModel): void {
@@ -729,32 +497,563 @@ function renderBadges(deck: DeckViewModel): void {
   badges.appendChild(renderBadge(formatUpdatedAt(deck.updatedAt)));
 }
 
-function renderThemeBadge(themeName: string): HTMLElement {
+function renderBadge(label: string, className = ''): HTMLElement {
   const badge = document.createElement('span');
-  badge.className = 'badge';
+  badge.className = `badge${className ? ` ${className}` : ''}`;
+  badge.textContent = label;
+  return badge;
+}
+
+function renderThemeBadge(themeName: string): HTMLElement {
+  const badge = renderBadge('');
   const swatch = document.createElement('span');
   swatch.className = 'vt-swatch';
   swatch.setAttribute('aria-hidden', 'true');
-  swatch.style.background = themeGradient(themeName);
+  const theme = findTheme(themeName);
+  swatch.style.background = theme ? resolveThemeTokens(theme).accentGradient : 'var(--vt-brand-gradient)';
   badge.appendChild(swatch);
   badge.appendChild(document.createTextNode(themeName));
   return badge;
 }
 
-function themeGradient(themeName: string): string {
-  const theme = findTheme(themeName);
-  return theme ? resolveThemeTokens(theme).accentGradient : 'var(--vt-brand-gradient)';
+/** The stage: the selected slide at full width, plus its caption and tools. */
+function renderCover(deck: DeckViewModel): void {
+  const total = deck.slides.length;
+  const index = clampIndex(deck, selectedIndex);
+  const slide = getRecord(deck.slides[index]);
+  const stage = byId('cover-preview');
+
+  if (total === 0) {
+    paintSlide(stage, { title: deck.title, previewText: 'Slide previews will appear here.' }, 0, true);
+  } else {
+    paintSlide(stage, slide, index, true);
+  }
+
+  // Count the whole deck, not just the slides a truncated response carried.
+  byId('stage-pos').textContent = total > 0
+    ? `Slide ${index + 1} of ${Math.max(total, deck.slideCount)}`
+    : 'No slides yet';
+  byId('stage-name').textContent = total > 0 ? getSlideTitle(slide, index) : deck.title;
+  configureSlideTools(deck);
 }
 
-function renderCover(deck: DeckViewModel): void {
-  const firstSlide = getRecord(deck.slides[0]);
-  const coverTitle = getSlideTitle(firstSlide, 0) || deck.title;
-  const coverText = getSlidePreview(firstSlide) || 'A clean preview of your generated Verto deck.';
+function renderSlides(deck: DeckViewModel): void {
+  const container = byId('slides');
+  container.querySelectorAll('.slide-frame').forEach((frame) => frameScaler?.unobserve(frame));
+  container.textContent = '';
+  const shown = deck.slides;
+  byId('filmstrip-count').textContent = `${shown.length} shown`;
 
-  byId('cover-theme').textContent = deck.themeName;
-  byId('cover-count').textContent = slideCountLabel(deck.slideCount);
-  byId('cover-title').textContent = coverTitle;
-  byId('cover-text').textContent = coverText;
+  if (shown.length === 0) {
+    const item = document.createElement('div');
+    item.className = 'empty-state';
+    item.textContent = 'Slide previews are not available yet. Open the deck to inspect the full presentation.';
+    container.appendChild(item);
+    return;
+  }
+
+  shown.forEach((slide, index) => {
+    const record = getRecord(slide);
+    const title = getSlideTitle(record, index);
+    const thumb = document.createElement('button');
+    thumb.type = 'button';
+    thumb.className = 'slide-card thumb';
+    thumb.dataset.index = String(index);
+    thumb.setAttribute('aria-label', `Slide ${index + 1}: ${title}`);
+    thumb.setAttribute('aria-current', index === selectedIndex ? 'true' : 'false');
+    thumb.tabIndex = index === selectedIndex ? 0 : -1;
+
+    const frame = document.createElement('div');
+    frame.className = 'slide-frame';
+    thumb.appendChild(frame);
+
+    const caption = document.createElement('span');
+    caption.className = 'thumb-caption';
+    caption.setAttribute('aria-hidden', 'true');
+    const num = document.createElement('span');
+    num.className = 'thumb-num';
+    num.textContent = String(index + 1);
+    const name = document.createElement('span');
+    name.className = 'thumb-name';
+    name.textContent = title;
+    caption.append(num, name);
+    thumb.appendChild(caption);
+
+    thumb.onclick = () => selectSlide(index);
+    container.appendChild(thumb);
+    paintSlide(frame, record, index, false);
+  });
+}
+
+function clampIndex(deck: DeckViewModel, index: number): number {
+  return Math.max(0, Math.min(index, Math.max(0, deck.slides.length - 1)));
+}
+
+let selectedIndex = 0;
+
+function selectSlide(index: number, focus = false): void {
+  const deck = currentDeck;
+  if (!deck) return;
+
+  selectedIndex = clampIndex(deck, index);
+  renderCover(deck);
+
+  byId('slides').querySelectorAll<HTMLButtonElement>('.thumb').forEach((thumb) => {
+    const isSelected = Number(thumb.dataset.index) === selectedIndex;
+    thumb.setAttribute('aria-current', isSelected ? 'true' : 'false');
+    thumb.tabIndex = isSelected ? 0 : -1;
+    if (isSelected && focus) thumb.focus();
+  });
+}
+
+/** Arrow keys walk the filmstrip; Home/End jump to either end. */
+function onFilmstripKey(event: KeyboardEvent): void {
+  const deck = currentDeck;
+  if (!deck || !(event.target instanceof HTMLElement) || !event.target.classList.contains('thumb')) return;
+
+  const last = deck.slides.length - 1;
+  const moves: Record<string, number> = {
+    ArrowRight: selectedIndex + 1,
+    ArrowDown: selectedIndex + 1,
+    ArrowLeft: selectedIndex - 1,
+    ArrowUp: selectedIndex - 1,
+    Home: 0,
+    End: last,
+  };
+
+  if (!(event.key in moves)) return;
+  event.preventDefault();
+  selectSlide(Math.max(0, Math.min(moves[event.key], last)), true);
+}
+
+/* ------------------------------------------------------------------ */
+/* Slide structure: move, duplicate, delete, undo                      */
+/* ------------------------------------------------------------------ */
+
+let saving = false;
+let deleteArmedFor = '';
+let deleteArmTimer = 0;
+let undoSnapshot: { deckId: string; slide: unknown; index: number } | null = null;
+let undoTimer = 0;
+/** Set by a delete, armed only once the server confirms the save. */
+let armUndoAfterSave: { deckId: string; slide: unknown; index: number } | null = null;
+
+/**
+ * Structural edits send the whole slide array, so they are only allowed when
+ * the widget can see every slide. A truncated response (40 slides or 200 KB)
+ * saved back would delete the slides it left out.
+ */
+function structureBlockedReason(deck: DeckViewModel): string {
+  if (!deck.id || !deck.actions.canUpdateSlides) return 'Slide changes are not available for this deck.';
+  if (deck.slides.length < deck.slideCount) {
+    return 'This deck is larger than chat can load, so slide changes are off here. Open it in Verto to reorder or delete slides.';
+  }
+  return '';
+}
+
+function configureSlideTools(deck: DeckViewModel): void {
+  const blocked = Boolean(structureBlockedReason(deck)) || deck.slides.length === 0;
+  const count = deck.slides.length;
+  const setEnabled = (id: string, enabled: boolean) => {
+    (byId(id) as HTMLButtonElement).disabled = !enabled || saving;
+  };
+
+  setEnabled('move-up-action', !blocked && selectedIndex > 0);
+  setEnabled('move-down-action', !blocked && selectedIndex < count - 1);
+  setEnabled('duplicate-slide-action', !blocked);
+  setEnabled('delete-slide-action', !blocked && count > 1);
+  byId('undo-slide-action').hidden = !undoSnapshot || undoSnapshot.deckId !== deck.id;
+  resetDeleteArm();
+}
+
+function resetDeleteArm(): void {
+  deleteArmedFor = '';
+  window.clearTimeout(deleteArmTimer);
+  const button = byId('delete-slide-action');
+  button.classList.remove('is-danger');
+  setControlLabel(button, 'Delete');
+}
+
+function wireStaticControls(): void {
+  byId('move-up-action').onclick = () => void runSlideChange('move', -1);
+  byId('move-down-action').onclick = () => void runSlideChange('move', 1);
+  byId('duplicate-slide-action').onclick = () => void runSlideChange('duplicate', 0);
+  byId('delete-slide-action').onclick = () => confirmOrDeleteSlide();
+  byId('undo-slide-action').onclick = () => void undoLastDelete();
+  byId('slides').addEventListener('keydown', onFilmstripKey);
+
+  byId('theme-search').addEventListener('input', () => renderThemeList());
+  byId('theme-cancel-btn').onclick = () => closeThemePicker(true);
+  byId('theme-apply-btn').onclick = () => void applyPickedTheme();
+  byId('theme-panel').addEventListener('keydown', (event) => {
+    if (event.key === 'Escape') {
+      event.preventDefault();
+      closeThemePicker(true);
+    }
+  });
+}
+
+function confirmOrDeleteSlide(): void {
+  const deck = currentDeck;
+  if (!deck) return;
+
+  const key = `${deck.id}:${selectedIndex}`;
+  const button = byId('delete-slide-action');
+
+  if (deleteArmedFor !== key) {
+    deleteArmedFor = key;
+    button.classList.add('is-danger');
+    setControlLabel(button, 'Confirm delete');
+    byId('action-note').textContent = `Click again to delete slide ${selectedIndex + 1}. You can undo it for a few seconds.`;
+    window.clearTimeout(deleteArmTimer);
+    deleteArmTimer = window.setTimeout(resetDeleteArm, CONFIRM_WINDOW_MS);
+    return;
+  }
+
+  resetDeleteArm();
+  void runSlideChange('delete', 0);
+}
+
+function newSlideId(): string {
+  return typeof crypto !== 'undefined' && typeof crypto.randomUUID === 'function'
+    ? crypto.randomUUID()
+    : `slide-${Date.now().toString(36)}-${Math.random().toString(36).slice(2, 10)}`;
+}
+
+/**
+ * Applies a structural change: paint it at once, save the whole array, adopt
+ * what the server returns, and put everything back if the save fails.
+ */
+async function runSlideChange(kind: 'move' | 'duplicate' | 'delete', direction: -1 | 0 | 1): Promise<void> {
+  const deck = currentDeck;
+  if (!deck || saving) return;
+
+  const note = byId('action-note');
+  const blocked = structureBlockedReason(deck);
+  if (blocked) {
+    note.textContent = blocked;
+    return;
+  }
+
+  saving = true;
+  const before = { slides: deck.slides, rawSlides: deck.rawSlides, count: deck.slideCount, selected: selectedIndex };
+
+  try {
+    // Widget-only payloads carry the mapped summary; fetch the real slides
+    // once before the first change so nothing structural is lost.
+    const base = deck.rawSlides.length > 0 ? deck.rawSlides : await fetchCompleteRawSlides(deck);
+    const from = selectedIndex;
+    let next: unknown[];
+    let nextSelected: number;
+    let message: string;
+
+    if (kind === 'move') {
+      nextSelected = from + direction;
+      next = moveSlide(base, from, nextSelected);
+      message = `Moved the slide to position ${nextSelected + 1}.`;
+    } else if (kind === 'duplicate') {
+      next = duplicateSlide(base, from, newSlideId);
+      nextSelected = from + 1;
+      message = `Duplicated slide ${from + 1}.`;
+    } else {
+      const removal = removeSlide(base, from);
+      next = removal.slides;
+      nextSelected = Math.min(from, next.length - 1);
+      // The previous Undo stays live until this save succeeds; armUndo then
+      // replaces it. Clearing it here would lose it if the save fails.
+      message = `Deleted slide ${from + 1}. Undo is available for ${UNDO_WINDOW_MS / 1000} seconds.`;
+      armUndoAfterSave = { deckId: deck.id, slide: removal.removed, index: from };
+    }
+
+    showSlides(deck, next, nextSelected);
+    note.textContent = 'Saving…';
+
+    showSlides(deck, await saveSlides(deck, next), nextSelected);
+
+    if (kind === 'delete' && armUndoAfterSave) armUndo(armUndoAfterSave);
+    note.textContent = message;
+    pushSlideStructureContext(deck, kind, from, nextSelected);
+  } catch (error) {
+    deck.slides = before.slides;
+    deck.rawSlides = before.rawSlides;
+    deck.slideCount = before.count;
+    selectedIndex = before.selected;
+    renderBadges(deck);
+    renderCover(deck);
+    renderSlides(deck);
+    note.textContent = `${getActionErrorMessage(error)} Nothing was changed.`;
+  } finally {
+    armUndoAfterSave = null;
+    saving = false;
+    configureSlideTools(deck);
+  }
+}
+
+function showSlides(deck: DeckViewModel, slides: unknown[], selected: number): void {
+  deck.slides = slides;
+  deck.rawSlides = slides;
+  deck.slideCount = slides.length;
+  selectedIndex = clampIndex(deck, selected);
+  byId('summary').textContent = summaryFor(deck);
+  renderBadges(deck);
+  renderCover(deck);
+  renderSlides(deck);
+}
+
+function armUndo(snapshot: { deckId: string; slide: unknown; index: number }): void {
+  undoSnapshot = snapshot;
+  byId('undo-slide-action').hidden = false;
+  window.clearTimeout(undoTimer);
+  undoTimer = window.setTimeout(() => {
+    undoSnapshot = null;
+    byId('undo-slide-action').hidden = true;
+  }, UNDO_WINDOW_MS);
+}
+
+async function undoLastDelete(): Promise<void> {
+  const deck = currentDeck;
+  const snapshot = undoSnapshot;
+  if (!deck || !snapshot || snapshot.deckId !== deck.id || saving) return;
+
+  const note = byId('action-note');
+  const withoutSlide = deck.rawSlides;
+  const restored = insertSlide(withoutSlide, snapshot.slide, snapshot.index);
+
+  saving = true;
+  window.clearTimeout(undoTimer);
+  undoSnapshot = null;
+  showSlides(deck, restored, snapshot.index);
+
+  try {
+    showSlides(deck, await saveSlides(deck, restored), snapshot.index);
+    note.textContent = `Restored slide ${snapshot.index + 1}.`;
+    pushSlideStructureContext(deck, 'restore', snapshot.index, snapshot.index);
+  } catch (error) {
+    showSlides(deck, withoutSlide, snapshot.index);
+    note.textContent = `${getActionErrorMessage(error)} The slide is still deleted.`;
+  } finally {
+    saving = false;
+    configureSlideTools(deck);
+  }
+}
+
+/** Saves the full array; returns the server's slides when it sends them back. */
+async function saveSlides(deck: DeckViewModel, slides: unknown[]): Promise<unknown[]> {
+  const result = await callMcpTool('presentation_update_slides', {
+    presentation_id: deck.id,
+    slides,
+  });
+
+  const returned = extractRawSlides(result);
+  if (returned.length === slides.length) return returned;
+
+  const refreshed = await callMcpTool('presentation_get', {
+    presentation_id: deck.id,
+    include_slides: true,
+  });
+  const fresh = extractRawSlides(refreshed);
+  return fresh.length === slides.length ? fresh : slides;
+}
+
+/**
+ * Reads the deck's current raw slides and refuses a partial list: saving one
+ * back would delete every slide the response left out.
+ */
+async function fetchCompleteRawSlides(deck: DeckViewModel): Promise<unknown[]> {
+  const payload = await callMcpTool('presentation_get', {
+    presentation_id: deck.id,
+    include_slides: true,
+  });
+  const slides = extractRawSlides(payload);
+  const total = getNumber(readPresentation(getRecord(payload.data)).slide_count, slides.length);
+
+  if (slides.length === 0) {
+    throw new Error('Could not read the current slides from Verto.');
+  }
+  if (slides.length < total) {
+    throw new Error('This deck is larger than chat can load, so it can only be changed in Verto.');
+  }
+
+  deck.rawSlides = slides;
+  return slides;
+}
+
+function pushSlideStructureContext(
+  deck: DeckViewModel,
+  kind: 'move' | 'duplicate' | 'delete' | 'restore',
+  from: number,
+  to: number
+): void {
+  const verbs = {
+    move: `moved slide ${from + 1} to position ${to + 1}`,
+    duplicate: `duplicated slide ${from + 1}`,
+    delete: `deleted slide ${from + 1}`,
+    restore: `restored the deleted slide ${from + 1}`,
+  };
+
+  void pushModelContext(
+    { event: 'slides_restructured', presentationId: deck.id, change: kind, from, to, slideCount: deck.slides.length },
+    `User ${verbs[kind]} in presentation ${deck.title} (${deck.id}) from chat. It now has ${slideCountLabel(deck.slides.length)}.`
+  );
+}
+
+/* ------------------------------------------------------------------ */
+/* Theme picker                                                        */
+/* ------------------------------------------------------------------ */
+
+let themeBeforePicker = '';
+let pickedTheme = '';
+let applyingTheme = false;
+
+function openThemePicker(deck: DeckViewModel): void {
+  themeBeforePicker = deck.themeName;
+  pickedTheme = deck.themeName;
+  const search = byId('theme-search') as HTMLInputElement;
+  search.value = '';
+  byId('theme-note').textContent = `Current theme: ${deck.themeName}. Pick one to preview it on the slides.`;
+  byId('action-panel').hidden = true;
+  byId('theme-panel').hidden = false;
+  renderThemeList();
+  byId('theme-list').querySelector<HTMLElement>('[aria-pressed="true"]')?.scrollIntoView({ block: 'nearest' });
+  search.focus({ preventScroll: true });
+}
+
+function closeThemePicker(restore: boolean): void {
+  // Cancel or Escape mid-save would repaint the old theme while the new one
+  // is being stored; the Apply result decides what the deck looks like.
+  if (applyingTheme && restore) return;
+  if (restore && currentDeck) {
+    previewTheme(themeBeforePicker);
+  }
+  byId('theme-panel').hidden = true;
+  byId('action-panel').hidden = false;
+  byId('theme-action').focus({ preventScroll: true });
+}
+
+function renderThemeList(): void {
+  const list = byId('theme-list');
+  const query = (byId('theme-search') as HTMLInputElement).value;
+  const themes = filterThemes(VERTO_THEMES, query);
+  list.textContent = '';
+
+  if (themes.length === 0) {
+    const empty = document.createElement('p');
+    empty.className = 'theme-empty';
+    empty.textContent = `No theme matches "${query}".`;
+    list.appendChild(empty);
+    return;
+  }
+
+  for (const theme of themes) {
+    const tokens = resolveThemeTokens(theme);
+    const card = document.createElement('button');
+    card.type = 'button';
+    card.className = 'theme-card';
+    card.dataset.themeName = theme.name;
+    card.setAttribute('aria-pressed', theme.name === pickedTheme ? 'true' : 'false');
+
+    // A thumbnail of the theme itself: slide background, heading font in the
+    // slide text color, and the accent as an underline.
+    const chip = document.createElement('span');
+    chip.className = 'theme-chip';
+    chip.setAttribute('aria-hidden', 'true');
+    chip.textContent = 'Aa';
+    chip.style.backgroundColor = tokens.slideBackgroundSolid;
+    chip.style.backgroundImage = /gradient\(/i.test(tokens.slideBackground) ? tokens.slideBackground : 'none';
+    chip.style.color = tokens.slideForeground;
+    chip.style.fontFamily = tokens.headingFontFamily;
+    chip.style.setProperty('--chip-accent', tokens.accentGradient);
+
+    const text = document.createElement('span');
+    text.className = 'theme-card-text';
+    const name = document.createElement('span');
+    name.className = 'theme-card-name';
+    name.textContent = theme.name;
+    const type = document.createElement('span');
+    type.className = 'theme-card-type';
+    type.textContent = theme.type;
+    text.append(name, type);
+
+    card.append(chip, text);
+    card.onclick = () => {
+      pickedTheme = theme.name;
+      previewTheme(theme.name);
+      list.querySelectorAll('.theme-card').forEach((other) =>
+        other.setAttribute('aria-pressed', other === card ? 'true' : 'false')
+      );
+      byId('theme-note').textContent = theme.name === themeBeforePicker
+        ? `${theme.name} is the current theme.`
+        : `Previewing ${theme.name}. Apply to save it to the deck.`;
+    };
+    list.appendChild(card);
+  }
+}
+
+/** Repaints the widget in `themeName` without saving anything. */
+function previewTheme(themeName: string): void {
+  const deck = currentDeck;
+  if (!deck) return;
+
+  setWidgetTheme(themeName);
+  renderBadges({ ...deck, themeName });
+  // The render kernel reads theme colors at render time (callout contrast),
+  // so the slides are re-rendered, not just re-colored.
+  renderCover(deck);
+  renderSlides(deck);
+}
+
+async function applyPickedTheme(): Promise<void> {
+  const deck = currentDeck;
+  if (!deck) return;
+
+  const themeName = pickedTheme;
+  if (themeName === themeBeforePicker) {
+    closeThemePicker(false);
+    byId('action-note').textContent = `${themeName} is already this deck's theme.`;
+    return;
+  }
+
+  const button = byId('theme-apply-btn') as HTMLButtonElement;
+  const cancel = byId('theme-cancel-btn') as HTMLButtonElement;
+  applyingTheme = true;
+  button.disabled = true;
+  cancel.disabled = true;
+  button.textContent = 'Applying…';
+
+  try {
+    await callMcpTool('presentation_update_theme', {
+      presentation_id: deck.id,
+      theme_name: themeName,
+    });
+
+    deck.themeName = themeName;
+    themeBeforePicker = themeName;
+    previewTheme(themeName);
+    byId('summary').textContent = summaryFor(deck);
+    closeThemePicker(false);
+    byId('action-note').textContent = `Theme updated to ${themeName}.`;
+
+    void pushModelContext(
+      { event: 'theme_changed', presentationId: deck.id, themeName },
+      `User updated the presentation theme to "${themeName}" from chat.`
+    );
+  } catch (error) {
+    byId('theme-note').textContent = getActionErrorMessage(error);
+  } finally {
+    applyingTheme = false;
+    button.disabled = false;
+    cancel.disabled = false;
+    button.textContent = 'Apply';
+  }
+}
+
+/* ------------------------------------------------------------------ */
+/* Deck actions                                                        */
+/* ------------------------------------------------------------------ */
+
+function setDisabled(button: HTMLButtonElement, disabled: boolean): void {
+  button.disabled = disabled;
+  button.setAttribute('aria-disabled', disabled ? 'true' : 'false');
 }
 
 function configureOpenLink(deck: DeckViewModel): void {
@@ -762,7 +1061,6 @@ function configureOpenLink(deck: DeckViewModel): void {
 
   if (!(link instanceof HTMLAnchorElement)) return;
 
-  link.classList.remove('primary');
   setControlLabel(link, 'Open in Verto');
 
   if (!deck.openUrl) {
@@ -782,79 +1080,43 @@ function configureOpenLink(deck: DeckViewModel): void {
   };
 }
 
-let presenterCurrentIndex = 0;
+let presenterIndex = 0;
 let presenterKeyHandler: ((e: KeyboardEvent) => void) | null = null;
 
 function openInWidgetPresenter(deck: DeckViewModel): void {
-  const overlay = document.getElementById('presenter-overlay');
-  const canvas = document.getElementById('presenter-canvas');
-  const counter = document.getElementById('presenter-counter');
-  const prevBtn = document.getElementById('presenter-prev-btn') as HTMLButtonElement | null;
-  const nextBtn = document.getElementById('presenter-next-btn') as HTMLButtonElement | null;
-  const closeBtn = document.getElementById('presenter-close-btn') as HTMLButtonElement | null;
-
-  if (!overlay || !canvas) return;
-
+  const root = byId('verto-deck-widget');
+  const presenter = byId('presenter');
+  const frame = byId('presenter-frame');
+  const prevBtn = byId('presenter-prev-btn') as HTMLButtonElement;
+  const nextBtn = byId('presenter-next-btn') as HTMLButtonElement;
   const slides = deck.slides.length > 0 ? deck.slides : [{ title: deck.title, previewText: 'Slide preview unavailable' }];
-  presenterCurrentIndex = 0;
 
   void requestDisplayMode('fullscreen');
-  overlay.removeAttribute('hidden');
+  root.dataset.mode = 'present';
+  presenter.hidden = false;
 
-  const renderCurrentPresenterSlide = () => {
-    const slide = getRecord(slides[presenterCurrentIndex]);
-    canvas.textContent = '';
-    if (slide.content) {
-      const wrapper = document.createElement('div');
-      wrapper.className = 'slide-content-html';
-      wrapper.innerHTML = renderSlideContent(slide.content);
-      canvas.appendChild(wrapper);
-    } else {
-      const heading = document.createElement('h2');
-      heading.className = 'cover-title vt-slide-heading';
-      heading.textContent = getSlideTitle(slide, presenterCurrentIndex);
-      const text = document.createElement('p');
-      text.className = 'cover-text';
-      text.textContent = getSlidePreview(slide);
-      canvas.appendChild(heading);
-      canvas.appendChild(text);
-    }
-
-    if (counter) {
-      counter.textContent = `Slide ${presenterCurrentIndex + 1} of ${slides.length}`;
-    }
-    if (prevBtn) prevBtn.disabled = presenterCurrentIndex <= 0;
-    if (nextBtn) nextBtn.disabled = presenterCurrentIndex >= slides.length - 1;
+  const show = (index: number) => {
+    presenterIndex = Math.max(0, Math.min(index, slides.length - 1));
+    paintSlide(frame, getRecord(slides[presenterIndex]), presenterIndex, true);
+    byId('presenter-counter').textContent = `Slide ${presenterIndex + 1} of ${slides.length}`;
+    prevBtn.disabled = presenterIndex <= 0;
+    nextBtn.disabled = presenterIndex >= slides.length - 1;
   };
 
-  const closePresenter = () => {
-    overlay.setAttribute('hidden', 'true');
+  const close = () => {
+    presenter.hidden = true;
+    delete root.dataset.mode;
     void requestDisplayMode('inline');
     if (presenterKeyHandler) {
       window.removeEventListener('keydown', presenterKeyHandler);
       presenterKeyHandler = null;
     }
+    selectSlide(presenterIndex);
   };
 
-  if (closeBtn) closeBtn.onclick = closePresenter;
-
-  if (prevBtn) {
-    prevBtn.onclick = () => {
-      if (presenterCurrentIndex > 0) {
-        presenterCurrentIndex--;
-        renderCurrentPresenterSlide();
-      }
-    };
-  }
-
-  if (nextBtn) {
-    nextBtn.onclick = () => {
-      if (presenterCurrentIndex < slides.length - 1) {
-        presenterCurrentIndex++;
-        renderCurrentPresenterSlide();
-      }
-    };
-  }
+  byId('presenter-close-btn').onclick = close;
+  prevBtn.onclick = () => show(presenterIndex - 1);
+  nextBtn.onclick = () => show(presenterIndex + 1);
 
   if (presenterKeyHandler) {
     window.removeEventListener('keydown', presenterKeyHandler);
@@ -863,24 +1125,18 @@ function openInWidgetPresenter(deck: DeckViewModel): void {
   presenterKeyHandler = (e: KeyboardEvent) => {
     if (e.key === 'ArrowRight' || e.key === ' ' || e.key === 'PageDown') {
       e.preventDefault();
-      if (presenterCurrentIndex < slides.length - 1) {
-        presenterCurrentIndex++;
-        renderCurrentPresenterSlide();
-      }
+      show(presenterIndex + 1);
     } else if (e.key === 'ArrowLeft' || e.key === 'PageUp') {
       e.preventDefault();
-      if (presenterCurrentIndex > 0) {
-        presenterCurrentIndex--;
-        renderCurrentPresenterSlide();
-      }
+      show(presenterIndex - 1);
     } else if (e.key === 'Escape') {
       e.preventDefault();
-      closePresenter();
+      close();
     }
   };
 
   window.addEventListener('keydown', presenterKeyHandler);
-  renderCurrentPresenterSlide();
+  show(clampIndex(deck, selectedIndex));
 }
 
 function configurePresentAction(deck: DeckViewModel): void {
@@ -894,16 +1150,8 @@ function configurePresentAction(deck: DeckViewModel): void {
   const fullscreenAvailable = canPresentFullscreen();
   button.hidden = fullscreenAvailable === false;
 
-  if (!deck.id) {
-    button.disabled = true;
-    button.setAttribute('aria-disabled', 'true');
-    button.onclick = null;
-    return;
-  }
-
-  button.disabled = false;
-  button.setAttribute('aria-disabled', 'false');
-  button.onclick = () => presentDeck(deck, button, byId('action-note'));
+  setDisabled(button, !deck.id);
+  button.onclick = deck.id ? () => presentDeck(deck, button, byId('action-note')) : null;
 }
 
 async function presentDeck(
@@ -917,130 +1165,11 @@ async function presentDeck(
         presentation_id: deck.id,
       });
     } catch {
-      // Tool call is best effort
+      // Best effort: the in-widget presenter works without it.
     }
     openInWidgetPresenter(deck);
-    note.textContent = 'Presenter opened. Use ← → or Space to navigate, Esc to exit.';
+    note.textContent = 'Presenter opened. Use the arrow keys or Space to move, Esc to exit.';
   });
-}
-
-let originalThemeBeforeStudio = '';
-let activeStudioTheme = '';
-
-function openThemeStudioDrawer(deck: DeckViewModel, note: HTMLElement): void {
-  const drawer = document.getElementById('theme-drawer');
-  const grid = document.getElementById('theme-drawer-grid');
-  const closeBtn = document.getElementById('theme-drawer-close');
-  const cancelBtn = document.getElementById('theme-cancel-btn');
-  const applyBtn = document.getElementById('theme-apply-btn') as HTMLButtonElement | null;
-
-  if (!drawer || !grid) return;
-
-  originalThemeBeforeStudio = deck.themeName;
-  activeStudioTheme = deck.themeName;
-  drawer.removeAttribute('hidden');
-
-  const themes = VERTO_THEMES.slice(0, 16);
-
-  const renderThemeCards = () => {
-    grid.textContent = '';
-    for (const theme of themes) {
-      const card = document.createElement('div');
-      const isActive = theme.name.toLowerCase() === activeStudioTheme.toLowerCase();
-      card.className = `theme-card${isActive ? ' is-active' : ''}`;
-      card.setAttribute('role', 'button');
-      card.setAttribute('tabindex', '0');
-
-      const head = document.createElement('div');
-      head.className = 'theme-card-head';
-
-      const swatch = document.createElement('span');
-      swatch.className = 'vt-swatch';
-      swatch.style.background = theme.accentGradient || theme.accentColor;
-      head.appendChild(swatch);
-
-      const name = document.createElement('span');
-      name.className = 'theme-card-name';
-      name.textContent = theme.name;
-      head.appendChild(name);
-
-      const type = document.createElement('span');
-      type.className = 'theme-card-type';
-      type.textContent = theme.type;
-
-      card.appendChild(head);
-      card.appendChild(type);
-
-      const selectTheme = () => {
-        activeStudioTheme = theme.name;
-        setWidgetTheme(theme.name);
-        renderBadges({ ...deck, themeName: theme.name });
-        renderCover({ ...deck, themeName: theme.name });
-        renderThemeCards();
-      };
-
-      card.onclick = selectTheme;
-      card.onkeydown = (e) => {
-        if (e.key === 'Enter' || e.key === ' ') {
-          e.preventDefault();
-          selectTheme();
-        }
-      };
-
-      grid.appendChild(card);
-    }
-  };
-
-  renderThemeCards();
-
-  const closeDrawer = () => {
-    drawer.setAttribute('hidden', 'true');
-  };
-
-  const cancelTheme = () => {
-    setWidgetTheme(originalThemeBeforeStudio);
-    renderBadges({ ...deck, themeName: originalThemeBeforeStudio });
-    renderCover({ ...deck, themeName: originalThemeBeforeStudio });
-    closeDrawer();
-  };
-
-  if (closeBtn) closeBtn.onclick = cancelTheme;
-  if (cancelBtn) cancelBtn.onclick = cancelTheme;
-
-  if (applyBtn) {
-    applyBtn.onclick = async () => {
-      const themeToApply = activeStudioTheme;
-      applyBtn.disabled = true;
-      setControlLabel(applyBtn, 'Applying…');
-
-      try {
-        await callMcpTool('presentation_update_theme', {
-          presentation_id: deck.id,
-          theme_name: themeToApply,
-        });
-
-        deck.themeName = themeToApply;
-        renderBadges(deck);
-        renderCover(deck);
-        closeDrawer();
-        note.textContent = `Theme updated to "${themeToApply}".`;
-
-        void pushModelContext(
-          {
-            event: 'theme_changed',
-            presentationId: deck.id,
-            themeName: themeToApply,
-          },
-          `User updated the presentation theme to "${themeToApply}" from chat.`
-        );
-      } catch (err) {
-        note.textContent = getActionErrorMessage(err);
-      } finally {
-        applyBtn.disabled = false;
-        setControlLabel(applyBtn, 'Apply Theme');
-      }
-    };
-  }
 }
 
 function configureThemeAction(deck: DeckViewModel): void {
@@ -1049,17 +1178,25 @@ function configureThemeAction(deck: DeckViewModel): void {
 
   if (!(button instanceof HTMLButtonElement)) return;
 
-  if (!deck.id) {
-    button.disabled = true;
-    button.setAttribute('aria-disabled', 'true');
-    button.onclick = null;
-    return;
-  }
+  setDisabled(button, !deck.id);
+  button.onclick = deck.id ? () => openThemeStudio(deck, button, note) : null;
+}
 
-  button.disabled = false;
-  button.setAttribute('aria-disabled', 'false');
-  button.onclick = () =>
-    openThemeStudio(deck, button, note);
+async function openThemeStudio(
+  deck: DeckViewModel,
+  button: HTMLButtonElement,
+  note: HTMLElement
+): Promise<void> {
+  await runButtonAction(button, note, 'Opening themes…', async () => {
+    try {
+      await callMcpTool('presentation_render_theme_studio', {
+        presentation_id: deck.id,
+      });
+    } catch {
+      // Best effort: the inline picker needs nothing from the server.
+    }
+    openThemePicker(deck);
+  });
 }
 
 function configureEditAction(deck: DeckViewModel): void {
@@ -1069,29 +1206,10 @@ function configureEditAction(deck: DeckViewModel): void {
 
   const canEdit = Boolean(deck.id)
     && Boolean(deck.actions.canUpdateSlides)
-    && deck.rawSlides.length > 0;
+    && deck.slides.length > 0;
 
-  button.disabled = !canEdit;
-  button.setAttribute('aria-disabled', canEdit ? 'false' : 'true');
+  setDisabled(button, !canEdit);
   button.onclick = canEdit ? () => openSlideEditor(deck) : null;
-}
-
-async function openThemeStudio(
-  deck: DeckViewModel,
-  button: HTMLButtonElement,
-  note: HTMLElement
-): Promise<void> {
-  await runButtonAction(button, note, 'Opening theme studio…', async () => {
-    try {
-      await callMcpTool('presentation_render_theme_studio', {
-        presentation_id: deck.id,
-      });
-    } catch {
-      // Best effort tool call
-    }
-    openThemeStudioDrawer(deck, note);
-    note.textContent = 'Theme studio opened. Pick a look and apply it live.';
-  });
 }
 
 function configureSecondaryAction(deck: DeckViewModel): void {
@@ -1100,8 +1218,7 @@ function configureSecondaryAction(deck: DeckViewModel): void {
 
   if (!(button instanceof HTMLButtonElement)) return;
 
-  button.disabled = false;
-  button.setAttribute('aria-disabled', 'false');
+  setDisabled(button, false);
   button.onclick = null;
 
   if (deck.shareUrl) {
@@ -1119,8 +1236,7 @@ function configureSecondaryAction(deck: DeckViewModel): void {
   }
 
   setButtonIcon(button, 'share', 'Share unavailable');
-  button.disabled = true;
-  button.setAttribute('aria-disabled', 'true');
+  setDisabled(button, true);
   note.textContent = 'Sharing is unavailable for this deck state.';
 }
 
@@ -1131,17 +1247,8 @@ function configureRefreshAction(deck: DeckViewModel): void {
   if (!(button instanceof HTMLButtonElement)) return;
 
   setControlLabel(button, 'Refresh preview');
-  button.onclick = null;
-
-  if (!deck.id) {
-    button.disabled = true;
-    button.setAttribute('aria-disabled', 'true');
-    return;
-  }
-
-  button.disabled = false;
-  button.setAttribute('aria-disabled', 'false');
-  button.onclick = () => refreshDeckPreview(deck, button, note);
+  setDisabled(button, !deck.id);
+  button.onclick = deck.id ? () => refreshDeckPreview(deck, button, note) : null;
 }
 
 let pendingPublishPresentationId = '';
@@ -1150,11 +1257,13 @@ let currentDeck: DeckViewModel | null = null;
 let slideEditorHandle: SlideEditorHandle | null = null;
 let teardownWired = false;
 
+/** One teardown handler: the runtime keeps only the last one registered. */
 function wireEditorTeardown(): void {
   if (teardownWired) return;
   teardownWired = true;
 
   onTeardown(() => {
+    dismissStreamStatus();
     if (slideEditorHandle?.hasUnsavedEdits()) {
       logWidgetWarning(
         'Verto deck preview was torn down with unsaved guided slide edits.'
@@ -1164,9 +1273,10 @@ function wireEditorTeardown(): void {
 }
 
 /**
- * Plan 10 F6: opens the guided single-slide editor. Saving re-fetches the
- * deck, applies patches onto the fresh tree, and performs a full-replacement
- * `presentation_update_slides` call before confirming with a diff strip.
+ * Plan 10 F6: opens the guided editor on the selected slide. Saving re-fetches
+ * the deck, applies patches onto the fresh tree, and performs a
+ * full-replacement `presentation_update_slides` call before confirming with a
+ * diff strip.
  */
 function openSlideEditor(deck: DeckViewModel): void {
   slideEditorHandle?.close();
@@ -1174,8 +1284,8 @@ function openSlideEditor(deck: DeckViewModel): void {
 
   slideEditorHandle = createSlideEditor({
     container: byId('slide-editor'),
-    getSlides: () => currentDeck?.rawSlides ?? [],
-    canUpdate: Boolean(deck.actions.canUpdateSlides) && deck.rawSlides.length > 0,
+    getSlides: () => currentDeck?.slides ?? [],
+    canUpdate: Boolean(deck.actions.canUpdateSlides) && deck.slides.length > 0,
     save: (patches) => saveSlideEdits(patches),
     onClose: (hadUnsavedEdits) => {
       if (hadUnsavedEdits) {
@@ -1184,7 +1294,7 @@ function openSlideEditor(deck: DeckViewModel): void {
     },
   });
 
-  slideEditorHandle.open();
+  slideEditorHandle.open(selectedIndex);
 }
 
 async function saveSlideEdits(patches: SlideEditPatch[]): Promise<void> {
@@ -1194,17 +1304,7 @@ async function saveSlideEdits(patches: SlideEditPatch[]): Promise<void> {
     throw new Error('This deck is not available for editing.');
   }
 
-  const freshPayload = await callMcpTool('presentation_get', {
-    presentation_id: deck.id,
-    include_slides: true,
-  });
-
-  const freshSlides = extractRawSlides(freshPayload);
-
-  if (freshSlides.length === 0) {
-    throw new Error('Could not read the current slides from Verto.');
-  }
-
+  const freshSlides = await fetchCompleteRawSlides(deck);
   const nextSlides = applyPatchesToSlides(freshSlides, patches);
 
   const result = await callMcpTool('presentation_update_slides', {
@@ -1214,18 +1314,6 @@ async function saveSlideEdits(patches: SlideEditPatch[]): Promise<void> {
 
   assertSuccess(result);
   syncAfterSave(deck, nextSlides, patches);
-}
-
-/** Raw slides prefer the full presentation payload (slideName/type intact). */
-function extractRawSlides(payload: Record<string, unknown>): unknown[] {
-  const data = getRecord(payload.data || payload);
-  const presentation = getRecord(data.presentation || data);
-
-  const fromData = Array.isArray(presentation.slides)
-    ? presentation.slides
-    : [];
-
-  return fromData.length > 0 ? fromData : getArray(getRecord(payload.widget).slides);
 }
 
 function assertSuccess(payload: Record<string, unknown>): void {
@@ -1240,22 +1328,8 @@ function syncAfterSave(
   nextSlides: unknown[],
   patches: SlideEditPatch[]
 ): void {
-  renderDeckPayload({
-    success: true,
-    data: {
-      presentation: {
-        id: deck.id,
-        title: deck.title,
-        theme_name: deck.themeName,
-        slide_count: nextSlides.length,
-        updated_at: new Date().toISOString(),
-        is_published: deck.isPublished,
-        share_url: deck.shareUrl,
-        open_url: deck.openUrl,
-        slides: nextSlides,
-      },
-    },
-  });
+  deck.updatedAt = new Date().toISOString();
+  showSlides(deck, nextSlides, selectedIndex);
   byId('action-note').textContent = 'Slide edits saved to Verto.';
 
   void pushModelContext(
@@ -1289,7 +1363,7 @@ function confirmOrPublishDeck(
         setControlLabel(button, 'Publish from chat');
         note.textContent = 'Publish when you want a public share link.';
       }
-    }, 6000);
+    }, CONFIRM_WINDOW_MS);
     return;
   }
 
@@ -1343,9 +1417,8 @@ async function runButtonAction(
   action: () => Promise<void>
 ): Promise<void> {
   const previousLabel = getControlLabel(button);
-  button.disabled = true;
+  setDisabled(button, true);
   button.classList.add('is-busy');
-  button.setAttribute('aria-disabled', 'true');
   setControlLabel(button, busyLabel);
 
   try {
@@ -1353,9 +1426,8 @@ async function runButtonAction(
   } catch (error) {
     note.textContent = getActionErrorMessage(error);
   } finally {
-    button.disabled = false;
+    setDisabled(button, false);
     button.classList.remove('is-busy');
-    button.setAttribute('aria-disabled', 'false');
     if (getControlLabel(button) === busyLabel) {
       setControlLabel(button, previousLabel);
     }
@@ -1390,244 +1462,23 @@ async function copyShareLink(
   }
 }
 
-async function reorderSlide(deck: DeckViewModel, index: number, direction: -1 | 1, button: HTMLButtonElement): Promise<void> {
-  const newIndex = index + direction;
-  if (newIndex < 0 || newIndex >= deck.rawSlides.length) return;
-
-  const rawSlides = [...deck.rawSlides];
-  const temp = rawSlides[index];
-  rawSlides[index] = rawSlides[newIndex];
-  rawSlides[newIndex] = temp;
-
-  const originalText = getControlLabel(button);
-  button.disabled = true;
-  setControlLabel(button, '...');
-
-  try {
-    await callMcpTool('presentation_update_slides', {
-      presentation_id: deck.id,
-      slides: rawSlides,
-    });
-
-    const refreshedPayload = await callMcpTool('presentation_get', {
-      presentation_id: deck.id,
-      include_slides: true,
-    });
-
-    renderDeckPayload(refreshedPayload);
-    byId('action-note').textContent = 'Slide order saved.';
-  } catch (error) {
-    button.disabled = false;
-    setControlLabel(button, originalText);
-    // alert() is inert inside the host's sandboxed iframe, so the failure has
-    // to land somewhere the user can actually see it.
-    byId('action-note').textContent = getActionErrorMessage(error);
-  }
-}
-
-function renderSlides(deck: DeckViewModel): void {
-  const container = byId('slides');
-  container.textContent = '';
-  byId('filmstrip-count').textContent = `${Math.min(deck.slides.length, 50)} shown`;
-
-  if (deck.slides.length === 0) {
-    const item = document.createElement('div');
-    item.className = 'empty-state';
-    item.textContent = 'Slide previews are not available yet. Open the deck to inspect the full presentation.';
-    container.appendChild(item);
-    return;
-  }
-
-  const canUpdate = Boolean(deck.actions.canUpdateSlides);
-
-  deck.slides.slice(0, 50).forEach((slide, index) => {
-    const record = getRecord(slide);
-    const item = document.createElement('article');
-    item.className = 'slide-card';
-
-    if (canUpdate) {
-      const controls = document.createElement('div');
-      controls.className = 'slide-reorder-controls';
-
-      const upBtn = document.createElement('button');
-      upBtn.className = 'reorder-btn';
-      upBtn.classList.add('vt-has-icon', 'vt-icon-only');
-      upBtn.setAttribute('aria-label', `Move slide ${index + 1} earlier`);
-      upBtn.appendChild(iconElement('arrow-up', '1em'));
-      upBtn.disabled = index === 0;
-      upBtn.onclick = () => reorderSlide(deck, index, -1, upBtn);
-
-      const downBtn = document.createElement('button');
-      downBtn.className = 'reorder-btn';
-      downBtn.classList.add('vt-has-icon', 'vt-icon-only');
-      downBtn.setAttribute('aria-label', `Move slide ${index + 1} later`);
-      downBtn.appendChild(iconElement('arrow-down', '1em'));
-      downBtn.disabled = index === deck.slides.length - 1;
-      downBtn.onclick = () => reorderSlide(deck, index, 1, downBtn);
-
-      controls.appendChild(upBtn);
-      controls.appendChild(downBtn);
-      item.appendChild(controls);
-    }
-
-    const preview = document.createElement('div');
-    preview.className = 'slide-preview vt-slide-surface';
-
-    const number = document.createElement('span');
-    number.className = 'slide-number';
-    number.textContent = String(index + 1);
-    preview.appendChild(number);
-
-    const title = document.createElement('h3');
-    title.className = 'slide-title';
-    title.textContent = getSlideTitle(record, index);
-    // Hide title if we are rendering html to avoid duplication
-    if (record.content) {
-      title.style.display = 'none';
-    } else {
-      preview.appendChild(title);
-    }
-
-    if (record.content) {
-      const contentHtml = document.createElement('div');
-      contentHtml.className = 'slide-content-html';
-      contentHtml.innerHTML = renderSlideContent(record.content);
-      preview.appendChild(contentHtml);
-    } else {
-      const previewText = document.createElement('p');
-      previewText.className = 'slide-preview-text';
-      previewText.textContent = getSlidePreview(record) || 'Preview text unavailable.';
-      preview.appendChild(previewText);
-    }
-
-    item.appendChild(preview);
-    container.appendChild(item);
-  });
-}
-
 function renderLoading(): void {
   const root = byId('verto-deck-widget');
   root.classList.add('is-loading');
   currentDeck = null;
   byId('title').textContent = 'Loading deck preview';
   byId('summary').textContent = 'Waiting for deck data from Verto.';
-  renderBadges({
-    id: '',
-    title: 'Deck preview',
-    themeName: 'Theme pending',
-    slideCount: 0,
-    updatedAt: '',
-    isPublished: false,
-    shareUrl: '',
-    openUrl: '',
-    actions: {},
-    slides: [],
-    rawSlides: [],
-  });
-  renderCover({
-    id: '',
-    title: 'Deck preview',
-    themeName: 'Theme pending',
-    slideCount: 0,
-    updatedAt: '',
-    isPublished: false,
-    shareUrl: '',
-    openUrl: '',
-    actions: {},
-    slides: [],
-    rawSlides: [],
-  });
-  configureOpenLink({
-    id: '',
-    title: 'Deck preview',
-    themeName: 'Theme pending',
-    slideCount: 0,
-    updatedAt: '',
-    isPublished: false,
-    shareUrl: '',
-    openUrl: '',
-    actions: {},
-    slides: [],
-    rawSlides: [],
-  });
-  configurePresentAction({
-    id: '',
-    title: 'Deck preview',
-    themeName: 'Theme pending',
-    slideCount: 0,
-    updatedAt: '',
-    isPublished: false,
-    shareUrl: '',
-    openUrl: '',
-    actions: {},
-    slides: [],
-    rawSlides: [],
-  });
-  configureThemeAction({
-    id: '',
-    title: 'Deck preview',
-    themeName: 'Theme pending',
-    slideCount: 0,
-    updatedAt: '',
-    isPublished: false,
-    shareUrl: '',
-    openUrl: '',
-    actions: {},
-    slides: [],
-    rawSlides: [],
-  });
-  configureEditAction({
-    id: '',
-    title: 'Deck preview',
-    themeName: 'Theme pending',
-    slideCount: 0,
-    updatedAt: '',
-    isPublished: false,
-    shareUrl: '',
-    openUrl: '',
-    actions: { canUpdateSlides: false },
-    slides: [],
-    rawSlides: [],
-  });
-  configureSecondaryAction({
-    id: '',
-    title: 'Deck preview',
-    themeName: 'Theme pending',
-    slideCount: 0,
-    updatedAt: '',
-    isPublished: false,
-    shareUrl: '',
-    openUrl: '',
-    actions: { canPublish: false },
-    slides: [],
-    rawSlides: [],
-  });
-  configureRefreshAction({
-    id: '',
-    title: 'Deck preview',
-    themeName: 'Theme pending',
-    slideCount: 0,
-    updatedAt: '',
-    isPublished: false,
-    shareUrl: '',
-    openUrl: '',
-    actions: {},
-    slides: [],
-    rawSlides: [],
-  });
-  renderSlides({
-    id: '',
-    title: 'Deck preview',
-    themeName: 'Theme pending',
-    slideCount: 0,
-    updatedAt: '',
-    isPublished: false,
-    shareUrl: '',
-    openUrl: '',
-    actions: {},
-    slides: [],
-    rawSlides: [],
-  });
+
+  const empty = { ...EMPTY_DECK, themeName: 'Theme pending' };
+  renderBadges(empty);
+  renderCover(empty);
+  configureOpenLink(empty);
+  configurePresentAction(empty);
+  configureThemeAction(empty);
+  configureEditAction(empty);
+  configureSecondaryAction({ ...empty, actions: { canPublish: false } });
+  configureRefreshAction(empty);
+  renderSlides(empty);
 }
 
 function renderDeckPayload(payload: Record<string, unknown>): void {
@@ -1643,26 +1494,35 @@ function renderDeckPayload(payload: Record<string, unknown>): void {
     return;
   }
 
+  // A refresh of the same deck keeps the selected slide; a new deck starts
+  // at slide one.
+  if (currentDeck?.id !== deck.id) selectedIndex = 0;
   currentDeck = deck;
+  selectedIndex = clampIndex(deck, selectedIndex);
 
-  setWidgetTheme(extractThemeName(payload));
+  setWidgetTheme(deck.themeName);
   renderDeepLinkMenu(byId('deck-links'), extractWidgetLinks(payload));
 
   root.classList.remove('is-loading');
   byId('title').textContent = deck.title;
-  byId('summary').textContent = deck.slides.length > 0
-    ? `Previewing ${slideCountLabel(deck.slideCount)} in ${deck.themeName}.`
-    : 'Deck metadata is ready. Slide previews are still unavailable.';
+  byId('summary').textContent = summaryFor(deck);
+  byId('theme-panel').hidden = true;
+  byId('action-panel').hidden = false;
 
   renderBadges(deck);
-  renderCover(deck);
   configureOpenLink(deck);
   configurePresentAction(deck);
   configureThemeAction(deck);
   configureEditAction(deck);
   configureSecondaryAction(deck);
   configureRefreshAction(deck);
+  renderCover(deck);
   renderSlides(deck);
+
+  const blocked = structureBlockedReason(deck);
+  if (blocked && deck.id && deck.actions.canUpdateSlides) {
+    byId('action-note').textContent = blocked;
+  }
 }
 
 mountWidget((payload) => {
@@ -1695,11 +1555,6 @@ function showStreamStatus(message: string): void {
     strip.setAttribute('role', 'status');
     strip.setAttribute('aria-live', 'polite');
     Object.assign(strip.style, {
-      position: 'fixed',
-      left: '12px',
-      right: '12px',
-      bottom: '12px',
-      zIndex: '60',
       display: 'flex',
       alignItems: 'center',
       gap: '8px',
@@ -1707,22 +1562,20 @@ function showStreamStatus(message: string): void {
       borderRadius: '12px',
       fontSize: '12px',
       lineHeight: '1.4',
-      color: 'var(--vt-slide-fg, #18181b)',
-      background: 'var(--vt-surface-chip, rgba(0,0,0,0.06))',
+      color: 'var(--fg)',
+      background: 'var(--surface)',
       border: '1px solid var(--vt-accent, #3b82f6)',
-      pointerEvents: 'none',
     } as CSSStyleDeclaration);
 
-    const spinner = document.createElement('span');
-    spinner.setAttribute('aria-hidden', 'true');
-    spinner.textContent = '✎';
-    strip.appendChild(spinner);
+    strip.appendChild(iconElement('pencil'));
 
     const label = document.createElement('span');
     label.className = 'vdp-stream-status-label';
     strip.appendChild(label);
 
-    root.appendChild(strip);
+    // In flow at the top, not fixed: in an iframe that grows to fit its
+    // content, a fixed bottom strip lands thousands of pixels down.
+    root.prepend(strip);
   }
 
   const label = strip.querySelector<HTMLSpanElement>('.vdp-stream-status-label');
@@ -1745,8 +1598,4 @@ onToolInputPartial((args) => {
   ).length;
 
   showStreamStatus(`Assistant is updating slides… ${count} received`);
-});
-
-onTeardown(() => {
-  dismissStreamStatus();
 });

@@ -95,7 +95,7 @@ export const presentationGenerateSchema = z.object({
   additional_context: z.string().max(LIMITS.MAX_ADDITIONAL_CONTEXT_LENGTH).optional()
     .describe('Optional additional instructions to guide generation.'),
   theme_preference: z.string().default('Default')
-    .describe('Preferred visual theme for the generated presentation.'),
+    .describe('Theme name from the Verto catalog (verto://themes), e.g. "Dark Elegance" or "Neon Nights". Not a style description: an unknown name falls back to Default.'),
   outlines: z.array(z.string().min(1).max(LIMITS.MAX_TITLE_LENGTH)).max(LIMITS.MAX_OUTLINES).optional()
     .describe('Optional pre-defined slide outlines. If omitted, AI generates outlines automatically.'),
   wait_timeout_ms: z.number().int().min(1000).max(LIMITS.GENERATION_TIMEOUT_MS).optional()
