@@ -37,7 +37,7 @@ real ChatGPT session (the screenshots in the PR) it looked broken:
 - The Theme Studio drawer covered the deck it claimed to preview live, showed
   16 of 65 themes, and put Apply 3,000 px below the fold. The iframe grows to
   fit its content, so a `position: fixed` drawer spans the whole widget.
-- The filmstrip stacked 15 full-size slides, making the widget 4,037 px tall.
+- The filmstrip stacked 15 full-size slides, making the widget 4,038 px tall.
 
 ### What must be true when this ships
 
