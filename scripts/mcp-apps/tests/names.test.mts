@@ -13,7 +13,15 @@ test('cleanSlideName strips the outline generator tag', () => {
 
 test('cleanSlideName keeps brackets that are part of the title', () => {
   assert.equal(cleanSlideName('The [redacted] memo'), 'The [redacted] memo');
+  assert.equal(cleanSlideName('Revenue [Q3]'), 'Revenue [Q3]');
+  assert.equal(cleanSlideName('Launch plan [Draft]'), 'Launch plan [Draft]');
   assert.equal(cleanSlideName('Plain title'), 'Plain title');
+});
+
+test('cleanSlideName strips every tag form the outline prompt asks for', () => {
+  assert.equal(cleanSlideName('Next Steps and Resources [CTA - conclusion]'), 'Next Steps and Resources');
+  assert.equal(cleanSlideName('Tips for Teams [features/tips - bullet points]'), 'Tips for Teams');
+  assert.equal(cleanSlideName('Old vs New [Comparison]'), 'Old vs New');
 });
 
 test('cleanSlideName never returns an empty name', () => {

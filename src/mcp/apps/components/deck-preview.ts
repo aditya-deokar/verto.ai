@@ -53,7 +53,6 @@ import {
 const CANVAS_WIDTH = 720;
 const UNDO_WINDOW_MS = 10_000;
 const CONFIRM_WINDOW_MS = 6_000;
-const MAX_THUMBNAILS = 50;
 
 const deckStyles = `
   .deck-shell {
@@ -542,7 +541,7 @@ function renderSlides(deck: DeckViewModel): void {
   const container = byId('slides');
   container.querySelectorAll('.slide-frame').forEach((frame) => frameScaler?.unobserve(frame));
   container.textContent = '';
-  const shown = deck.slides.slice(0, MAX_THUMBNAILS);
+  const shown = deck.slides;
   byId('filmstrip-count').textContent = `${shown.length} shown`;
 
   if (shown.length === 0) {
@@ -612,7 +611,7 @@ function onFilmstripKey(event: KeyboardEvent): void {
   const deck = currentDeck;
   if (!deck || !(event.target instanceof HTMLElement) || !event.target.classList.contains('thumb')) return;
 
-  const last = Math.min(deck.slides.length, MAX_THUMBNAILS) - 1;
+  const last = deck.slides.length - 1;
   const moves: Record<string, number> = {
     ArrowRight: selectedIndex + 1,
     ArrowDown: selectedIndex + 1,
@@ -760,7 +759,8 @@ async function runSlideChange(kind: 'move' | 'duplicate' | 'delete', direction: 
       const removal = removeSlide(base, from);
       next = removal.slides;
       nextSelected = Math.min(from, next.length - 1);
-      undoSnapshot = null;
+      // The previous Undo stays live until this save succeeds; armUndo then
+      // replaces it. Clearing it here would lose it if the save fails.
       message = `Deleted slide ${from + 1}. Undo is available for ${UNDO_WINDOW_MS / 1000} seconds.`;
       armUndoAfterSave = { deckId: deck.id, slide: removal.removed, index: from };
     }
@@ -903,6 +903,7 @@ function pushSlideStructureContext(
 
 let themeBeforePicker = '';
 let pickedTheme = '';
+let applyingTheme = false;
 
 function openThemePicker(deck: DeckViewModel): void {
   themeBeforePicker = deck.themeName;
@@ -918,6 +919,9 @@ function openThemePicker(deck: DeckViewModel): void {
 }
 
 function closeThemePicker(restore: boolean): void {
+  // Cancel or Escape mid-save would repaint the old theme while the new one
+  // is being stored; the Apply result decides what the deck looks like.
+  if (applyingTheme && restore) return;
   if (restore && currentDeck) {
     previewTheme(themeBeforePicker);
   }
@@ -1010,7 +1014,10 @@ async function applyPickedTheme(): Promise<void> {
   }
 
   const button = byId('theme-apply-btn') as HTMLButtonElement;
+  const cancel = byId('theme-cancel-btn') as HTMLButtonElement;
+  applyingTheme = true;
   button.disabled = true;
+  cancel.disabled = true;
   button.textContent = 'Applying…';
 
   try {
@@ -1021,7 +1028,7 @@ async function applyPickedTheme(): Promise<void> {
 
     deck.themeName = themeName;
     themeBeforePicker = themeName;
-    renderBadges(deck);
+    previewTheme(themeName);
     byId('summary').textContent = summaryFor(deck);
     closeThemePicker(false);
     byId('action-note').textContent = `Theme updated to ${themeName}.`;
@@ -1033,7 +1040,9 @@ async function applyPickedTheme(): Promise<void> {
   } catch (error) {
     byId('theme-note').textContent = getActionErrorMessage(error);
   } finally {
+    applyingTheme = false;
     button.disabled = false;
+    cancel.disabled = false;
     button.textContent = 'Apply';
   }
 }
