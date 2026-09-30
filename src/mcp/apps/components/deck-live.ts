@@ -16,6 +16,7 @@ import {
 } from './shared/verto-skin';
 import { icon, iconLabel } from './shared/icons';
 import { renderSlideContent } from '../../../lib/slides/render-core/index';
+import { cleanSlideName } from '../../../lib/slides/slide-names';
 
 /**
  * Immersive presenter view (plan 10 F2 / Phase 10C). Receives slim deck
@@ -472,10 +473,10 @@ function toDeckLiveViewModel(payload: Record<string, unknown>): DeckLiveViewMode
 
     return {
       id: getString(record.id, `slide-${index + 1}`),
-      title: getString(
+      title: cleanSlideName(getString(
         record.title || record.slideName || record.slide_name,
         `Slide ${index + 1}`
-      ),
+      )),
       previewText: getString(record.previewText || record.preview_text),
       content: 'content' in record ? record.content : undefined,
     };

@@ -8,7 +8,7 @@
  * - presentationUpdateThemeSchema (schemas.ts)
  * - getOwnedProjectForMcp (lib/mcp-project-access.ts)
  * - projectToPresentation (mappers.ts)
- * - isValidThemeName / getValidThemeNames (lib/theme-validator.ts)
+ * - resolveThemeName / getValidThemeNames (lib/theme-validator.ts)
  */
 
 import prisma from '@/lib/prisma';
@@ -20,7 +20,7 @@ import { createThemeStudioWidgetData } from '../../apps/widget-data';
 import type { PresentationUpdateThemeInput } from './schemas';
 import { getOwnedProjectForMcp } from '../../lib/mcp-project-access';
 import { projectToPresentation } from './mappers';
-import { isValidThemeName, getValidThemeNames } from '../../lib/theme-validator';
+import { resolveThemeName, getValidThemeNames } from '../../lib/theme-validator';
 
 /**
  * Handler for the presentation_update_theme tool.
@@ -29,16 +29,19 @@ export async function handlePresentationUpdateTheme(
   args: PresentationUpdateThemeInput,
   auth: AuthContext
 ): Promise<McpToolResponse> {
-  const { presentation_id, theme_name } = args;
+  const { presentation_id } = args;
 
-  // Validate theme name against catalog
-  if (!isValidThemeName(theme_name)) {
+  // Validate against the catalog; any casing is accepted and the canonical
+  // name is what gets stored.
+  const resolved = resolveThemeName(args.theme_name);
+  if (!resolved.ok) {
     const validNames = getValidThemeNames();
     return Errors.validationError(
-      `Invalid theme name '${theme_name}'. Valid themes: ${validNames.join(', ')}. ` +
+      `Invalid theme name '${args.theme_name}'. Valid themes: ${validNames.join(', ')}. ` +
       `Use the 'verto://themes' resource to browse all available themes.`
     );
   }
+  const theme_name = resolved.name;
 
   // Ownership check
   const project = await getOwnedProjectForMcp(presentation_id, auth.userId);

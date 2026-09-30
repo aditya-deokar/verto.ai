@@ -20,6 +20,9 @@ import {
 import { createGenerationProgressWidgetData } from '../../apps/widget-data';
 import { logGenerationTelemetry } from '../../lib/generation-telemetry';
 import { limitSlidesForMcp, projectToPresentation } from './mappers';
+import { resolveThemeName } from '../../lib/theme-validator';
+
+const FALLBACK_THEME = 'Default';
 
 type GenerationOutcome =
   | {
@@ -34,6 +37,24 @@ function createTimeoutPromise(timeoutMs: number): Promise<GenerationOutcome> {
   return new Promise((resolve) => {
     setTimeout(() => resolve({ kind: 'timeout' }), timeoutMs);
   });
+}
+
+/**
+ * Models often pass a style description ("modern, premium developer-tool
+ * look") instead of a catalog name. That string used to be stored as the
+ * theme, which nothing can paint. Unknown names fall back to Default, and the
+ * note tells the model so it can offer real themes.
+ */
+function resolveThemePreference(preference: string): { themeName: string; note?: string } {
+  const resolved = resolveThemeName(preference);
+  if (resolved.ok) return { themeName: resolved.name };
+
+  return {
+    themeName: FALLBACK_THEME,
+    note:
+      `"${preference}" is not a Verto theme, so the deck uses ${FALLBACK_THEME}. `
+      + `Offer a theme from the verto://themes resource, then apply it with presentation_update_theme.`,
+  };
 }
 
 function getGenerationErrorMessage(error: unknown): string {
@@ -51,6 +72,9 @@ export async function handlePresentationGenerate(
     outlines,
     wait_timeout_ms,
   } = args;
+
+  const theme = resolveThemePreference(theme_preference);
+  const themeNote = theme.note ? { theme_note: theme.note } : {};
 
   const usageCheck = await checkAndIncrementUsage(
     auth.userId,
@@ -93,7 +117,7 @@ export async function handlePresentationGenerate(
     auth.clerkId,
     topic,
     additional_context,
-    theme_preference,
+    theme.themeName,
     outlines,
     generationRun.id
   )
@@ -166,6 +190,7 @@ export async function handlePresentationGenerate(
         ...statusPayload,
         response_mode: 'RUNNING_BEFORE_HOST_TIMEOUT',
         wait_timeout_ms: waitTimeoutMs,
+        ...themeNote,
         background_execution_note:
           'Generation has started. Use presentation_generation_status or the progress resource instead of starting a duplicate generation.',
       },
@@ -205,6 +230,7 @@ export async function handlePresentationGenerate(
       generation_run_id: generationRun.id,
       generation_status: generationStatus,
       presentation_id: result.projectId,
+      ...themeNote,
       presentation: project
         ? projectToPresentation(project, { includeSlides: true })
         : {
