@@ -48,6 +48,7 @@ const candidateFiles = [
   'src/mcp/lib/mcp-project-access.ts',
   'src/mcp/lib/presentation-generation-runs.ts',
   'src/mcp/lib/theme-validator.ts',
+  'src/mcp/lib/theme-names.ts',
   'src/mcp/lib/transport-context.ts',
   'src/mcp/apps/constants.ts',
   'src/mcp/apps/widget-data.ts',
@@ -56,6 +57,8 @@ const candidateFiles = [
   'src/mcp/apps/components/shared/verto-skin.ts',
   'src/lib/slides/render-core/index.ts',
   'src/mcp/apps/components/shared/slide-editor.ts',
+  'src/mcp/apps/components/shared/deck-model.ts',
+  'src/lib/slides/slide-names.ts',
   'src/mcp/apps/components/shared/qrcode.ts',
   'src/mcp/apps/components/presentation-list.ts',
   'src/mcp/apps/components/generation-progress.ts',
@@ -120,6 +123,7 @@ const rootFiles = candidateFiles
 
 const scopePrefixes = [
   'src/lib/mcp-client-guide.ts',
+  'src/lib/slides/slide-names.ts',
   'src/mcp/',
   'src/app/mcp/',
   'src/app/api/mcp/',

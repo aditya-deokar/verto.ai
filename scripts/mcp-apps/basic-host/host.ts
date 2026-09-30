@@ -27,12 +27,21 @@ interface ToolCallRecord {
   refused?: boolean;
 }
 
+interface MountOptions {
+  theme?: 'light' | 'dark';
+  appVisibleTools?: string[];
+  /** Iframe width in CSS pixels. Defaults to 1100. */
+  width?: number;
+  /**
+   * Grow the iframe to the height the widget reports, the way ChatGPT and
+   * Claude size inline widgets. Off by default so the fixed 900px frame the
+   * smoke cases were written against stays unchanged.
+   */
+  autoResize?: boolean;
+}
+
 interface HostHarness {
-  mount(
-    widgetHtml: string,
-    toolResult: unknown,
-    options?: { theme?: 'light' | 'dark'; appVisibleTools?: string[] }
-  ): Promise<void>;
+  mount(widgetHtml: string, toolResult: unknown, options?: MountOptions): Promise<void>;
   /** Tool calls the widget made through the bridge, oldest first. */
   toolCalls(): ToolCallRecord[];
   /** Follow-up messages the widget asked the host to post to the model. */
@@ -126,10 +135,12 @@ let bridge: AppBridge | null = null;
 async function mount(
   widgetHtml: string,
   toolResult: unknown,
-  options: { theme?: 'light' | 'dark'; appVisibleTools?: string[] } = {}
+  options: MountOptions = {}
 ): Promise<void> {
   appVisibleTools = options.appVisibleTools ? new Set(options.appVisibleTools) : null;
-  document.body.innerHTML = '<iframe id="widget" style="width:1100px;height:900px;border:0"></iframe>';
+  document.body.style.margin = '0';
+  document.body.innerHTML =
+    `<iframe id="widget" style="display:block;width:${options.width ?? 1100}px;height:900px;border:0"></iframe>`;
 
   const client = new Client({ name: 'verto-basic-host', version: '0.0.0' });
   const [clientTransport, serverTransport] = InMemoryTransport.createLinkedPair();
@@ -154,6 +165,14 @@ async function mount(
   };
 
   const iframe = document.getElementById('widget') as HTMLIFrameElement;
+
+  if (options.autoResize) {
+    bridge.onsizechange = ({ height }) => {
+      if (typeof height === 'number' && height > 0) {
+        iframe.style.height = `${Math.ceil(height)}px`;
+      }
+    };
+  }
 
   const ready = new Promise<void>((resolve) => {
     bridge!.oninitialized = () => resolve();

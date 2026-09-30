@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-09-20T05:55:16.688Z",
+  "generatedAt": "2026-09-30T13:01:37.768Z",
   "results": [
     {
       "id": "list-preview-uses-bridge",
@@ -51,7 +51,43 @@
     },
     {
       "id": "deck-reorder-saves-slides",
-      "label": "Deck preview: reorder saves through presentation_update_slides",
+      "label": "Deck preview: moving a slide fetches raw slides, then saves them renumbered",
+      "status": "pass",
+      "failures": []
+    },
+    {
+      "id": "deck-thumbnail-selects-slide",
+      "label": "Deck preview: clicking a thumbnail puts that slide on the stage",
+      "status": "pass",
+      "failures": []
+    },
+    {
+      "id": "deck-duplicate-slide",
+      "label": "Deck preview: Duplicate saves a copy with fresh ids",
+      "status": "pass",
+      "failures": []
+    },
+    {
+      "id": "deck-delete-then-undo",
+      "label": "Deck preview: Delete needs a second click, and Undo saves the slide back",
+      "status": "pass",
+      "failures": []
+    },
+    {
+      "id": "deck-failed-save-rolls-back",
+      "label": "Deck preview: a rejected slide save restores the deck and says why",
+      "status": "pass",
+      "failures": []
+    },
+    {
+      "id": "deck-truncated-blocks-structure",
+      "label": "Deck preview: slide changes are off when the widget holds a partial deck",
+      "status": "pass",
+      "failures": []
+    },
+    {
+      "id": "deck-inline-theme-apply",
+      "label": "Deck preview: the inline picker previews and applies a theme",
       "status": "pass",
       "failures": []
     },
