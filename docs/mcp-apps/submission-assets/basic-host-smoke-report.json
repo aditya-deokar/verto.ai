@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-09-30T13:11:32.444Z",
+  "generatedAt": "2026-10-01T08:47:20.024Z",
   "results": [
     {
       "id": "list-preview-uses-bridge",
@@ -52,6 +52,36 @@
     {
       "id": "deck-reorder-saves-slides",
       "label": "Deck preview: moving a slide fetches raw slides, then saves them renumbered",
+      "status": "pass",
+      "failures": []
+    },
+    {
+      "id": "deck-drag-reorders",
+      "label": "Deck preview: dragging a thumbnail past its neighbour saves the new order",
+      "status": "pass",
+      "failures": []
+    },
+    {
+      "id": "deck-drag-escape-cancels",
+      "label": "Deck preview: Escape during a drag leaves the order alone",
+      "status": "pass",
+      "failures": []
+    },
+    {
+      "id": "deck-touch-hold-drags",
+      "label": "Deck preview: on touch, a long press then a drag reorders; a quick swipe does not",
+      "status": "pass",
+      "failures": []
+    },
+    {
+      "id": "deck-click-still-selects",
+      "label": "Deck preview: a plain click on a thumbnail selects it without moving anything",
+      "status": "pass",
+      "failures": []
+    },
+    {
+      "id": "deck-alt-arrow-moves",
+      "label": "Deck preview: Alt+ArrowRight moves the focused slide and keeps focus on it",
       "status": "pass",
       "failures": []
     },

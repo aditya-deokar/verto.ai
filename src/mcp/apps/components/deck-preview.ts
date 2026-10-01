@@ -39,6 +39,7 @@ import {
   type SlideEditorHandle,
 } from './shared/slide-editor';
 import {
+  dropTargetIndex,
   duplicateSlide,
   filterThemes,
   insertSlide,
@@ -183,8 +184,23 @@ const deckStyles = `
   }
   .filmstrip-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 12px; }
   .thumb {
-    display: grid; gap: 6px; min-width: 0; border: 0; border-radius: 12px; padding: 4px;
+    position: relative; display: grid; gap: 6px; min-width: 0; border: 0; border-radius: 12px; padding: 4px;
     background: transparent; color: var(--fg); font: inherit; text-align: left; cursor: pointer;
+    -webkit-user-select: none; user-select: none; -webkit-touch-callout: none;
+  }
+  .filmstrip-hint { color: var(--muted); font-size: 12px; font-weight: 600; letter-spacing: 0; text-transform: none; }
+  .filmstrip-hint[hidden] { display: none; }
+  .filmstrip-grid.is-reorderable .thumb { cursor: grab; }
+  .filmstrip-grid.is-dragging, .filmstrip-grid.is-dragging .thumb { cursor: grabbing; }
+  .thumb.is-drag-source { opacity: 0.35; }
+  .thumb:is(.drop-before, .drop-after)::before {
+    content: ""; position: absolute; top: 4px; bottom: 26px; width: 4px; border-radius: 4px; background: var(--accent);
+  }
+  .thumb.drop-before::before { left: -8px; }
+  .thumb.drop-after::before { right: -8px; }
+  .drag-ghost {
+    position: fixed; top: 0; left: 0; z-index: 50; pointer-events: none; opacity: 0.92;
+    border-radius: 8px; box-shadow: 0 16px 40px rgba(0, 0, 0, 0.28);
   }
   .thumb .slide-frame { border-radius: 8px; }
   .thumb:hover .slide-frame { border-color: var(--accent); }
@@ -311,7 +327,7 @@ function ensureMarkup(): void {
       </section>
       <section class="filmstrip" aria-label="Slide filmstrip">
         <div class="filmstrip-head">
-          <span>Slides</span>
+          <span>Slides <span class="filmstrip-hint" id="filmstrip-hint" hidden>Drag, or Alt + arrow keys, to reorder</span></span>
           <span id="filmstrip-count">0 shown</span>
         </div>
         <div class="filmstrip-grid" id="slides"></div>
@@ -562,6 +578,8 @@ function renderSlides(deck: DeckViewModel): void {
     thumb.setAttribute('aria-label', `Slide ${index + 1}: ${title}`);
     thumb.setAttribute('aria-current', index === selectedIndex ? 'true' : 'false');
     thumb.tabIndex = index === selectedIndex ? 0 : -1;
+    thumb.setAttribute('aria-describedby', 'filmstrip-hint');
+    thumb.setAttribute('aria-keyshortcuts', 'Alt+ArrowLeft Alt+ArrowRight');
 
     const frame = document.createElement('div');
     frame.className = 'slide-frame';
@@ -623,6 +641,14 @@ function onFilmstripKey(event: KeyboardEvent): void {
 
   if (!(event.key in moves)) return;
   event.preventDefault();
+
+  // Alt+Arrow is the keyboard twin of dragging: it moves the slide itself.
+  if (event.altKey && event.key.startsWith('Arrow')) {
+    const to = Math.max(0, Math.min(moves[event.key], last));
+    if (to !== selectedIndex) void runSlideChange('move', { to });
+    return;
+  }
+
   selectSlide(Math.max(0, Math.min(moves[event.key], last)), true);
 }
 
@@ -662,6 +688,8 @@ function configureSlideTools(deck: DeckViewModel): void {
   setEnabled('move-down-action', !blocked && selectedIndex < count - 1);
   setEnabled('duplicate-slide-action', !blocked);
   setEnabled('delete-slide-action', !blocked && count > 1);
+  byId('filmstrip-hint').hidden = blocked || count < 2;
+  byId('slides').classList.toggle('is-reorderable', !blocked && count > 1);
   byId('undo-slide-action').hidden = !undoSnapshot || undoSnapshot.deckId !== deck.id;
   resetDeleteArm();
 }
@@ -675,12 +703,13 @@ function resetDeleteArm(): void {
 }
 
 function wireStaticControls(): void {
-  byId('move-up-action').onclick = () => void runSlideChange('move', -1);
-  byId('move-down-action').onclick = () => void runSlideChange('move', 1);
-  byId('duplicate-slide-action').onclick = () => void runSlideChange('duplicate', 0);
+  byId('move-up-action').onclick = () => void runSlideChange('move', { to: selectedIndex - 1 });
+  byId('move-down-action').onclick = () => void runSlideChange('move', { to: selectedIndex + 1 });
+  byId('duplicate-slide-action').onclick = () => void runSlideChange('duplicate');
   byId('delete-slide-action').onclick = () => confirmOrDeleteSlide();
   byId('undo-slide-action').onclick = () => void undoLastDelete();
   byId('slides').addEventListener('keydown', onFilmstripKey);
+  wireThumbnailDrag(byId('slides'));
 
   byId('theme-search').addEventListener('input', () => renderThemeList());
   byId('theme-cancel-btn').onclick = () => closeThemePicker(true);
@@ -691,6 +720,201 @@ function wireStaticControls(): void {
       closeThemePicker(true);
     }
   });
+}
+
+/* ------------------------------------------------------------------ */
+/* Drag to reorder                                                     */
+/* ------------------------------------------------------------------ */
+
+/**
+ * Pointer events rather than HTML5 drag and drop, which never fires for
+ * touch. A mouse drag starts after a few pixels of travel. A touch drag
+ * needs a long press, so a swipe across the filmstrip still scrolls the
+ * chat instead of grabbing a slide.
+ */
+const DRAG_START_PX = 6;
+const TOUCH_HOLD_MS = 300;
+const TOUCH_SLOP_PX = 8;
+
+type ThumbDrag = {
+  pointerId: number;
+  from: number;
+  source: HTMLElement;
+  startX: number;
+  startY: number;
+  offsetX: number;
+  offsetY: number;
+  touch: boolean;
+  active: boolean;
+  slot: number;
+  holdTimer: number;
+  ghost: HTMLElement | null;
+};
+
+let thumbDrag: ThumbDrag | null = null;
+let suppressThumbClick = false;
+
+function wireThumbnailDrag(grid: HTMLElement): void {
+  grid.addEventListener('pointerdown', (event) => {
+    const thumb = (event.target as HTMLElement).closest<HTMLElement>('.thumb');
+    const deck = currentDeck;
+    if (!thumb || !deck || event.button !== 0 || saving || thumbDrag) return;
+    if (structureBlockedReason(deck) || deck.slides.length < 2) return;
+
+    const rect = thumb.getBoundingClientRect();
+    const from = Number(thumb.dataset.index);
+    thumbDrag = {
+      pointerId: event.pointerId,
+      from,
+      source: thumb,
+      startX: event.clientX,
+      startY: event.clientY,
+      offsetX: event.clientX - rect.left,
+      offsetY: event.clientY - rect.top,
+      touch: event.pointerType === 'touch',
+      active: false,
+      slot: from,
+      holdTimer: 0,
+      ghost: null,
+    };
+
+    if (thumbDrag.touch) {
+      const pending = thumbDrag;
+      pending.holdTimer = window.setTimeout(() => {
+        if (thumbDrag === pending) startThumbDrag(pending, pending.startX, pending.startY);
+      }, TOUCH_HOLD_MS);
+    }
+  });
+
+  window.addEventListener('pointermove', (event) => {
+    const drag = thumbDrag;
+    if (!drag || event.pointerId !== drag.pointerId) return;
+
+    const travel = Math.hypot(event.clientX - drag.startX, event.clientY - drag.startY);
+    if (!drag.active) {
+      if (drag.touch) {
+        // Moving before the hold completes is a scroll, not a drag.
+        if (travel > TOUCH_SLOP_PX) endThumbDrag();
+        return;
+      }
+      if (travel < DRAG_START_PX) return;
+      startThumbDrag(drag, event.clientX, event.clientY);
+    }
+
+    event.preventDefault();
+    trackThumbDrag(drag, event.clientX, event.clientY);
+  });
+
+  window.addEventListener('pointerup', (event) => {
+    const drag = thumbDrag;
+    if (!drag || event.pointerId !== drag.pointerId) return;
+    if (!drag.active) {
+      endThumbDrag();
+      return;
+    }
+
+    const to = dropTargetIndex(drag.from, drag.slot);
+    endThumbDrag();
+    // The click that follows a drag must not re-select the slide under the
+    // pointer. Reset on the next tick in case no click arrives.
+    suppressThumbClick = true;
+    window.setTimeout(() => { suppressThumbClick = false; }, 0);
+    if (to !== drag.from) void runSlideChange('move', { from: drag.from, to });
+  });
+
+  window.addEventListener('pointercancel', (event) => {
+    if (thumbDrag && event.pointerId === thumbDrag.pointerId) endThumbDrag();
+  });
+
+  window.addEventListener('keydown', (event) => {
+    if (event.key === 'Escape' && thumbDrag?.active) {
+      event.preventDefault();
+      endThumbDrag();
+      byId('action-note').textContent = 'Drag cancelled. The slide order is unchanged.';
+    }
+  });
+
+  grid.addEventListener('click', (event) => {
+    if (suppressThumbClick) {
+      event.stopPropagation();
+      event.preventDefault();
+      suppressThumbClick = false;
+    }
+  }, true);
+
+  // Once a touch drag is live, the finger moves the slide, not the page.
+  document.addEventListener('touchmove', (event) => {
+    if (thumbDrag?.active) event.preventDefault();
+  }, { passive: false });
+  grid.addEventListener('contextmenu', (event) => {
+    if (thumbDrag) event.preventDefault();
+  });
+}
+
+function startThumbDrag(drag: ThumbDrag, x: number, y: number): void {
+  drag.active = true;
+  byId('slides').classList.add('is-dragging');
+  drag.source.classList.add('is-drag-source');
+
+  const frame = drag.source.querySelector<HTMLElement>('.slide-frame');
+  if (frame) {
+    const ghost = frame.cloneNode(true) as HTMLElement;
+    ghost.classList.add('drag-ghost');
+    ghost.setAttribute('aria-hidden', 'true');
+    ghost.style.width = `${frame.getBoundingClientRect().width}px`;
+    document.body.appendChild(ghost);
+    drag.ghost = ghost;
+  }
+
+  trackThumbDrag(drag, x, y);
+}
+
+/** Moves the ghost and works out which gap the pointer is over. */
+function trackThumbDrag(drag: ThumbDrag, x: number, y: number): void {
+  if (drag.ghost) {
+    drag.ghost.style.transform = `translate(${x - drag.offsetX}px, ${y - drag.offsetY}px) rotate(2deg)`;
+  }
+
+  const thumbs = [...byId('slides').querySelectorAll<HTMLElement>('.thumb')];
+  let nearest: { index: number; after: boolean; distance: number } | null = null;
+
+  for (const thumb of thumbs) {
+    const rect = thumb.getBoundingClientRect();
+    const cx = rect.left + rect.width / 2;
+    const cy = rect.top + rect.height / 2;
+    const distance = Math.hypot(x - cx, (y - cy) * 1.5);
+    if (!nearest || distance < nearest.distance) {
+      nearest = { index: Number(thumb.dataset.index), after: x > cx, distance };
+    }
+  }
+
+  if (!nearest) return;
+  drag.slot = nearest.index + (nearest.after ? 1 : 0);
+
+  for (const thumb of thumbs) {
+    const index = Number(thumb.dataset.index);
+    thumb.classList.toggle('drop-before', !nearest.after && index === nearest.index);
+    thumb.classList.toggle('drop-after', nearest.after && index === nearest.index);
+  }
+
+  // Dropping a slide next to itself changes nothing, so show no marker.
+  if (dropTargetIndex(drag.from, drag.slot) === drag.from) {
+    thumbs.forEach((thumb) => thumb.classList.remove('drop-before', 'drop-after'));
+  }
+}
+
+function endThumbDrag(): void {
+  const drag = thumbDrag;
+  if (!drag) return;
+  window.clearTimeout(drag.holdTimer);
+  drag.ghost?.remove();
+  drag.source.classList.remove('is-drag-source');
+  const grid = byId('slides');
+  grid.classList.remove('is-dragging');
+  grid.querySelectorAll('.drop-before, .drop-after').forEach((thumb) =>
+    thumb.classList.remove('drop-before', 'drop-after')
+  );
+  thumbDrag = null;
 }
 
 function confirmOrDeleteSlide(): void {
@@ -711,7 +935,7 @@ function confirmOrDeleteSlide(): void {
   }
 
   resetDeleteArm();
-  void runSlideChange('delete', 0);
+  void runSlideChange('delete');
 }
 
 function newSlideId(): string {
@@ -724,9 +948,15 @@ function newSlideId(): string {
  * Applies a structural change: paint it at once, save the whole array, adopt
  * what the server returns, and put everything back if the save fails.
  */
-async function runSlideChange(kind: 'move' | 'duplicate' | 'delete', direction: -1 | 0 | 1): Promise<void> {
+async function runSlideChange(
+  kind: 'move' | 'duplicate' | 'delete',
+  target: { from?: number; to?: number } = {}
+): Promise<void> {
   const deck = currentDeck;
   if (!deck || saving) return;
+
+  // Keyboard moves keep focus in the filmstrip across the re-render.
+  const keepFocus = byId('slides').contains(document.activeElement);
 
   const note = byId('action-note');
   const blocked = structureBlockedReason(deck);
@@ -742,15 +972,15 @@ async function runSlideChange(kind: 'move' | 'duplicate' | 'delete', direction: 
     // Widget-only payloads carry the mapped summary; fetch the real slides
     // once before the first change so nothing structural is lost.
     const base = deck.rawSlides.length > 0 ? deck.rawSlides : await fetchCompleteRawSlides(deck);
-    const from = selectedIndex;
+    const from = target.from ?? selectedIndex;
     let next: unknown[];
     let nextSelected: number;
     let message: string;
 
     if (kind === 'move') {
-      nextSelected = from + direction;
+      nextSelected = target.to ?? from;
       next = moveSlide(base, from, nextSelected);
-      message = `Moved the slide to position ${nextSelected + 1}.`;
+      message = `Moved slide ${from + 1} to position ${nextSelected + 1}.`;
     } else if (kind === 'duplicate') {
       next = duplicateSlide(base, from, newSlideId);
       nextSelected = from + 1;
@@ -786,6 +1016,9 @@ async function runSlideChange(kind: 'move' | 'duplicate' | 'delete', direction: 
     armUndoAfterSave = null;
     saving = false;
     configureSlideTools(deck);
+    if (keepFocus) {
+      byId('slides').querySelector<HTMLElement>(`.thumb[data-index="${selectedIndex}"]`)?.focus();
+    }
   }
 }
 
