@@ -24,7 +24,10 @@ const outDir = path.resolve(root, readArg('--out') || 'docs/mcp-apps/submission-
 const before = byId(JSON.parse(await readFile(path.join(beforeDir, 'metrics.json'), 'utf8')));
 const after = byId(JSON.parse(await readFile(path.join(afterDir, 'metrics.json'), 'utf8')));
 
-const sheets = [
+// `--only` limits the run to the named sheets, e.g. when a later PR adds one.
+const only = readArg('--only')?.split(',');
+
+const allSheets = [
   {
     id: 'overview-desktop',
     title: 'First screen at 860 px',
@@ -53,7 +56,18 @@ const sheets = [
       `Layout tags on screen: ${m.layoutTagsVisible}`,
     ],
   },
+  {
+    id: 'drag-midway',
+    title: 'Press on slide 1 and drag it past slide 3',
+    // Facts come from two runs: one held mid-drag, one released.
+    facts: (m, side) => [
+      `Drop marker: ${m.dropIndicator == null ? 'none' : `after slide ${Number(m.dropIndicator) + 1}`}`,
+      `Saved on release: ${side['drag-drop']?.metrics.savedOrder ?? 'nothing'}`,
+      `Stage after release: ${side['drag-drop']?.metrics.stagePosition ?? 'n/a'}`,
+    ],
+  },
 ];
+const sheets = allSheets.filter((sheet) => !only || only.includes(sheet.id));
 
 const newStates = [
   { id: 'select-slide', title: 'Thumbnail 4 selected', fact: (m) => `Stage shows slide ${Number(m.selectedThumb) + 1}` },
@@ -69,23 +83,25 @@ try {
     const b = before[sheet.id];
     const a = after[sheet.id];
     const html = page2up(sheet.title, [
-      { tag: 'BEFORE', tone: 'before', src: await dataUri(beforeDir, sheet.id), facts: sheet.facts(b.metrics) },
-      { tag: 'AFTER', tone: 'after', src: await dataUri(afterDir, sheet.id), facts: sheet.facts(a.metrics) },
+      { tag: 'BEFORE', tone: 'before', src: await dataUri(beforeDir, sheet.id), facts: sheet.facts(b.metrics, before) },
+      { tag: 'AFTER', tone: 'after', src: await dataUri(afterDir, sheet.id), facts: sheet.facts(a.metrics, after) },
     ]);
     await shoot(browser, html, path.join(outDir, `${sheet.id}.png`));
   }
 
   const panels = [];
-  for (const state of newStates) {
+  for (const state of only ? [] : newStates) {
     const entry = after[state.id];
     panels.push({ tag: 'NEW', tone: 'after', src: await dataUri(afterDir, state.id), facts: [state.title, state.fact(entry.metrics)] });
   }
-  await shoot(browser, page2up('Controls that did not exist before', panels), path.join(outDir, 'new-controls.png'));
+  if (panels.length > 0) {
+    await shoot(browser, page2up('Controls that did not exist before', panels), path.join(outDir, 'new-controls.png'));
+  }
 } finally {
   await browser.close();
 }
 
-console.log(`Wrote ${sheets.length + 1} sheets to ${path.relative(root, outDir).replace(/\\/g, '/')}`);
+console.log(`Wrote ${sheets.length + (only ? 0 : 1)} sheets to ${path.relative(root, outDir).replace(/\\/g, '/')}`);
 
 /* ------------------------------------------------------------------ */
 

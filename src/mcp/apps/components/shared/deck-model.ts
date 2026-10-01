@@ -38,6 +38,15 @@ export function moveSlide(slides: readonly unknown[], from: number, to: number):
   return renumberSlides(next);
 }
 
+/**
+ * Where a dragged slide ends up. `slot` is the gap it was dropped into: 0 is
+ * before the first slide, `length` is after the last. Removing the slide
+ * first shifts every later gap down by one.
+ */
+export function dropTargetIndex(from: number, slot: number): number {
+  return slot > from ? slot - 1 : slot;
+}
+
 /** Removes the slide at `index`, returning it so the caller can offer undo. */
 export function removeSlide(
   slides: readonly unknown[],

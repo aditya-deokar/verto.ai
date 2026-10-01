@@ -165,6 +165,20 @@ async function clickByLabel(frame, selector, label) {
   if (!clicked) throw new Error(`no control matching "${label}" (${selector})`);
 }
 
+/**
+ * Presses on thumbnail `from` and moves the mouse to `fraction` of the way
+ * across thumbnail `to`, leaving the button down. Element boxes are in
+ * main-page coordinates, so this works through the widget iframe.
+ */
+async function dragThumb(page, frame, from, to, fraction) {
+  const source = await (await frame.$(`.thumb[data-index="${from}"]`)).boundingBox();
+  const target = await (await frame.$(`.thumb[data-index="${to}"]`)).boundingBox();
+  await page.mouse.move(source.x + source.width / 2, source.y + source.height / 2);
+  await page.mouse.down();
+  await page.mouse.move(target.x + target.width * fraction, target.y + target.height / 2, { steps: 10 });
+  await new Promise((resolve) => setTimeout(resolve, 150));
+}
+
 async function settle(page, ms = 450) {
   await new Promise((resolve) => setTimeout(resolve, ms));
   return page.evaluate(() => ({
@@ -357,6 +371,170 @@ function scenarios() {
             ? []
             : [`expected raw slides s2,s1 renumbered, got: ${JSON.stringify(args).slice(0, 160)}`];
         }),
+      ],
+    },
+    {
+      id: 'deck-drag-reorders',
+      label: 'Deck preview: dragging a thumbnail past its neighbour saves the new order',
+      html: widgetHtml.deck,
+      payload: deckRawPayload(),
+      readySelector: '.thumb[data-index="1"]',
+      async run({ page, frame }) {
+        await dragThumb(page, frame, 0, 1, 0.8);
+        await page.mouse.up();
+        const observed = await settle(page, 900);
+        const position = await frame.$eval('#stage-pos', (el) => el.textContent);
+        return { position, ...observed };
+      },
+      expect: (observed) => [
+        ...expectCall(observed, 'presentation_update_slides', (args) => {
+          const order = (args.slides || []).map((slide) => `${slide.id}:${slide.slideOrder}`).join(',');
+          return order === 's2:0,s1:1' ? [] : [`expected s2,s1 renumbered, got: ${order}`];
+        }),
+        ...(observed.position === 'Slide 2 of 2' ? [] : [`stage did not follow the dragged slide: ${observed.position}`]),
+      ],
+    },
+    {
+      id: 'deck-drag-across-rows',
+      label: 'Deck preview: dragging slide 1 onto the second row saves it at that position',
+      html: widgetHtml.deck,
+      payload: deckRawPayload({ slides: 9 }),
+      readySelector: '.thumb[data-index="8"]',
+      async run({ page, frame }) {
+        const rows = await frame.evaluate(() => {
+          const top = (i) => document.querySelector(`.thumb[data-index="${i}"]`).getBoundingClientRect().top;
+          return { first: top(0), target: top(7) };
+        });
+        await dragThumb(page, frame, 0, 7, 0.8);
+        await page.mouse.up();
+        const observed = await settle(page, 900);
+        return { wrapped: rows.target > rows.first, ...observed };
+      },
+      expect: (observed) => [
+        ...(observed.wrapped ? [] : ['slide 8 is on the first row, so this does not test wrapping']),
+        ...expectCall(observed, 'presentation_update_slides', (args) => {
+          const order = (args.slides || []).map((slide) => slide.id).join(',');
+          return order === 's2,s3,s4,s5,s6,s7,s8,s1,s9' ? [] : [`expected s1 after s8, got: ${order}`];
+        }),
+      ],
+    },
+    {
+      id: 'deck-refresh-ends-drag',
+      label: 'Deck preview: a new tool result mid-drag ends the drag instead of moving a stale index',
+      html: widgetHtml.deck,
+      payload: deckRawPayload(),
+      readySelector: '.thumb[data-index="1"]',
+      async run({ page, frame }) {
+        await dragThumb(page, frame, 0, 1, 0.8);
+        // The model reorders the deck itself while the person is dragging.
+        const reordered = deckRawPayload();
+        reordered.data.slides.reverse();
+        await page.evaluate((payload) => window.__VERTO_HOST__.pushToolResult(payload), reordered);
+        await settle(page, 300);
+        await page.mouse.up();
+        const observed = await settle(page, 700);
+        const leftovers = await frame.evaluate(() => document.querySelectorAll('.drag-ghost, .is-drag-source').length);
+        return { leftovers, ...observed };
+      },
+      expect: (observed) => [
+        ...expectNoCall(observed, 'presentation_update_slides'),
+        ...(observed.leftovers === 0 ? [] : [`${observed.leftovers} drag artifacts left after the refresh`]),
+      ],
+    },
+    {
+      id: 'deck-drag-escape-cancels',
+      label: 'Deck preview: Escape during a drag leaves the order alone',
+      html: widgetHtml.deck,
+      payload: deckRawPayload(),
+      readySelector: '.thumb[data-index="1"]',
+      async run({ page, frame }) {
+        await dragThumb(page, frame, 0, 1, 0.8);
+        await page.keyboard.press('Escape');
+        await page.mouse.up();
+        const observed = await settle(page, 600);
+        const leftovers = await frame.evaluate(() =>
+          document.querySelectorAll('.drag-ghost, .drop-before, .drop-after, .is-drag-source').length
+        );
+        return { leftovers, ...observed };
+      },
+      expect: (observed) => [
+        ...expectNoCall(observed, 'presentation_update_slides'),
+        ...(observed.leftovers === 0 ? [] : [`${observed.leftovers} drag artifacts left on screen`]),
+      ],
+    },
+    {
+      id: 'deck-touch-hold-drags',
+      label: 'Deck preview: on touch, a long press then a drag reorders; a quick swipe does not',
+      html: widgetHtml.deck,
+      payload: deckRawPayload(),
+      readySelector: '.thumb[data-index="1"]',
+      async run({ page, frame }) {
+        const source = await (await frame.$('.thumb[data-index="0"]')).boundingBox();
+        const target = await (await frame.$('.thumb[data-index="1"]')).boundingBox();
+        const start = { x: source.x + source.width / 2, y: source.y + source.height / 2 };
+        const end = { x: target.x + target.width * 0.8, y: target.y + target.height / 2 };
+
+        // A swipe that starts moving at once is a scroll, not a drag.
+        await page.touchscreen.touchStart(start.x, start.y);
+        await page.touchscreen.touchMove(end.x, end.y);
+        await page.touchscreen.touchEnd();
+        const afterSwipe = await settle(page, 500);
+
+        // Holding still past the long-press delay picks the slide up.
+        await page.touchscreen.touchStart(start.x, start.y);
+        await new Promise((resolve) => setTimeout(resolve, 450));
+        await page.touchscreen.touchMove((start.x + end.x) / 2, end.y);
+        await page.touchscreen.touchMove(end.x, end.y);
+        await page.touchscreen.touchEnd();
+        const afterHold = await settle(page, 900);
+        return { afterSwipe, ...afterHold };
+      },
+      expect: (observed) => [
+        ...expectNoCall(observed.afterSwipe, 'presentation_update_slides'),
+        ...expectCall(observed, 'presentation_update_slides', (args) => {
+          const order = (args.slides || []).map((slide) => slide.id).join(',');
+          return order === 's2,s1' ? [] : [`expected s2,s1, got: ${order}`];
+        }),
+      ],
+    },
+    {
+      id: 'deck-click-still-selects',
+      label: 'Deck preview: a plain click on a thumbnail selects it without moving anything',
+      html: widgetHtml.deck,
+      payload: deckRawPayload(),
+      readySelector: '.thumb[data-index="1"]',
+      async run({ page, frame }) {
+        await frame.click('.thumb[data-index="1"]');
+        const observed = await settle(page, 400);
+        const position = await frame.$eval('#stage-pos', (el) => el.textContent);
+        return { position, ...observed };
+      },
+      expect: (observed) => [
+        ...expectNoCall(observed, 'presentation_update_slides'),
+        ...(observed.position === 'Slide 2 of 2' ? [] : [`click did not select: ${observed.position}`]),
+      ],
+    },
+    {
+      id: 'deck-alt-arrow-moves',
+      label: 'Deck preview: Alt+ArrowRight moves the focused slide and keeps focus on it',
+      html: widgetHtml.deck,
+      payload: deckRawPayload(),
+      readySelector: '.thumb[data-index="0"]',
+      async run({ page, frame }) {
+        await frame.focus('.thumb[data-index="0"]');
+        await page.keyboard.down('Alt');
+        await page.keyboard.press('ArrowRight');
+        await page.keyboard.up('Alt');
+        const observed = await settle(page, 900);
+        const focused = await frame.evaluate(() => document.activeElement?.getAttribute('aria-label'));
+        return { focused, ...observed };
+      },
+      expect: (observed) => [
+        ...expectCall(observed, 'presentation_update_slides', (args) => {
+          const order = (args.slides || []).map((slide) => slide.id).join(',');
+          return order === 's2,s1' ? [] : [`expected s2,s1, got: ${order}`];
+        }),
+        ...(observed.focused === 'Slide 2: Market shift' ? [] : [`focus did not follow the slide: ${observed.focused}`]),
       ],
     },
     {
@@ -653,23 +831,27 @@ function deckPayload() {
 }
 
 /** Raw slides as the server stores them, the way presentation_get returns them in `data`. */
-function deckRawSlides() {
-  return [
+function deckRawSlides(count = 2) {
+  const base = [
     { id: 's1', slideName: 'Market shift', type: 'title', slideOrder: 0, content: { id: 'c1', type: 'title', content: 'Market shift' } },
     { id: 's2', slideName: 'Problem', type: 'title', slideOrder: 1, content: { id: 'c2', type: 'title', content: 'Problem' } },
   ];
+  for (let i = base.length; i < count; i += 1) {
+    base.push({ id: `s${i + 1}`, slideName: `Slide ${i + 1}`, type: 'title', slideOrder: i, content: { id: `c${i + 1}`, type: 'title', content: `Slide ${i + 1}` } });
+  }
+  return base;
 }
 
 function deckGetResult() {
   return { success: true, data: { id: 'deck_1', title: 'AI tutoring investor pitch deck', slide_count: 2, slides: deckRawSlides() } };
 }
 
-function deckRawPayload({ slideCount = 2 } = {}) {
+function deckRawPayload({ slides = 2, slideCount = slides } = {}) {
   const payload = deckPayload();
   payload.widget.presentation.slideCount = slideCount;
   return {
     success: true,
-    data: { id: 'deck_1', title: 'AI tutoring investor pitch deck', slide_count: slideCount, slides: deckRawSlides() },
+    data: { id: 'deck_1', title: 'AI tutoring investor pitch deck', slide_count: slideCount, slides: deckRawSlides(slides) },
     ...payload,
   };
 }

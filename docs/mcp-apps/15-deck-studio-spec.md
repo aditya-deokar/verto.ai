@@ -74,6 +74,12 @@ basic-host smoke run, at an 860 px iframe that grows to fit like a real host.
 11. The bundle stays inside its 448 KB budget, `npm run mcp:phase7` passes,
     and the smoke run passes.
 
+12. Added 2026-10-01: a thumbnail can be dragged to a new position. A mouse
+    drag starts after 6 px of travel; a touch drag needs a 300 ms press, so
+    a swipe still scrolls the chat. A bar marks the gap the slide will land
+    in, Escape cancels, and Alt + arrow keys do the same move from the
+    keyboard. The drop saves through the same path as the move buttons.
+
 ### Out of scope
 
 Adding a new blank slide (needs a slide-type picker), image swapping, export,

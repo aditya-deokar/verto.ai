@@ -1,6 +1,7 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import {
+  dropTargetIndex,
   duplicateSlide,
   filterThemes,
   insertSlide,
@@ -89,4 +90,18 @@ test('filterThemes matches every word against name and type', () => {
   assert.deepEqual(filterThemes(themes, 'n light').map((t) => t.name), ['Nature Fresh']);
   assert.equal(filterThemes(themes, '   ').length, 3);
   assert.equal(filterThemes(themes, 'zzz').length, 0);
+});
+
+test('dropTargetIndex accounts for the slide leaving its own gap', () => {
+  // Five slides; slots 0..5 are the gaps between them.
+  assert.equal(dropTargetIndex(0, 3), 2, 'dragging right lands one before the slot');
+  assert.equal(dropTargetIndex(4, 1), 1, 'dragging left lands on the slot');
+  assert.equal(dropTargetIndex(2, 2), 2, 'the gap before itself is a no-op');
+  assert.equal(dropTargetIndex(2, 3), 2, 'the gap after itself is a no-op');
+  assert.equal(dropTargetIndex(0, 5), 4, 'after the last slide');
+  assert.deepEqual(
+    ids(moveSlide(deck(), 0, dropTargetIndex(0, 2))),
+    ['b', 'a', 'c'],
+    'dropping slide a after slide b'
+  );
 });

@@ -53,7 +53,9 @@ const states = [
   { id: 'theme-search', width: 860, run: searchThemes, needs: '#theme-search' },
   { id: 'select-slide', width: 860, run: selectFourthSlide, needs: '.thumb' },
   { id: 'delete-undo', width: 860, run: deleteThenOfferUndo, needs: '#delete-slide-action' },
-];
+  { id: 'drag-midway', width: 860, run: (ctx) => dragFirstThumb(ctx, { release: false }), needs: '.thumb' },
+  { id: 'drag-drop', width: 860, run: (ctx) => dragFirstThumb(ctx, { release: true }), needs: '.thumb' },
+].filter((state) => !readArg('--only') || readArg('--only').split(',').includes(state.id));
 
 await mkdir(outDir, { recursive: true });
 
@@ -210,6 +212,38 @@ async function selectFourthSlide({ frame }) {
   }));
 }
 
+/**
+ * Presses on thumbnail 1 and drags it past the middle of thumbnail 3, which
+ * should land it at position 3. With `release: false` the pointer stays down
+ * so the screenshot shows the drag in progress.
+ */
+async function dragFirstThumb({ page, frame }, { release }) {
+  const thumbs = await frame.$$('.thumb');
+  const from = await thumbs[0].boundingBox();
+  const to = await thumbs[2].boundingBox();
+  await page.mouse.move(from.x + from.width / 2, from.y + from.height / 2);
+  await page.mouse.down();
+  await page.mouse.move(to.x + to.width * 0.8, to.y + to.height / 2, { steps: 12 });
+  await pause(250);
+
+  if (!release) {
+    return {
+      dropIndicator: await frame.evaluate(() =>
+        document.querySelector('.thumb.drop-before, .thumb.drop-after')?.getAttribute('data-index') ?? null
+      ),
+    };
+  }
+
+  await page.mouse.up();
+  await pause(900);
+  const calls = await page.evaluate(() => window.__VERTO_HOST__.toolCalls());
+  const save = calls.find((call) => call.name === 'presentation_update_slides');
+  return {
+    savedOrder: save ? save.arguments.slides.slice(0, 4).map((slide) => slide.id).join(',') : null,
+    stagePosition: await frame.$eval('#stage-pos', (el) => el.textContent.trim()).catch(() => null),
+  };
+}
+
 async function deleteThenOfferUndo({ page, frame }) {
   const thumbs = await frame.$$('.thumb');
   await thumbs[3].click();
@@ -332,6 +366,28 @@ async function recordFlow() {
         const save = await lastSave();
         const ids = save?.arguments.slides.map((slide) => slide.id).join(',');
         return save?.arguments.slides.length === 15 && ids === deckSlides().map((slide) => slide.id).join(',');
+      },
+    },
+    {
+      id: 'flow-10-drag',
+      caption: 'Drag slide 1 past slide 3: a marker shows where it will land',
+      act: async () => {
+        const thumbs = await frame.$$('.thumb');
+        const from = await thumbs[0].boundingBox();
+        const to = await thumbs[2].boundingBox();
+        await page.mouse.move(from.x + from.width / 2, from.y + from.height / 2);
+        await page.mouse.down();
+        await page.mouse.move(to.x + to.width * 0.8, to.y + to.height / 2, { steps: 12 });
+      },
+      check: async () => (await frame.$eval('.thumb.drop-after', (el) => el.dataset.index).catch(() => null)) === '2',
+    },
+    {
+      id: 'flow-11-drop',
+      caption: 'Release: slide 1 saved at position 3, the stage follows it',
+      act: async () => page.mouse.up(),
+      check: async () => {
+        const order = (await lastSave())?.arguments.slides.slice(0, 3).map((slide) => slide.id).join(',');
+        return order === 'slide_2,slide_3,slide_1' && (await stagePos()) === 'Slide 3 of 15';
       },
     },
   ];

@@ -50,6 +50,8 @@ interface HostHarness {
   links(): string[];
   /** Queues the result the stub server returns for the next call to `name`. */
   stubTool(name: string, result: unknown): void;
+  /** Delivers another tool result to the mounted widget, as a host does after a later model turn. */
+  pushToolResult(toolResult: unknown): Promise<void>;
   /** Makes the stub server fail the next call to `name`. */
   failTool(name: string, message: string): void;
   reset(): void;
@@ -208,6 +210,13 @@ window.__VERTO_HOST__ = {
   messages: () => messages.slice(),
   links: () => links.slice(),
   stubTool: (name, result) => stubbedResults.set(name, result),
+  pushToolResult: async (toolResult) => {
+    if (!bridge) throw new Error('mount() a widget first');
+    await bridge.sendToolResult({
+      structuredContent: toolResult as Record<string, unknown>,
+      content: [{ type: 'text', text: JSON.stringify(toolResult) }],
+    });
+  },
   failTool: (name, message) => failures.set(name, message),
   reset: () => {
     toolCalls.length = 0;
