@@ -554,10 +554,13 @@ function renderCover(deck: DeckViewModel): void {
 }
 
 function renderSlides(deck: DeckViewModel): void {
+  // The thumbnails a drag was measuring are about to be replaced.
+  endThumbDrag();
   const container = byId('slides');
   container.querySelectorAll('.slide-frame').forEach((frame) => frameScaler?.unobserve(frame));
   container.textContent = '';
   const shown = deck.slides;
+  const reorderable = canReorder(deck);
   byId('filmstrip-count').textContent = `${shown.length} shown`;
 
   if (shown.length === 0) {
@@ -578,8 +581,10 @@ function renderSlides(deck: DeckViewModel): void {
     thumb.setAttribute('aria-label', `Slide ${index + 1}: ${title}`);
     thumb.setAttribute('aria-current', index === selectedIndex ? 'true' : 'false');
     thumb.tabIndex = index === selectedIndex ? 0 : -1;
-    thumb.setAttribute('aria-describedby', 'filmstrip-hint');
-    thumb.setAttribute('aria-keyshortcuts', 'Alt+ArrowLeft Alt+ArrowRight');
+    if (reorderable) {
+      thumb.setAttribute('aria-describedby', 'filmstrip-hint');
+      thumb.setAttribute('aria-keyshortcuts', 'Alt+ArrowLeft Alt+ArrowRight');
+    }
 
     const frame = document.createElement('div');
     frame.className = 'slide-frame';
@@ -643,7 +648,7 @@ function onFilmstripKey(event: KeyboardEvent): void {
   event.preventDefault();
 
   // Alt+Arrow is the keyboard twin of dragging: it moves the slide itself.
-  if (event.altKey && event.key.startsWith('Arrow')) {
+  if (event.altKey && event.key.startsWith('Arrow') && canReorder(deck)) {
     const to = Math.max(0, Math.min(moves[event.key], last));
     if (to !== selectedIndex) void runSlideChange('move', { to });
     return;
@@ -677,6 +682,10 @@ function structureBlockedReason(deck: DeckViewModel): string {
   return '';
 }
 
+function canReorder(deck: DeckViewModel): boolean {
+  return !structureBlockedReason(deck) && deck.slides.length > 1;
+}
+
 function configureSlideTools(deck: DeckViewModel): void {
   const blocked = Boolean(structureBlockedReason(deck)) || deck.slides.length === 0;
   const count = deck.slides.length;
@@ -688,8 +697,8 @@ function configureSlideTools(deck: DeckViewModel): void {
   setEnabled('move-down-action', !blocked && selectedIndex < count - 1);
   setEnabled('duplicate-slide-action', !blocked);
   setEnabled('delete-slide-action', !blocked && count > 1);
-  byId('filmstrip-hint').hidden = blocked || count < 2;
-  byId('slides').classList.toggle('is-reorderable', !blocked && count > 1);
+  byId('filmstrip-hint').hidden = !canReorder(deck);
+  byId('slides').classList.toggle('is-reorderable', canReorder(deck));
   byId('undo-slide-action').hidden = !undoSnapshot || undoSnapshot.deckId !== deck.id;
   resetDeleteArm();
 }
@@ -739,6 +748,8 @@ const TOUCH_SLOP_PX = 8;
 type ThumbDrag = {
   pointerId: number;
   from: number;
+  /** The slide object picked up, so a drop after a refresh cannot move another. */
+  slide: unknown;
   source: HTMLElement;
   startX: number;
   startY: number;
@@ -759,13 +770,14 @@ function wireThumbnailDrag(grid: HTMLElement): void {
     const thumb = (event.target as HTMLElement).closest<HTMLElement>('.thumb');
     const deck = currentDeck;
     if (!thumb || !deck || event.button !== 0 || saving || thumbDrag) return;
-    if (structureBlockedReason(deck) || deck.slides.length < 2) return;
+    if (!canReorder(deck)) return;
 
     const rect = thumb.getBoundingClientRect();
     const from = Number(thumb.dataset.index);
     thumbDrag = {
       pointerId: event.pointerId,
       from,
+      slide: deck.slides[from],
       source: thumb,
       startX: event.clientX,
       startY: event.clientY,
@@ -814,17 +826,25 @@ function wireThumbnailDrag(grid: HTMLElement): void {
     }
 
     const to = dropTargetIndex(drag.from, drag.slot);
+    const sameSlide = currentDeck?.slides[drag.from] === drag.slide;
     endThumbDrag();
     // The click that follows a drag must not re-select the slide under the
     // pointer. Reset on the next tick in case no click arrives.
     suppressThumbClick = true;
     window.setTimeout(() => { suppressThumbClick = false; }, 0);
-    if (to !== drag.from) void runSlideChange('move', { from: drag.from, to });
+    if (to !== drag.from && sameSlide) void runSlideChange('move', { from: drag.from, to });
   });
 
   window.addEventListener('pointercancel', (event) => {
     if (thumbDrag && event.pointerId === thumbDrag.pointerId) endThumbDrag();
   });
+
+  // A release outside the iframe can go to the host page instead. Losing
+  // capture before our pointerup, or the frame losing focus, ends the drag.
+  grid.addEventListener('lostpointercapture', (event) => {
+    if (thumbDrag?.active && event.pointerId === thumbDrag.pointerId) endThumbDrag();
+  });
+  window.addEventListener('blur', () => endThumbDrag());
 
   window.addEventListener('keydown', (event) => {
     if (event.key === 'Escape' && thumbDrag?.active) {
@@ -853,6 +873,11 @@ function wireThumbnailDrag(grid: HTMLElement): void {
 
 function startThumbDrag(drag: ThumbDrag, x: number, y: number): void {
   drag.active = true;
+  try {
+    drag.source.setPointerCapture(drag.pointerId);
+  } catch {
+    // The pointer is already gone; lostpointercapture or blur cleans up.
+  }
   byId('slides').classList.add('is-dragging');
   drag.source.classList.add('is-drag-source');
 

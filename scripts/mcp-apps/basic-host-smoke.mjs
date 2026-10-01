@@ -395,6 +395,53 @@ function scenarios() {
       ],
     },
     {
+      id: 'deck-drag-across-rows',
+      label: 'Deck preview: dragging slide 1 onto the second row saves it at that position',
+      html: widgetHtml.deck,
+      payload: deckRawPayload({ slides: 9 }),
+      readySelector: '.thumb[data-index="8"]',
+      async run({ page, frame }) {
+        const rows = await frame.evaluate(() => {
+          const top = (i) => document.querySelector(`.thumb[data-index="${i}"]`).getBoundingClientRect().top;
+          return { first: top(0), target: top(7) };
+        });
+        await dragThumb(page, frame, 0, 7, 0.8);
+        await page.mouse.up();
+        const observed = await settle(page, 900);
+        return { wrapped: rows.target > rows.first, ...observed };
+      },
+      expect: (observed) => [
+        ...(observed.wrapped ? [] : ['slide 8 is on the first row, so this does not test wrapping']),
+        ...expectCall(observed, 'presentation_update_slides', (args) => {
+          const order = (args.slides || []).map((slide) => slide.id).join(',');
+          return order === 's2,s3,s4,s5,s6,s7,s8,s1,s9' ? [] : [`expected s1 after s8, got: ${order}`];
+        }),
+      ],
+    },
+    {
+      id: 'deck-refresh-ends-drag',
+      label: 'Deck preview: a new tool result mid-drag ends the drag instead of moving a stale index',
+      html: widgetHtml.deck,
+      payload: deckRawPayload(),
+      readySelector: '.thumb[data-index="1"]',
+      async run({ page, frame }) {
+        await dragThumb(page, frame, 0, 1, 0.8);
+        // The model reorders the deck itself while the person is dragging.
+        const reordered = deckRawPayload();
+        reordered.data.slides.reverse();
+        await page.evaluate((payload) => window.__VERTO_HOST__.pushToolResult(payload), reordered);
+        await settle(page, 300);
+        await page.mouse.up();
+        const observed = await settle(page, 700);
+        const leftovers = await frame.evaluate(() => document.querySelectorAll('.drag-ghost, .is-drag-source').length);
+        return { leftovers, ...observed };
+      },
+      expect: (observed) => [
+        ...expectNoCall(observed, 'presentation_update_slides'),
+        ...(observed.leftovers === 0 ? [] : [`${observed.leftovers} drag artifacts left after the refresh`]),
+      ],
+    },
+    {
       id: 'deck-drag-escape-cancels',
       label: 'Deck preview: Escape during a drag leaves the order alone',
       html: widgetHtml.deck,
@@ -784,23 +831,27 @@ function deckPayload() {
 }
 
 /** Raw slides as the server stores them, the way presentation_get returns them in `data`. */
-function deckRawSlides() {
-  return [
+function deckRawSlides(count = 2) {
+  const base = [
     { id: 's1', slideName: 'Market shift', type: 'title', slideOrder: 0, content: { id: 'c1', type: 'title', content: 'Market shift' } },
     { id: 's2', slideName: 'Problem', type: 'title', slideOrder: 1, content: { id: 'c2', type: 'title', content: 'Problem' } },
   ];
+  for (let i = base.length; i < count; i += 1) {
+    base.push({ id: `s${i + 1}`, slideName: `Slide ${i + 1}`, type: 'title', slideOrder: i, content: { id: `c${i + 1}`, type: 'title', content: `Slide ${i + 1}` } });
+  }
+  return base;
 }
 
 function deckGetResult() {
   return { success: true, data: { id: 'deck_1', title: 'AI tutoring investor pitch deck', slide_count: 2, slides: deckRawSlides() } };
 }
 
-function deckRawPayload({ slideCount = 2 } = {}) {
+function deckRawPayload({ slides = 2, slideCount = slides } = {}) {
   const payload = deckPayload();
   payload.widget.presentation.slideCount = slideCount;
   return {
     success: true,
-    data: { id: 'deck_1', title: 'AI tutoring investor pitch deck', slide_count: slideCount, slides: deckRawSlides() },
+    data: { id: 'deck_1', title: 'AI tutoring investor pitch deck', slide_count: slideCount, slides: deckRawSlides(slides) },
     ...payload,
   };
 }

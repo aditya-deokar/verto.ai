@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-10-01T08:47:20.024Z",
+  "generatedAt": "2026-10-01T09:03:57.451Z",
   "results": [
     {
       "id": "list-preview-uses-bridge",
@@ -58,6 +58,18 @@
     {
       "id": "deck-drag-reorders",
       "label": "Deck preview: dragging a thumbnail past its neighbour saves the new order",
+      "status": "pass",
+      "failures": []
+    },
+    {
+      "id": "deck-drag-across-rows",
+      "label": "Deck preview: dragging slide 1 onto the second row saves it at that position",
+      "status": "pass",
+      "failures": []
+    },
+    {
+      "id": "deck-refresh-ends-drag",
+      "label": "Deck preview: a new tool result mid-drag ends the drag instead of moving a stale index",
       "status": "pass",
       "failures": []
     },
