@@ -83,9 +83,12 @@ export default function McpUsageGuidePage() {
           <div className="grid gap-8 p-6 sm:p-8 lg:grid-cols-[minmax(0,1.35fr)_minmax(320px,0.9fr)] lg:p-10">
             <div className="space-y-6">
               <div className="space-y-4">
-                <Badge className="rounded-full bg-emerald-500/15 px-3 py-1 text-emerald-700 hover:bg-emerald-500/15">
-                  Hosted MCP Guide
-                </Badge>
+                <div className="flex items-center gap-3">
+                  <img src="/logoipsum-246.png" alt="Verto AI" className="h-7 w-7 object-contain" />
+                  <Badge className="rounded-full bg-emerald-500/15 px-3 py-1 text-emerald-700 hover:bg-emerald-500/15">
+                    Hosted MCP Guide
+                  </Badge>
+                </div>
                 <div className="space-y-3">
                   <h1 className="max-w-3xl text-3xl font-semibold tracking-tight sm:text-4xl lg:text-5xl">
                     Connect Verto AI to Claude, Cursor, and other MCP clients

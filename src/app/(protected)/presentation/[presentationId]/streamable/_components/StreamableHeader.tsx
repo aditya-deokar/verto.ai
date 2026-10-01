@@ -57,12 +57,9 @@ export default function StreamableHeader({
         >
           <ArrowLeft className="h-4 w-4" />
         </Button>
-        
         <div className="flex items-center gap-2">
-           <div className="w-7 h-7 rounded-xl bg-gradient-to-br from-primary to-primary/80 flex items-center justify-center shadow-[0_4px_12px_rgba(var(--primary),0.3)]">
-             <Sparkles className="h-3.5 w-3.5 text-primary-foreground" />
-           </div>
-           <span className="text-sm font-bold tracking-tight text-foreground bg-clip-text text-transparent bg-gradient-to-r from-foreground to-foreground/70">Verto AI</span>
+          <img src="/logoipsum-246.png" alt="Verto AI" className="w-7 h-7 object-contain" />
+          <span className="text-sm font-bold tracking-tight text-foreground bg-clip-text text-transparent bg-gradient-to-r from-foreground to-foreground/70">Verto AI</span>
         </div>
       </div>
 

@@ -22,7 +22,7 @@ export default function FooterV2() {
                     {/* Brand */}
                     <div className="col-span-1">
                         <Link href="/landing-v2" className="flex items-center gap-2 mb-6">
-                            <div className="w-6 h-6 rounded bg-linear-to-br from-[#F55C7A] to-[#F6BC66]" />
+                            <img src="/logoipsum-246.png" alt="Verto AI Logo" className="w-6 h-6 object-contain" />
                             <span className="text-black dark:text-white font-bold tracking-widest text-sm font-[family-name:var(--font-inter-tight)]">VERTO AI</span>
                         </Link>
                         <p className="text-black/60 dark:text-white/40 text-sm leading-relaxed mb-6 font-[family-name:var(--font-inter)]">

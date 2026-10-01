@@ -332,7 +332,7 @@ function consentPage(
       <!-- Logos -->
       <div class="flex items-center justify-center mb-8">
         <div class="w-14 h-14 bg-white rounded-[14px] shadow-sm border border-gray-100 flex items-center justify-center overflow-hidden z-10">
-          <img src="/new-logo.png" alt="Verto AI" class="w-full h-full object-cover" onerror="this.src='/logoipsum-246.png'" />
+          <img src="/logoipsum-246.png" alt="Verto AI" class="w-full h-full object-contain p-2" onerror="this.src='/logoipsum-246.png'" />
         </div>
         <div class="logo-connector -mx-2 z-0"></div>
         <div class="w-14 h-14 bg-[#10a37f] rounded-[14px] shadow-sm flex items-center justify-center overflow-hidden z-10">

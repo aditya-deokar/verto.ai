@@ -29,6 +29,11 @@ export const metadata: Metadata = {
   creator: "Verto AI",
   publisher: "Verto AI",
   metadataBase: new URL("https://verto.ai"),
+  icons: {
+    icon: "/logoipsum-246.png",
+    shortcut: "/logoipsum-246.png",
+    apple: "/logoipsum-246.png",
+  },
   openGraph: {
     type: "website",
     locale: "en_US",
