@@ -1,0 +1,76 @@
+# Software factory: the weekly outer loop. Runs skill-feedback-loop, which
+# opens at most one proposal PR (label factory:skill-loop) for a human to
+# review. It never merges. Transcript signals are unavailable in CI, so the
+# loop works from the run ledger, PR review comments, and memory.
+# Needs: the factory skills committed in this repo, .factory/ set up, and an
+# ANTHROPIC_API_KEY secret (or FACTORY_AGENT=codex plus OPENAI_API_KEY).
+name: Factory loop
+
+on:
+  schedule:
+    - cron: "0 6 * * 1"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+  pull-requests: write
+  issues: write
+
+concurrency:
+  group: factory-loop
+  cancel-in-progress: false
+
+jobs:
+  loop:
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    steps:
+      - name: Gate on credentials
+        id: gate
+        env:
+          AGENT: ${{ vars.FACTORY_AGENT || 'claude' }}
+          HAS_ANTHROPIC: ${{ secrets.ANTHROPIC_API_KEY != '' }}
+          HAS_OPENAI: ${{ secrets.OPENAI_API_KEY != '' }}
+        run: |
+          if [ "$AGENT" = "codex" ] && [ "$HAS_OPENAI" = "true" ]; then echo "agent=codex" >> "$GITHUB_OUTPUT"
+          elif [ "$AGENT" != "codex" ] && [ "$HAS_ANTHROPIC" = "true" ]; then echo "agent=claude" >> "$GITHUB_OUTPUT"
+          else echo "::notice::No API key for $AGENT; skipping the loop."; fi
+
+      - uses: actions/checkout@v4
+        if: steps.gate.outputs.agent != ''
+        with:
+          fetch-depth: 0
+
+      - uses: actions/setup-node@v4
+        if: steps.gate.outputs.agent != ''
+        with:
+          node-version: 20
+
+      - name: Loop (Claude)
+        if: steps.gate.outputs.agent == 'claude'
+        uses: anthropics/claude-code-action@v1
+        with:
+          anthropic_api_key: ${{ secrets.ANTHROPIC_API_KEY }}
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          claude_args: >-
+            --model ${{ vars.FACTORY_FRONTIER_MODEL || 'opus' }}
+            --allowedTools "Read,Grep,Glob,Edit,Write,Bash(node *),Bash(git *),Bash(gh pr *),Bash(gh api *),Bash(gh label *)"
+          prompt: |
+            Use the skill-feedback-loop skill in ${{ github.repository }}.
+            Run collect-signals. If nothing qualifies, print the signals summary and stop without changing anything.
+            Otherwise work on a new branch named factory-loop/<date>-<key>, change exactly one skill,
+            write the proposal file, and open one PR labeled factory:skill-loop. Never merge.
+
+      # Experimental: check openai/codex-action's current inputs before relying on this step.
+      - name: Loop (Codex)
+        if: steps.gate.outputs.agent == 'codex'
+        uses: openai/codex-action@v1
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          openai-api-key: ${{ secrets.OPENAI_API_KEY }}
+          prompt: |
+            Use the skill-feedback-loop skill in ${{ github.repository }}.
+            Run collect-signals. If nothing qualifies, print the signals summary and stop without changing anything.
+            Otherwise work on a new branch named factory-loop/<date>-<key>, change exactly one skill,
+            write the proposal file, and open one PR labeled factory:skill-loop. Never merge.

@@ -14,7 +14,8 @@ compatibility: >
   Port inspection differs per platform and both forms are given.
 metadata:
   author: software-factory
-  version: "2.0"
+  version: "2.1"
+  signals: "[worked-on-main, stale-branch]"
 allowed-tools: Bash(git:*) Bash(gh pr list*) Bash(gh pr diff*) Bash(lsof:*) Bash(netstat:*)
 ---
 

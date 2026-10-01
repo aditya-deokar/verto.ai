@@ -1,0 +1,23 @@
+{
+  "schema": 1,
+  "beats": {
+    "triage": true,
+    "spec": true,
+    "monitor": true
+  },
+  "ledger": true,
+  "memory": true,
+  "routing": true,
+  "loop": {
+    "enabled": true,
+    "window": "14d",
+    "min_occurrences": 2,
+    "max_open_prs": 1,
+    "cooldown_windows": 2
+  },
+  "human_gates": ["spec-approval", "merge", "loop-pr", "routing-change"],
+  "monitor": {
+    "watch_minutes": 30,
+    "sources": []
+  }
+}

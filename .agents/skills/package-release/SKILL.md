@@ -5,7 +5,7 @@ license: MIT
 compatibility: Requires Node.js 18+, npm 9+ with an authenticated account (npm whoami), git, and an authenticated gh CLI for the GitHub release step. Scoped packages need --access public on first publish or npm rejects them as private.
 metadata:
   author: software-factory
-  version: "1.0"
+  version: "1.1"
 allowed-tools: Bash(npm:*) Bash(npx skills *) Bash(git:*) Bash(gh release *) Bash(node:*)
 ---
 
@@ -25,6 +25,7 @@ Version the package on what happens to the agent, not on lines changed.
 | Removed a skill, or renamed one | major |
 | Narrowed a description so it fires in fewer cases | major |
 | Removed a step the user depended on | major |
+| Changed the workflow contract users copy into their repos (`AGENTS.md`, required PR fields) | major |
 | Added a skill | minor |
 | Broadened a description | minor |
 | Added a section, reference file, or script | minor |
