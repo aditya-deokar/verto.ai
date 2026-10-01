@@ -348,12 +348,15 @@ export default function McpUiDemosClient(): React.ReactElement {
     <div className="min-h-screen bg-zinc-950 text-zinc-100">
       <header className="sticky top-0 z-10 border-b border-zinc-800 bg-zinc-950/95 backdrop-blur">
         <div className="mx-auto flex max-w-[1600px] flex-wrap items-center gap-x-6 gap-y-3 px-5 py-4">
-          <div>
-            <h1 className="text-lg font-bold tracking-tight">MCP UI demos</h1>
-            <p className="text-xs text-zinc-400">
-              Static previews of the built widget bundles — same HTML served to MCP hosts.
-              In-widget actions need a live host session.
-            </p>
+          <div className="flex items-center gap-3">
+            <img src="/logoipsum-246.png" alt="Verto AI" className="h-7 w-7 object-contain" />
+            <div>
+              <h1 className="text-lg font-bold tracking-tight">MCP UI demos</h1>
+              <p className="text-xs text-zinc-400">
+                Static previews of the built widget bundles — same HTML served to MCP hosts.
+                In-widget actions need a live host session.
+              </p>
+            </div>
           </div>
 
           <SegmentedControl

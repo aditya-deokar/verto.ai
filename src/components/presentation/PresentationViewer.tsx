@@ -1,4 +1,4 @@
-﻿"use client";
+"use client";
 
 import { Button } from "@/components/ui/button";
 import {
@@ -431,7 +431,8 @@ export default function PresentationViewer({
             </Button>
 
             {viewerMode === "share" ? (
-              <div className="hidden items-center gap-2 rounded-full border border-white/10 bg-white/5 px-3 py-2 text-xs text-white/80 backdrop-blur md:flex">
+              <div className="hidden items-center gap-2 rounded-full border border-white/10 bg-white/5 px-3 py-1.5 text-xs text-white/80 backdrop-blur md:flex">
+                <img src="/logoipsum-246.png" alt="Verto AI" className="h-4 w-4 object-contain" />
                 <Globe className="h-3.5 w-3.5" />
                 Public link
               </div>

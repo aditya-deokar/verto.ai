@@ -112,13 +112,13 @@ const Navbar = ({ presentationId }: Props) => {
                 <Link passHref href={'/dashboard'}>
                     <Button
                         variant={'ghost'}
-                        className="hover:bg-muted/30 p-2"
+                        className="hover:bg-muted/30 p-2 flex items-center gap-2"
                         style={{
                             color: currentTheme.accentColor,
                         }}
                     >
-                        <Home className="w-5 h-5" />
-                        <span className='hidden sm:inline ml-2'>Return Home</span>
+                        <img src="/logoipsum-246.png" alt="Verto AI" className="w-5 h-5 object-contain" />
+                        <span className='hidden sm:inline'>Return Home</span>
                     </Button>
                 </Link>
 
