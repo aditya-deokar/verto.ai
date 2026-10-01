@@ -1,0 +1,19 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Factory memory frontmatter",
+  "description": "Frontmatter of .factory/memory/<name>.md. Written by agent-memory/scripts/memory.mjs.",
+  "type": "object",
+  "required": ["name", "description", "type", "source", "created", "uses", "status"],
+  "additionalProperties": false,
+  "properties": {
+    "name": { "type": "string", "pattern": "^[a-z0-9][a-z0-9-]*$" },
+    "description": { "type": "string", "minLength": 10 },
+    "type": { "enum": ["fact", "pitfall", "decision", "reference"] },
+    "source": { "type": "string", "minLength": 3 },
+    "run": { "type": ["string", "null"] },
+    "created": { "type": "string", "format": "date" },
+    "last_used": { "type": ["string", "null"], "format": "date" },
+    "uses": { "type": "integer", "minimum": 0 },
+    "status": { "enum": ["observed", "confirmed", "stale"] }
+  }
+}

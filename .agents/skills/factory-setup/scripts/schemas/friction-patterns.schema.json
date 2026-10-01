@@ -1,0 +1,28 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Factory friction patterns",
+  "description": ".factory/friction-patterns.json. Each key is a correction people keep having to repeat, owned by one skill or by AGENTS.md.",
+  "type": "array",
+  "items": {
+    "type": "object",
+    "required": ["key", "label", "owner", "re", "examples"],
+    "additionalProperties": false,
+    "properties": {
+      "key": { "type": "string", "pattern": "^[a-z0-9][a-z0-9-]*$" },
+      "label": { "type": "string", "minLength": 5 },
+      "owner": { "type": "string", "minLength": 1 },
+      "re": { "type": "string", "minLength": 3 },
+      "flags": { "type": "string", "pattern": "^[imsu]*$" },
+      "added": { "type": "string", "format": "date" },
+      "examples": {
+        "type": "object",
+        "required": ["match", "miss"],
+        "additionalProperties": false,
+        "properties": {
+          "match": { "type": "array", "items": { "type": "string" }, "minItems": 1 },
+          "miss": { "type": "array", "items": { "type": "string" }, "minItems": 1 }
+        }
+      }
+    }
+  }
+}

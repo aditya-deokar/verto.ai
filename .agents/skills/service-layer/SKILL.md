@@ -14,7 +14,7 @@ compatibility: >
   and cron jobs.
 metadata:
   author: software-factory
-  version: "2.0"
+  version: "2.1"
 ---
 
 # Service layer
@@ -166,6 +166,34 @@ after any of them and still have working code.
 6. **Leave the domain logic where it was.** Auth checks, status transitions,
    and user-facing error text should not have moved. If they did, put them
    back.
+
+## Sweep for siblings before fixing a bug
+
+A bug report names one file. The defect is often a pattern: a helper copied
+into four places, the same unchecked call, the same literal. Fixing the one
+named file leaves the other three to be reported next week.
+
+1. **Name the fingerprint,** from the cause, not the symptom: the function or
+   call shape, the duplicated literal, the missing check.
+2. **Search the whole repo before editing anything:**
+   ```bash
+   git grep -n "parseAmount(" -- ':!**/node_modules/**'
+   git grep -n -E "fetch([^)]*).then(r => r.json())"
+   ```
+   Widen the search (drop arguments, try the other spelling) until another
+   variant turns up nothing new.
+3. **Write the list of hits down** before fixing, so the reviewer can check
+   the sweep was complete.
+4. **Decide where the fix lives.** If a shared service exists and some
+   callers bypass it, fix the service and point them at it. If three or more
+   copies exist and no service does, that is the second-caller signal from
+   the procedure above.
+5. **Report the blast radius in the PR,** including hits you found but did
+   not change because another task or agent owns them. Name them; never drop
+   them silently.
+
+If the bug really is local (a typo, a value that only makes sense in one
+place), say "local, no sweep needed" in the PR and move on.
 
 ## When not to do this
 

@@ -1,0 +1,119 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Factory run record",
+  "description": "One task through the factory. Written by run-ledger/scripts/ledger.mjs.",
+  "type": "object",
+  "required": ["schema", "id", "task", "harness", "beats", "memories", "human_touches", "started_at"],
+  "additionalProperties": false,
+  "properties": {
+    "schema": { "const": 1 },
+    "id": { "type": "string", "pattern": "^\\d{4}-\\d{2}-\\d{2}-[a-z0-9-]+$" },
+    "title": { "type": ["string", "null"] },
+    "branch": { "type": ["string", "null"] },
+    "task": {
+      "type": "object",
+      "required": ["class", "size"],
+      "additionalProperties": false,
+      "properties": {
+        "source": { "type": ["string", "null"] },
+        "class": { "enum": ["bugfix", "feature", "refactor", "docs", "ci-fix", "migration", "perf", "chore", "triage", "loop", "eval"] },
+        "size": { "enum": ["small", "medium", "large"] }
+      }
+    },
+    "harness": { "type": "string", "minLength": 1 },
+    "model": {
+      "type": ["object", "null"],
+      "additionalProperties": false,
+      "properties": {
+        "tier": { "type": ["string", "null"] },
+        "id": { "type": ["string", "null"] },
+        "rule": { "type": ["string", "null"] }
+      }
+    },
+    "beats": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "triage": {
+          "type": "object",
+          "properties": {
+            "decision": { "enum": ["implement", "spec", "duplicate", "needs-info", "decline"] },
+            "duplicate_of": { "type": ["string", "null"] }
+          }
+        },
+        "spec": {
+          "type": "object",
+          "properties": {
+            "path": { "type": "string" },
+            "approved": { "type": "boolean" }
+          }
+        },
+        "isolate": { "type": "object" },
+        "build": { "type": "object" },
+        "prove": {
+          "type": "object",
+          "properties": {
+            "evidence": {
+              "type": "array",
+              "items": { "enum": ["recording", "screenshots", "visual-diff", "output-pair", "measurement", "query", "log", "test-suite", "none"] }
+            },
+            "before_captured": { "type": "boolean" }
+          }
+        },
+        "ship": {
+          "type": "object",
+          "properties": {
+            "pr": { "type": ["integer", "string"] },
+            "review_rounds": { "type": "integer", "minimum": 0 },
+            "final_score": { "type": "string" }
+          }
+        },
+        "monitor": {
+          "type": "object",
+          "properties": {
+            "status": { "enum": ["clean", "regression", "skipped", "pending"] },
+            "issue": { "type": ["integer", "string", "null"] }
+          }
+        }
+      }
+    },
+    "memories": {
+      "type": "object",
+      "required": ["used", "written"],
+      "additionalProperties": false,
+      "properties": {
+        "used": { "type": "array", "items": { "type": "string" } },
+        "written": { "type": "array", "items": { "type": "string" } }
+      }
+    },
+    "human_touches": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["beat", "kind"],
+        "additionalProperties": false,
+        "properties": {
+          "beat": { "enum": ["triage", "spec", "isolate", "build", "prove", "ship", "monitor"] },
+          "kind": { "enum": ["correction", "approval", "rejection", "clarification", "manual-fix"] },
+          "ref": { "type": ["string", "null"] },
+          "note": { "type": ["string", "null"] },
+          "at": { "type": "string", "format": "date-time" }
+        }
+      }
+    },
+    "cost": {
+      "type": ["object", "null"],
+      "additionalProperties": false,
+      "properties": {
+        "input_tokens": { "type": "integer", "minimum": 0 },
+        "cached_input_tokens": { "type": "integer", "minimum": 0 },
+        "output_tokens": { "type": "integer", "minimum": 0 },
+        "usd": { "type": ["number", "null"] },
+        "source": { "type": "string" }
+      }
+    },
+    "started_at": { "type": "string", "format": "date-time" },
+    "finished_at": { "type": ["string", "null"], "format": "date-time" },
+    "outcome": { "enum": [null, "shipped", "merged", "closed", "blocked", "abandoned"] }
+  }
+}

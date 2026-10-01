@@ -1,0 +1,19 @@
+{
+  "schema": 1,
+  "tiers": {
+    "fast": { "claude-code": "haiku", "codex": null, "cursor": null },
+    "balanced": { "claude-code": "sonnet", "codex": null, "cursor": null },
+    "frontier": { "claude-code": "opus", "codex": null, "cursor": null }
+  },
+  "default": "balanced",
+  "rules": [
+    { "id": "triage", "match": { "beat": "triage" }, "tier": "fast", "note": "Labeling and dedupe are pattern matching." },
+    { "id": "spec", "match": { "beat": "spec" }, "tier": "frontier", "note": "Ambiguity calls are where a strong model earns its price." },
+    { "id": "monitor", "match": { "beat": "monitor" }, "tier": "fast" },
+    { "id": "docs", "match": { "class": "docs" }, "tier": "fast" },
+    { "id": "chore-small", "match": { "class": ["chore", "ci-fix"], "size": "small" }, "tier": "fast" },
+    { "id": "migration", "match": { "class": "migration" }, "tier": "frontier" },
+    { "id": "large", "match": { "size": "large" }, "tier": "frontier" }
+  ],
+  "evidence": {}
+}

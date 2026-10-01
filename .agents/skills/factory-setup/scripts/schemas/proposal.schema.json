@@ -1,0 +1,18 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Factory loop proposal frontmatter",
+  "description": "Frontmatter of .factory/proposals/<date>-<key>.md, written by the skill feedback loop.",
+  "type": "object",
+  "required": ["key", "target", "status", "date", "window", "baseline"],
+  "additionalProperties": false,
+  "properties": {
+    "key": { "type": "string", "pattern": "^[a-z0-9][a-z0-9-]*$" },
+    "target": { "type": "string", "minLength": 1 },
+    "status": { "enum": ["draft", "open", "merged", "closed", "reverted"] },
+    "date": { "type": "string", "format": "date" },
+    "window": { "type": "string", "pattern": "^\\d+[hdw]$" },
+    "baseline": { "type": "integer", "minimum": 0 },
+    "target_count": { "type": ["integer", "null"], "minimum": 0 },
+    "pr": { "type": ["string", "null"] }
+  }
+}

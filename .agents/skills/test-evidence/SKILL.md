@@ -16,8 +16,9 @@ compatibility: >
   running app and a scriptable browser. Attaching evidence to a PR needs gh.
 metadata:
   author: software-factory
-  version: "2.0"
-allowed-tools: Bash(python*) Bash(ffmpeg*) Bash(ffprobe*) Bash(gh pr*) Bash(gh issue*) Bash(npx playwright*)
+  version: "3.0"
+  signals: "[false-done, missing-evidence]"
+allowed-tools: Bash(python*) Bash(ffmpeg*) Bash(ffprobe*) Bash(gh pr*) Bash(gh issue*) Bash(npx playwright*) Bash(node:*)
 ---
 
 # Test evidence
@@ -51,6 +52,48 @@ stashing everything.
 **Vary one thing.** Before and after must differ only by your change. A
 screenshot at a different window width, or a benchmark on a loaded machine,
 proves nothing and will be dismissed by anyone who notices.
+
+## Done or blocked
+
+Every report of finished work ends in one of two shapes.
+
+**Done**, with the artifact: the recording, the before/after pair, the
+command and its output, the PR URL. A sentence describing a check you would
+run is not an artifact.
+
+**Blocked**, on one line:
+
+```
+BLOCKED: <what stops you> - unblock: <one thing a person can do in under a minute>
+```
+
+Anything else is a stall. "It should work now", "let me know if it doesn't",
+and a status paragraph with no ask all hand the checking back to the reader.
+A failing check is a reason to keep working, not a reason to stop and report.
+
+Before writing BLOCKED, make sure it is real. Run the thing locally instead
+of waiting for CI. Pick the reversible option and say which one you picked.
+Only a missing credential, a destructive action, or a decision that belongs
+to a person is a blocker.
+
+## Scale the proof to the change
+
+Proof has to exercise what you changed. It does not have to exercise
+everything.
+
+- **A small, local change:** read the diff, then run the narrowest check that
+  touches it: one test file, one command, one page. Not the full suite, not
+  a browser session.
+- **A shared contract, a migration, or a cross-cutting change:** the full
+  suite, plus runtime evidence from the table above.
+- **Docs only:** say "docs only, no runtime check applies". Do not invent a
+  check.
+- **Cannot run it at all:** say exactly what would close the gap: "Not
+  verified. Needs `pnpm test:e2e` with a database, which this environment
+  lacks." Unverified must never read as done.
+
+"Obviously correct" one-line fixes are the ones that ship broken most often.
+Run the narrow check anyway.
 
 ## The recording path
 
@@ -199,6 +242,21 @@ What could still be wrong, and what is untested.
 The risks section matters. Evidence shows what you checked; it says nothing
 about what you did not. Naming the gap is the difference between evidence and
 a sales pitch.
+
+## Recording it in the ledger
+
+If the repo has `.factory/`, record what you captured, so the factory can
+tell whether evidence is keeping up with shipping (`$LEDGER` is resolved as in
+`run-ledger`):
+
+```bash
+node "$LEDGER" beat current prove --add evidence=recording --add evidence=output-pair --set before_captured=true
+```
+
+Evidence names: `recording`, `screenshots`, `visual-diff`, `output-pair`,
+`measurement`, `query`, `log`, `test-suite`, `none`. When a person has
+to tell you it is still broken, record that as a `correction` touch on the
+`prove` beat. That count is how the outer loop knows this skill needs work.
 
 ## Do not do these
 

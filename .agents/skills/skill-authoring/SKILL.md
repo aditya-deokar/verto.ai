@@ -5,7 +5,7 @@ license: MIT
 compatibility: Requires Node.js 18+ for the validator (npx skills add --list). Everything else is plain file editing and works in any harness.
 metadata:
   author: software-factory
-  version: "1.0"
+  version: "1.1"
 allowed-tools: Bash(npx skills *) Bash(node:*) Bash(git:*)
 ---
 
@@ -64,6 +64,7 @@ Worth adding on anything you publish:
 | `metadata.version` | Bump on every behaviour change. |
 | `allowed-tools` | Narrow the blast radius. Claude Code and most others honour it. |
 | `metadata.internal` | `true` hides it from discovery until `INSTALL_INTERNAL_SKILLS=1`. |
+| `metadata.signals` | Friction keys this skill owns, as `"[key-a, key-b]"`. Ties the skill to the numbers that say whether it works. |
 
 `compatibility` is the field people skip and then field bug reports about.
 Write it as if the reader has none of your tools installed, because they do not.
@@ -128,6 +129,40 @@ Run this before publishing a skill or when one is not firing.
    nothing more.
 10. Vendored skills keep their upstream `LICENSE` file and name the source in
     `metadata.vendored-from`.
+
+## Skills that measure themselves
+
+In a repo that runs the factory, a skill is not finished when it reads well.
+It is finished when the correction it exists to prevent stops recurring.
+
+- **Name what it owns.** Each skill that prevents a failure lists the
+  friction keys for that failure in `metadata.signals`, and each key in
+  `.factory/friction-patterns.json` names its owner. The linter checks both
+  directions.
+- **No key, no rule.** Before adding a rule to a skill, find or add the
+  friction pattern it should reduce, with `match` and `miss` examples. A
+  rule whose effect nobody can count cannot be judged, and it never gets
+  removed.
+- **Rewrite once, then build a mechanism.** If a rule was already reworded
+  once and the count did not move, more words will not help either. Replace
+  it with a script, a check, or a hook, and delete the prose in the same
+  change.
+
+### Reviewing a proposal from the loop
+
+`skill-feedback-loop` opens PRs labeled `factory:skill-loop`. Review them
+like code, with these questions:
+
+1. Do the samples really show the pattern? Regexes misfire. A wrong match is
+   a pattern fix, not a skill fix.
+2. Does the diagnosis quote the skill text that failed?
+3. Is it one skill and the smallest change? Two changes in one PR cannot be
+   measured separately.
+4. Does it delete what it replaces?
+5. Is the expected movement a number with a baseline?
+
+Merge it, or close it with the reason. Either way, set the proposal file's
+`status` so the loop's cooldown and follow-up stay accurate.
 
 ## When a skill does not fire
 

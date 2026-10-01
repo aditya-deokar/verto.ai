@@ -1,0 +1,46 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Factory config",
+  "description": ".factory/config.json. Every switch off gives plain v2 behavior.",
+  "type": "object",
+  "required": ["schema", "beats", "ledger", "memory", "routing", "loop"],
+  "additionalProperties": false,
+  "properties": {
+    "schema": { "const": 1 },
+    "beats": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "triage": { "type": "boolean" },
+        "spec": { "type": "boolean" },
+        "monitor": { "type": "boolean" }
+      }
+    },
+    "ledger": { "type": "boolean" },
+    "memory": { "type": "boolean" },
+    "routing": { "type": "boolean" },
+    "loop": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "enabled": { "type": "boolean" },
+        "window": { "type": "string", "pattern": "^\\d+[hdw]$" },
+        "min_occurrences": { "type": "integer", "minimum": 1 },
+        "max_open_prs": { "type": "integer", "minimum": 1 },
+        "cooldown_windows": { "type": "integer", "minimum": 0 }
+      }
+    },
+    "human_gates": {
+      "type": "array",
+      "items": { "enum": ["spec-approval", "merge", "loop-pr", "routing-change"] }
+    },
+    "monitor": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "watch_minutes": { "type": "integer", "minimum": 0 },
+        "sources": { "type": "array", "items": { "type": "string" } }
+      }
+    }
+  }
+}

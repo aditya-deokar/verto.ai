@@ -1,0 +1,42 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Factory routing rules",
+  "description": ".factory/routing.json. Rules name tiers; tiers map to a model per harness. List tiers cheapest first.",
+  "type": "object",
+  "required": ["schema", "tiers", "default", "rules"],
+  "additionalProperties": false,
+  "properties": {
+    "schema": { "const": 1 },
+    "tiers": {
+      "type": "object",
+      "additionalProperties": {
+        "type": "object",
+        "additionalProperties": { "type": ["string", "null"] }
+      }
+    },
+    "default": { "type": "string" },
+    "rules": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["id", "match", "tier"],
+        "additionalProperties": false,
+        "properties": {
+          "id": { "type": "string", "pattern": "^[a-z0-9][a-z0-9-]*$" },
+          "match": {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+              "beat": { "type": ["string", "array"] },
+              "class": { "type": ["string", "array"] },
+              "size": { "type": ["string", "array"] }
+            }
+          },
+          "tier": { "type": "string" },
+          "note": { "type": "string" }
+        }
+      }
+    },
+    "evidence": { "type": "object", "additionalProperties": { "type": "string" } }
+  }
+}

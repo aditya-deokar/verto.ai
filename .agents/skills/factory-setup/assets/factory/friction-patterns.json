@@ -1,0 +1,180 @@
+[
+  {
+    "key": "false-done",
+    "label": "Said it was fixed or done when it was not",
+    "owner": "test-evidence",
+    "re": "\\b(still (broken|failing|not working|happening|the same)|you said (it was |it's |it is )?(fixed|done|working)|(isn't|is not|wasn't|was not|not) (actually )?fixed|did(n't| not) actually (fix|work))\\b",
+    "added": "2026-09-29",
+    "examples": {
+      "match": [
+        "it's still broken on the settings page",
+        "you said it was fixed but the test fails",
+        "that is not actually fixed",
+        "this didn't actually fix anything"
+      ],
+      "miss": [
+        "the login page is broken, can you fix it",
+        "nice, that fixed it",
+        "the bug is still open in Linear"
+      ]
+    }
+  },
+  {
+    "key": "missing-evidence",
+    "label": "Had to ask for proof that a change works",
+    "owner": "test-evidence",
+    "re": "\\b(where('s| is| are) the (evidence|proof|screenshots?|recording|before)|(show|give) me (the )?(proof|evidence|screenshots?)|did you (actually )?(test|verify|run) (it|this|that)|how do you know (it|this|that) works)\\b",
+    "added": "2026-09-29",
+    "examples": {
+      "match": [
+        "where's the evidence?",
+        "show me screenshots before I merge",
+        "did you actually test it",
+        "how do you know this works"
+      ],
+      "miss": [
+        "add a test for the parser",
+        "the evidence folder is gitignored",
+        "take screenshots of the new page"
+      ]
+    }
+  },
+  {
+    "key": "worked-on-main",
+    "label": "Committed or built on the default branch",
+    "owner": "worktree-isolation",
+    "re": "\\b((don't|do not|never|why did you|why are you) (commit|push|work|build)(ing)? (directly )?(on|to|in) (main|master)|(committed|pushed) (directly )?(on|to) (main|master))\\b",
+    "added": "2026-09-29",
+    "examples": {
+      "match": [
+        "why did you commit to main",
+        "never push directly to master",
+        "you pushed to main again"
+      ],
+      "miss": [
+        "rebase onto main before opening the PR",
+        "merge it to main once CI is green",
+        "the main page is slow"
+      ]
+    }
+  },
+  {
+    "key": "stale-branch",
+    "label": "Branch was based on stale code or collided with other work",
+    "owner": "worktree-isolation",
+    "re": "\\b((branched|based) (on|off|from) (an? |the )?(old|stale|outdated)|not (up to date|rebased) (with|on) (origin/)?(main|master)|overwrote (my|their|the other agent's) (changes|work)|another agent('s)? (changes|work|edits))\\b",
+    "added": "2026-09-29",
+    "examples": {
+      "match": [
+        "you branched off an old commit",
+        "this is not rebased on main",
+        "you overwrote my changes",
+        "that clobbered another agent's work"
+      ],
+      "miss": [
+        "create a branch for this",
+        "the old API is deprecated",
+        "rebase when you are ready"
+      ]
+    }
+  },
+  {
+    "key": "status-chase",
+    "label": "Had to ask for status on long-running work",
+    "owner": "AGENTS.md",
+    "re": "\\b(any (update|progress)|how's it going|what's the status|are you (still )?(done|stuck|there|working)|is it (done|finished) yet|still (running|going)\\?)",
+    "added": "2026-09-29",
+    "examples": {
+      "match": [
+        "any update?",
+        "what's the status on the migration",
+        "are you stuck",
+        "is it done yet"
+      ],
+      "miss": [
+        "update the status column",
+        "the build is still running on CI, that's expected",
+        "add a progress bar"
+      ]
+    }
+  },
+  {
+    "key": "unrequested-scope",
+    "label": "Changed things outside the task",
+    "owner": "AGENTS.md",
+    "re": "\\b((i )?(didn't|did not|never) ask (you )?(for|to)|out of scope|why did you (add|change|touch|refactor|rename|delete|remove)|revert (the |those |that )?(unrelated|extra) (changes?|files?|edits?))\\b",
+    "added": "2026-09-29",
+    "examples": {
+      "match": [
+        "I didn't ask for a refactor",
+        "why did you rename the helper",
+        "that's out of scope for this PR",
+        "revert the unrelated changes"
+      ],
+      "miss": [
+        "please rename the helper",
+        "scope the query to the current org",
+        "add the missing file"
+      ]
+    }
+  },
+  {
+    "key": "repeated-correction",
+    "label": "Had to repeat a correction given before",
+    "owner": "agent-memory",
+    "re": "\\b((i|we)('ve| have)? (already )?told you (this|that|before)|how many times|same (mistake|thing|comment) again|i already (said|told you|mentioned)|like i said before)\\b",
+    "added": "2026-09-29",
+    "examples": {
+      "match": [
+        "I told you this yesterday",
+        "how many times do I have to say it",
+        "same mistake again",
+        "I already said to use pnpm"
+      ],
+      "miss": [
+        "tell me how the cache works",
+        "run it again",
+        "the same query works in staging"
+      ]
+    }
+  },
+  {
+    "key": "ai-prose",
+    "label": "Writing read as machine-generated or padded",
+    "owner": "prose-cleanup",
+    "re": "\\b(sounds? (like )?(an? )?(ai|bot|chatgpt|robot|robotic)|(too|so) (verbose|wordy|fluffy)|(stop using|no more|remove the) em ?dash(es)?|less (fluff|filler)|cut the (fluff|filler))\\b",
+    "added": "2026-09-29",
+    "examples": {
+      "match": [
+        "this PR description sounds like AI",
+        "too wordy, cut it down",
+        "stop using em dashes",
+        "less fluff please"
+      ],
+      "miss": [
+        "add an AI section to the docs",
+        "the dash in the filename breaks the script",
+        "write a longer description"
+      ]
+    }
+  },
+  {
+    "key": "misread-intent",
+    "label": "Built something other than what was asked",
+    "owner": "spec-writing",
+    "re": "\\b(that's not what i (asked|wanted|meant)|not what i (asked for|wanted|meant)|you misunderstood|i meant (the|something) (other|else|different))\\b",
+    "added": "2026-09-29",
+    "examples": {
+      "match": [
+        "that's not what I asked for",
+        "you misunderstood the task",
+        "not what I meant at all"
+      ],
+      "miss": [
+        "what I wanted was already on main, thanks",
+        "explain what you meant by retries",
+        "I asked the team about it"
+      ]
+    }
+  }
+]
